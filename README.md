@@ -4,6 +4,20 @@ This repo has the agents and command prompts that I use for my agentic workflow.
 
 **IMPORTANT** Between each phase you MUST review the outputs for correctness. This is YOUR job, not the models. It may produce working results, but that doesn't mean they are correct for your project or product. Keep in mind that the more times you run this system, the more it will use itself as a baselines for future workflow runs. So spending a bit of time to ensure the early research is correct is important as it will make the system run more smoothly in the future!
 
+
+## Setup
+
+There's a couple of small tools that really help to make this work more smoothly, though the issue tracker is optional, I advise not using MCP or similar type APIs from an agent as they are absurdly noisy. And JSON is generally bad for inference.
+
+### Thoughts
+
+The thoughts tool is a simple concept that aims to separate your llm generated intermediate output from your actual codebase. This current system requires you to setup a separate 'thoughts' repo. This may change in the future but for now this is how I have it working.
+
+1. Create a thoughts repo, you can do this for your org if you have many repos, or for yourself if you're a solo dev, but it's ideal that everyone uses the same repo across an org or it won't really work well.
+2. Run `npx humanlyer thoughts init` inside your project. This will ask some questions about where your thoughts repo is so have that made first. It defaults to ~/thoughts
+
+That's pretty much it, the prompts are all designed to manage it from here on out.
+
 ## Commands
 
 The process really start with the commands, as the subagents are laregely used by the commands themselves. The commands are each designed to be run from a fresh context window to maximize the inference latency and quality. Each phase and subagent performs a form of context compression, feeding the next phase or suagent with only the optimial chunks of tokens necessary to complete it's task.
