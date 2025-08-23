@@ -11,12 +11,44 @@ There's a couple of small tools that really help to make this work more smoothly
 
 ### Thoughts
 
-The thoughts tool is a simple concept that aims to separate your llm generated intermediate output from your actual codebase. This current system requires you to setup a separate 'thoughts' repo. This may change in the future but for now this is how I have it working.
+Thoughts are a place to store notes that are helpful context for the LLM to perform it's job accurately. They include the following categories of thoughts, each with their own purpose in the overall workflow.
 
-1. Create a thoughts repo, you can do this for your org if you have many repos, or for yourself if you're a solo dev, but it's ideal that everyone uses the same repo across an org or it won't really work well.
-2. Run `npx humanlyer thoughts init` inside your project. This will ask some questions about where your thoughts repo is so have that made first. It defaults to ~/thoughts
+#### Architecture (/thoughts/architecure)
 
-That's pretty much it, the prompts are all designed to manage it from here on out.
+The architecture files contain the overall design and decisions made that will guide the project as a whole. This contains several documents that may be unique to each project, these generally include:
+* overview.md - an outline of the whole architecture and synopsis of each document and how they relate to other documents.
+* system-architecture.md - deeper dive into the languages, frameworks, libraries, tooling and the overall core infrasturcutre of the application
+* domain-model.md - describes the actual application domains beyond the core achitecture, diving into specifics of business logic and feature designs
+* testing-strategy.md - covers various testing methods used through the project and where they are applicable
+* development-workflow.md - describes the phases of development and how each ticket is expected to progress, and how archtecture changes are handled
+* persistance.md - how data is persisted from the domain model. This should include all data stores used like sql dbs, search dbs, assets stores, etc
+
+Other more optional architecure components may include
+* api-design.md - where the project has direct external interfaces that drive query and mutation actions within the core domain models
+* cli-design.md - for command line interfaces to the application
+* event-bus.md - for projects that implement an async event bus to pump events to clients, usually coupled with api-design.md
+
+And any other major dependencies or integral components that an agent would need to know exists to understand how to interact with it.
+
+#### Documentation (/thoughts/docs)
+
+These docs are not for the project itself but rather for external tools, libraries or services. These are not the full documentation from their website, but rather a distilled version that contains the most relevant information for the projects use cases. The purpose is to create a highly greppable set of docs that contains only the specific API endpoints or functions that are used. This prevents having to fetch large websites and 
+
+#### Tickets (/thoughts/tickets)
+
+Tickets hold information on work that needs to be completed. A ticket may be an issue with the software, a feature request, or an architecural delta that needs to be resolved. In the beginning most tickets would be architecure deltas, and typically these occur when the architecture undergoes changes. The differnce with feature requests is they are more typical in the user interface projects where the architectural details are often less specific and more user-centric or personalized.
+
+Ideally these are linked to an issue tracker like linear or github for integration with external systems like slack.
+
+#### Research (/thoughts/research)
+
+Research notes are gathered with respect to a specific ticket and are an analysis of the codebase, the thoughtbase, and relevant web documentation. Each research file is timestampped as to when it was triggered and provides frontmatter metadata on the report as well. These reports form the initial analysis of where related concepts of a ticket are located, and previous thoughts that are relevant, especially architecural info, and may trigger web searches for documentation for relevant libraries, tools or services that are missing.
+
+#### Planning (/thoughts/plans)
+
+Planning documnts are much more specific and pull together a ticket with it's associted research to determine an implementation plan. The research may have discovered that the ticket requires more
+
+#### Review (/thoughts/review)
 
 ## Commands
 

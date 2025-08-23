@@ -1,53 +1,29 @@
+---
+description: Create an implementation plan from a ticket and research
+---
+
 # Implementation Plan
 
 You are tasked with creating detailed implementation plans through an interactive, iterative process. You should be skeptical, thorough, and work collaboratively with the user to produce high-quality technical specifications.
-
-## Initial Response
-
-When this command is invoked:
-
-1. **Check if parameters were provided**:
-   - If a file path or ticket reference was provided as a parameter, skip the default message
-   - Immediately read any provided files FULLY
-   - Begin the research process
-
-2. **If no parameters provided**, respond with:
-```
-I'll help you create a detailed implementation plan. Let me start by understanding what we're building.
-
-Please provide:
-1. The task/ticket description (or reference to a ticket file)
-2. Any relevant context, constraints, or specific requirements
-3. Links to related research or previous implementations
-
-I'll analyze this information and work with you to create a comprehensive plan.
-
-Tip: You can also invoke this command with a ticket file directly: `/create_plan thoughts/user/tickets/eng_1234.md`
-For deeper analysis, try: `/create_plan think deeply about thoughts/user/tickets/eng_1234.md`
-```
-
-Then wait for the user's input.
 
 ## Process Steps
 
 ### Step 1: Context Gathering & Initial Analysis
 
-1. **Read all mentioned files immediately and FULLY**:
-   - Ticket files (e.g., `thoughts/user/tickets/eng_1234.md`)
+1. **Read all mentioned <files> immediately and FULLY**:
+   - Ticket files (e.g., `thoughts/tickets/eng_1234.md`)
    - Research documents
    - Related implementation plans
    - Any JSON/data files mentioned
-   - **IMPORTANT**: Use the Read tool WITHOUT limit/offset parameters to read entire files
-   - **CRITICAL**: DO NOT spawn sub-tasks before reading these files yourself in the main context
-   - **NEVER** read files partially - if a file is mentioned, read it completely
+   - **IMPORTANT**: Use the Read tool WITHOUT limit/offset parameters to read entire <files>
+   - **CRITICAL**: DO NOT spawn sub-tasks before reading these <files> yourself in the main context
 
 2. **Spawn initial research tasks to gather context**:
    Before asking the user any questions, use specialized agents to research in parallel:
 
-   - Use the **codebase-locator** agent to find all files related to the ticket/task
-   - Use the **codebase-analyzer** agent to understand how the current implementation works
-   - If relevant, use the **thoughts-locator** agent to find any existing thoughts documents about this feature
-   - If a Linear ticket is mentioned, use the **linear-ticket-reader** agent to get full details
+   - Use the **codebase-locator** task to find all files related to the <files> given by the user
+   - Use the **codebase-analyzer** task to understand how the current implementation works
+   - If relevant, use the **thoughts-locator** task to find any existing thoughts documents about this feature
 
    These agents will:
    - Find relevant source files, configs, and tests
@@ -95,7 +71,7 @@ After getting initial clarifications:
 
 2. **Create a research todo list** using TodoWrite to track exploration tasks
 
-3. **Spawn parallel sub-tasks for comprehensive research**:
+3. **Spawn sub-tasks for comprehensive research**:
    - Create multiple Task agents to research different aspects concurrently
    - Use the right agent for each type of research:
 
@@ -107,9 +83,6 @@ After getting initial clarifications:
    **For historical context:**
    - **thoughts-locator** - To find any research, plans, or decisions about this area
    - **thoughts-analyzer** - To extract key insights from the most relevant documents
-
-   **For related tickets:**
-   - **linear-searcher** - To find similar issues or past implementations
 
    Each agent knows how to:
    - Find the right files and code patterns
@@ -164,7 +137,7 @@ Once aligned on approach:
 
 After structure approval:
 
-1. **Write the plan** to `thoughts/shared/plans/{descriptive_name}.md`
+1. **Write the plan** to `thoughts/plans/{descriptive_name}.md`
 2. **Use this template structure**:
 
 ```markdown
@@ -255,21 +228,17 @@ After structure approval:
 
 ## References
 
-- Original ticket: `thoughts/user/tickets/eng_XXXX.md`
-- Related research: `thoughts/shared/research/[relevant].md`
+- Original ticket: `thoughts/tickets/eng_XXXX.md`
+- Related research: `thoughts/research/[relevant].md`
 - Similar implementation: `[file:line]`
 ```
 
-### Step 5: Sync and Review
-
-1. **Sync the thoughts directory**:
-   - Run `humanlayer thoughts sync` to sync the newly created plan
-   - This ensures the plan is properly indexed and available
+### Step 5: Review
 
 2. **Present the draft plan location**:
    ```
    I've created the initial implementation plan at:
-   `thoughts/shared/plans/[filename].md`
+   `thoughts/plans/[filename].md`
 
    Please review it and let me know:
    - Are the phases properly scoped?
@@ -283,7 +252,6 @@ After structure approval:
    - Adjust technical approach
    - Clarify success criteria (both automated and manual)
    - Add/remove scope items
-   - After making changes, run `humanlayer thoughts sync` again
 
 4. **Continue refining** until the user is satisfied
 
@@ -306,7 +274,6 @@ After structure approval:
    - Research actual code patterns using parallel sub-tasks
    - Include specific file paths and line numbers
    - Write measurable success criteria with clear automated vs manual distinction
-   - automated steps should use `make` whenever possible - for example `make -C humanlayer-wui check` instead of `cd humanalyer-wui && bun run fmt`
 
 4. **Be Practical**:
    - Focus on incremental, testable changes
@@ -392,9 +359,6 @@ When spawning research sub-tasks:
    - What information to extract
    - Expected output format
 4. **Be EXTREMELY specific about directories**:
-   - If the ticket mentions "WUI", specify `humanlayer-wui/` directory
-   - If it mentions "daemon", specify `hld/` directory
-   - Never use generic terms like "UI" when you mean "WUI"
    - Include the full path context in your prompts
 5. **Specify read-only tools** to use
 6. **Request specific file:line references** in responses
@@ -404,29 +368,7 @@ When spawning research sub-tasks:
    - Cross-check findings against the actual codebase
    - Don't accept results that seem incorrect
 
-Example of spawning multiple tasks:
-```python
-# Spawn these tasks concurrently:
-tasks = [
-    Task("Research database schema", db_research_prompt),
-    Task("Find API patterns", api_research_prompt),
-    Task("Investigate UI components", ui_research_prompt),
-    Task("Check test patterns", test_research_prompt)
-]
-```
 
-## Example Interaction Flow
-
-```
-User: /implementation_plan
-Assistant: I'll help you create a detailed implementation plan...
-
-User: We need to add parent-child tracking for Claude sub-tasks. See thoughts/user/tickets/eng_1478.md
-Assistant: Let me read that ticket file completely first...
-
-[Reads file fully]
-
-Based on the ticket, I understand we need to track parent-child relationships for Claude sub-task events in the hld daemon. Before I start planning, I have some questions...
-
-[Interactive process continues...]
-```
+<files>
+$ARGUMENTS
+</files>
