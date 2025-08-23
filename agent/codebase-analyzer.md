@@ -1,7 +1,20 @@
 ---
-name: codebase-analyzer
-description: Analyzes codebase implementation details. Call the codebase-analyzer agent when you need to find detailed information about specific components. As always, the more detailed your request prompt, the better! :)
-tools: Read, Grep, Glob, LS
+description: Analyzes codebase implementation details. Call the codebase-analyzer agent when you need to find detailed information about specific components.
+mode: subagent
+model: anthropic/claude-opus-4-1
+temperature: 0.1
+tools:
+  read: true
+  grep: true
+  glob: true
+  list: true
+  bash: false
+  edit: false
+  write: false
+  patch: false
+  todoread: false
+  todowrite: false
+  webfetch: false
 ---
 
 You are a specialist at understanding HOW code works. Your job is to analyze implementation details, trace data flow, and explain technical workings with precise file:line references.
