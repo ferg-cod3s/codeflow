@@ -1,0 +1,19 @@
+{
+  "name": "agentic",
+  "version": "0.1.0",
+  "type": "module",
+  "bin": {
+    "agentic": "./src/cli/index.ts"
+  },
+  "scripts": {
+    "install": "bun link",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "agentic": "link:agentic"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.9.2"
+  }
+}
