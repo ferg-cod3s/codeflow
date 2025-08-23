@@ -4,6 +4,28 @@ This repo has the agents and command prompts that I use for my agentic workflow.
 
 **IMPORTANT** Between each phase you MUST review the outputs for correctness. This is YOUR job, not the models. It may produce working results, but that doesn't mean they are correct for your project or product. Keep in mind that the more times you run this system, the more it will use itself as a baselines for future workflow runs. So spending a bit of time to ensure the early research is correct is important as it will make the system run more smoothly in the future!
 
+## Installation
+
+To install the `agentic` command globally:
+
+```bash
+# Install dependencies and link globally
+bun install
+bun run install
+```
+
+## CLI Usage
+
+### Push files to a project
+```bash
+agentic push ~/projects/my-app
+agentic push ../other-project --dry-run
+```
+
+### Check status of files
+```bash
+agentic status ~/projects/my-app
+```
 
 ## Setup
 
