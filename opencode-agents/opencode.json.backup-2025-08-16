@@ -1,0 +1,732 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {},
+  "model": "github-copilot/gpt-5",
+  "small_model": "github-copilot/gpt-5-mini",
+  "agent": {
+    "build": {
+      "description": "Build and compilation agent for project builds",
+      "mode": "primary",
+      "model": "github-copilot/gpt-5"
+    },
+    "plan": {
+      "description": "Planning agent for task analysis and strategy",
+      "mode": "primary",
+      "model": "github-copilot/gpt-5-mini",
+      "tools": {
+        "write": false,
+        "edit": false,
+        "bash": false,
+        "patch": false
+      }
+    },
+    "gpt5": {
+      "description": "Primary agent using GitHub Copilot GPT-5 for maximum capability",
+      "mode": "primary",
+      "model": "github-copilot/gpt-5",
+      "temperature": 0.2,
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "patch": true,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "list": true,
+        "webfetch": true
+      }
+    },
+    "ai-integration-expert": {
+      "description": "Adds AI features and integrates machine learning capabilities. Specializes in AI/ML implementation and optimization. Use this agent when you need to integrate AI features like chatbots, recommendation engines, image processing, natural language processing, or predictive analytics.",
+      "model": "github-copilot/gpt-5",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "patch": true,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "list": true,
+        "webfetch": true
+      }
+    },
+    "automation-builder": {
+      "description": "Creates workflow automations and implements process automation. Specializes in workflow design and automation systems. Use this agent when you need to automate workflows like CI/CD pipelines, data processing, business approval processes, email campaigns, or repetitive development tasks.",
+      "model": "github-copilot/gpt-5",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "patch": true,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "list": true,
+        "webfetch": true
+      }
+    },
+    "innovation-lab": {
+      "description": "Experiments with cutting-edge tech and explores new technologies. Specializes in emerging technology exploration and prototyping. Use this agent when you need to explore new technologies and experiment with innovative solutions.",
+      "model": "github-copilot/gpt-5",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "patch": true,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "list": true,
+        "webfetch": true
+      }
+    },
+    "analytics-engineer": {
+      "description": "Tracks user behavior and implements analytics solutions. Specializes in data collection, analysis, and insights generation. Use this agent when you need to implement analytics platforms, set up conversion funnels, track user engagement metrics, or build data dashboards.",
+      "model": "github-copilot/gpt-5",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "patch": true,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "list": true,
+        "webfetch": true
+      }
+    },
+    "community-features": {
+      "description": "Adds user engagement tools and builds community features. Specializes in social features and user interaction systems. Use this agent when you need to build community features and improve user engagement.",
+      "model": "github-copilot/gpt-5",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "patch": true,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "list": true,
+        "webfetch": true
+      }
+    },
+    "compliance-expert": {
+      "description": "Handles regulatory requirements and ensures compliance standards. Specializes in legal compliance and regulatory adherence. Use this agent when you need to ensure compliance with regulations and industry standards.",
+      "model": "github-copilot/gpt-5",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "patch": true,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "list": true,
+        "webfetch": true
+      }
+    },
+    "email-automator": {
+      "description": "Creates effective email flows and automates email marketing campaigns. Specializes in email marketing and automation strategies. Use this agent when you need to create and optimize email marketing campaigns and automation flows.",
+      "model": "github-copilot/gpt-5",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "patch": true,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "list": true,
+        "webfetch": true
+      }
+    },
+    "seo-master": {
+      "description": "Improves search engine optimization and increases organic visibility. Specializes in technical SEO and content optimization. Use this agent when you need to improve search engine rankings and organic traffic.",
+      "model": "github-copilot/gpt-5",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "patch": true,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "list": true,
+        "webfetch": true
+      }
+    },
+    "support-builder": {
+      "description": "Reduces support tickets and implements customer support solutions. Specializes in support automation and self-service tools. Use this agent when you need to improve customer support efficiency and reduce support workload.",
+      "model": "github-copilot/gpt-5",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "patch": true,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "list": true,
+        "webfetch": true
+      }
+    },
+    "content-writer": {
+      "description": "Improves app messaging and creates compelling copy. Specializes in UX writing and content strategy for applications. Use this agent when you need to improve application copy and messaging for better user understanding.",
+      "model": "github-copilot/gpt-5",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "patch": true,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "list": true,
+        "webfetch": true
+      }
+    },
+    "design-system-builder": {
+      "description": "Creates consistent component library and establishes design systems. Specializes in scalable design architecture. Use this agent when you need to build or maintain a comprehensive design system and component library.",
+      "model": "github-copilot/gpt-5",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "patch": true,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "list": true,
+        "webfetch": true
+      }
+    },
+    "ui-polisher": {
+      "description": "Adds premium design elements and enhances visual appeal. Specializes in visual design refinement and modern UI patterns. Use this agent when you need to improve the visual design and polish of your user interface.",
+      "model": "github-copilot/gpt-5",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "patch": true,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "list": true,
+        "webfetch": true
+      }
+    },
+    "ux-optimizer": {
+      "description": "Simplifies user flows, enhances user experience, and optimizes conversion paths. Specializes in user journey optimization, interaction design, and conversion optimization. Use this agent when you need to improve user experience, optimize user interactions, or improve conversion rates through UX improvements.",
+      "model": "github-copilot/gpt-5",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "patch": true,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "list": true,
+        "webfetch": true
+      }
+    },
+    "accessibility-pro": {
+      "description": "Ensures app accessibility and compliance with WCAG guidelines. Specializes in making applications usable for all users. Use this agent when you need to ensure your application is accessible to users with disabilities.",
+      "model": "github-copilot/gpt-5",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "patch": true,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "list": true,
+        "webfetch": true
+      }
+    },
+    "api-builder": {
+      "description": "Creates developer-friendly APIs with proper documentation and standards compliance. Specializes in REST, GraphQL, and modern API design. Use this agent when you need to design and implement robust, developer-friendly APIs.",
+      "model": "anthropic/claude-sonnet-4@20250514",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "patch": true,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "list": true,
+        "webfetch": true
+      }
+    },
+    "database-expert": {
+      "description": "Optimizes database queries and designs efficient data models. Specializes in performance tuning and database architecture. Use this agent when you need to optimize queries, design schemas, implement migrations, or resolve performance bottlenecks in PostgreSQL, MySQL, MongoDB, or other database systems.",
+      "model": "anthropic/claude-sonnet-4@20250514",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "patch": true,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "list": true,
+        "webfetch": true
+      }
+    },
+    "integration-master": {
+      "description": "Connects services and builds seamless integrations between systems. Specializes in API integrations and service orchestration. Use this agent when you need to connect multiple services or build complex integrations.",
+      "model": "github-copilot/gpt-5",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "patch": true,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "list": true,
+        "webfetch": true
+      }
+    },
+    "mobile-optimizer": {
+      "description": "Enhances mobile experience and optimizes for mobile platforms. Specializes in responsive design and mobile-specific optimizations. Use this agent when you need to optimize web apps for mobile browsers, improve React Native or Flutter performance, implement touch gestures, optimize mobile loading speeds, or ensure mobile accessibility compliance.",
+      "model": "github-copilot/gpt-5",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "patch": true,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "list": true,
+        "webfetch": true
+      }
+    },
+    "performance-engineer": {
+      "description": "Improves app speed, optimizes performance bottlenecks, and conducts comprehensive performance testing. Specializes in profiling, benchmarking, load testing, and performance optimization. Use this agent when you need to improve application performance, conduct load testing, or resolve speed and scalability issues.",
+      "model": "anthropic/claude-sonnet-4@20250514",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "patch": true,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "list": true,
+        "webfetch": true
+      }
+    },
+    "system-architect": {
+      "description": "Transforms codebases and designs scalable system architectures. Specializes in large-scale refactoring and architectural decisions. Use this agent when you need to redesign system architecture or perform major codebase transformations.",
+      "model": "github-copilot/gpt-5",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "patch": true,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "list": true,
+        "webfetch": true
+      }
+    },
+    "devops-operations-specialist": {
+      "description": "Provides integrated operations strategy spanning deployment, infrastructure, monitoring, and cost management for comprehensive operational planning and coordination. Use this agent for comprehensive operations strategy, cross-team operational coordination, integrated DevOps planning spanning multiple operational domains, or when you need operational leadership before engaging specialized operations agents.",
+      "model": "github-copilot/gpt-5",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "patch": true,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "list": true,
+        "webfetch": true
+      }
+    },
+    "full-stack-developer": {
+      "description": "Handles cross-functional development tasks requiring broad technical knowledge across frontend, backend, and infrastructure for smaller projects or rapid prototyping scenarios. Use this agent for smaller projects requiring end-to-end implementation, rapid prototyping, quick feature additions spanning multiple technical domains, or when you need broad technical guidance before engaging specialists.",
+      "model": "anthropic/claude-sonnet-4@20250514",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "patch": true,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "list": true,
+        "webfetch": true
+      }
+    },
+    "product-designer": {
+      "description": "Provides holistic design guidance combining user experience, visual design, and content strategy for cohesive product experiences and cross-functional design decisions. Use this agent for holistic design strategy, cross-product design consistency, integrated UX/UI/content projects, or when you need design leadership spanning multiple design disciplines before engaging specialists.",
+      "model": "github-copilot/gpt-5",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "patch": true,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "list": true,
+        "webfetch": true
+      }
+    },
+    "product-strategy-lead": {
+      "description": "Drives product vision, identifies market opportunities, optimizes user acquisition and retention, and ensures product-market fit for cross-functional teams. Use this agent for initial product ideation, market validation, feature roadmap planning, business model optimization, and when you need comprehensive product strategy guidance for smaller projects or cross-functional team initiatives that require integrated product and strategy expertise.",
+      "model": "github-copilot/gpt-5",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "patch": true,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "list": true,
+        "webfetch": true
+      }
+    },
+    "quality-security-engineer": {
+      "description": "Provides integrated quality and security strategy combining testing, vulnerability assessment, and code standards for comprehensive quality assurance planning. Use this agent for comprehensive quality and security strategy, integrated QA planning spanning testing and security, cross-team quality coordination, or when you need quality leadership before engaging specialized testing and security agents.",
+      "model": "github-copilot/gpt-5",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "patch": true,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "list": true,
+        "webfetch": true
+      }
+    },
+    "agent-prompt-updater": {
+      "description": "A comprehensive review specialist that conducts thorough analysis of all AI agent definitions within the agents directory. Ensures consistency, clarity, and minimizes redundancies or overlaps across the entire agent ecosystem while maintaining quality standards and platform-appropriate formatting. Use this agent when you need to conduct comprehensive reviews of agent definitions, ensure consistency and clarity across descriptions, identify capability overlaps, standardize formatting, or perform quality audits for the entire agent collection.",
+      "model": "github-copilot/gpt-5",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "patch": true,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "list": true,
+        "webfetch": true
+      }
+    },
+    "cost-optimizer": {
+      "description": "Reduces cloud expenses and optimizes resource utilization. Specializes in cost analysis and optimization strategies. Use this agent when you need to optimize cloud costs and improve resource efficiency.",
+      "model": "github-copilot/gpt-5",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "patch": true,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "list": true,
+        "webfetch": true
+      }
+    },
+    "deployment-wizard": {
+      "description": "Sets up CI/CD pipelines and automates deployment processes. Specializes in deployment automation and DevOps practices. Use this agent when you need to set up or improve deployment processes and CI/CD workflows.",
+      "model": "github-copilot/gpt-5",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "patch": true,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "list": true,
+        "webfetch": true
+      }
+    },
+    "infrastructure-builder": {
+      "description": "Designs scalable cloud architecture and manages infrastructure as code. Specializes in cloud infrastructure and scalability. Use this agent when you need to design or optimize cloud infrastructure and ensure scalability.",
+      "model": "github-copilot/gpt-5",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "patch": true,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "list": true,
+        "webfetch": true
+      }
+    },
+    "monitoring-expert": {
+      "description": "Implements system alerts, monitoring solutions, and observability infrastructure. Specializes in operational monitoring, alerting, and incident response. Use this agent when you need to implement comprehensive operational monitoring, alerting systems, and observability infrastructure for production systems.",
+      "model": "github-copilot/gpt-5",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "patch": true,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "list": true,
+        "webfetch": true
+      }
+    },
+    "release-manager": {
+      "description": "Handles smooth deployments and manages release processes. Specializes in release coordination and deployment strategies. Use this agent when you need to manage complex releases and ensure smooth deployment processes.",
+      "model": "github-copilot/gpt-5",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "patch": true,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "list": true,
+        "webfetch": true
+      }
+    },
+    "smart-subagent-orchestrator": {
+      "description": "An expert AI project manager that receives high-level user goals, analyzes them, and orchestrates a plan by invoking the appropriate specialized subagents to accomplish the task. Use this agent when you need to coordinate complex multi-domain projects requiring expertise from strategy, development, design, testing, and operations.",
+      "model": "github-copilot/gpt-5",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "patch": true,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "list": true,
+        "webfetch": true
+      }
+    },
+    "growth-engineer": {
+      "description": "Identifies user engagement opportunities and implements growth mechanisms. Specializes in user acquisition strategies, retention optimization, and viral growth feature development. Use this agent when you need to optimize for user growth and engagement.",
+      "model": "github-copilot/gpt-5",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "patch": true,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "list": true,
+        "webfetch": true
+      }
+    },
+    "market-analyst": {
+      "description": "Compares features to competitors and provides market intelligence. Analyzes competitive landscape and identifies market opportunities. Use this agent when you need competitive analysis and market positioning insights.",
+      "model": "github-copilot/gpt-5",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "patch": true,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "list": true,
+        "webfetch": true
+      }
+    },
+    "product-strategist": {
+      "description": "Analyzes product features and provides critical strategic evaluation to ensure decisions align with business goals and user needs through comprehensive feature assessment and strategic questioning. Use this agent when you need critical analysis of product features and strategic direction.",
+      "model": "github-copilot/gpt-5",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "patch": true,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "list": true,
+        "webfetch": true
+      }
+    },
+    "revenue-optimizer": {
+      "description": "Identifies monetization opportunities and optimizes revenue streams. Analyzes product features for revenue potential and implements monetization strategies. Use this agent when you need to optimize revenue generation and identify new monetization opportunities.",
+      "model": "github-copilot/gpt-5",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "patch": true,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "list": true,
+        "webfetch": true
+      }
+    },
+    "user-researcher": {
+      "description": "Analyzes user flows and identifies drop-off points. Conducts user research to understand behavior patterns and optimize user experience. Use this agent when you need to understand user behavior and optimize conversion funnels.",
+      "model": "github-copilot/gpt-5",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "patch": true,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "list": true,
+        "webfetch": true
+      }
+    },
+    "code-reviewer": {
+      "description": "Provides engineering-level code feedback, improves code quality through refactoring, and ensures maintainability standards. Specializes in code review and systematic code improvement. Use this agent when you need expert code review, quality feedback, or systematic code refactoring and improvement.",
+      "model": "github-copilot/gpt-5",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "patch": true,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "list": true,
+        "webfetch": true
+      }
+    },
+    "security-scanner": {
+      "description": "Identifies vulnerabilities and implements security best practices. Specializes in security analysis and threat detection. Use this agent when you need to assess and improve the security posture of your applications.",
+      "model": "github-copilot/gpt-5",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "patch": true,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "list": true,
+        "webfetch": true
+      }
+    },
+    "test-generator": {
+      "description": "Creates comprehensive tests and ensures code quality through automated testing. Specializes in test strategy and implementation. Use this agent when you need to create comprehensive test suites and improve code quality through testing.",
+      "model": "github-copilot/gpt-5",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "patch": true,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "list": true,
+        "webfetch": true
+      }
+    },
+    "agent-architect": {
+      "description": "Meta-level agent that creates and designs specialized AI agents on-demand for specific tasks, projects, or domains. Analyzes requirements, selects base agent capabilities, designs specializations, and generates new agent configurations. Use this agent when you need to create custom agents that don't exist in the current system or when you need highly specialized combinations of existing agent capabilities.",
+      "mode": "primary",
+      "model": "github-copilot/gpt-5",
+      "temperature": 0.1,
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "patch": true,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "list": true,
+        "webfetch": true
+      },
+      "prompt": "You are the Agent-Architect, a meta-level AI agent designer and creator. Your primary responsibility is to analyze user requirements and create specialized AI agents on-demand.\n\n## Core Capabilities:\n\n**Agent Analysis & Design:**\n- Analyze user requests to identify gaps in existing agent capabilities\n- Design new agent specifications combining multiple domains of expertise\n- Select optimal base agents to inherit capabilities from\n- Create detailed agent descriptions, prompts, and tool configurations\n\n**Agent Creation Process:**\n1. **Requirement Analysis**: Break down user needs into specific capabilities\n2. **Gap Assessment**: Compare against existing 43 agents to identify missing specializations\n3. **Base Agent Selection**: Choose 2-4 existing agents whose capabilities should be combined\n4. **Specialization Design**: Define domain-specific knowledge and prompt engineering\n5. **Model Assignment**: Select optimal model based on task complexity and requirements\n6. **Configuration Generation**: Create complete OpenCode agent configuration\n\n**Available Base Agents for Inheritance:**\n- **Development**: api-builder, database-expert, full-stack-developer, performance-engineer, system-architect\n- **Design/UX**: ui-polisher, ux-optimizer, design-system-builder, content-writer, product-designer\n- **Strategy**: product-strategist, market-analyst, revenue-optimizer, growth-engineer, user-researcher\n- **Operations**: devops-operations-specialist, infrastructure-builder, deployment-wizard, monitoring-expert\n- **Quality**: code-reviewer, security-scanner, test-generator, quality-security-engineer\n- **AI/Innovation**: ai-integration-expert, automation-builder, innovation-lab\n- **Analytics**: analytics-engineer, community-features, compliance-expert\n\n**Model Selection Guidelines:**\n- **Claude Sonnet 4**: Complex development, technical implementation\n- **GPT-5**: Strategic thinking, coordination, complex reasoning\n- **GPT-5.1-Mini**: Focused tasks, content creation, lightweight operations\n\n**Agent Creation Examples:**\n- \"Rust blockchain expert\" → Combine api-builder + security-scanner + database-expert\n- \"E-commerce specialist\" → Combine full-stack-developer + analytics-engineer + payment expertise\n- \"ML operations engineer\" → Combine ai-integration-expert + devops-operations-specialist + monitoring-expert\n\n**Output Format:**\nWhen creating an agent, provide:\n1. **Agent name** (kebab-case)\n2. **Complete OpenCode configuration** (JSON)\n3. **Inheritance explanation** (which base agents and why)\n4. **Use cases** (specific scenarios where this agent excels)\n5. **Integration suggestions** (how it works with Smart Subagent Orchestrator)\n\n**Collaboration Protocol:**\n- Work closely with Smart Subagent Orchestrator for workflow coordination\n- Inform Agent Prompt Updater of new agent definitions for maintenance\n- Ensure new agents complement rather than duplicate existing capabilities\n- Design agents that can evolve and be enhanced over time\n\nYour goal is to make the agent ecosystem infinitely extensible while maintaining coherence and avoiding redundancy."
+    },
+    "nextjs-ecommerce-expert": {
+      "description": "Specialized NextJS e-commerce platform developer combining full-stack development, payment integration, analytics tracking, and conversion optimization. Expert in React/NextJS, Stripe payments, e-commerce UX patterns, and performance optimization for modern online stores.",
+      "model": "anthropic/claude-sonnet-4@20250514",
+      "temperature": 0.2,
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "patch": true,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "list": true,
+        "webfetch": true
+      },
+      "prompt": "You are a NextJS E-commerce Expert, a specialized agent combining full-stack development, payment integration, analytics, and conversion optimization expertise for building modern e-commerce platforms.\n\n## Core Specializations\n\n**NextJS/React E-commerce Development:**\n- Build complete e-commerce platforms using NextJS 14+ with App Router\n- Implement server-side rendering and static generation for optimal SEO\n- Create responsive, mobile-first e-commerce interfaces\n- Develop product catalogs, shopping carts, and checkout flows\n- Implement authentication and user account management\n\n**Payment Integration & Security:**\n- Integrate Stripe, PayPal, and other payment gateways\n- Implement secure checkout flows and PCI compliance\n- Handle subscription billing and recurring payments\n- Set up webhooks for payment confirmation and order processing\n- Implement fraud detection and security best practices\n\n**E-commerce Analytics & Tracking:**\n- Integrate Google Analytics 4, Facebook Pixel, and custom analytics\n- Track conversion funnels, cart abandonment, and user behavior\n- Implement A/B testing for conversion optimization\n- Set up custom events and e-commerce tracking\n- Create analytics dashboards and reporting\n\n**Performance & SEO Optimization:**\n- Optimize Core Web Vitals for e-commerce sites\n- Implement lazy loading for product images and components\n- Optimize database queries and API responses\n- Configure CDN and caching strategies\n- Implement structured data for product rich snippets\n\n**Inherited Capabilities from Base Agents:**\n- **Full-Stack Developer**: End-to-end application development\n- **Analytics Engineer**: Data tracking and conversion analysis\n- **UX Optimizer**: User experience and conversion optimization\n- **Performance Engineer**: Site speed and optimization\n\nYou excel at building complete, production-ready e-commerce platforms that are fast, secure, conversion-optimized, and analytically robust. You understand both the technical implementation and business requirements of modern online retail."
+    }
+  },
+  "mcp": {
+    "filesystem": {
+      "type": "local",
+      "command": [
+        "npx",
+        "@modelcontextprotocol/server-filesystem",
+        "/home/f3rg"
+      ],
+      "enabled": true
+    },
+    "memory": {
+      "type": "local",
+      "command": ["npx", "@modelcontextprotocol/server-memory"],
+      "enabled": true
+    },
+    "sequential-thinking": {
+      "type": "local",
+      "command": ["npx", "@modelcontextprotocol/server-sequential-thinking"],
+      "enabled": true
+    },
+    "playwright": {
+      "type": "local",
+      "command": ["npx", "@playwright/mcp"],
+      "enabled": true
+    },
+    "socket": {
+      "type": "local",
+      "command": ["npx", "@socketsecurity/mcp"],
+      "enabled": true
+    },
+    "context7": {
+      "type": "local",
+      "command": ["npx", "@upstash/context7-mcp"],
+      "enabled": true
+    },
+    "coolify": {
+      "type": "local",
+      "command": ["npx", "@felixallistar/coolify-mcp"],
+      "enabled": true
+    },
+    "github": {
+      "type": "local",
+      "command": [
+        "docker",
+        "run", "--rm", "-i",
+        "--env-file", "/home/f3rg/.config/claude_code/.env",
+        "ghcr.io/github/github-mcp-server"
+      ],
+      "enabled": true
+    },
+    "sentry": {
+      "type": "remote",
+      "url": "https://mcp.sentry.dev/mcp",
+      "enabled": true
+    }
+  }
+}

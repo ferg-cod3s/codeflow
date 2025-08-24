@@ -110,12 +110,31 @@ Create a new context window and run:
 /plan_execute thoughts/shared/plans/the-plan.md
 ```
 
-Once it's done, you should review the work, but we will have one last phase that will also help with this.
+Once it's done, you should review the work, but we will have additional quality assurance phases.
 
+### Test
+
+Before committing, generate comprehensive tests for the implemented features to ensure quality and prevent regressions.
+
+```
+/test thoughts/shared/plans/the-plan.md
+```
+
+This creates unit tests, integration tests, and end-to-end tests following the project's testing patterns and frameworks.
+
+### Document
+
+Create comprehensive documentation for the implemented features, including user guides, API documentation, and technical specifications.
+
+```
+/document thoughts/shared/plans/the-plan.md
+```
+
+This generates user-facing documentation, developer docs, API specifications, and updates existing documentation.
 
 ### Commit
 
-Before review, commit the work, but don't push it yet. We want it in the git history so that the agent can make use of git for helping with analysis.
+After testing and documentation, commit the work. We want it in the git history so that the agent can make use of git for helping with analysis.
 
 ```
 /commit
@@ -123,14 +142,12 @@ Before review, commit the work, but don't push it yet. We want it in the git his
 
 The agent will stop before doing the final commit to confirm the details, just tell it to continue once you review the commit details.
 
-### Validate Plan
+### Review
 
-As a final pass before pushing upstream, the agent can review the implemenation to ensure that it actually adhered to the details of the original plan, or inform you of any drift that occured. This may happen due to underspecification in the plans itself. So review the output of this carefuly and ensure you are ok with any deviations that were taken.
-
-It's better not to start a new context session here unless the implmenation ate up the window. If there's no warnings then it's ok to run this in the same session as the implementation, if it ends up blowing up the window before it finishes, then you can just clear it and run from a fresh window too, it will just have to do a bit more work to pull in details.
+As a final pass before pushing upstream, the agent can review the implementation to ensure that it actually adhered to the details of the original plan, or inform you of any drift that occurred.
 
 ```
-/validate_plan thoughts/shared/plans/the-plan.md
+/review thoughts/shared/plans/the-plan.md
 ```
 
 If you're good with the results push and close your issue!

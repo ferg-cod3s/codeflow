@@ -57,6 +57,7 @@ Usage:
 Commands:
   pull [project-path]    Pull agents and commands to a project's .opencode directory
   status [project-path]  Check which files are up-to-date or outdated
+  commands               List available slash commands for Claude Code and OpenCode
   version                Show the version of agentic
   help                   Show this help message
 
@@ -69,6 +70,7 @@ Examples:
   agentic pull                       # Auto-detect project from current dir
   agentic status ~/projects/my-app
   agentic status                     # Auto-detect project from current dir
+  agentic commands                   # List slash commands and their descriptions
 `);
   process.exit(0);
 }
@@ -81,6 +83,10 @@ switch (command) {
   case "status":
     const statusPath = args[1];
     await status(statusPath);
+    break;
+  case "commands":
+    const { commands } = await import("./commands");
+    await commands();
     break;
   case "version":
     console.log(`Agentic ${packageJson.version}`);

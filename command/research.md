@@ -38,6 +38,13 @@ The user will provide a <ticket> for you to read and begin researching.
    - Use the **thoughts-analyzer** agent to extract key insights from specific documents (only the most relevant ones)
    - **CRITICAL** Only run thoughts-analyzer AFTER the thoughts-locator
 
+   **For specialized domain research (use selectively when relevant):**
+   - **operations_incident_commander** - For incident response, SLO analysis, or operational issues
+   - **development_migrations_specialist** - For database schema changes, data migrations, or expand/contract patterns
+   - **programmatic_seo_engineer** - For SEO architecture, content generation, or site structure
+   - **content_localization_coordinator** - For i18n/l10n workflows, translation processes, or multi-locale features
+   - **quality-testing_performance_tester** - For performance analysis, load testing, or SLO validation
+
    The key is to use these agents intelligently:
    - Start with locator agents to find what exists
    - Then use analyzer agents on the most promising findings
