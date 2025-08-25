@@ -37,9 +37,9 @@ You are tasked with creating git commits for the changes made during this sessio
 - The user trusts your judgment - they asked you to commit
 
 <git-status>
-`!git status -s`
+!`git status -s`
 </git-status>
 
 <git-diff>
-`!git diff`
+!`git diff`
 </git-diff>

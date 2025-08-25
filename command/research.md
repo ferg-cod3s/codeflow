@@ -22,25 +22,32 @@ The user will provide a <ticket> for you to read and begin researching.
    - Create a research plan using TodoWrite to track all subtasks
    - Consider which directories, files, or architectural patterns are relevant
 
-3. **Spawn tasks for comprehensive research:**
-   - Create multiple Task agents to research different aspects concurrently
-   - When spawning Tasks, run locators in parallel first, when they are done you should then use the pattern-finder.
-   - ONLY WHEN those are done should you then run the appropirate analyzer Tasks
+3. **Spawn tasks for comprehensive research (follow this sequence):**
+   
+   **Phase 1 - Locate (Codebase & Thoughts):**
+   - Identify all topics/components/areas you need to locate
+   - Group related topics into coherent batches
+   - Spawn **codebase-locator** agents in parallel for each topic group to find WHERE files and components live
+   - Simultaneously spawn **thoughts-locator** agents in parallel to discover relevant documents
+   - **WAIT** for all locator agents to complete before proceeding
 
-   **For codebase research:**
-   - Use the **codebase-locator** agent to find WHERE files and components live
-   - Use the **codebase-pattern-finder** agent if you need examples of similar implementations
-   - Use the **codebase-analyzer** agent to understand HOW specific code works
-   - **CRITICAL** Only run codebase-analyzer AFTER the other codebase agents.
+   **Phase 2 - Find Patterns (Codebase only):**
+   - Based on locator results, identify patterns you need to find
+   - Use **codebase-pattern-finder** agents to find examples of similar implementations
+   - Run multiple pattern-finders in parallel if searching for different unique patterns
+   - **WAIT** for all pattern-finder agents to complete before proceeding
 
-   **For thoughts directory:**
-   - Use the **thoughts-locator** agent to discover what documents exist about the topic
-   - Use the **thoughts-analyzer** agent to extract key insights from specific documents (only the most relevant ones)
-   - **CRITICAL** Only run thoughts-analyzer AFTER the thoughts-locator
+   **Phase 3 - Analyze (Codebase & Thoughts):**
+   - Using information from locators and pattern-finders, determine what needs deep analysis
+   - Group analysis tasks by topic/component
+   - Spawn **codebase-analyzer** agents in parallel for each topic group to understand HOW specific code works
+   - Spawn **thoughts-analyzer** agents in parallel to extract key insights from the most relevant documents found
+   - **WAIT** for all analyzer agents to complete before synthesizing
 
-   The key is to use these agents intelligently:
-   - Start with locator agents to find what exists
-   - Then use analyzer agents on the most promising findings
+   **Important sequencing notes:**
+   - Each phase builds on the previous one - locators inform pattern-finding, both inform analysis
+   - Run agents of the same type in parallel within each phase
+   - Never mix agent types in parallel execution
    - Each agent knows its job - just tell it what you're looking for
    - Don't write detailed prompts about HOW to search - the agents already know
 
@@ -59,7 +66,7 @@ The user will provide a <ticket> for you to read and begin researching.
 Use the following metadata for the research document frontmatter:
 
 <metadata>
-!agentic metadata
+!`agentic metadata`
 </metadata>
 
 6. **Generate research document:**
@@ -132,7 +139,8 @@ Use the following metadata for the research document frontmatter:
    - Continue updating the document and syncing
 
 ## Important notes:
-- Use parallel Task agents OF THE SAME TYPE ONLY to maximize efficiency and minimize context usage
+- Follow the three-phase sequence: Locate → Find Patterns → Analyze
+- Use parallel Task agents OF THE SAME TYPE ONLY within each phase to maximize efficiency and minimize context usage
 - Always run fresh codebase research - never rely solely on existing research documents
 - The thoughts/architecture directory contains important information about the codebase details
 - Focus on finding concrete file paths and line numbers for developer reference

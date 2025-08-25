@@ -22,6 +22,11 @@ try {
         type: "boolean",
         default: false,
       },
+      global: {
+        type: "boolean",
+        short: "g",
+        default: false,
+      },
     },
     strict: true,
     allowPositionals: true,
@@ -64,13 +69,16 @@ Commands:
 
 Options:
   -h, --help          Show this help message
+  -g, --global        Use ~/.config/opencode instead of .opencode directory
   --version           Show the version of agentic
 
 Examples:
   agentic pull ~/projects/my-app
   agentic pull                       # Auto-detect project from current dir
+  agentic pull -g                    # Pull to ~/.config/opencode
   agentic status ~/projects/my-app
   agentic status                     # Auto-detect project from current dir
+  agentic status -g                  # Check status of ~/.config/opencode
   agentic metadata                   # Display project metadata
 `);
   process.exit(0);
@@ -79,11 +87,19 @@ Examples:
 switch (command) {
   case "pull":
     const projectPath = args[1];
-    await pull(projectPath);
+    if (values.global && projectPath) {
+      console.error("Error: Cannot use --global flag with a project path");
+      process.exit(1);
+    }
+    await pull(projectPath, values.global);
     break;
   case "status":
     const statusPath = args[1];
-    await status(statusPath);
+    if (values.global && statusPath) {
+      console.error("Error: Cannot use --global flag with a project path");
+      process.exit(1);
+    }
+    await status(statusPath, values.global);
     break;
   case "metadata":
     await metadata();

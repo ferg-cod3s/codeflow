@@ -22,9 +22,9 @@ async function getFileHash(path: string): Promise<string> {
   return hasher.digest("hex");
 }
 
-export async function status(projectPath: string | undefined) {
+export async function status(projectPath: string | undefined, useGlobal: boolean = false) {
   // Resolve the project path (will exit if invalid)
-  const resolvedProjectPath = resolveProjectPath(projectPath);
+  const resolvedProjectPath = resolveProjectPath(projectPath, useGlobal);
   
   // Load config - find the agentic installation directory
   // import.meta.dir gives us the src/cli directory
@@ -35,7 +35,9 @@ export async function status(projectPath: string | undefined) {
   
   // Resolve paths
   const sourcePath = agenticDir;
-  const targetBase = join(resolvedProjectPath, ".opencode");
+  const targetBase = useGlobal 
+    ? resolvedProjectPath 
+    : join(resolvedProjectPath, ".opencode");
   
   console.log(`📊 Status for: ${targetBase}`);
   console.log(`📁 Checking: ${includes.join(", ")}\n`);

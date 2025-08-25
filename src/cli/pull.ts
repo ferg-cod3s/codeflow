@@ -15,9 +15,9 @@ async function* walkDir(dir: string): AsyncGenerator<string> {
   }
 }
 
-export async function pull(projectPath: string | undefined) {
+export async function pull(projectPath: string | undefined, useGlobal: boolean = false) {
   // Resolve the project path (will exit if invalid)
-  const resolvedProjectPath = resolveProjectPath(projectPath);
+  const resolvedProjectPath = resolveProjectPath(projectPath, useGlobal);
   
   // Load config - find the agentic installation directory
   // import.meta.dir gives us the src/cli directory
@@ -28,7 +28,9 @@ export async function pull(projectPath: string | undefined) {
   
   // Resolve paths
   const sourcePath = agenticDir;
-  const targetBase = join(resolvedProjectPath, ".opencode");
+  const targetBase = useGlobal 
+    ? resolvedProjectPath 
+    : join(resolvedProjectPath, ".opencode");
   
   console.log(`📦 Pulling to: ${targetBase}`);
   console.log(`📁 Including: ${includes.join(", ")}\n`);

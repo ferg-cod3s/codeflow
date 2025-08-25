@@ -11,7 +11,6 @@
 - [ ] Add validation for agent/command markdown files
 - [ ] Add update notifications when new versions available
 - [ ] Add templates for creating new agents/commands
-- [ ] Add dry-run mode for pull command
 - [ ] Add init command for new projects
 
 ### Error Handling Improvements
@@ -19,7 +18,6 @@
 - [ ] Improve error messages with suggested fixes
 - [ ] Add verbose mode for debugging
 - [ ] Handle corrupted/malformed agent files gracefully
-- [ ] Add rollback capability if pull fails midway
 
 ## Workflow Features
 
@@ -30,12 +28,15 @@
 - [ ] External tracker sync (future - GitHub, Linear, etc.)
 
 ### Thoughts Management
-- [ ] Automated archiving of outdated thoughts documents
+- [ ] Assisted archiving of outdated thoughts documents
 - [ ] Archive summary generation before deletion
 - [ ] Cross-reference validation
 - [ ] Duplicate detection
 
 ## Agent System
+
+### New Agents
+- [ ] Architecture documentation locator subagent - Specifically locates architecture docs relevant to tasks (separate from thoughts-locator/analyzer)
 
 ### Testing & Validation
 - [ ] Agent frontmatter validator

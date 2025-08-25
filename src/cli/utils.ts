@@ -1,9 +1,21 @@
 import { join, dirname, resolve } from "node:path";
-import { existsSync } from "node:fs";
+import { existsSync, mkdirSync } from "node:fs";
 import { homedir } from "node:os";
 
-export function resolveProjectPath(providedPath?: string): string {
+export function resolveProjectPath(providedPath?: string, useGlobal: boolean = false): string {
   const home = homedir();
+  
+  // If using global flag, return the global config directory
+  if (useGlobal) {
+    const globalDir = join(home, ".config", "opencode");
+    
+    // Create the directory if it doesn't exist
+    if (!existsSync(globalDir)) {
+      mkdirSync(globalDir, { recursive: true });
+    }
+    
+    return globalDir;
+  }
   
   if (providedPath) {
     // Path was provided, check if .opencode exists
