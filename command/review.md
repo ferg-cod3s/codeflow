@@ -1,33 +1,16 @@
-# Validate Plan
+---
+description: Reviews the last commit made and determines if the plan was executed completely, and documents any drift that occurred during implementation. Provide a plan file in the arguments for the review to analyze. It is strongly advised to run this command within the session of a plan execution, after running commit.
+---
+
+# Review Plan
 
 You are tasked with validating that an implementation plan was correctly executed, verifying all success criteria and identifying any deviations or issues.
 
-## Initial Setup
-
-When invoked:
-1. **Determine context** - Are you in an existing conversation or starting fresh?
-   - If existing: Review what was implemented in this session
-   - If fresh: Need to discover what was done through git and codebase analysis
-
-2. **Locate the plan**:
-   - If plan path provided, use it
-   - Otherwise, search recent commits for plan references or ask user
-
-3. **Gather implementation evidence**:
-   ```bash
-   # Check recent commits
-   git log --oneline -n 20
-   git diff HEAD~N..HEAD  # Where N covers implementation commits
-
-   # Run comprehensive checks
-   cd $(git rev-parse --show-toplevel) && turbo check && turbo test
-   ```
+You will be given instructions, followed by a <review> block that will contain user specific instructions and the plan file related to this implementation.
 
 ## Validation Process
 
 ### Step 1: Context Discovery
-
-If starting fresh or need more context:
 
 1. **Read the implementation plan** completely
 2. **Identify what should have changed**:
@@ -124,7 +107,6 @@ Create comprehensive validation summary:
 
 ## Working with Existing Context
 
-If you were part of the implementation:
 - Review the conversation history
 - Check your todo list for what was completed
 - Focus validation on work done in this session
@@ -149,14 +131,8 @@ Always verify:
 - [ ] Documentation updated if needed
 - [ ] Manual test steps are clear
 
-## Relationship to Other Commands
-
-Recommended workflow:
-1. `/implement_plan` - Execute the implementation
-2. `/commit` - Create atomic commits for changes
-3. `/validate_plan` - Verify implementation correctness
-4. `/describe_pr` - Generate PR description
-
 The validation works best after commits are made, as it can analyze the git history to understand what was implemented.
 
 Remember: Good validation catches issues before they reach production. Be constructive but thorough in identifying gaps or improvements.
+
+<review>$ARGUMENTS</review>
