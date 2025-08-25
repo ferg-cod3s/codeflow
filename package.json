@@ -8,13 +8,6 @@
     "build": "bun build ./src/cli/index.ts --compile --outfile ./bin/agentic",
     "publish": "./scripts/publish.ts"
   },
-  "scripts": {
-    "build": "bun build ./src/cli/index.ts --compile --outfile ./bin/agentic",
-    "prepublishOnly": "bun run typecheck",
-    "postinstall": "node scripts/postinstall.cjs",
-    "typecheck": "tsc --noEmit",
-    "release": "npm publish"
-  },
   "keywords": [
     "ai",
     "agent",
@@ -25,17 +18,15 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Cluster444/agentic.git"
+    "url": "https://github.com/Cluster444/agentic.git"
   },
   "bugs": {
     "url": "https://github.com/Cluster444/agentic/issues"
   },
   "homepage": "https://github.com/Cluster444/agentic#readme",
-
   "dependencies": {},
   "devDependencies": {
     "@types/bun": "latest",
     "typescript": "^5.9.2"
-  },
-
+  }
 }
