@@ -16,4 +16,5 @@ bin/
 .idea/
 
 # OS files
-Thumbs.dbtsconfig.tsbuildinfo
+Thumbs.db
+tsconfig.tsbuildinfo
