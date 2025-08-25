@@ -3,6 +3,7 @@
 import { parseArgs } from "util";
 import { pull } from "./pull";
 import { status } from "./status";
+import { metadata } from "./metadata";
 import packageJson from "../../package.json";
 
 let values: any;
@@ -57,6 +58,7 @@ Usage:
 Commands:
   pull [project-path]    Pull agents and commands to a project's .opencode directory
   status [project-path]  Check which files are up-to-date or outdated
+  metadata               Display project metadata for research documentation
   version                Show the version of agentic
   help                   Show this help message
 
@@ -69,6 +71,7 @@ Examples:
   agentic pull                       # Auto-detect project from current dir
   agentic status ~/projects/my-app
   agentic status                     # Auto-detect project from current dir
+  agentic metadata                   # Display project metadata
 `);
   process.exit(0);
 }
@@ -81,6 +84,9 @@ switch (command) {
   case "status":
     const statusPath = args[1];
     await status(statusPath);
+    break;
+  case "metadata":
+    await metadata();
     break;
   case "version":
     console.log(`Agentic ${packageJson.version}`);

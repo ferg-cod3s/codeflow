@@ -1,5 +1,5 @@
 ---
-description: Research a ticket or provider a prompt for ad-hoc research
+description: Research a ticket or provide a prompt for ad-hoc research. It is best to run this command in a new session.
 ---
 
 # Research Codebase
@@ -54,28 +54,30 @@ The user will provide a <ticket> for you to read and begin researching.
    - Highlight patterns, connections, and architectural decisions
    - Answer the user's specific questions with concrete evidence
 
-Use the following metadata to for the research document frontmatter
+5. **Gather metadata for the research document:**
+
+Use the following metadata for the research document frontmatter:
 
 <metadata>
-!hack/spec_metadata.sh
+!agentic metadata
 </metadata>
 
 6. **Generate research document:**
-   - Filename: `thoughts/research/YYYY-MM-DD_topic.md`
-   - Use the metadata gathered in step 4
+   - Filename: `thoughts/research/<date>_topic.md`
+   - Use the metadata gathered in step 5, mapping XML tags to frontmatter fields
    - Structure the document with YAML frontmatter followed by content:
      ```markdown
      ---
      date: [Current date and time with timezone in ISO format]
-     researcher: [Researcher name from thoughts status]
-     git_commit: [Current commit hash]
-     branch: [Current branch name]
-     repository: [Repository name]
+     researcher: Opus
+     git_commit: <git_commit>
+     branch: <branch>
+     repository: <repository>
      topic: "[User's Question/Topic]"
      tags: [research, codebase, relevant-component-names]
      status: complete
-     last_updated: [Current date in YYYY-MM-DD format]
-     last_updated_by: [Researcher name]
+     last_updated: <last_updated>
+     last_updated_by: Opus
      ---
 
      ## Ticket Synopsis
@@ -106,9 +108,8 @@ Use the following metadata to for the research document frontmatter
 
      ## Historical Context (from thoughts/)
      [Relevant insights from thoughts/ directory with references]
-     - `thoughts/shared/something.md` - Historical decision about X
-     - `thoughts/local/notes.md` - Past exploration of Y
-     Note: Paths exclude "searchable/" even if found there
+     - `thoughts/research/something.md` - Historical decision about X
+     - `thoughts/plans/build-thing.md` - Past exploration of Y
 
      ## Related Research
      [Links to other research documents in thoughts/shared/research/]
