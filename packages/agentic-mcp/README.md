@@ -1,4 +1,4 @@
-# codeflow-mcp-server
+# @agentic-codeflow/mcp-server
 
 A Model Context Protocol (MCP) server providing AI-assisted development workflow commands for any MCP-compatible AI client.
 
@@ -38,10 +38,10 @@ npx @codeflow/mcp-server
 
 ```bash
 # Global installation
-npm install -g codeflow-mcp-server
+npm install -g @agentic-codeflow/mcp-server
 
 # Or use with npx (no installation required)
-npx codeflow-mcp-server
+npx @agentic-codeflow/mcp-server
 ```
 
 ### Claude Desktop Setup
@@ -53,7 +53,7 @@ Add to your Claude Desktop MCP configuration:
   "mcpServers": {
     "codeflow-workflows": {
       "command": "npx",
-      "args": ["codeflow-mcp-server"]
+      "args": ["@agentic-codeflow/mcp-server"]
     }
   }
 }
@@ -206,7 +206,7 @@ This is expected behavior! The MCP server provides generic, privacy-safe command
 ```bash
 # Clone and setup
 git clone https://github.com/ferg-cod3s/codeflow.git
-cd codeflow/packages/codeflow-mcp
+cd codeflow/packages/agentic-codeflow-mcp
 npm install
 
 # Development with hot reload

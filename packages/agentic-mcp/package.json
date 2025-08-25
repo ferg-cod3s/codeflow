@@ -1,7 +1,7 @@
 {
-  "name": "codeflow-mcp-server",
+  "name": "@agentic-codeflow/mcp-server",
   "version": "0.1.0",
-  "description": "MCP server for CodeFlow AI-assisted development workflows",
+  "description": "MCP server for Agentic CodeFlow AI-assisted development workflows",
   "type": "module",
   "main": "dist/server.js",
   "bin": {
@@ -42,9 +42,9 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/ferg-cod3s/codeflow.git",
-    "directory": "packages/codeflow-mcp"
+    "directory": "packages/agentic-codeflow-mcp"
   },
-  "homepage": "https://github.com/ferg-cod3s/codeflow/tree/main/packages/codeflow-mcp",
+  "homepage": "https://github.com/ferg-cod3s/codeflow/tree/main/packages/agentic-codeflow-mcp",
   "bugs": {
     "url": "https://github.com/ferg-cod3s/codeflow/issues"
   },

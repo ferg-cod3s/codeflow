@@ -404,7 +404,7 @@ async function run() {
   console.error(`📁 Working directory: ${process.cwd()}`);
   
   const server = new McpServer({ 
-    name: "codeflow-mcp-server", 
+    name: "agentic-codeflow-mcp-server", 
     version: "0.1.0" 
   });
 
