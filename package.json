@@ -7,13 +7,17 @@
   },
   "scripts": {
     "install": "bun link",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "mcp:server": "bun run mcp/agentic-server.mjs",
+    "mcp:dev": "bun run --watch mcp/agentic-server.mjs"
   },
   "dependencies": {
     "agentic": "link:agentic"
   },
   "devDependencies": {
+    "@modelcontextprotocol/sdk": "^1.17.4",
     "@types/bun": "latest",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "zod": "^4.1.1"
   }
 }

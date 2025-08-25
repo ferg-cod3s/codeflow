@@ -69,10 +69,21 @@ The system emphasizes **context compression** and **fresh analysis** over cachin
 - Use specialized domain agents selectively based on the research or implementation domain (operations, database migrations, performance, SEO, localization)
 - Agents have defined handoff targets for complex scenarios - follow escalation paths when needed
 
+### MCP Integration
+
+The system now includes **Model Context Protocol (MCP)** support:
+
+- **MCP Server**: `mcp/agentic-server.mjs` - Provides dynamic access to all workflow components
+- **Tool Discovery**: Auto-registers commands and agents as MCP tools
+- **Stable Naming**: Semantic tool names for predictable access (e.g., `agentic.command.research`)
+- **Client Support**: Compatible with Claude Desktop, OpenCode, and other MCP clients
+
 ### Development Notes
 
 - Uses **Bun runtime** for fast TypeScript execution
 - CLI binary linked via `bun link` for global access
 - TypeScript configured for ES modules with Bun-specific types
+- **MCP Dependencies**: `@modelcontextprotocol/sdk`, `zod` for server implementation
 - No test framework currently configured
 - See `AGENT_REGISTRY.md` for complete agent capabilities and usage guidelines
+- See `MCP_INTEGRATION.md` for MCP server setup and tool reference

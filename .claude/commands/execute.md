@@ -1,97 +1,66 @@
 ---
-description: Execute an implementation plan by reading the plan file, understanding the requirements, and systematically implementing each phase with proper testing and validation.
+description: Execute a specific implementation plan.
 ---
 
-You are tasked with executing implementation plans by reading plan files, understanding requirements, and systematically implementing each phase.
+# Implement Plan
 
-## Execution Process
+You are tasked with implementing an approved technical plan from `thoughts/plans/`. These plans contain phases with specific changes and success criteria.
 
-### Step 1: Plan Analysis
-1. **Read the implementation plan file completely**:
-   - Use the Read tool WITHOUT limit/offset parameters
-   - Understand the overall objective and scope
-   - Note all phases, success criteria, and constraints
-   - Identify any dependencies between phases
+## Getting Started
 
-2. **Validate preconditions**:
-   - Ensure all required files/directories exist
-   - Check that dependencies are available
-   - Verify development environment is ready
+- Read the plan completely and check for any existing checkmarks (- [x])
+- Read the original ticket and all files mentioned in the plan
+- **Read files fully** - never use limit/offset parameters, you need complete context
+- Think deeply about how the pieces fit together
+- Create a todo list to track your progress
+- Start implementing if you understand what needs to be done
 
-### Step 2: Phase-by-Phase Implementation
+## Implementation Philosophy
 
-For each phase in the plan:
+Plans are carefully designed, but reality can be messy. Your job is to:
+- Follow the plan's intent while adapting to what you find
+- Implement each phase fully before moving to the next
+- Verify your work makes sense in the broader codebase context
+- Update checkboxes in the plan as you complete sections
 
-1. **Create execution todo list** using TodoWrite to track implementation tasks
-2. **Read all relevant files** mentioned in the phase before making changes
-3. **Implement changes systematically**:
-   - Follow the exact specifications in the plan
-   - Maintain existing code patterns and conventions
-   - Add comprehensive error handling
-   - Include appropriate logging/debugging info
+When things don't match the plan exactly, think about why and communicate clearly. The plan is your guide, but your judgment matters too.
 
-4. **Test after each significant change**:
-   - Run automated tests if available
-   - Perform manual verification as specified
-   - Ensure no regressions in existing functionality
+If you encounter a mismatch:
+- STOP and think deeply about why the plan can't be followed
+- Present the issue clearly:
+  ```
+  Issue in Phase [N]:
+  Expected: [what the plan says]
+  Found: [actual situation]
+  Why this matters: [explanation]
 
-### Step 3: Validation & Quality Checks
+  How should I proceed?
+  ```
 
-After each phase completion:
+## Verification Approach
 
-1. **Run automated verification** (as specified in plan):
-   - Execute test commands: `npm test`, `npm run lint`, `npm run typecheck`
-   - Verify builds succeed
-   - Check type checking passes
+After implementing a phase:
+- Run the success criteria checks (usually `bun run check` covers everything)
+- Fix any issues before proceeding
+- Update your progress in both the plan and your todos
+- Check off completed items in the plan file itself using Edit
 
-2. **Perform manual verification**:
-   - Test functionality works as expected
-   - Verify edge cases handle correctly
-   - Check performance is acceptable
-   - Ensure UI/UX meets requirements
+Don't let verification interrupt your flow - batch it at natural stopping points.
 
-3. **Update todo status** and proceed to next phase only after current phase success criteria are met
+## If You Get Stuck
 
-### Step 4: Final Integration & Documentation
+When something isn't working as expected:
+- First, make sure you've read and understood all the relevant code
+- Consider if the codebase has evolved since the plan was written
+- Present the mismatch clearly and ask for guidance
 
-1. **Integration testing**:
-   - Test all phases working together
-   - Verify end-to-end functionality
-   - Check for any conflicts between phases
+Use sub-tasks sparingly - mainly for targeted debugging or exploring unfamiliar territory.
 
-2. **Documentation updates**:
-   - Update README if needed
-   - Add/update code comments for complex logic
-   - Document any configuration changes
+## Resuming Work
 
-3. **Prepare for review**:
-   - Run final test suite
-   - Clean up any temporary files
-   - Ensure code is properly formatted
+If the plan has existing checkmarks:
+- Trust that completed work is done
+- Pick up from the first unchecked item
+- Verify previous work only if something seems off
 
-## Implementation Guidelines
-
-1. **Follow the plan exactly**: Don't deviate unless you encounter blocking issues
-2. **Incremental progress**: Complete one phase before starting the next
-3. **Quality first**: Never compromise on testing or validation
-4. **Error handling**: Include appropriate error handling and user feedback
-5. **Performance awareness**: Consider performance implications of changes
-6. **Security consciousness**: Follow security best practices
-
-## Error Handling
-
-If you encounter issues during implementation:
-
-1. **Document the problem**: Clearly explain what went wrong and why
-2. **Attempt resolution**: Try reasonable solutions within the plan's scope
-3. **Escalate when needed**: If the issue requires plan changes, stop and ask for guidance
-4. **Never skip validation**: Always complete success criteria before proceeding
-
-## Success Criteria
-
-Each phase must meet its specified success criteria:
-- **Automated checks must pass**: All specified commands must succeed
-- **Manual verification must be completed**: Test all specified scenarios
-- **No regressions allowed**: Existing functionality must continue working
-
-The implementation plan to execute: $ARGUMENTS
+Remember: You're implementing a solution, not just checking boxes. Keep the end goal in mind and maintain forward momentum.

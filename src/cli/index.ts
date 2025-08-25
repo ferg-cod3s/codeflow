@@ -3,6 +3,8 @@
 import { parseArgs } from "util";
 import { pull } from "./pull";
 import { status } from "./status";
+import { setup } from "./setup";
+import { mcpServer, mcpConfigure, mcpList } from "./mcp";
 import packageJson from "../../package.json";
 
 let values: any;
@@ -19,6 +21,25 @@ try {
       },
       version: {
         type: "boolean",
+        default: false,
+      },
+      force: {
+        type: "boolean",
+        short: "f",
+        default: false,
+      },
+      type: {
+        type: "string",
+        short: "t",
+      },
+      background: {
+        type: "boolean",
+        short: "b",
+        default: false,
+      },
+      remove: {
+        type: "boolean",
+        short: "r",
         default: false,
       },
     },
@@ -49,33 +70,58 @@ if (values.version) {
 // Handle help (both --help flag and help command)
 if (values.help || command === "help" || !command) {
   console.log(`
-agentic - Manage opencode agents and commands
+agentic - Intelligent AI workflow management
 
 Usage:
   agentic <command> [options]
 
-Commands:
-  pull [project-path]    Pull agents and commands to a project's .opencode directory
-  status [project-path]  Check which files are up-to-date or outdated
-  commands               List available slash commands for Claude Code and OpenCode
-  version                Show the version of agentic
-  help                   Show this help message
+Project Setup:
+  setup [project-path]       Smart setup for Claude Code or MCP integration
+  pull [project-path]        Pull agents and commands to existing .opencode directory
+  status [project-path]      Check which files are up-to-date or outdated
 
-Options:
-  -h, --help          Show this help message
-  --version           Show the version of agentic
+MCP Server:
+  mcp start                  Start MCP server for current project
+  mcp start --background     Start MCP server in background
+  mcp stop                   Stop background MCP server  
+  mcp status                 Check MCP server status
+  mcp configure <client>     Configure MCP client (claude-desktop)
+  mcp list                   List available MCP tools and usage
+
+Information:
+  commands                   List available slash commands
+  version                    Show the version of agentic
+  help                       Show this help message
+
+Setup Options:
+  -f, --force               Force overwrite existing setup
+  -t, --type <type>         Specify project type (claude-code, opencode, general)
+
+MCP Options:
+  -b, --background          Run MCP server in background
+  -r, --remove              Remove MCP client configuration
 
 Examples:
-  agentic pull ~/projects/my-app
-  agentic pull                       # Auto-detect project from current dir
-  agentic status ~/projects/my-app
-  agentic status                     # Auto-detect project from current dir
-  agentic commands                   # List slash commands and their descriptions
+  # Smart project setup (detects Claude Code vs MCP needs)
+  agentic setup ~/my-project
+  
+  # Force setup for specific type
+  agentic setup . --type claude-code
+  
+  # Start MCP server for current project
+  agentic mcp start
+  
+  # Configure Claude Desktop for MCP
+  agentic mcp configure claude-desktop
 `);
   process.exit(0);
 }
 
 switch (command) {
+  case "setup":
+    const setupPath = args[1];
+    await setup(setupPath, { force: values.force, type: values.type });
+    break;
   case "pull":
     const projectPath = args[1];
     await pull(projectPath);
@@ -83,6 +129,42 @@ switch (command) {
   case "status":
     const statusPath = args[1];
     await status(statusPath);
+    break;
+  case "mcp":
+    const mcpAction = args[1];
+    if (!mcpAction) {
+      await mcpList();
+      break;
+    }
+    
+    switch (mcpAction) {
+      case "start":
+        await mcpServer("start", { background: values.background });
+        break;
+      case "stop":
+        await mcpServer("stop");
+        break;
+      case "status":
+        await mcpServer("status");
+        break;
+      case "configure":
+        const client = args[2];
+        if (!client) {
+          console.error("Error: MCP client name required");
+          console.error("Usage: agentic mcp configure <client>");
+          console.error("Available clients: claude-desktop");
+          process.exit(1);
+        }
+        await mcpConfigure(client, { remove: values.remove });
+        break;
+      case "list":
+        await mcpList();
+        break;
+      default:
+        console.error(`Error: Unknown MCP action '${mcpAction}'`);
+        console.error("Available actions: start, stop, status, configure, list");
+        process.exit(1);
+    }
     break;
   case "commands":
     const { commands } = await import("./commands");

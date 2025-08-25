@@ -18,14 +18,109 @@ bun run install
 
 ### Push files to a project
 ```bash
-agentic push ~/projects/my-app
-agentic push ../other-project --dry-run
+agentic pull ~/projects/my-app
+agentic pull ../other-project --dry-run
 ```
 
 ### Check status of files
 ```bash
 agentic status ~/projects/my-app
 ```
+
+## Platform Integration
+
+The agentic workflow system supports **three integration approaches**:
+
+### **Claude Code**: Native Slash Commands
+- Built-in `/research`, `/plan`, `/execute` commands
+- Zero setup required - works immediately
+- Commands stored in `.claude/commands/`
+
+### **NPM Package**: Universal MCP Server
+- **Quick start**: `npx @agentic/mcp-server`
+- Works with Claude Desktop, OpenCode, any MCP client
+- Privacy-safe built-in templates
+- No project setup required
+
+### **Full Integration**: Project-Aware MCP
+- Enhanced with project-specific customizations
+- Uses agentic CLI for setup and management
+- Combines NPM package with local commands
+
+## Quick Start Options
+
+### Option 1: NPX (Instant Setup)
+```bash
+# Instant MCP server - no installation required
+npx @agentic/mcp-server
+
+# Configure Claude Desktop
+# Add to ~/.../Claude/claude_desktop_config.json:
+{
+  "mcpServers": {
+    "agentic-workflows": {
+      "command": "npx", 
+      "args": ["@agentic/mcp-server"]
+    }
+  }
+}
+```
+
+### Option 2: Project-Aware Setup
+```bash
+# Intelligent setup - detects Claude Code vs MCP needs automatically
+agentic setup ~/my-project
+
+# Or force specific type
+agentic setup ~/my-project --type claude-code   # Claude Code only
+agentic setup ~/my-project --type opencode      # MCP integration only  
+agentic setup ~/my-project --type general       # Both (default)
+```
+
+### Option 3: Full CLI Management
+```bash
+# Start MCP server for current project
+agentic mcp start
+
+# Start in background
+agentic mcp start --background
+
+# Configure Claude Desktop automatically
+agentic mcp configure claude-desktop
+
+# Check status
+agentic mcp status
+```
+
+## Integration Comparison
+
+| Approach | Setup Time | Customization | Use Case |
+|----------|------------|---------------|----------|
+| **NPX** | 30 seconds | Generic templates | Quick start, universal compatibility |
+| **Project-Aware** | 2 minutes | Project-specific | Team projects, customized workflows |
+| **Claude Code** | Instant | Per-project | Claude Code users, native experience |
+
+### Available Workflow Commands
+
+**Core Commands** (available in all approaches):
+- `research` - Comprehensive research and analysis
+- `plan` - Implementation planning
+- `execute` - Code execution and implementation
+- `test` - Test generation and validation
+- `document` - Documentation generation
+- `commit` - Git commit management
+- `review` - Implementation review and validation
+
+**Intelligent Automation**: Commands automatically orchestrate 50+ specialized agents for comprehensive analysis and implementation.
+
+**Documentation**:
+- 🏗️ [Architecture Overview](./ARCHITECTURE_OVERVIEW.md) - Native slash commands vs MCP integration
+- 📦 [NPM Package](./packages/agentic-mcp/README.md) - Standalone MCP server via NPX
+- 🚀 [Quick Start Guide](./MCP_QUICKSTART.md) - Get running in 5 minutes
+- 📖 [Complete Integration Guide](./MCP_INTEGRATION.md) - Full technical documentation
+- 💡 [Usage Examples](./MCP_USAGE_EXAMPLES.md) - Practical workflow examples
+- 🔧 [Cross-Repository Setup](./CROSS_REPO_SETUP.md) - Use agentic from any project
+- 🚨 [Troubleshooting Guide](./TROUBLESHOOTING.md) - Fix common issues
 
 ## Setup
 

@@ -180,6 +180,22 @@ agentic commands
 agentic status ~/path/to/project
 ```
 
+### MCP Integration
+
+The slash commands are also available through **Model Context Protocol (MCP)** for direct AI client integration:
+
+```bash
+# Start MCP server for Claude Desktop/OpenCode
+bun run mcp/agentic-server.mjs
+```
+
+**MCP Tool Names**:
+- Commands: `agentic.command.{name}` (e.g., `agentic.command.research`)
+- Core Agents: `agentic.agent.{name}` (e.g., `agentic.agent.codebase_locator`)
+- OpenCode Agents: `agentic.agent.opencode.{name}`
+
+See [MCP_INTEGRATION.md](./MCP_INTEGRATION.md) for complete setup guide.
+
 ### Directory Structure After Installation
 ```
 your-project/

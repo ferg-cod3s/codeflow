@@ -1,141 +1,162 @@
----
-description: Review an implementation against its original plan. Validates that the implementation adhered to the plan specifications and identifies any deviations or improvements needed.
----
+# Validate Plan
 
-You are tasked with reviewing an implementation to ensure it adhered to the details of the original plan and identify any deviations.
+You are tasked with validating that an implementation plan was correctly executed, verifying all success criteria and identifying any deviations or issues.
 
-## Review Process
+## Initial Setup
 
-### Step 1: Plan Analysis
+When invoked:
+1. **Determine context** - Are you in an existing conversation or starting fresh?
+   - If existing: Review what was implemented in this session
+   - If fresh: Need to discover what was done through git and codebase analysis
 
-1. **Read the original implementation plan**:
-   - Use the Read tool WITHOUT limit/offset parameters
-   - Understand the planned phases, requirements, and success criteria
-   - Note the expected outcomes and constraints
-   - Identify key architectural decisions and patterns
+2. **Locate the plan**:
+   - If plan path provided, use it
+   - Otherwise, search recent commits for plan references or ask user
 
-### Step 2: Implementation Analysis
+3. **Gather implementation evidence**:
+   ```bash
+   # Check recent commits
+   git log --oneline -n 20
+   git diff HEAD~N..HEAD  # Where N covers implementation commits
 
-1. **Examine the current implementation**:
-   - Read all files that were supposed to be modified according to the plan
-   - Check git history to understand what was actually implemented
-   - Run `git log --oneline --since="1 day ago"` to see recent commits
-   - Use `git diff` to see any uncommitted changes
+   # Run comprehensive checks
+   cd $(git rev-parse --show-toplevel) && turbo check && turbo test
+   ```
 
-2. **Create review todo list** using TodoWrite to track validation tasks
+## Validation Process
 
-### Step 3: Systematic Validation
+### Step 1: Context Discovery
 
-For each phase in the original plan:
+If starting fresh or need more context:
 
-1. **Verify phase completion**:
-   - Check if all specified changes were made
-   - Validate that files were modified as described
-   - Ensure code follows the planned approach
+1. **Read the implementation plan** completely
+2. **Identify what should have changed**:
+   - List all files that should be modified
+   - Note all success criteria (automated and manual)
+   - Identify key functionality to verify
 
-2. **Test success criteria**:
-   - **Automated verification**: Run all specified commands (tests, linting, building)
-   - **Manual verification**: Test functionality as described in the plan
-   - Document which criteria pass/fail
+3. **Spawn parallel research tasks** to discover implementation:
+   ```
+   Task 1 - Verify database changes:
+   Research if migration [N] was added and schema changes match plan.
+   Check: migration files, schema version, table structure
+   Return: What was implemented vs what plan specified
 
-3. **Identify deviations**:
-   - Note where implementation differs from the plan
-   - Categorize deviations as:
-     - **Acceptable**: Improvements or necessary adaptations
-     - **Concerning**: Significant departures that may cause issues
-     - **Missing**: Planned features/changes that weren't implemented
+   Task 2 - Verify code changes:
+   Find all modified files related to [feature].
+   Compare actual changes to plan specifications.
+   Return: File-by-file comparison of planned vs actual
 
-### Step 4: Quality Assessment
+   Task 3 - Verify test coverage:
+   Check if tests were added/modified as specified.
+   Run test commands and capture results.
+   Return: Test status and any missing coverage
+   ```
 
-1. **Code quality review**:
-   - Check if code follows existing patterns and conventions
-   - Verify error handling is appropriate
-   - Ensure performance considerations were addressed
-   - Validate security best practices were followed
+### Step 2: Systematic Validation
 
-2. **Integration testing**:
-   - Test that all phases work together correctly
-   - Verify end-to-end functionality
-   - Check for any regressions in existing features
+For each phase in the plan:
 
-### Step 5: Review Report
+1. **Check completion status**:
+   - Look for checkmarks in the plan (- [x])
+   - Verify the actual code matches claimed completion
 
-Generate a comprehensive review report:
+2. **Run automated verification**:
+   - Execute each command from "Automated Verification"
+   - Document pass/fail status
+   - If failures, investigate root cause
+
+3. **Assess manual criteria**:
+   - List what needs manual testing
+   - Provide clear steps for user verification
+
+4. **Think deeply about edge cases**:
+   - Were error conditions handled?
+   - Are there missing validations?
+   - Could the implementation break existing functionality?
+
+### Step 3: Generate Validation Report
+
+Create comprehensive validation summary:
 
 ```markdown
-# Implementation Review: [Plan Name]
+## Validation Report: [Plan Name]
 
-## Overview
-- **Plan**: [path to original plan]
-- **Review Date**: [current date]
-- **Implementation Status**: [Complete/Partial/Issues]
+### Implementation Status
+✓ Phase 1: [Name] - Fully implemented
+✓ Phase 2: [Name] - Fully implemented
+⚠️ Phase 3: [Name] - Partially implemented (see issues)
 
-## Phase-by-Phase Analysis
+### Automated Verification Results
+✓ Build passes: `turbo build`
+✓ Tests pass: `turbo test`
+✗ Linting issues: `turbo check` (3 warnings)
 
-### Phase 1: [Name]
-- **Status**: ✅ Complete / ⚠️ Partial / ❌ Missing
-- **Planned Changes**: [what was supposed to happen]
-- **Actual Implementation**: [what was actually done]
-- **Deviations**: [any differences and their rationale]
-- **Success Criteria**: [automated/manual verification results]
+### Code Review Findings
 
-[Repeat for each phase]
+#### Matches Plan:
+- Database migration correctly adds [table]
+- API endpoints implement specified methods
+- Error handling follows plan
 
-## Overall Assessment
+#### Deviations from Plan:
+- Used different variable names in [file:line]
+- Added extra validation in [file:line] (improvement)
 
-### ✅ What Went Well
-- [Aspects that were implemented correctly]
-- [Good decisions or improvements made]
+#### Potential Issues:
+- Missing index on foreign key could impact performance
+- No rollback handling in migration
 
-### ⚠️ Deviations & Concerns
-- [Significant departures from the plan]
-- [Potential issues or risks identified]
+### Manual Testing Required:
+1. UI functionality:
+   - [ ] Verify [feature] appears correctly
+   - [ ] Test error states with invalid input
 
-### ❌ Missing or Incomplete
-- [Features/changes that weren't implemented]
-- [Success criteria that failed]
+2. Integration:
+   - [ ] Confirm works with existing [component]
+   - [ ] Check performance with large datasets
 
-## Quality Review
-
-### Code Quality
-- **Conventions**: [follows existing patterns Y/N]
-- **Error Handling**: [appropriate error handling Y/N]
-- **Performance**: [performance considerations addressed Y/N]
-- **Security**: [security best practices followed Y/N]
-
-### Testing Results
-- **Automated Tests**: [pass/fail status]
-- **Manual Testing**: [summary of manual verification]
-- **Integration**: [end-to-end functionality works Y/N]
-
-## Recommendations
-
-### Immediate Actions Needed
-- [Critical issues that must be addressed]
-
-### Future Improvements
-- [Suggestions for enhancement]
-
-### Process Learnings
-- [Insights for improving future implementations]
+### Recommendations:
+- Address linting warnings before merge
+- Consider adding integration test for [scenario]
+- Document new API endpoints
 ```
+
+## Working with Existing Context
+
+If you were part of the implementation:
+- Review the conversation history
+- Check your todo list for what was completed
+- Focus validation on work done in this session
+- Be honest about any shortcuts or incomplete items
 
 ## Important Guidelines
 
-1. **Be objective**: Focus on facts, not opinions
-2. **Be thorough**: Check every aspect mentioned in the plan
-3. **Be constructive**: When identifying issues, suggest solutions
-4. **Validate thoroughly**: Actually run tests and verify functionality
-5. **Document everything**: Include specific file paths and line numbers
+1. **Be thorough but practical** - Focus on what matters
+2. **Run all automated checks** - Don't skip verification commands
+3. **Document everything** - Both successes and issues
+4. **Think critically** - Question if the implementation truly solves the problem
+5. **Consider maintenance** - Will this be maintainable long-term?
 
-## Success Criteria for Review
+## Validation Checklist
 
-The review is complete when:
-- ✅ All planned phases have been analyzed
-- ✅ All success criteria have been tested
-- ✅ Deviations have been identified and categorized
-- ✅ Quality assessment has been performed
-- ✅ Comprehensive report has been generated
-- ✅ Clear recommendations have been provided
+Always verify:
+- [ ] All phases marked complete are actually done
+- [ ] Automated tests pass
+- [ ] Code follows existing patterns
+- [ ] No regressions introduced
+- [ ] Error handling is robust
+- [ ] Documentation updated if needed
+- [ ] Manual test steps are clear
 
-The implementation plan to review: $ARGUMENTS
+## Relationship to Other Commands
+
+Recommended workflow:
+1. `/implement_plan` - Execute the implementation
+2. `/commit` - Create atomic commits for changes
+3. `/validate_plan` - Verify implementation correctness
+4. `/describe_pr` - Generate PR description
+
+The validation works best after commits are made, as it can analyze the git history to understand what was implemented.
+
+Remember: Good validation catches issues before they reach production. Be constructive but thorough in identifying gaps or improvements.
