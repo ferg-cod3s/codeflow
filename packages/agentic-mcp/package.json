@@ -1,11 +1,11 @@
 {
   "name": "@agentic-codeflow/mcp-server",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "MCP server for Agentic CodeFlow AI-assisted development workflows",
   "type": "module",
   "main": "dist/server.js",
   "bin": {
-    "codeflow-mcp": "dist/server.js"
+    "agentic-codeflow-mcp": "dist/server.js"
   },
   "files": [
     "dist/**/*",
