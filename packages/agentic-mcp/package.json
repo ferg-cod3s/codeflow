@@ -1,5 +1,5 @@
 {
-  "name": "@codeflow/mcp-server",
+  "name": "codeflow-mcp-server",
   "version": "0.1.0",
   "description": "MCP server for CodeFlow AI-assisted development workflows",
   "type": "module",

@@ -1,4 +1,4 @@
-# @codeflow/mcp-server
+# codeflow-mcp-server
 
 A Model Context Protocol (MCP) server providing AI-assisted development workflow commands for any MCP-compatible AI client.
 
@@ -38,10 +38,10 @@ npx @codeflow/mcp-server
 
 ```bash
 # Global installation
-npm install -g @codeflow/mcp-server
+npm install -g codeflow-mcp-server
 
 # Or use with npx (no installation required)
-npx @codeflow/mcp-server
+npx codeflow-mcp-server
 ```
 
 ### Claude Desktop Setup
@@ -53,7 +53,7 @@ Add to your Claude Desktop MCP configuration:
   "mcpServers": {
     "codeflow-workflows": {
       "command": "npx",
-      "args": ["@codeflow/mcp-server"]
+      "args": ["codeflow-mcp-server"]
     }
   }
 }
