@@ -43,9 +43,10 @@
         "COOLIFY_API_TOKEN": "1|WoN76CL40WTMQWCM1YHcAGvjQ7LNRpqXQz8G74Jk7cf39acd"
       }
     },
-    "agentic-tools": {
-      "command": "bun",
-      "args": ["/home/f3rg/Documents/git/agentic/mcp/agentic-server.mjs"]
+    "agentic-codeflow": {
+      "command": "npx",
+      "args": ["@agentic-codeflow/mcp-server"],
+      "description": "Agentic CodeFlow AI development workflows"
     }
   }
 }
