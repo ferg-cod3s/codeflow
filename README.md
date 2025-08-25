@@ -1,5 +1,8 @@
 # Agentic
 
+[![npm version](https://badge.fury.io/js/agentic-cli.svg)](https://www.npmjs.com/package/agentic-cli)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 **Modular AI agents and commands for structured software development with OpenCode.**
 
 ## What It Does
@@ -22,6 +25,16 @@ The system aims to:
 ## Quick Start
 
 ### Installation
+
+#### From npm (Recommended)
+
+```bash
+npm install -g agentic-cli
+# or
+bun add -g agentic-cli
+```
+
+#### From Source
 
 ```bash
 git clone https://github.com/Cluster444/agentic.git

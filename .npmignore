@@ -1,0 +1,48 @@
+# Source files
+src/
+*.ts
+
+# Configuration files
+tsconfig.json
+tsconfig.tsbuildinfo
+bun.lock
+.gitignore
+
+# Development files
+*.log
+node_modules/
+.env
+.env.local
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test files
+__tests__/
+*.test.ts
+*.spec.ts
+coverage/
+
+# Build artifacts
+dist/
+*.map
+
+# Documentation source
+*.template.md
+TODO.md
+THOUGHTS.md
+
+# Git
+.git/
+.github/
+
+# Local config
+config.json

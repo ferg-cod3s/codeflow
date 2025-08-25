@@ -1,19 +1,41 @@
 {
-  "name": "agentic",
+  "name": "agentic-cli",
   "version": "0.1.0",
+  "description": "Modular AI agent system with specialized subagents and commands for enhanced OpenCode capabilities",
   "type": "module",
-  "bin": {
-    "agentic": "./src/cli/index.ts"
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "bun build ./src/cli/index.ts --compile --outfile ./bin/agentic",
+    "publish": "./scripts/publish.ts"
   },
   "scripts": {
-    "install": "bun link",
-    "typecheck": "tsc --noEmit"
+    "build": "bun build ./src/cli/index.ts --compile --outfile ./bin/agentic",
+    "prepublishOnly": "bun run typecheck",
+    "postinstall": "node scripts/postinstall.cjs",
+    "typecheck": "tsc --noEmit",
+    "release": "npm publish"
   },
-  "dependencies": {
-    "agentic": "link:agentic"
+  "keywords": [
+    "ai",
+    "agent",
+    "opencode",
+    "assistant"
+  ],
+  "author": "Chris Covington",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Cluster444/agentic.git"
   },
+  "bugs": {
+    "url": "https://github.com/Cluster444/agentic/issues"
+  },
+  "homepage": "https://github.com/Cluster444/agentic#readme",
+
+  "dependencies": {},
   "devDependencies": {
     "@types/bun": "latest",
     "typescript": "^5.9.2"
-  }
+  },
+
 }
