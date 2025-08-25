@@ -1,5 +1,5 @@
 ---
-description: Execute a specific implementation plan.
+description: Execute a specific implementation plan. Provide a plan file as the argument to this command. It's very important this command runs in a new session.
 ---
 
 # Implement Plan
@@ -64,3 +64,7 @@ If the plan has existing checkmarks:
 - Verify previous work only if something seems off
 
 Remember: You're implementing a solution, not just checking boxes. Keep the end goal in mind and maintain forward momentum.
+
+<plan>
+$ARGUMENTS
+</plan>

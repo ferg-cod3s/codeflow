@@ -1,5 +1,5 @@
 ---
-description: Create an implementation plan from a ticket and research
+description: Create an implementation plan from a ticket and research. Provide both the ticket and relevant research as arguments to this command. It is best to run this command in a new session.
 ---
 
 # Implementation Plan

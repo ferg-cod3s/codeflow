@@ -1,10 +1,8 @@
 ---
-name: web-search-researcher
 description: Used to perform web searches from a URL and analyze the contents based on a query.
 mode: subagent
-model: anthropic/claude-haiku-3-5
+model: anthropic/claude-3-5-haiku-20241022
 temperature: 0.1
-enabled: false
 tools:
   read: true
   grep: true
@@ -16,7 +14,7 @@ tools:
   patch: false
   todoread: false
   todowrite: false
-  webfetch: true 
+  webfetch: false
 ---
 
 # TODO: This doesn't really work with opencode as we dont have search. So we need to determine
