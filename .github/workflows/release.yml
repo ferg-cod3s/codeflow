@@ -37,8 +37,11 @@ jobs:
       
       - name: Publish packages
         run: |
+          git config --global user.email "agentic@bod.care"
+          git config --global user.name "agentic"
           chmod +x ./scripts/publish.ts
           AGENTIC_VERSION=${{ inputs.version }} ./scripts/publish.ts
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
