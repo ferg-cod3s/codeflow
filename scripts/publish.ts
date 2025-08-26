@@ -235,7 +235,7 @@ for (const platform of platforms) {
 
 // Commit version changes
 console.log("\nCommitting version changes...");
-await $`git add package.json bun.lockb`;
+await $`git add package.json bun.lock`;
 await $`git commit -m "release: v${version}"`;
 
 // Create and push tag
