@@ -32,7 +32,6 @@ const platforms = [
   { name: "darwin-arm64", os: "darwin", cpu: "arm64", bun: "darwin-arm64" },
   { name: "linux-x64", os: "linux", cpu: "x64", bun: "linux-x64" },
   { name: "linux-arm64", os: "linux", cpu: "arm64", bun: "linux-arm64" },
-  { name: "windows-x64", os: "win32", cpu: "x64", bun: "windows-x64", ext: ".exe" },
 ];
 
 // Create dist directory
@@ -43,7 +42,7 @@ await fs.mkdir(distDir, { recursive: true });
 console.log("\nBuilding binaries...");
 for (const platform of platforms) {
   console.log(`  Building ${platform.name}...`);
-  const outfile = `./dist/agentic-${platform.name}/bin/agentic${platform.ext || ""}`;
+  const outfile = `./dist/agentic-${platform.name}/bin/agentic`;
   await $`bun build ./src/cli/index.ts --compile --target=bun-${platform.bun} --outfile ${outfile}`;
 }
 
@@ -85,9 +84,6 @@ const mainPkg = {
   bin: {
     agentic: "./bin/agentic"
   },
-  scripts: {
-    postinstall: "node ./postinstall.mjs"
-  },
   keywords: basePkg.keywords,
   author: basePkg.author,
   license: basePkg.license,
@@ -104,89 +100,73 @@ await fs.writeFile(
   JSON.stringify(mainPkg, null, 2)
 );
 
-// Create postinstall.mjs
-const postinstallScript = `#!/usr/bin/env node
 
-import { existsSync, symlinkSync, unlinkSync, chmodSync } from 'fs';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
+// Create shell wrapper script
+const shellWrapper = `#!/bin/sh
+set -e
 
-// Detect platform
-const platform = process.platform;
-const arch = process.arch;
+if [ -n "\$AGENTIC_BIN_PATH" ]; then
+    resolved="\$AGENTIC_BIN_PATH"
+else
+    # Get the real path of this script, resolving any symlinks
+    script_path="\$0"
+    while [ -L "\$script_path" ]; do
+        link_target="\$(readlink "\$script_path")"
+        case "\$link_target" in
+            /*) script_path="\$link_target" ;;
+            *) script_path="\$(dirname "\$script_path")/\$link_target" ;;
+        esac
+    done
+    script_dir="\$(dirname "\$script_path")"
+    script_dir="\$(cd "\$script_dir" && pwd)"
+    
+    # Map platform names
+    case "\$(uname -s)" in
+        Darwin) platform="darwin" ;;
+        Linux) platform="linux" ;;
+        *) platform="\$(uname -s | tr '[:upper:]' '[:lower:]')" ;;
+    esac
+    
+    # Map architecture names  
+    case "\$(uname -m)" in
+        x86_64|amd64) arch="x64" ;;
+        aarch64) arch="arm64" ;;
+        armv7l) arch="arm" ;;
+        *) arch="\$(uname -m)" ;;
+    esac
+    
+    name="agentic-\${platform}-\${arch}"
+    binary="agentic"
+    
+    # Search for the binary starting from real script location
+    resolved=""
+    current_dir="\$script_dir"
+    while [ "\$current_dir" != "/" ]; do
+        candidate="\$current_dir/../\$name/bin/\$binary"
+        if [ -f "\$candidate" ]; then
+            resolved="\$candidate"
+            break
+        fi
+        current_dir="\$(dirname "\$current_dir")"
+    done
+    
+    if [ -z "\$resolved" ]; then
+        printf "It seems that your package manager failed to install the right version of the agentic CLI for your platform. You can try manually installing the \\"%s\\" package\\n" "\$name" >&2
+        exit 1
+    fi
+fi
 
-const platformMap = {
-  'darwin-x64': 'darwin-x64',
-  'darwin-arm64': 'darwin-arm64',
-  'linux-x64': 'linux-x64',
-  'linux-arm64': 'linux-arm64',
-  'win32-x64': 'windows-x64',
-};
+# Handle SIGINT gracefully
+trap '' INT
 
-const platformKey = \`\${platform}-\${arch}\`;
-const platformName = platformMap[platformKey];
-
-if (!platformName) {
-  console.error(\`Unsupported platform: \${platformKey}\`);
-  process.exit(1);
-}
-
-const platformPkg = \`agentic-\${platformName}\`;
-const ext = platform === 'win32' ? '.exe' : '';
-
-// Find the platform package
-const platformBin = join(__dirname, '..', platformPkg, 'bin', \`agentic\${ext}\`);
-const targetBin = join(__dirname, 'bin', 'agentic');
-
-if (!existsSync(platformBin)) {
-  console.error(\`Platform binary not found: \${platformBin}\`);
-  console.error(\`Please install \${platformPkg} manually\`);
-  process.exit(1);
-}
-
-// Create symlink
-try {
-  if (existsSync(targetBin)) {
-    unlinkSync(targetBin);
-  }
-  
-  if (platform === 'win32') {
-    // On Windows, create a cmd wrapper instead of symlink
-    const wrapper = \`@echo off\\n"\${platformBin}" %*\`;
-    require('fs').writeFileSync(targetBin + '.cmd', wrapper);
-  } else {
-    // On Unix, create symlink and ensure executable
-    symlinkSync(platformBin, targetBin);
-    chmodSync(platformBin, '755');
-  }
-  
-  console.log(\`✓ Agentic CLI configured for \${platformKey}\`);
-} catch (error) {
-  console.error('Failed to setup agentic binary:', error);
-  process.exit(1);
-}
-`;
-
-await fs.writeFile(
-  path.join(mainPkgDir, "postinstall.mjs"),
-  postinstallScript
-);
-
-// Create Unix wrapper script
-const unixWrapper = `#!/usr/bin/env node
-const { spawn } = require('child_process');
-const path = require('path');
-
-const bin = path.join(__dirname, '..', \`agentic-\${process.platform}-\${process.arch}\`, 'bin', 'agentic');
-const child = spawn(bin, process.argv.slice(2), { stdio: 'inherit' });
-child.on('exit', code => process.exit(code));
+# Execute the binary with all arguments
+exec "\$resolved" "\$@"
 `;
 
 await fs.writeFile(
   path.join(mainPkgDir, "bin", "agentic"),
-  unixWrapper,
+  shellWrapper,
   { mode: 0o755 }
 );
 
