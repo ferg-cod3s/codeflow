@@ -228,8 +228,7 @@ console.log(`\n✓ Successfully published all packages to npm\n`);
 console.log("Creating release artifacts...");
 for (const platform of platforms) {
   const binDir = path.join(distDir, `agentic-${platform.name}`, "bin");
-  const zipFile = path.join(distDir, `agentic-${platform.name}.zip`);
-  await $`cd ${binDir} && zip -r ${zipFile} *`.quiet();
+  await $`cd ${binDir} && zip -r ../../agentic-${platform.name}.zip *`.quiet();
   console.log(`  Created ${platform.name}.zip`);
 }
 
@@ -320,8 +319,7 @@ releaseNotes += `\n\n**Full Changelog**: https://github.com/Cluster444/agentic/c
 // Create GitHub release
 console.log("Creating GitHub release...");
 try {
-  const zipFiles = platforms.map(p => path.join(distDir, `agentic-${p.name}.zip`)).join(' ');
-  await $`gh release create v${version} --title "v${version}" --notes ${releaseNotes} ${zipFiles}`;
+  await $`gh release create v${version} --title "v${version}" --notes ${releaseNotes} ./dist/*.zip`;
   console.log(`  Created GitHub release v${version}`);
 } catch (e) {
   console.log("  Warning: Could not create GitHub release (might need gh auth or GITHUB_TOKEN)");
