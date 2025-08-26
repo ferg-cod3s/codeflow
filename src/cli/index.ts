@@ -4,6 +4,7 @@ import { parseArgs } from "util";
 import { pull } from "./pull";
 import { status } from "./status";
 import { metadata } from "./metadata";
+import { init } from "./init";
 import packageJson from "../../package.json";
 
 let values: any;
@@ -26,6 +27,9 @@ try {
         type: "boolean",
         short: "g",
         default: false,
+      },
+      "thoughts-dir": {
+        type: "string",
       },
     },
     strict: true,
@@ -61,6 +65,7 @@ Usage:
   agentic <command> [options]
 
 Commands:
+  init [project-path]    Initialize agentic in a project with config and thoughts directory
   pull [project-path]    Pull agents and commands to a project's .opencode directory
   status [project-path]  Check which files are up-to-date or outdated
   metadata               Display project metadata for research documentation
@@ -71,8 +76,11 @@ Options:
   -h, --help          Show this help message
   -g, --global        Use ~/.config/opencode instead of .opencode directory
   --version           Show the version of agentic
+  --thoughts-dir      Specify thoughts directory (for init command)
 
 Examples:
+  agentic init                       # Initialize in current directory
+  agentic init ~/projects/my-app     # Initialize in specific project
   agentic pull ~/projects/my-app
   agentic pull                       # Auto-detect project from current dir
   agentic pull -g                    # Pull to ~/.config/opencode
@@ -85,6 +93,10 @@ Examples:
 }
 
 switch (command) {
+  case "init":
+    const initPath = args[1];
+    await init(initPath, values["thoughts-dir"]);
+    break;
   case "pull":
     const projectPath = args[1];
     if (values.global && projectPath) {
