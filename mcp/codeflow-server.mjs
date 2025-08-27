@@ -5,6 +5,14 @@ import crypto from "node:crypto";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
+import { buildAgentRegistry, categorizeAgents, suggestAgents } from "./agent-registry.mjs";
+import { 
+  spawnAgentTask, 
+  executeParallelAgents, 
+  executeSequentialAgents, 
+  createWorkflowOrchestrator, 
+  validateAgentExecution 
+} from "./agent-spawner.mjs";
 
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -29,6 +37,11 @@ function findCodeflowPaths() {
 }
 
 const paths = findCodeflowPaths();
+
+// Global agent registry - initialized once on server startup
+let globalAgentRegistry = null;
+let agentCategories = null;
+let workflowOrchestrator = null;
 
 function toSlug(filePath) {
   const base = path.basename(filePath).replace(/\.[^.]+$/, "");
@@ -110,7 +123,51 @@ function toolSpecFromEntry(entry) {
   };
 }
 
+/**
+ * Add agent context to command content
+ */
+function addAgentContext(commandContent, context) {
+  const agentSection = [
+    '## Available Agents',
+    '',
+    '### Agent Categories:'
+  ];
+  
+  for (const [category, agents] of Object.entries(context.agentCategories)) {
+    if (agents.length > 0) {
+      agentSection.push(`**${category}**: ${agents.join(', ')}`);
+    }
+  }
+  
+  agentSection.push('');
+  agentSection.push('### Agent Functions Available:');
+  agentSection.push('- `spawnAgent(agentId, task)` - Execute a single agent');
+  agentSection.push('- `parallelAgents(agentIds, tasks)` - Execute multiple agents in parallel');
+  agentSection.push('- `suggestAgents(taskDescription)` - Get agent recommendations');
+  agentSection.push('- `executeResearchWorkflow(domain, query)` - Run research workflow');
+  agentSection.push('- `executePlanningWorkflow(requirements, context)` - Run planning workflow');
+  agentSection.push('');
+  
+  return commandContent + '\n\n' + agentSection.join('\n');
+}
+
 async function run() {
+  console.log('Initializing codeflow MCP server...');
+  
+  // Initialize agent registry on startup
+  try {
+    console.log('Building agent registry...');
+    globalAgentRegistry = await buildAgentRegistry();
+    agentCategories = categorizeAgents(globalAgentRegistry);
+    workflowOrchestrator = createWorkflowOrchestrator(globalAgentRegistry);
+    console.log(`Agent registry initialized with ${globalAgentRegistry.size} agents`);
+  } catch (error) {
+    console.error('Failed to initialize agent registry:', error);
+    // Continue without agents rather than failing completely
+    globalAgentRegistry = new Map();
+    agentCategories = {};
+  }
+
   const server = new McpServer({ name: "codeflow-tools", version: "0.1.0" });
 
   const transport = new StdioServerTransport();
@@ -118,18 +175,40 @@ async function run() {
   const toolEntries = await buildTools();
   const commandSlugToPath = new Map();
 
-  // Register each core workflow command
+  // Register each core workflow command with agent context
   for (const entry of toolEntries) {
     server.registerTool(
       entry.id,
       {
         title: entry.id,
-        description: entry.description,
+        description: entry.description + " (Enhanced with agent orchestration capabilities)",
       },
-      async () => {
-        const text = await fs.readFile(entry.filePath, "utf8");
+      async (args = {}) => {
+        const commandContent = await fs.readFile(entry.filePath, "utf8");
+        
+        // Enhanced context with available agents
+        const context = {
+          availableAgents: Array.from(globalAgentRegistry.keys()),
+          agentCategories,
+          totalAgents: globalAgentRegistry.size,
+          
+          // Agent execution functions (for command reference)
+          spawnAgent: (agentId, task) => spawnAgentTask(agentId, task, globalAgentRegistry),
+          parallelAgents: (agentIds, tasks) => executeParallelAgents(agentIds, tasks, globalAgentRegistry),
+          sequentialAgents: (agentSpecs) => executeSequentialAgents(agentSpecs, globalAgentRegistry),
+          suggestAgents: (taskDescription) => suggestAgents(globalAgentRegistry, taskDescription),
+          validateAgent: (agentId) => validateAgentExecution(agentId, globalAgentRegistry),
+          
+          // Workflow orchestrators
+          executeResearchWorkflow: (domain, query) => workflowOrchestrator.executeResearchWorkflow(domain, query),
+          executePlanningWorkflow: (requirements, context) => workflowOrchestrator.executePlanningWorkflow(requirements, context)
+        };
+        
+        // Add agent context information to command content
+        const enhancedContent = addAgentContext(commandContent, context);
+        
         return {
-          content: [{ type: "text", text }],
+          content: [{ type: "text", text: enhancedContent }],
         };
       }
     );
@@ -138,12 +217,12 @@ async function run() {
     commandSlugToPath.set(entry.slug, entry.filePath);
   }
 
-  // Parameterized command getter (keep this with prefix for clarity)
+  // Parameterized command getter with agent context
   server.registerTool(
     "get_command",
     {
       title: "get_command",
-      description: "Return command markdown by base name (e.g., 'research', 'plan', 'execute').",
+      description: "Return command markdown by base name with agent orchestration context.",
     },
     async (args = {}) => {
       const name = (args.name || "").toString().trim();
@@ -161,15 +240,33 @@ async function run() {
           }] 
         };
       }
-      const text = await fs.readFile(filePath, "utf8");
-      return { content: [{ type: "text", text }] };
+      
+      const commandContent = await fs.readFile(filePath, "utf8");
+      
+      // Enhanced context with available agents
+      const context = {
+        availableAgents: Array.from(globalAgentRegistry.keys()),
+        agentCategories,
+        totalAgents: globalAgentRegistry.size
+      };
+      
+      // Add agent context information to command content
+      const enhancedContent = addAgentContext(commandContent, context);
+      
+      return { content: [{ type: "text", text: enhancedContent }] };
     }
   );
 
+  console.log('Connecting MCP server transport...');
   await server.connect(transport);
+  console.log('Codeflow MCP server running with enhanced agent capabilities');
+  
   // Keep the process alive until the stdio stream closes or the process is interrupted.
   await new Promise((resolve) => {
-    const onClose = () => resolve();
+    const onClose = () => {
+      console.log('Shutting down codeflow MCP server...');
+      resolve();
+    };
     // Bun sometimes doesn't keep the event loop alive on stdio alone; explicitly wait.
     try { process.stdin.resume(); } catch {}
     try {

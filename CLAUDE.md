@@ -9,20 +9,24 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Architecture Overview
 
-This is an **Agentic Workflow CLI** built with **Bun** and **TypeScript** that manages opencode agents and commands for AI-assisted development workflows.
+This is a **Codeflow Automation Enhancement CLI** built with **Bun** and **TypeScript** that manages agents and commands for AI-assisted development workflows.
 
 ### Core Structure
 
 - **CLI Entry Point**: `src/cli/index.ts` - Main CLI with `pull`, `status`, and `version` commands
 - **Agent Definitions**: `/agent/` - Specialized subagents for codebase analysis and research
 - **Command Prompts**: `/command/` - Complex workflow commands that orchestrate multiple agents
-- **Workflow Documentation**: `/README.md` - Contains the full agentic workflow process
+- **Workflow Documentation**: `/README.md` - Contains the full codeflow automation process
 
 ### Key Components
 
 **CLI Commands**:
-- `agentic pull [project-path]` - Copies agents and commands to a project's `.opencode` directory
-- `agentic status [project-path]` - Checks which files are up-to-date or outdated
+- `codeflow setup [project-path]` - Sets up codeflow directory structure and copies agents/commands
+- `codeflow status [project-path]` - Checks which files are up-to-date or outdated
+- `codeflow sync [project-path]` - Synchronizes agents and commands with global configuration
+- `codeflow watch start` - Starts file watching for automatic synchronization
+- `codeflow convert` - Converts agents between different formats
+- `codeflow mcp configure` - Configures MCP server integration
 
 **Core Workflow Agent Types**:
 - `codebase-locator` - Finds WHERE files and components exist
@@ -57,8 +61,8 @@ This is an **Agentic Workflow CLI** built with **Bun** and **TypeScript** that m
 **Slash Commands Available**:
 - **Claude Code**: Commands in `.claude/commands/` (YAML frontmatter format)
 - **OpenCode**: Commands in `.opencode/command/` (YAML frontmatter with agent/model specs)
-- Use `agentic commands` to list all available slash commands and their descriptions
-- Commands are automatically copied to projects via `agentic pull [project-path]`
+- Use `codeflow commands` to list all available slash commands and their descriptions
+- Commands are automatically copied to projects via `codeflow setup [project-path]`
 
 ### Workflow Philosophy
 
@@ -73,9 +77,9 @@ The system emphasizes **context compression** and **fresh analysis** over cachin
 
 The system now includes **Model Context Protocol (MCP)** support:
 
-- **MCP Server**: `mcp/agentic-server.mjs` - Provides dynamic access to all workflow components
+- **MCP Server**: `mcp/codeflow-server.mjs` - Provides dynamic access to all workflow components
 - **Tool Discovery**: Auto-registers commands and agents as MCP tools
-- **Stable Naming**: Semantic tool names for predictable access (e.g., `agentic.command.research`)
+- **Stable Naming**: Semantic tool names for predictable access (e.g., `codeflow.command.research`)
 - **Client Support**: Compatible with Claude Desktop, OpenCode, and other MCP clients
 
 ### Development Notes
@@ -84,6 +88,6 @@ The system now includes **Model Context Protocol (MCP)** support:
 - CLI binary linked via `bun link` for global access
 - TypeScript configured for ES modules with Bun-specific types
 - **MCP Dependencies**: `@modelcontextprotocol/sdk`, `zod` for server implementation
-- No test framework currently configured
+- Comprehensive test framework with unit, integration, and E2E tests
 - See `AGENT_REGISTRY.md` for complete agent capabilities and usage guidelines
 - See `MCP_INTEGRATION.md` for MCP server setup and tool reference

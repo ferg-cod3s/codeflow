@@ -1,5 +1,6 @@
 import { readFile } from "node:fs/promises";
 import { basename } from "node:path";
+import { globalPerformanceMonitor, globalFileReader } from "../optimization/performance.js";
 
 /**
  * Base agent format used in /agent/ directory
@@ -148,8 +149,24 @@ function parseFrontmatter(content: string): { frontmatter: any; body: string } {
  * Parse an agent file from any format
  */
 export async function parseAgentFile(filePath: string, format: 'base' | 'claude-code' | 'opencode'): Promise<Agent> {
+  const parseCache = globalPerformanceMonitor.getParseCache();
+  
+  // Check cache first
+  const cached = await parseCache.get(filePath);
+  if (cached) {
+    if ('frontmatter' in cached) {
+      // Cached successful parse
+      return cached;
+    } else {
+      // Cached error
+      throw new Error(cached.message);
+    }
+  }
+
+  const parseStart = performance.now();
+  
   try {
-    const content = await readFile(filePath, 'utf-8');
+    const content = await globalFileReader.readFile(filePath);
     const { frontmatter, body } = parseFrontmatter(content);
     
     // Validate required fields
@@ -157,15 +174,31 @@ export async function parseAgentFile(filePath: string, format: 'base' | 'claude-
       throw new Error('Agent must have a description field');
     }
     
-    return {
+    const agent: Agent = {
       name: basename(filePath, '.md'),
       format,
       frontmatter,
       content: body,
       filePath
     };
+
+    // Cache successful parse
+    await parseCache.set(filePath, agent);
+    
+    const parseTime = performance.now() - parseStart;
+    globalPerformanceMonitor.updateMetrics({ agentParseTime: parseTime });
+    
+    return agent;
   } catch (error: any) {
-    throw new Error(`Failed to parse agent file ${filePath}: ${error.message}`);
+    const parseError: ParseError = {
+      message: `Failed to parse agent file ${filePath}: ${error.message}`,
+      filePath
+    };
+    
+    // Cache the error
+    await parseCache.setError(filePath, parseError);
+    
+    throw new Error(parseError.message);
   }
 }
 

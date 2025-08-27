@@ -118,13 +118,14 @@ export async function mcpServer(action: string, options: { background?: boolean,
       
     case "status":
       // Check if MCP server is running
+      const { execSync: statusExecSync } = await import("node:child_process");
       try {
         if (process.platform === "win32") {
-          const output = execSync('tasklist /fi "IMAGENAME eq bun.exe" /fo csv', { encoding: "utf-8" });
+          const output = statusExecSync('tasklist /fi "IMAGENAME eq bun.exe" /fo csv', { encoding: "utf-8" });
           const isRunning = output.includes("codeflow-server");
           console.log(isRunning ? "✅ MCP Server is running" : "❌ MCP Server is not running");
         } else {
-          execSync("pgrep -f 'codeflow-server.mjs'", { stdio: "ignore" });
+          statusExecSync("pgrep -f 'codeflow-server.mjs'", { stdio: "ignore" });
           console.log("✅ MCP Server is running");
         }
       } catch {

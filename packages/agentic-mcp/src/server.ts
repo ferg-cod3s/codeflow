@@ -6,9 +6,23 @@ import url from "node:url";
 import crypto from "node:crypto";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { buildSafeAgentRegistry, categorizeAgents, suggestAgents, type Agent, type AgentCategories } from './agent-registry.js';
+import { 
+  spawnAgentTask, 
+  executeParallelAgents, 
+  executeSequentialAgents, 
+  createWorkflowOrchestrator,
+  validateAgentExecution,
+  type WorkflowOrchestrator 
+} from './agent-spawner.js';
 
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// Global agent registry - initialized once on server startup
+let globalAgentRegistry: Map<string, Agent> | null = null;
+let agentCategories: AgentCategories | null = null;
+let workflowOrchestrator: WorkflowOrchestrator | null = null;
 
 // Core workflow commands - these are generic and PII-safe
 const CORE_COMMANDS = [
@@ -399,9 +413,54 @@ async function buildTools() {
   return tools;
 }
 
+/**
+ * Add agent context to command content
+ */
+function addAgentContext(commandContent: string, context: { availableAgents: string[], agentCategories: AgentCategories, totalAgents: number }): string {
+  const agentSection = [
+    '## Available Agents',
+    '',
+    '### Agent Categories:'
+  ];
+  
+  for (const [category, agents] of Object.entries(context.agentCategories)) {
+    if (agents.length > 0) {
+      agentSection.push(`**${category}**: ${agents.join(', ')}`);
+    }
+  }
+  
+  agentSection.push('');
+  agentSection.push('### Agent Functions Available:');
+  agentSection.push('- `spawnAgent(agentId, task)` - Execute a single agent');
+  agentSection.push('- `parallelAgents(agentIds, tasks)` - Execute multiple agents in parallel');
+  agentSection.push('- `suggestAgents(taskDescription)` - Get agent recommendations');
+  agentSection.push('- `executeResearchWorkflow(domain, query)` - Run research workflow');
+  agentSection.push('- `executePlanningWorkflow(requirements, context)` - Run planning workflow');
+  agentSection.push('');
+  
+  return commandContent + '\n\n' + agentSection.join('\n');
+}
+
 async function run() {
-  console.error("🚀 Starting CodeFlow MCP Server");
+  console.error("🚀 Starting CodeFlow MCP Server with Agent Support");
   console.error(`📁 Working directory: ${process.cwd()}`);
+  
+  // Initialize agent registry on startup
+  try {
+    console.error('🤖 Building agent registry...');
+    globalAgentRegistry = await buildSafeAgentRegistry();
+    agentCategories = categorizeAgents(globalAgentRegistry);
+    workflowOrchestrator = createWorkflowOrchestrator(globalAgentRegistry);
+    console.error(`✅ Agent registry initialized with ${globalAgentRegistry.size} agents`);
+  } catch (error: any) {
+    console.error('❌ Failed to initialize agent registry:', error.message);
+    // Continue without agents rather than failing completely
+    globalAgentRegistry = new Map();
+    agentCategories = {
+      codebase: [], research: [], planning: [], development: [],
+      testing: [], operations: [], business: [], design: [], specialized: []
+    };
+  }
   
   const server = new McpServer({ 
     name: "agentic-codeflow-mcp-server", 
@@ -414,23 +473,38 @@ async function run() {
 
   console.error(`🛠️  Registered ${toolEntries.length} tools: ${toolEntries.map(t => t.id).join(', ')}`);
 
-  // Register each core workflow command
+  // Register each core workflow command with agent context
   for (const entry of toolEntries) {
     server.registerTool(
       entry.id,
       {
         title: entry.id,
-        description: entry.description,
+        description: entry.description + " (Enhanced with agent orchestration capabilities)",
       },
       async () => {
-        let content = commandCache.get(entry.id);
-        if (!content) {
-          content = await entry.getContent();
-          commandCache.set(entry.id, content);
+        let commandContent = commandCache.get(entry.id);
+        if (!commandContent) {
+          commandContent = await entry.getContent();
+          commandCache.set(entry.id, commandContent);
+        }
+        
+        // Enhanced context with available agents
+        if (globalAgentRegistry && agentCategories) {
+          const context = {
+            availableAgents: Array.from(globalAgentRegistry.keys()),
+            agentCategories,
+            totalAgents: globalAgentRegistry.size
+          };
+          
+          // Add agent context information to command content
+          const enhancedContent = addAgentContext(commandContent, context);
+          return {
+            content: [{ type: "text", text: enhancedContent }],
+          };
         }
         
         return {
-          content: [{ type: "text", text: content }],
+          content: [{ type: "text", text: commandContent }],
         };
       }
     );
@@ -465,12 +539,24 @@ async function run() {
         };
       }
       
-      const content = await tool.getContent();
+      let content = await tool.getContent();
+      
+      // Enhanced context with available agents
+      if (globalAgentRegistry && agentCategories) {
+        const context = {
+          availableAgents: Array.from(globalAgentRegistry.keys()),
+          agentCategories,
+          totalAgents: globalAgentRegistry.size
+        };
+        
+        content = addAgentContext(content, context);
+      }
+      
       return { content: [{ type: "text", text: content }] };
     }
   );
 
-  console.error("✅ MCP Server ready");
+  console.error(`✅ MCP Server ready with ${globalAgentRegistry?.size || 0} agents available`);
   
   await server.connect(transport);
   
@@ -499,7 +585,7 @@ async function run() {
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   run().catch((err) => {
-    console.error("❌ CodeFlow MCP server failed:", err);
+    console.error("❌ CodeFlow MCP server failed:", err.message || err);
     process.exit(1);
   });
 }

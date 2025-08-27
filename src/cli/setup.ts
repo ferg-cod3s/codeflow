@@ -1,6 +1,7 @@
 import { readdir, mkdir, copyFile, stat, writeFile, readFile } from "node:fs/promises";
 import { join, basename } from "node:path";
 import { existsSync } from "node:fs";
+import { validatePath, secureFileOperation, sanitizeInput } from "../security/validation.js";
 
 interface ProjectType {
   name: string;
@@ -252,8 +253,21 @@ Commands are in \`.opencode/command/\`.
 }
 
 export async function setup(projectPath: string | undefined, options: { force?: boolean, type?: string } = {}) {
-  // Resolve project path
-  const resolvedPath = projectPath ? (projectPath.startsWith('/') ? projectPath : join(process.cwd(), projectPath)) : process.cwd();
+  // Validate and sanitize inputs
+  if (options.type) {
+    options.type = sanitizeInput(options.type);
+  }
+
+  // Resolve and validate project path
+  const inputPath = projectPath ? projectPath : process.cwd();
+  const pathValidation = await validatePath(inputPath);
+  
+  if (!pathValidation.isValid) {
+    console.error(`❌ Invalid project path: ${pathValidation.error}`);
+    process.exit(1);
+  }
+  
+  const resolvedPath = pathValidation.sanitizedPath!;
   
   if (!existsSync(resolvedPath)) {
     console.error(`❌ Directory does not exist: ${resolvedPath}`);

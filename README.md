@@ -1,12 +1,12 @@
-# Agentic Workflow
+# Codeflow Automation Enhancement
 
-This repo has the agents and command prompts that I use for my agentic workflow. Right now it's just the bare prompts, in the future I'll aim to make it more dynamic and include some tooling to help manage the workflow.
+This repo contains the agents and command prompts for the codeflow automation system. It provides a comprehensive workflow management system with dynamic tooling, agent orchestration, and seamless integrations.
 
 **IMPORTANT** Between each phase you MUST review the outputs for correctness. This is YOUR job, not the models. It may produce working results, but that doesn't mean they are correct for your project or product. Keep in mind that the more times you run this system, the more it will use itself as a baselines for future workflow runs. So spending a bit of time to ensure the early research is correct is important as it will make the system run more smoothly in the future!
 
 ## Installation
 
-To install the `agentic` command globally:
+To install the `codeflow` command globally:
 
 ```bash
 # Install dependencies and link globally
@@ -18,18 +18,18 @@ bun run install
 
 ### Push files to a project
 ```bash
-agentic pull ~/projects/my-app
-agentic pull ../other-project --dry-run
+codeflow setup ~/projects/my-app
+codeflow setup ../other-project --dry-run
 ```
 
 ### Check status of files
 ```bash
-agentic status ~/projects/my-app
+codeflow status ~/projects/my-app
 ```
 
 ## Platform Integration
 
-The agentic workflow system supports **three integration approaches**:
+The codeflow automation system supports **three integration approaches**:
 
 ### **Claude Code**: Native Slash Commands
 - Built-in `/research`, `/plan`, `/execute` commands
@@ -37,14 +37,14 @@ The agentic workflow system supports **three integration approaches**:
 - Commands stored in `.claude/commands/`
 
 ### **NPM Package**: Universal MCP Server
-- **Quick start**: `npx @agentic/mcp-server`
+- **Quick start**: `npx @codeflow/mcp-server`
 - Works with Claude Desktop, OpenCode, any MCP client
 - Privacy-safe built-in templates
 - No project setup required
 
 ### **Full Integration**: Project-Aware MCP
 - Enhanced with project-specific customizations
-- Uses agentic CLI for setup and management
+- Uses codeflow CLI for setup and management
 - Combines NPM package with local commands
 
 ## Quick Start Options
@@ -52,15 +52,15 @@ The agentic workflow system supports **three integration approaches**:
 ### Option 1: NPX (Instant Setup)
 ```bash
 # Instant MCP server - no installation required
-npx @agentic/mcp-server
+npx @codeflow/mcp-server
 
 # Configure Claude Desktop
 # Add to ~/.../Claude/claude_desktop_config.json:
 {
   "mcpServers": {
-    "agentic-workflows": {
+    "codeflow-workflows": {
       "command": "npx", 
-      "args": ["@agentic/mcp-server"]
+      "args": ["@codeflow/mcp-server"]
     }
   }
 }
@@ -69,27 +69,27 @@ npx @agentic/mcp-server
 ### Option 2: Project-Aware Setup
 ```bash
 # Intelligent setup - detects Claude Code vs MCP needs automatically
-agentic setup ~/my-project
+codeflow setup ~/my-project
 
 # Or force specific type
-agentic setup ~/my-project --type claude-code   # Claude Code only
-agentic setup ~/my-project --type opencode      # MCP integration only  
-agentic setup ~/my-project --type general       # Both (default)
+codeflow setup ~/my-project --type claude-code   # Claude Code only
+codeflow setup ~/my-project --type opencode      # MCP integration only  
+codeflow setup ~/my-project --type general       # Both (default)
 ```
 
 ### Option 3: Full CLI Management
 ```bash
 # Start MCP server for current project
-agentic mcp start
+codeflow mcp start
 
 # Start in background
-agentic mcp start --background
+codeflow mcp start --background
 
 # Configure Claude Desktop automatically
-agentic mcp configure claude-desktop
+codeflow mcp configure claude-desktop
 
 # Check status
-agentic mcp status
+codeflow mcp status
 ```
 
 ## Integration Comparison
@@ -115,11 +115,11 @@ agentic mcp status
 
 **Documentation**:
 - 🏗️ [Architecture Overview](./ARCHITECTURE_OVERVIEW.md) - Native slash commands vs MCP integration
-- 📦 [NPM Package](./packages/agentic-mcp/README.md) - Standalone MCP server via NPX
+- 📦 [NPM Package](./packages/codeflow-mcp/README.md) - Standalone MCP server via NPX
 - 🚀 [Quick Start Guide](./MCP_QUICKSTART.md) - Get running in 5 minutes
 - 📖 [Complete Integration Guide](./MCP_INTEGRATION.md) - Full technical documentation
 - 💡 [Usage Examples](./MCP_USAGE_EXAMPLES.md) - Practical workflow examples
-- 🔧 [Cross-Repository Setup](./CROSS_REPO_SETUP.md) - Use agentic from any project
+- 🔧 [Cross-Repository Setup](./CROSS_REPO_SETUP.md) - Use codeflow from any project
 - 🚨 [Troubleshooting Guide](./TROUBLESHOOTING.md) - Fix common issues
 
 ## Setup
@@ -176,7 +176,7 @@ The process really start with the commands, as the subagents are laregely used b
 Whether it's a an issue, feature request or larger piece of work, each workflow should start with doing codebase and thought analysis. Thought analsis will build up over time as you start with very little, so initially this focuses more heavily on the codebase analysis. If you want the research to include web searches, instruct the agent to do so when giving it instructions on what to research. Any files mentioned will be read fully, otherwise the subagents will perform a combination keyword lookups and pattern matching to find relevant parts of the codebase before analyzing.
 
 ```
-/research thourghts/shared/tickets/web-042.md wants to add google oauth provider, find all the relevant information about the authentication system currently in place. Then review the documentation for someAuth.js to determine how to properly add google oauth.
+/research thoughts/shared/tickets/web-042.md wants to add google oauth provider, find all the relevant information about the authentication system currently in place. Then review the documentation for someAuth.js to determine how to properly add google oauth.
 ```
 
 This will produce a concise report on everything that is needed to further plan out updates to the auth system.
@@ -190,7 +190,7 @@ Once you have research we can then create an implementation plan. This one is ge
 Create a new context window then run the following command
 
 ```
-/plan_create read thoughts/shared/tickets/web-042.md and thoughts/shared/research/TIMESTAMP_google-oauth-research.md and prepare an implementation plan.
+/plan read thoughts/shared/tickets/web-042.md and thoughts/shared/research/TIMESTAMP_google-oauth-research.md and prepare an implementation plan.
 ```
 
 This is the same as the research phase, let it run, then review the results. This output will be far more specific with files and line numbers and descriptions of what is being changed at each spot. This is just short of actual code gen, but still reviewable to ensure that the implementation goes smoothly.
@@ -202,7 +202,7 @@ This one is pretty straightforward, you have the plan, let it rip.
 Create a new context window and run:
 
 ```
-/plan_execute thoughts/shared/plans/the-plan.md
+/execute thoughts/shared/plans/the-plan.md
 ```
 
 Once it's done, you should review the work, but we will have additional quality assurance phases.

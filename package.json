@@ -8,16 +8,19 @@
   "scripts": {
     "install": "bun link",
     "typecheck": "tsc --noEmit",
+    "test": "bun test",
+    "test:watch": "bun test --watch",
+    "test:coverage": "bun test --coverage",
     "mcp:server": "bun run mcp/codeflow-server.mjs",
     "mcp:dev": "bun run --watch mcp/codeflow-server.mjs"
   },
   "dependencies": {
-    "codeflow": "link:codeflow"
+    "codeflow": "link:codeflow",
+    "@modelcontextprotocol/sdk": "^1.17.4",
+    "zod": "^4.1.1"
   },
   "devDependencies": {
-    "@modelcontextprotocol/sdk": "^1.17.4",
     "@types/bun": "latest",
-    "typescript": "^5.9.2",
-    "zod": "^4.1.1"
+    "typescript": "^5.9.2"
   }
 }

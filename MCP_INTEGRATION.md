@@ -2,13 +2,13 @@
 
 ## Overview
 
-The Agentic Workflow CLI now includes **Model Context Protocol (MCP)** integration, enabling AI clients to access agentic commands and agents directly through a standardized server interface. This allows seamless integration with MCP-compatible AI systems like Claude Desktop, providing dynamic access to all workflow components.
+The Codeflow Automation Enhancement CLI now includes **Model Context Protocol (MCP)** integration, enabling AI clients to access codeflow commands and agents directly through a standardized server interface. This allows seamless integration with MCP-compatible AI systems like Claude Desktop, providing dynamic access to all workflow components.
 
 ## Architecture
 
 ### MCP Server Implementation
 
-The MCP server is implemented in `mcp/agentic-server.mjs` and provides:
+The MCP server is implemented in `mcp/codeflow-server.mjs` and provides:
 
 - **Dynamic Tool Discovery**: Automatically registers all commands and agents as MCP tools
 - **Stable Naming**: Provides both unique IDs and stable semantic names for consistency
@@ -19,7 +19,7 @@ The MCP server is implemented in `mcp/agentic-server.mjs` and provides:
 
 ```javascript
 // Core server setup
-const server = new McpServer({ name: "agentic-tools", version: "0.1.0" });
+const server = new McpServer({ name: "codeflow-tools", version: "1.0.0" });
 const transport = new StdioServerTransport();
 
 // Dynamic tool registration from filesystem
@@ -29,9 +29,9 @@ const toolEntries = await buildTools();
 ### Tool Categories
 
 **Core Workflow Commands** (`/command/*.md`):
-- The 7 essential agentic workflow commands
-- Registered with stable names like `agentic.command.research`
-- Works from any repository that has been set up with `agentic pull`
+- The 7 essential codeflow workflow commands
+- Registered with stable names like `codeflow.command.research`
+- Works from any repository that has been set up with `codeflow setup`
 
 **Note**: Agents are internal implementation details used by commands and are not exposed as MCP tools. The commands handle all orchestration of specialized agents automatically.
 
@@ -68,9 +68,9 @@ Each tool gets both a unique ID (with hash for collision prevention) and a stabl
 ### Stable Name Aliases
 
 ```javascript
-// Commands: agentic.command.{slug}
-// Core Agents: agentic.agent.{slug}  
-// OpenCode Agents: agentic.agent.opencode.{slug}
+// Commands: codeflow.command.{slug}
+// Core Agents: codeflow.agent.{slug}  
+// OpenCode Agents: codeflow.agent.opencode.{slug}
 ```
 
 This dual naming system ensures tools remain accessible even if file paths change.
@@ -122,9 +122,9 @@ Add to Claude Desktop's MCP settings:
 ```json
 {
   "mcpServers": {
-    "agentic-tools": {
+    "codeflow-tools": {
       "command": "node",
-      "args": ["/path/to/agentic/mcp/agentic-server.mjs"],
+      "args": ["/path/to/codeflow/mcp/codeflow-server.mjs"],
       "env": {}
     }
   }
@@ -157,15 +157,15 @@ async function buildTools() {
 The MCP server now works from any directory or repository:
 
 ```javascript
-function findAgenticPaths() {
+function findCodeflowPaths() {
   const cwd = process.cwd();
-  const cwdCommandDir = path.join(cwd, ".opencode", "command");
+  const cwdCommandDir = path.join(cwd, ".codeflow", "command");
   const cwdClaudeCommandDir = path.join(cwd, ".claude", "commands");
-  const agenticCommandDir = path.join(agenticRoot, "command");
+  const codeflowCommandDir = path.join(codeflowRoot, "command");
   
   return {
-    // Priority: .opencode/command, .claude/commands, then agentic/command
-    commandDirs: [cwdCommandDir, cwdClaudeCommandDir, agenticCommandDir]
+    // Priority: .codeflow/command, .claude/commands, then codeflow/command
+    commandDirs: [cwdCommandDir, cwdClaudeCommandDir, codeflowCommandDir]
   };
 }
 ```

@@ -1,7 +1,7 @@
 {
   "name": "@agentic-codeflow/mcp-server",
-  "version": "0.1.1",
-  "description": "MCP server for Agentic CodeFlow AI-assisted development workflows",
+  "version": "0.2.0",
+  "description": "MCP server for Agentic CodeFlow AI-assisted development workflows with internal agent orchestration",
   "type": "module",
   "main": "dist/server.js",
   "bin": {
@@ -10,6 +10,8 @@
   "files": [
     "dist/**/*",
     "commands/**/*",
+    "src/agent-registry.ts",
+    "src/agent-spawner.ts",
     "README.md",
     "LICENSE"
   ],

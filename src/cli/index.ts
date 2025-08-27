@@ -8,6 +8,7 @@ import { mcpServer, mcpConfigure, mcpList } from "./mcp";
 import { convert, convertAll, listDifferences } from "./convert";
 import { syncGlobalAgents, checkGlobalSync } from "./sync";
 import { syncAllFormats, showFormatDifferences } from "./sync-formats";
+import { startWatch, stopWatch, watchStatus, watchLogs, restartWatch } from "./watch";
 import packageJson from "../../package.json";
 
 let values: any;
@@ -50,6 +51,39 @@ try {
         default: true,
       },
       "dry-run": {
+        type: "boolean",
+        default: false,
+      },
+      global: {
+        type: "boolean",
+        short: "g",
+        default: false,
+      },
+      projects: {
+        type: "string",
+        short: "p",
+      },
+      "auto-convert": {
+        type: "boolean",
+        default: true,
+      },
+      "health-check": {
+        type: "string",
+        default: "15",
+      },
+      follow: {
+        type: "boolean",
+        default: false,
+      },
+      lines: {
+        type: "string",
+        default: "50",
+      },
+      clear: {
+        type: "boolean",
+        default: false,
+      },
+      json: {
         type: "boolean",
         default: false,
       },
@@ -107,6 +141,13 @@ MCP Server:
   mcp configure <client>     Configure MCP client (claude-desktop)
   mcp list                   List available MCP tools and usage
 
+File Watching:
+  watch start [options]      Start automatic file synchronization daemon
+  watch stop                 Stop file watching daemon
+  watch status               Show daemon status and activity
+  watch logs [options]       View daemon logs
+  watch restart [options]    Restart the daemon
+
 Information:
   commands                   List available slash commands
   version                    Show the version of codeflow
@@ -123,6 +164,16 @@ Conversion Options:
 MCP Options:
   -b, --background          Run MCP server in background
   -r, --remove              Remove MCP client configuration
+
+Watch Options:
+  -g, --global              Watch global directories
+  -p, --projects <paths>    Comma-separated project directories to watch
+  --auto-convert            Enable automatic format conversion (default: true)
+  --health-check <minutes>  Health check interval in minutes (default: 15)
+  --follow                  Follow logs in real-time
+  --lines <count>           Number of log lines to show (default: 50)
+  --clear                   Clear log file
+  --json                    Output status in JSON format
 
 Examples:
   # Smart project setup (detects Claude Code vs MCP needs)
@@ -144,6 +195,16 @@ Examples:
   
   # Configure Claude Desktop for MCP
   codeflow mcp configure claude-desktop
+  
+  # Start file watching with global sync
+  codeflow watch start --global
+  
+  # Watch specific projects
+  codeflow watch start --projects ~/project1,~/project2
+  
+  # View daemon status and logs
+  codeflow watch status
+  codeflow watch logs --follow
 `);
   process.exit(0);
 }
@@ -237,10 +298,11 @@ switch (command) {
     await listDifferences(args[1]);
     break;
   case "sync-formats":
+    const direction = args[1] as 'to-all' | 'from-opencode' | 'bidirectional' | undefined;
     await syncAllFormats({
       validate: values.validate !== false,
       dryRun: values["dry-run"],
-      direction: args[1] || 'from-opencode'
+      direction: direction || 'from-opencode'
     });
     break;
   case "sync-global":
@@ -251,6 +313,56 @@ switch (command) {
     break;
   case "show-format-differences":
     await showFormatDifferences();
+    break;
+  case "watch":
+    const watchAction = args[1];
+    const codeflowRoot = import.meta.dir + "/../.."; // Get codeflow root directory
+    
+    if (!watchAction) {
+      console.error("Error: watch action required");
+      console.error("Usage: codeflow watch <action>");
+      console.error("Available actions: start, stop, status, logs, restart");
+      process.exit(1);
+    }
+    
+    switch (watchAction) {
+      case "start":
+        await startWatch(codeflowRoot, {
+          global: values.global,
+          projects: values.projects,
+          autoConvert: values["auto-convert"],
+          healthCheck: parseInt(values["health-check"]),
+          background: !values.foreground // Default to background unless --foreground specified
+        });
+        break;
+      case "stop":
+        await stopWatch();
+        break;
+      case "status":
+        await watchStatus({
+          json: values.json
+        });
+        break;
+      case "logs":
+        await watchLogs({
+          follow: values.follow,
+          lines: parseInt(values.lines),
+          clear: values.clear
+        });
+        break;
+      case "restart":
+        await restartWatch(codeflowRoot, {
+          global: values.global,
+          projects: values.projects,
+          autoConvert: values["auto-convert"],
+          healthCheck: parseInt(values["health-check"])
+        });
+        break;
+      default:
+        console.error(`Error: Unknown watch action '${watchAction}'`);
+        console.error("Available actions: start, stop, status, logs, restart");
+        process.exit(1);
+    }
     break;
   case "version":
     console.log(`Codeflow ${packageJson.version}`);
