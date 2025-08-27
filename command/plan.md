@@ -10,18 +10,18 @@ You are tasked with creating detailed implementation plans through an interactiv
 
 ### Step 1: Context Gathering & Initial Analysis
 
-1. **Read all mentioned <files> immediately and FULLY**:
+1. **Read all mentioned files immediately and FULLY**:
    - Ticket files (e.g., `thoughts/tickets/eng_1234.md`)
    - Research documents
    - Related implementation plans
    - Any JSON/data files mentioned
-   - **IMPORTANT**: Use the Read tool WITHOUT limit/offset parameters to read entire <files>
-   - **CRITICAL**: DO NOT spawn sub-tasks before reading these <files> yourself in the main context
+   - **IMPORTANT**: Use the Read tool WITHOUT limit/offset parameters to read entire files
+   - **CRITICAL**: DO NOT spawn sub-tasks before reading these files yourself in the main context
 
 2. **Spawn initial research tasks to gather context**:
    Before asking the user any questions, use specialized agents to research in parallel:
 
-   - Use the **codebase-locator** task to find all files related to the <files> given by the user
+   - Use the **codebase-locator** task to find all files related to the files given by the user
    - Use the **codebase-analyzer** task to understand how the current implementation works
    - If relevant, use the **thoughts-locator** task to find any existing thoughts documents about this feature
 
@@ -369,6 +369,6 @@ When spawning research sub-tasks:
    - Don't accept results that seem incorrect
 
 
-<files>
+**files**
+
 $ARGUMENTS
-</files>

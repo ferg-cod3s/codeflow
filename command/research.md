@@ -6,18 +6,18 @@ description: Research a ticket or provide a prompt for ad-hoc research. It is be
 
 You are tasked with conducting comprehensive research across the codebase to answer user questions by spawning tasks and synthesizing their findings.
 
-The user will provide a <ticket> for you to read and begin researching.
+The user will provide a ticket for you to read and begin researching.
 
 ## Steps to follow after receiving the research query:
 
-1. **Read the <ticket> first:**
+1. **Read the ticket first:**
    - **IMPORTANT**: Use the Read tool WITHOUT limit/offset parameters to read entire files
    - **CRITICAL**: Read these files yourself in the main context before spawning any sub-tasks
    - This ensures you have full context before decomposing the research
 
-2. **Analyze and decompose the <ticket>:**
-   - Break down the user's <ticket> into composable research areas
-   - Take time to think about the underlying patterns, connections, and architectural the <ticket> has provided
+2. **Analyze and decompose the ticket:**
+   - Break down the user's ticket into composable research areas
+   - Take time to think about the underlying patterns, connections, and architectural the ticket has provided
    - Identify specific components, patterns, or concepts to investigate
    - Create a research plan using TodoWrite to track all subtasks
    - Consider which directories, files, or architectural patterns are relevant
@@ -65,26 +65,23 @@ The user will provide a <ticket> for you to read and begin researching.
 
 Use the following metadata for the research document frontmatter:
 
-<metadata>
+**metadata for frontmatter**
+
 !`agentic metadata`
-</metadata>
 
 6. **Generate research document:**
-   - Filename: `thoughts/research/<date>_topic.md`
+   - Filename: `thoughts/research/date_topic.md`
    - Use the metadata gathered in step 5, mapping XML tags to frontmatter fields
    - Structure the document with YAML frontmatter followed by content:
      ```markdown
      ---
      date: [Current date and time with timezone in ISO format]
-     researcher: Opus
-     git_commit: <git_commit>
-     branch: <branch>
-     repository: <repository>
+     git_commit: [from metadata]
+     branch: [from metadata]
+     repository: [from metadata]
      topic: "[User's Question/Topic]"
      tags: [research, codebase, relevant-component-names]
-     status: complete
-     last_updated: <last_updated>
-     last_updated_by: Opus
+     last_updated: [from metadata]
      ---
 
      ## Ticket Synopsis
@@ -164,4 +161,7 @@ Use the following metadata for the research document frontmatter:
   - Use snake_case for multi-word field names (e.g., `last_updated`, `git_commit`)
   - Tags should be relevant to the research topic and components studied
 
-<ticket>$ARGUMENTS</ticket>
+**ticket**
+
+$ARGUMENTS
+

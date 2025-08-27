@@ -10,8 +10,7 @@ You are tasked with creating git commits for the changes made during this sessio
 
 1. **Think about what changed:**
    - Review the conversation history and understand what was accomplished
-   - Review the <git-status> to get an idea of what files changed
-   - Review the <git-diff> to understand the modifications
+   - Review the `git status` to get an idea of what files changed
    - Consider whether changes should be one commit or multiple logical commits
 
 2. **Plan your commit(s):**
@@ -28,7 +27,7 @@ You are tasked with creating git commits for the changes made during this sessio
 4. **Execute upon confirmation:**
    - Use `git add` with specific files (never use `-A` or `.`)
    - Create commits with your planned messages
-   - Show the result with `git log --oneline -n [number]`
+   - Show the result with `git log --oneline -n [N]`
 
 ## Remember:
 - You have the full context of what was done in this session
@@ -36,10 +35,7 @@ You are tasked with creating git commits for the changes made during this sessio
 - Keep commits focused and atomic when possible
 - The user trusts your judgment - they asked you to commit
 
-<git-status>
-!`git status -s`
-</git-status>
+**git status**
 
-<git-diff>
-!`git diff`
-</git-diff>
+!`git status -s`
+

@@ -65,6 +65,6 @@ If the plan has existing checkmarks:
 
 Remember: You're implementing a solution, not just checking boxes. Keep the end goal in mind and maintain forward momentum.
 
-<plan>
+**plan**
+
 $ARGUMENTS
-</plan>

@@ -146,7 +146,7 @@ Extract and organize information specifically for the research phase:
 - Security requirements
 
 ### Step 5: Ticket Creation
-Create the ticket file at: `thoughts/tickets/<type>_<subject>.md`
+Create the ticket file at: `thoughts/tickets/type_subject.md`
 
 Use this template structure:
 
@@ -155,7 +155,6 @@ Use this template structure:
 type: [bug|feature|debt]
 priority: [high|medium|low]
 created: [ISO date]
-created_by: Opus
 status: open
 tags: [relevant-tags]
 keywords: [comma-separated keywords for research]
