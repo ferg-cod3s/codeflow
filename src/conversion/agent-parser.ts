@@ -124,10 +124,14 @@ function parseFrontmatter(content: string): { frontmatter: any; body: string } {
       // Handle different value types
       if (value === 'true' || value === 'false') {
         frontmatter[key] = value === 'true';
-      } else if (!isNaN(Number(value)) && value !== '') {
+      } else if (!isNaN(Number(value)) && value !== '' && !value.includes('/')) {
+        // Don't convert model names like "github-copilot/gpt-5" to numbers
         frontmatter[key] = Number(value);
       } else if (value.startsWith('"') && value.endsWith('"')) {
         frontmatter[key] = value.slice(1, -1);
+      } else if (key === 'temperature' && !isNaN(Number(value)) && value !== '') {
+        // Explicitly handle temperature as number
+        frontmatter[key] = Number(value);
       } else {
         frontmatter[key] = value;
       }

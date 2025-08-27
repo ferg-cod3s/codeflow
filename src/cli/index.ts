@@ -6,6 +6,8 @@ import { status } from "./status";
 import { setup } from "./setup";
 import { mcpServer, mcpConfigure, mcpList } from "./mcp";
 import { convert, convertAll, listDifferences } from "./convert";
+import { syncGlobalAgents, checkGlobalSync } from "./sync";
+import { syncAllFormats, showFormatDifferences } from "./sync-formats";
 import packageJson from "../../package.json";
 
 let values: any;
@@ -89,10 +91,13 @@ Project Setup:
   pull [project-path]        Pull agents and commands to existing .opencode directory
   status [project-path]      Check which files are up-to-date or outdated
 
-Agent Conversion:
+Agent Management:
   convert <source> <target> <format>  Convert agents between formats
   convert-all                Convert all agent formats in project
+  sync-formats               Ensure all formats have the same agents
+  sync-global                Sync agents to global directories
   list-differences          Show differences between agent formats
+  show-format-differences   Detailed format difference analysis
 
 MCP Server:
   mcp start                  Start MCP server for current project
@@ -129,6 +134,10 @@ Examples:
   # Convert agents between formats
   codeflow convert ./agent ./claude-agents claude-code
   codeflow convert-all --dry-run
+  
+  # Sync agents across formats
+  codeflow sync-formats --dry-run
+  codeflow sync-global
   
   # Start MCP server for current project
   codeflow mcp start
@@ -226,6 +235,22 @@ switch (command) {
     break;
   case "list-differences":
     await listDifferences(args[1]);
+    break;
+  case "sync-formats":
+    await syncAllFormats({
+      validate: values.validate !== false,
+      dryRun: values["dry-run"],
+      direction: args[1] || 'from-opencode'
+    });
+    break;
+  case "sync-global":
+    await syncGlobalAgents({
+      validate: values.validate !== false,
+      dryRun: values["dry-run"]
+    });
+    break;
+  case "show-format-differences":
+    await showFormatDifferences();
     break;
   case "version":
     console.log(`Codeflow ${packageJson.version}`);
