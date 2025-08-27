@@ -1,18 +1,28 @@
-# Codeflow Automation Enhancement
+# Codeflow - Intelligent AI Workflow Management
 
-This repo contains the agents and command prompts for the codeflow automation system. It provides a comprehensive workflow management system with dynamic tooling, agent orchestration, and seamless integrations.
+Codeflow is a comprehensive automation system that provides intelligent AI workflow management with dynamic tooling, agent orchestration, and seamless multi-platform integrations.
 
-**IMPORTANT** Between each phase you MUST review the outputs for correctness. This is YOUR job, not the models. It may produce working results, but that doesn't mean they are correct for your project or product. Keep in mind that the more times you run this system, the more it will use itself as a baselines for future workflow runs. So spending a bit of time to ensure the early research is correct is important as it will make the system run more smoothly in the future!
-
-## Installation
-
-To install the `codeflow` command globally:
+## 🚀 Quick Installation
 
 ```bash
-# Install dependencies and link globally
-bun install
-bun run install
+# Clone and install globally
+git clone https://github.com/your-org/codeflow.git
+cd codeflow
+bun install && bun run install
+
+# Verify installation
+codeflow --version
+codeflow --help
 ```
+
+## 🎯 Core Features
+
+- **🤖 Agent Orchestration**: 54+ specialized agents for different domains
+- **⚡ Automatic Synchronization**: Real-time file watching and format conversion
+- **🌐 Cross-Platform**: Works on macOS, Windows, and Linux
+- **🔧 Multiple Integrations**: Claude Code, MCP Protocol, Universal NPM package
+- **📊 Format Conversion**: Automatic conversion between Base, Claude Code, and OpenCode formats
+- **🔍 Global Agent Access**: Agents available across all projects
 
 ## CLI Usage
 
