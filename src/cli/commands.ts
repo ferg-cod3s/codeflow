@@ -36,10 +36,10 @@ function parseMarkdownFrontmatter(content: string): { [key: string]: any } {
 
 function loadSlashCommands(): SlashCommand[] {
   const commands: SlashCommand[] = [];
-  const agenticRoot = path.resolve(__dirname, "../..");
+  const codeflowRoot = path.resolve(__dirname, "../..");
 
   // Load Claude Code commands
-  const claudeCommandsPath = path.join(agenticRoot, ".claude", "commands");
+  const claudeCommandsPath = path.join(codeflowRoot, ".claude", "commands");
   if (fs.existsSync(claudeCommandsPath)) {
     const files = fs.readdirSync(claudeCommandsPath).filter(f => f.endsWith('.md'));
     
@@ -58,7 +58,7 @@ function loadSlashCommands(): SlashCommand[] {
   }
 
   // Load OpenCode commands
-  const opencodeCommandsPath = path.join(agenticRoot, ".opencode", "command");
+  const opencodeCommandsPath = path.join(codeflowRoot, ".opencode", "command");
   if (fs.existsSync(opencodeCommandsPath)) {
     const files = fs.readdirSync(opencodeCommandsPath).filter(f => f.endsWith('.md'));
     
@@ -86,7 +86,7 @@ export async function commands(): Promise<void> {
     
     if (slashCommands.length === 0) {
       console.log("No slash commands found.");
-      console.log("Run 'agentic pull' to install agents and commands to a project.");
+      console.log("Run 'codeflow pull' to install agents and commands to a project.");
       return;
     }
 
@@ -127,7 +127,7 @@ export async function commands(): Promise<void> {
     console.log("  Claude Code: Type '/<command>' in Claude Code interface");
     console.log("  OpenCode: Type '/<command>' in OpenCode interface");
     console.log("\\n🚀 To install these commands to a project:");
-    console.log("  agentic pull [project-path]");
+    console.log("  codeflow pull [project-path]");
     
   } catch (error) {
     console.error("Error loading slash commands:", error);

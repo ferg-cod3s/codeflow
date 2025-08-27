@@ -9,26 +9,26 @@ import { z } from "zod";
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Function to find agentic installation or use fallback paths
-function findAgenticPaths() {
-  const agenticRoot = path.resolve(__dirname, "..");
+// Function to find codeflow installation or use fallback paths
+function findCodeflowPaths() {
+  const codeflowRoot = path.resolve(__dirname, "..");
   
   // Try current working directory first (for cross-repo usage)
   const cwd = process.cwd();
   const cwdCommandDir = path.join(cwd, ".opencode", "command");
   const cwdClaudeCommandDir = path.join(cwd, ".claude", "commands");
   
-  // Fallback to agentic installation
-  const agenticCommandDir = path.join(agenticRoot, "command");
+  // Fallback to codeflow installation
+  const codeflowCommandDir = path.join(codeflowRoot, "command");
   
   return {
-    // Priority order: .opencode/command, .claude/commands, then agentic/command
-    commandDirs: [cwdCommandDir, cwdClaudeCommandDir, agenticCommandDir],
-    agenticRoot
+    // Priority order: .opencode/command, .claude/commands, then codeflow/command
+    commandDirs: [cwdCommandDir, cwdClaudeCommandDir, codeflowCommandDir],
+    codeflowRoot
   };
 }
 
-const paths = findAgenticPaths();
+const paths = findCodeflowPaths();
 
 function toSlug(filePath) {
   const base = path.basename(filePath).replace(/\.[^.]+$/, "");
@@ -86,7 +86,7 @@ async function buildTools() {
       type: "command",
       slug,
       filePath,
-      description: `Agentic workflow: ${base}`,
+      description: `Codeflow workflow: ${base}`,
     });
   }
 
@@ -111,7 +111,7 @@ function toolSpecFromEntry(entry) {
 }
 
 async function run() {
-  const server = new McpServer({ name: "agentic-tools", version: "0.1.0" });
+  const server = new McpServer({ name: "codeflow-tools", version: "0.1.0" });
 
   const transport = new StdioServerTransport();
 
@@ -184,6 +184,6 @@ async function run() {
 }
 
 run().catch((err) => {
-  console.error("Agentic MCP server failed:", err);
+  console.error("Codeflow MCP server failed:", err);
   process.exit(1);
 });

@@ -26,15 +26,15 @@ export async function status(projectPath: string | undefined) {
   // Resolve the project path (will exit if invalid)
   const resolvedProjectPath = resolveProjectPath(projectPath);
   
-  // Load config - find the agentic installation directory
+  // Load config - find the codeflow installation directory
   // import.meta.dir gives us the src/cli directory
-  const agenticDir = join(import.meta.dir, "../..");
-  const configPath = join(agenticDir, "config.json");
+  const codeflowDir = join(import.meta.dir, "../..");
+  const configPath = join(codeflowDir, "config.json");
   const config = await Bun.file(configPath).json();
   const includes = config.pull?.include || ["agent", "command"];
   
   // Resolve paths
-  const sourcePath = agenticDir;
+  const sourcePath = codeflowDir;
   const targetBase = join(resolvedProjectPath, ".opencode");
   
   console.log(`📊 Status for: ${targetBase}`);

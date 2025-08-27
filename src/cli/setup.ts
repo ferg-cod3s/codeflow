@@ -124,10 +124,10 @@ async function createProjectReadme(projectPath: string, projectType: ProjectType
   let readmeContent = "";
   
   if (existsSync(readmePath)) {
-    // Check if agentic section already exists
+    // Check if codeflow section already exists
     const existingContent = await readFile(readmePath, "utf-8");
-    if (existingContent.includes("## Agentic Workflow")) {
-      console.log("  ℹ️  README already contains Agentic Workflow section");
+    if (existingContent.includes("## Codeflow Workflow")) {
+      console.log("  ℹ️  README already contains Codeflow Workflow section");
       return;
     }
     readmeContent = existingContent + "\n\n";
@@ -137,7 +137,7 @@ async function createProjectReadme(projectPath: string, projectType: ProjectType
   
   // Add appropriate section based on project type
   if (projectType.name === "claude-code") {
-    readmeContent += `## Agentic Workflow - Claude Code
+    readmeContent += `## Codeflow Workflow - Claude Code
 
 This project is set up for Claude Code with native slash commands.
 
@@ -166,7 +166,7 @@ Simply use the slash commands directly in Claude Code:
 Commands are located in \`.claude/commands/\` and can be customized for this project.
 `;
   } else if (projectType.name === "opencode") {
-    readmeContent += `## Agentic Workflow - MCP Integration
+    readmeContent += `## Codeflow Workflow - MCP Integration
 
 This project is set up for MCP integration with OpenCode and other compatible AI clients.
 
@@ -185,16 +185,16 @@ This project is set up for MCP integration with OpenCode and other compatible AI
 1. **Start MCP Server**:
    \`\`\`bash
    # From this project directory
-   bun run /path/to/agentic/mcp/agentic-server.mjs
+   bun run /path/to/codeflow/mcp/codeflow-server.mjs
    \`\`\`
 
 2. **Configure AI Client** (e.g., Claude Desktop):
    \`\`\`json
    {
      "mcpServers": {
-       "agentic-tools": {
+       "codeflow-tools": {
          "command": "bun",
-         "args": ["run", "/path/to/agentic/mcp/agentic-server.mjs"]
+         "args": ["run", "/path/to/codeflow/mcp/codeflow-server.mjs"]
        }
      }
    }
@@ -218,7 +218,7 @@ Input: "Implement the OAuth integration following the plan"
 Commands are located in \`.opencode/command/\` and can be customized for this project.
 `;
   } else {
-    readmeContent += `## Agentic Workflow - Multi-Platform
+    readmeContent += `## Codeflow Workflow - Multi-Platform
 
 This project supports both Claude Code and MCP integration.
 
@@ -236,7 +236,7 @@ Use MCP tools:
 
 **Setup MCP Server**:
 \`\`\`bash
-bun run /path/to/agentic/mcp/agentic-server.mjs
+bun run /path/to/codeflow/mcp/codeflow-server.mjs
 \`\`\`
 
 Commands are in \`.opencode/command/\`.
@@ -276,20 +276,20 @@ export async function setup(projectPath: string | undefined, options: { force?: 
   if (!options.force) {
     const hasExistingSetup = projectType.setupDirs.some(dir => existsSync(join(resolvedPath, dir)));
     if (hasExistingSetup) {
-      console.log("⚠️  Project appears to already have agentic setup.");
-      console.log("   Use --force to overwrite, or 'agentic status .' to check current state.");
+      console.log("⚠️  Project appears to already have codeflow setup.");
+      console.log("   Use --force to overwrite, or 'codeflow status .' to check current state.");
       return;
     }
   }
   
-  // Get agentic source directory
-  const agenticDir = join(import.meta.dir, "../..");
+  // Get codeflow source directory
+  const codeflowDir = join(import.meta.dir, "../..");
   
   console.log(`📦 Setting up ${projectType.name} configuration...\n`);
   
   try {
     // Copy commands and agents
-    const fileCount = await copyCommands(agenticDir, resolvedPath, projectType);
+    const fileCount = await copyCommands(codeflowDir, resolvedPath, projectType);
     
     // Run additional setup if needed
     if (projectType.additionalSetup) {
@@ -309,10 +309,10 @@ export async function setup(projectPath: string | undefined, options: { force?: 
     
     const neededEntries = [];
     if (projectType.setupDirs.some(dir => dir.includes(".claude")) && !gitignoreContent.includes("!.claude/")) {
-      neededEntries.push("# Keep agentic Claude Code commands", "!.claude/");
+      neededEntries.push("# Keep codeflow Claude Code commands", "!.claude/");
     }
     if (projectType.setupDirs.some(dir => dir.includes(".opencode")) && !gitignoreContent.includes("!.opencode/")) {
-      neededEntries.push("# Keep agentic OpenCode commands and agents", "!.opencode/");
+      neededEntries.push("# Keep codeflow OpenCode commands and agents", "!.opencode/");
     }
     
     if (neededEntries.length > 0) {
@@ -321,7 +321,7 @@ export async function setup(projectPath: string | undefined, options: { force?: 
       }
       gitignoreContent += '\n' + neededEntries.join('\n') + '\n';
       await writeFile(gitignorePath, gitignoreContent);
-      console.log("  ✓ Updated .gitignore to preserve agentic files");
+      console.log("  ✓ Updated .gitignore to preserve codeflow files");
     }
     
     console.log(`\n✅ Successfully set up ${projectType.name} project!`);
@@ -335,7 +335,7 @@ export async function setup(projectPath: string | undefined, options: { force?: 
       console.log("  3. Commands are ready to use immediately!");
     } else if (projectType.name === "opencode") {
       console.log("  1. Configure your MCP client (Claude Desktop, OpenCode, etc.)");
-      console.log("  2. Start MCP server: bun run /path/to/agentic/mcp/agentic-server.mjs");
+      console.log("  2. Start MCP server: bun run /path/to/codeflow/mcp/codeflow-server.mjs");
       console.log("  3. Use MCP tools: research, plan, execute, etc.");
     } else {
       console.log("  For Claude Code:");
@@ -345,7 +345,7 @@ export async function setup(projectPath: string | undefined, options: { force?: 
       console.log("    • Use MCP tools: research, plan, execute, etc.");
     }
     
-    console.log("\n🔍 Verify setup: agentic status .");
+    console.log("\n🔍 Verify setup: codeflow status .");
     
   } catch (error: any) {
     console.error(`❌ Setup failed: ${error.message}`);

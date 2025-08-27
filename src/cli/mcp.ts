@@ -53,8 +53,8 @@ async function saveClaudeConfig(config: any): Promise<void> {
 }
 
 export async function mcpServer(action: string, options: { background?: boolean, port?: number } = {}) {
-  const agenticDir = join(import.meta.dir, "../..");
-  const serverPath = join(agenticDir, "mcp/agentic-server.mjs");
+  const codeflowDir = join(import.meta.dir, "../..");
+  const serverPath = join(codeflowDir, "mcp/codeflow-server.mjs");
   
   if (!existsSync(serverPath)) {
     console.error(`❌ MCP server not found: ${serverPath}`);
@@ -63,7 +63,7 @@ export async function mcpServer(action: string, options: { background?: boolean,
   
   switch (action) {
     case "start":
-      console.log("🚀 Starting Agentic MCP Server...");
+      console.log("🚀 Starting Codeflow MCP Server...");
       console.log(`📁 Working directory: ${process.cwd()}`);
       console.log(`🔧 Server path: ${serverPath}`);
       
@@ -72,14 +72,14 @@ export async function mcpServer(action: string, options: { background?: boolean,
         detached: options.background,
         env: {
           ...process.env,
-          AGENTIC_PORT: options.port?.toString()
+          CODEFLOW_PORT: options.port?.toString()
         }
       });
       
       if (options.background) {
         serverProcess.unref();
         console.log(`✅ MCP Server started in background (PID: ${serverProcess.pid})`);
-        console.log("   Use 'agentic mcp stop' to stop the server");
+        console.log("   Use 'codeflow mcp stop' to stop the server");
       } else {
         console.log("🔗 MCP Server running (Ctrl+C to stop)");
         
@@ -106,9 +106,9 @@ export async function mcpServer(action: string, options: { background?: boolean,
       const { execSync } = await import("node:child_process");
       try {
         if (process.platform === "win32") {
-          execSync('taskkill /f /im bun.exe /fi "WINDOWTITLE eq agentic-server*"');
+          execSync('taskkill /f /im bun.exe /fi "WINDOWTITLE eq codeflow-server*"');
         } else {
-          execSync("pkill -f 'agentic-server.mjs'");
+          execSync("pkill -f 'codeflow-server.mjs'");
         }
         console.log("✅ Stopped MCP Server");
       } catch (error) {
@@ -121,10 +121,10 @@ export async function mcpServer(action: string, options: { background?: boolean,
       try {
         if (process.platform === "win32") {
           const output = execSync('tasklist /fi "IMAGENAME eq bun.exe" /fo csv', { encoding: "utf-8" });
-          const isRunning = output.includes("agentic-server");
+          const isRunning = output.includes("codeflow-server");
           console.log(isRunning ? "✅ MCP Server is running" : "❌ MCP Server is not running");
         } else {
-          execSync("pgrep -f 'agentic-server.mjs'", { stdio: "ignore" });
+          execSync("pgrep -f 'codeflow-server.mjs'", { stdio: "ignore" });
           console.log("✅ MCP Server is running");
         }
       } catch {
@@ -133,10 +133,10 @@ export async function mcpServer(action: string, options: { background?: boolean,
       
       // Also check Claude Desktop config
       const config = await loadClaudeConfig();
-      const hasAgenticServer = config.mcpServers && config.mcpServers["agentic-tools"];
-      console.log(hasAgenticServer ? 
-        "✅ Claude Desktop is configured for agentic" : 
-        "❌ Claude Desktop is not configured for agentic"
+      const hasCodeflowServer = config.mcpServers && config.mcpServers["codeflow-tools"];
+      console.log(hasCodeflowServer ? 
+        "✅ Claude Desktop is configured for codeflow" : 
+        "❌ Claude Desktop is not configured for codeflow"
       );
       break;
       
@@ -148,8 +148,8 @@ export async function mcpServer(action: string, options: { background?: boolean,
 }
 
 export async function mcpConfigure(client: string, options: { remove?: boolean } = {}) {
-  const agenticDir = join(import.meta.dir, "../..");
-  const serverPath = join(agenticDir, "mcp/agentic-server.mjs");
+  const codeflowDir = join(import.meta.dir, "../..");
+  const serverPath = join(codeflowDir, "mcp/codeflow-server.mjs");
   
   switch (client) {
     case "claude-desktop":
@@ -157,13 +157,13 @@ export async function mcpConfigure(client: string, options: { remove?: boolean }
       const config = await loadClaudeConfig();
       
       if (options.remove) {
-        if (config.mcpServers && config.mcpServers["agentic-tools"]) {
-          delete config.mcpServers["agentic-tools"];
+        if (config.mcpServers && config.mcpServers["codeflow-tools"]) {
+          delete config.mcpServers["codeflow-tools"];
           await saveClaudeConfig(config);
-          console.log("✅ Removed agentic from Claude Desktop configuration");
+          console.log("✅ Removed codeflow from Claude Desktop configuration");
           console.log("🔄 Restart Claude Desktop for changes to take effect");
         } else {
-          console.log("ℹ️  Agentic is not configured in Claude Desktop");
+          console.log("ℹ️  Codeflow is not configured in Claude Desktop");
         }
         return;
       }
@@ -173,14 +173,14 @@ export async function mcpConfigure(client: string, options: { remove?: boolean }
         config.mcpServers = {};
       }
       
-      config.mcpServers["agentic-tools"] = {
+      config.mcpServers["codeflow-tools"] = {
         command: "bun",
         args: ["run", serverPath],
         env: {}
       };
       
       await saveClaudeConfig(config);
-      console.log("✅ Configured Claude Desktop for agentic MCP integration");
+      console.log("✅ Configured Claude Desktop for codeflow MCP integration");
       console.log("🔄 Restart Claude Desktop for changes to take effect");
       console.log("");
       console.log("📋 Next steps:");
@@ -201,16 +201,16 @@ export async function mcpList(): Promise<void> {
   
   // Show server management
   console.log("🔧 Server Management:");
-  console.log("  agentic mcp start              Start MCP server");
-  console.log("  agentic mcp start --background  Start in background");
-  console.log("  agentic mcp stop               Stop background server");
-  console.log("  agentic mcp status             Check server status");
+  console.log("  codeflow mcp start              Start MCP server");
+  console.log("  codeflow mcp start --background  Start in background");
+  console.log("  codeflow mcp stop               Stop background server");
+  console.log("  codeflow mcp status             Check server status");
   console.log("");
   
   // Show configuration
   console.log("⚙️  Client Configuration:");
-  console.log("  agentic mcp configure claude-desktop    Configure Claude Desktop");
-  console.log("  agentic mcp configure claude --remove   Remove from Claude Desktop");
+  console.log("  codeflow mcp configure claude-desktop    Configure Claude Desktop");
+  console.log("  codeflow mcp configure claude --remove   Remove from Claude Desktop");
   console.log("");
   
   // Show available tools
@@ -233,7 +233,7 @@ export async function mcpList(): Promise<void> {
   console.log("💡 Usage Example:");
   console.log("  # Start server from your project directory");
   console.log("  cd ~/my-project");
-  console.log("  agentic mcp start");
+  console.log("  codeflow mcp start");
   console.log("  ");
   console.log("  # In Claude Desktop:");
   console.log("  Use tool: research");

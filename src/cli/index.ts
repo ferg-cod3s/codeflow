@@ -51,7 +51,7 @@ try {
 } catch (error: any) {
   if (error.code === "ERR_PARSE_ARGS_UNKNOWN_OPTION") {
     console.error(`Error: ${error.message}`);
-    console.error("Run 'agentic --help' for usage information");
+    console.error("Run 'codeflow --help' for usage information");
     process.exit(1);
   }
   throw error;
@@ -63,17 +63,17 @@ const command = args[0];
 
 // Handle --version flag
 if (values.version) {
-  console.log(`Agentic ${packageJson.version}`);
+  console.log(`Codeflow ${packageJson.version}`);
   process.exit(0);
 }
 
 // Handle help (both --help flag and help command)
 if (values.help || command === "help" || !command) {
   console.log(`
-agentic - Intelligent AI workflow management
+codeflow - Intelligent AI workflow management
 
 Usage:
-  agentic <command> [options]
+  codeflow <command> [options]
 
 Project Setup:
   setup [project-path]       Smart setup for Claude Code or MCP integration
@@ -90,7 +90,7 @@ MCP Server:
 
 Information:
   commands                   List available slash commands
-  version                    Show the version of agentic
+  version                    Show the version of codeflow
   help                       Show this help message
 
 Setup Options:
@@ -103,16 +103,16 @@ MCP Options:
 
 Examples:
   # Smart project setup (detects Claude Code vs MCP needs)
-  agentic setup ~/my-project
+  codeflow setup ~/my-project
   
   # Force setup for specific type
-  agentic setup . --type claude-code
+  codeflow setup . --type claude-code
   
   # Start MCP server for current project
-  agentic mcp start
+  codeflow mcp start
   
   # Configure Claude Desktop for MCP
-  agentic mcp configure claude-desktop
+  codeflow mcp configure claude-desktop
 `);
   process.exit(0);
 }
@@ -151,7 +151,7 @@ switch (command) {
         const client = args[2];
         if (!client) {
           console.error("Error: MCP client name required");
-          console.error("Usage: agentic mcp configure <client>");
+          console.error("Usage: codeflow mcp configure <client>");
           console.error("Available clients: claude-desktop");
           process.exit(1);
         }
@@ -171,13 +171,13 @@ switch (command) {
     await commands();
     break;
   case "version":
-    console.log(`Agentic ${packageJson.version}`);
+    console.log(`Codeflow ${packageJson.version}`);
     break;
   case "help":
     // Already handled above, but included for completeness
     break;
   default:
     console.error(`Error: Unknown command '${command}'`);
-    console.error("Run 'agentic --help' for usage information");
+    console.error("Run 'codeflow --help' for usage information");
     process.exit(1);
 }
