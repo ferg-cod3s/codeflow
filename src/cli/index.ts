@@ -5,6 +5,7 @@ import { pull } from "./pull";
 import { status } from "./status";
 import { setup } from "./setup";
 import { mcpServer, mcpConfigure, mcpList } from "./mcp";
+import { convert, convertAll, listDifferences } from "./convert";
 import packageJson from "../../package.json";
 
 let values: any;
@@ -40,6 +41,14 @@ try {
       remove: {
         type: "boolean",
         short: "r",
+        default: false,
+      },
+      validate: {
+        type: "boolean",
+        default: true,
+      },
+      "dry-run": {
+        type: "boolean",
         default: false,
       },
     },
@@ -80,6 +89,11 @@ Project Setup:
   pull [project-path]        Pull agents and commands to existing .opencode directory
   status [project-path]      Check which files are up-to-date or outdated
 
+Agent Conversion:
+  convert <source> <target> <format>  Convert agents between formats
+  convert-all                Convert all agent formats in project
+  list-differences          Show differences between agent formats
+
 MCP Server:
   mcp start                  Start MCP server for current project
   mcp start --background     Start MCP server in background
@@ -97,6 +111,10 @@ Setup Options:
   -f, --force               Force overwrite existing setup
   -t, --type <type>         Specify project type (claude-code, opencode, general)
 
+Conversion Options:
+  --validate                Validate agents during conversion (default: true)
+  --dry-run                 Show what would be converted without writing files
+
 MCP Options:
   -b, --background          Run MCP server in background
   -r, --remove              Remove MCP client configuration
@@ -107,6 +125,10 @@ Examples:
   
   # Force setup for specific type
   codeflow setup . --type claude-code
+  
+  # Convert agents between formats
+  codeflow convert ./agent ./claude-agents claude-code
+  codeflow convert-all --dry-run
   
   # Start MCP server for current project
   codeflow mcp start
@@ -169,6 +191,41 @@ switch (command) {
   case "commands":
     const { commands } = await import("./commands");
     await commands();
+    break;
+  case "convert":
+    const source = args[1];
+    const target = args[2];
+    const format = args[3] as 'base' | 'claude-code' | 'opencode';
+    
+    if (!source || !target || !format) {
+      console.error("Error: convert requires source, target, and format arguments");
+      console.error("Usage: codeflow convert <source> <target> <format>");
+      console.error("Formats: base, claude-code, opencode");
+      process.exit(1);
+    }
+    
+    if (!['base', 'claude-code', 'opencode'].includes(format)) {
+      console.error(`Error: Invalid format '${format}'`);
+      console.error("Valid formats: base, claude-code, opencode");
+      process.exit(1);
+    }
+    
+    await convert({
+      source,
+      target,
+      format,
+      validate: values.validate !== false,
+      dryRun: values["dry-run"]
+    });
+    break;
+  case "convert-all":
+    await convertAll(args[1], {
+      validate: values.validate !== false,
+      dryRun: values["dry-run"]
+    });
+    break;
+  case "list-differences":
+    await listDifferences(args[1]);
     break;
   case "version":
     console.log(`Codeflow ${packageJson.version}`);
