@@ -41,33 +41,33 @@ You create well-structured tickets that provide maximum context for downstream r
    - Technologies, libraries, or services mentioned
 
 ### Step 2: Interactive Question Flow
-Ask specific, targeted questions based on ticket type to gather comprehensive context:
+Ask specific, targeted questions based on ticket type to gather comprehensive context. **Present questions in a numbered format** for clarity:
 
 #### For Bug Tickets:
-- What specific behavior are you seeing?
-- What should happen instead?
-- Steps to reproduce (be very specific)?
-- When did this start happening?
-- Does this affect all users or specific conditions?
-- Any error messages or logs?
-- Have you tried any workarounds?
+1. What specific behavior are you seeing?
+2. What should happen instead?
+3. Steps to reproduce (be very specific)?
+4. When did this start happening?
+5. Does this affect all users or specific conditions?
+6. Any error messages or logs?
+7. Have you tried any workarounds?
 
 #### For Feature Tickets:
-- What problem does this solve for users?
-- Who are the primary users of this feature?
-- What are the acceptance criteria?
-- Are there any specific UI/UX requirements?
-- Should this integrate with existing features?
-- Any performance or scalability requirements?
-- What technologies or libraries should be used?
+1. What problem does this solve for users?
+2. Who are the primary users of this feature?
+3. What are the acceptance criteria?
+4. Are there any specific UI/UX requirements?
+5. Should this integrate with existing features?
+6. Any performance or scalability requirements?
+7. What technologies or libraries should be used?
 
 #### For Debt Tickets:
-- What specific code or architecture needs improvement?
-- What problems does this debt cause?
-- Are there any recent changes that introduced this?
-- What would be the ideal state after cleanup?
-- Any specific patterns or anti-patterns to address?
-- Should this include tests or documentation updates?
+1. What specific code or architecture needs improvement?
+2. What problems does this debt cause?
+3. Are there any recent changes that introduced this?
+4. What would be the ideal state after cleanup?
+5. Any specific patterns or anti-patterns to address?
+6. Should this include tests or documentation updates?
 
 ### Step 3: Scope Boundary Exploration
 **CRITICAL STEP**: This iterative process should be repeated at least 2-3 times to thoroughly explore scope boundaries. Do not rush through this step - the quality of the final ticket depends on clearly defined scope.
@@ -89,18 +89,23 @@ After receiving initial responses, analyze how these answers impact the original
 - **Explore Edges**: Ask about edge cases, integrations, or related concerns
 - **Test Boundaries**: Include questions that might be out of scope to find the limits
 - **Aim for 5-10 questions** total, asked iteratively based on responses
+- **Present in Numbered Format**: Always present questions as a numbered list for clarity
 
 **Example Flow for Feature Ticket**:
 ```
 Initial: "Add user profile editing"
 User: "Yes, let users change name, email, avatar"
 
-Follow-ups:
+Follow-up questions (Round 1):
 1. Should this also allow changing passwords?
 2. What about phone numbers or addresses?
 3. Should users be able to delete their account?
 4. What if they want to change their username?
 5. Should this integrate with social media profiles?
+
+User responses indicate some boundaries...
+
+Follow-up questions (Round 2):
 6. What about privacy settings?
 7. Should there be email verification for changes?
 8. What about bulk editing or admin overrides?
@@ -392,6 +397,6 @@ This command creates the foundation for:
 2. **Planning phase**: Uses requirements and context to create implementation plans
 3. **Execution phase**: Uses success criteria to verify completion
 
-<user_request>
+**user_request**
+
 $ARGUMENTS
-</user_request>
