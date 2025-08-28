@@ -15,12 +15,15 @@ The user will provide a ticket for you to read and begin researching.
    - **CRITICAL**: Read these files yourself in the main context before spawning any sub-tasks
    - This ensures you have full context before decomposing the research
 
-2. **Analyze and decompose the ticket:**
-   - Break down the user's ticket into composable research areas
-   - Take time to think about the underlying patterns, connections, and architectural the ticket has provided
-   - Identify specific components, patterns, or concepts to investigate
-   - Create a research plan using TodoWrite to track all subtasks
-   - Consider which directories, files, or architectural patterns are relevant
+2. **Detail the steps needed to perform the research:**
+    - Break down the user's ticket into composable research areas
+    - Take time to think about the underlying patterns, connections, and architectural the ticket has provided
+    - Identify specific components, patterns, or concepts to investigate
+    - Lay out what the codebase-locator or thoughts-locator should look for
+    - Specify what patterns the codebase-pattern-finder should look for
+    - Be clear that locators and pattern-finders collect information for analyzers
+    - Typically run a single codebase-analyzer and thoughts-analyzer (in parallel if both needed)
+    - Consider which directories, files, or architectural patterns are relevant
 
 3. **Spawn tasks for comprehensive research (follow this sequence):**
    
@@ -133,7 +136,11 @@ Use the following metadata for the research document frontmatter:
    - Add `last_updated_note: "Added follow-up research for [brief description]"` to frontmatter
    - Add a new section: `## Follow-up Research [timestamp]`
    - Spawn new sub-agents as needed for additional investigation
-   - Continue updating the document and syncing
+    - Continue updating the document and syncing
+
+9. **Update ticket status** to 'researched' by editing the ticket file's frontmatter.
+
+Use the todowrite tool to create a structured task list for the 9 steps above, marking each as pending initially.
 
 ## Important notes:
 - Follow the three-phase sequence: Locate → Find Patterns → Analyze

@@ -59,17 +59,17 @@ You are tasked with creating detailed implementation plans through an interactiv
 
    Only ask questions that you genuinely cannot answer through code investigation.
 
-### Step 2: Research & Discovery
+### Step 2: Think through the ticket and research to consider the steps needed to generate the plan
 
 After getting initial clarifications:
 
 1. **If the user corrects any misunderstanding**:
-   - DO NOT just accept the correction
-   - Spawn new research tasks to verify the correct information
-   - Read the specific files/directories they mention
-   - Only proceed once you've verified the facts yourself
+    - DO NOT just accept the correction
+    - Spawn new research tasks to verify the correct information
+    - Read the specific files/directories they mention
+    - Only proceed once you've verified the facts yourself
 
-2. **Create a research todo list** using TodoWrite to track exploration tasks
+2. **Determine what actually needs to change** based on the research findings. The plan should be a markdown format document that addresses specific locations needing changes, written in engineering English, with small code snippets only if required for clarity.
 
 3. **Spawn sub-tasks for comprehensive research**:
    - Create multiple Task agents to research different aspects concurrently
@@ -236,24 +236,28 @@ After structure approval:
 ### Step 5: Review
 
 2. **Present the draft plan location**:
-   ```
-   I've created the initial implementation plan at:
-   `thoughts/plans/[filename].md`
+    ```
+    I've created the initial implementation plan at:
+    `thoughts/plans/[filename].md`
 
-   Please review it and let me know:
-   - Are the phases properly scoped?
-   - Are the success criteria specific enough?
-   - Any technical details that need adjustment?
-   - Missing edge cases or considerations?
-   ```
+    Please review it and let me know:
+    - Are the phases properly scoped?
+    - Are the success criteria specific enough?
+    - Any technical details that need adjustment?
+    - Missing edge cases or considerations?
+    ```
 
 3. **Iterate based on feedback** - be ready to:
-   - Add missing phases
-   - Adjust technical approach
-   - Clarify success criteria (both automated and manual)
-   - Add/remove scope items
+    - Add missing phases
+    - Adjust technical approach
+    - Clarify success criteria (both automated and manual)
+    - Add/remove scope items
 
 4. **Continue refining** until the user is satisfied
+
+### Step 6: Update ticket status to 'planned' by editing the ticket file's frontmatter.
+
+Use the todowrite tool to create a structured task list for the 6 steps above, marking each as pending initially.
 
 ## Important Guidelines
 

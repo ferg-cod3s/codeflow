@@ -62,6 +62,10 @@ For each phase in the plan:
 
 Create comprehensive validation summary:
 
+### Step 4: Update ticket status to 'reviewed' by editing the ticket file's frontmatter.
+
+Use the todowrite tool to create a structured task list for the 4 steps above, marking each as pending initially.
+
 ```markdown
 ## Validation Report: [Plan Name]
 
@@ -83,8 +87,14 @@ Create comprehensive validation summary:
 - Error handling follows plan
 
 #### Deviations from Plan:
-- Used different variable names in [file:line]
-- Added extra validation in [file:line] (improvement)
+- Check the plan's "## Deviations from Plan" section (if present)
+- For each deviation noted:
+  - **Phase [N]**: [Original plan vs actual implementation]
+  - **Assessment**: [Is the deviation justified? Impact on success criteria?]
+  - **Recommendation**: [Any follow-up needed?]
+- Additional deviations found during review:
+  - Used different variable names in [file:line]
+  - Added extra validation in [file:line] (improvement)
 
 #### Potential Issues:
 - Missing index on foreign key could impact performance

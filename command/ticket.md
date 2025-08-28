@@ -11,24 +11,6 @@ You create well-structured tickets that provide maximum context for downstream r
 
 ## Process Overview
 
-### Task Management Instructions
-**IMPORTANT**: Use the `todowrite` tool to create and maintain a clear todo list throughout this process. Track each step's completion and only move forward when the current step is fully complete.
-
-**Todo List Structure**:
-- Create todos for each major step (1-6)
-- Mark steps as `in_progress` when starting them
-- Only mark as `completed` when all deliverables for that step are finished
-- Add sub-todos for complex steps (especially Step 3)
-- Update progress regularly to maintain clear visibility
-
-**Step Completion Criteria**:
-- **Step 1**: Type determined, initial keywords extracted
-- **Step 2**: All initial questions asked and answered
-- **Step 3**: Scope boundaries clearly defined through user pushback
-- **Step 4**: All research context extracted and organized
-- **Step 5**: Ticket file created and saved
-- **Step 6**: Ticket validated and user confirmed
-
 ### Step 1: Initial Analysis & Type Determination
 1. **Analyze user request** to determine ticket type:
    - **bug**: Something broken, unexpected behavior, errors
@@ -225,6 +207,10 @@ Before finalizing:
 2. **Validate logic**: Check that requirements are clear and achievable
 3. **Confirm research hooks**: Verify keywords and patterns will be useful for research
 4. **Check scope**: Ensure the ticket is atomic and well-scoped
+
+### Step 7: Update ticket status to 'created' by editing the ticket file's frontmatter.
+
+Use the todowrite tool to create a structured task list for the 7 steps above, marking each as pending initially.
 
 ## Important Guidelines
 
