@@ -27,11 +27,43 @@ async function* walkDir(dir: string): AsyncGenerator<string> {
   }
 }
 
-async function getFileHash(path: string): Promise<string> {
+function stripYamlFrontmatter(text: string): string {
+  if (!text.startsWith('---\n') && !text.startsWith('---\r\n')) {
+    return text;
+  }
+
+  const lines = text.split('\n');
+  let endIndex = -1;
+
+  for (let i = 1; i < lines.length; i++) {
+    if (lines[i].trim() === '---') {
+      endIndex = i;
+      break;
+    }
+  }
+
+  if (endIndex === -1) {
+    return text;
+  }
+
+  return lines.slice(endIndex + 1).join('\n');
+}
+
+async function getFileHash(path: string, ignoreFrontmatter: boolean = false): Promise<string> {
   const file = Bun.file(path);
-  const hasher = new Bun.CryptoHasher("sha256");
-  hasher.update(await file.arrayBuffer());
-  return hasher.digest("hex");
+
+  if (ignoreFrontmatter && path.endsWith('.md')) {
+    const text = await file.text();
+    const contentWithoutFrontmatter = stripYamlFrontmatter(text);
+    const encoder = new TextEncoder();
+    const hasher = new Bun.CryptoHasher("sha256");
+    hasher.update(encoder.encode(contentWithoutFrontmatter));
+    return hasher.digest("hex");
+  } else {
+    const hasher = new Bun.CryptoHasher("sha256");
+    hasher.update(await file.arrayBuffer());
+    return hasher.digest("hex");
+  }
 }
 
 async function readAgenticConfig(projectPath: string): Promise<AgenticConfig | null> {
@@ -105,7 +137,12 @@ export function findAgenticInstallDir(): string {
   throw new Error(`Could not find agent/command directories. Binary dir: ${binaryDir}, Package dir: ${packageDir}`);
 }
 
-export async function findOutOfSyncFiles(targetPath: string, agentModel?: string, projectPath?: string): Promise<FileSync[]> {
+export async function findOutOfSyncFiles(
+  targetPath: string,
+  agentModel?: string,
+  projectPath?: string,
+  ignoreFrontmatter: boolean = false,
+): Promise<FileSync[]> {
   const sourceDir = findAgenticInstallDir();
   const results: FileSync[] = [];
 
@@ -133,22 +170,39 @@ export async function findOutOfSyncFiles(targetPath: string, agentModel?: string
       if (!existsSync(targetFile)) {
         results.push({ path: relativePath, status: 'missing' });
       } else {
-        // For agent files, process as templates before comparison
-        let sourceContent: string;
         if (relativePath.startsWith('agent/') && relativePath.endsWith('.md')) {
-          sourceContent = await processAgentTemplate(sourceFile, resolvedModel);
-        } else {
-          sourceContent = await readFile(sourceFile, 'utf-8');
-        }
+          // Process agent markdown as templates before comparison
+          const sourceContent = await processAgentTemplate(sourceFile, resolvedModel);
+          const targetContent = await readFile(targetFile, 'utf-8');
 
-        // Get target content
-        const targetContent = await readFile(targetFile, 'utf-8');
+          const src = ignoreFrontmatter ? stripYamlFrontmatter(sourceContent) : sourceContent;
+          const dst = ignoreFrontmatter ? stripYamlFrontmatter(targetContent) : targetContent;
 
-        // Compare processed content
-        if (sourceContent === targetContent) {
-          results.push({ path: relativePath, status: 'up-to-date' });
+          if (src === dst) {
+            results.push({ path: relativePath, status: 'up-to-date' });
+          } else {
+            results.push({ path: relativePath, status: 'outdated' });
+          }
+        } else if (relativePath.endsWith('.md') && ignoreFrontmatter) {
+          // For non-agent markdown, ignore frontmatter when comparing if requested
+          const sourceText = await readFile(sourceFile, 'utf-8');
+          const targetText = await readFile(targetFile, 'utf-8');
+          const src = stripYamlFrontmatter(sourceText);
+          const dst = stripYamlFrontmatter(targetText);
+          if (src === dst) {
+            results.push({ path: relativePath, status: 'up-to-date' });
+          } else {
+            results.push({ path: relativePath, status: 'outdated' });
+          }
         } else {
-          results.push({ path: relativePath, status: 'outdated' });
+          // Binary/other files: compare hashes
+          const sourceHash = await getFileHash(sourceFile, false);
+          const targetHash = await getFileHash(targetFile, false);
+          if (sourceHash === targetHash) {
+            results.push({ path: relativePath, status: 'up-to-date' });
+          } else {
+            results.push({ path: relativePath, status: 'outdated' });
+          }
         }
       }
     }

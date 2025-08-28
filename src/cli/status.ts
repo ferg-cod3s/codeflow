@@ -1,7 +1,12 @@
 import { join } from "node:path";
 import { resolveProjectPath, findOutOfSyncFiles } from "./utils";
 
-export async function status(projectPath: string | undefined, useGlobal: boolean = false, agentModel?: string) {
+export async function status(
+  projectPath: string | undefined,
+  useGlobal: boolean = false,
+  agentModel?: string,
+  ignoreFrontmatter: boolean = false,
+) {
   // Resolve the project path (will exit if invalid)
   const resolvedProjectPath = resolveProjectPath(projectPath, useGlobal);
   
@@ -13,7 +18,7 @@ export async function status(projectPath: string | undefined, useGlobal: boolean
   console.log(`📊 Status for: ${targetBase}\n`);
   
   // Find all files and their sync status
-  const syncStatus = await findOutOfSyncFiles(targetBase, agentModel, resolvedProjectPath);
+  const syncStatus = await findOutOfSyncFiles(targetBase, agentModel, resolvedProjectPath, ignoreFrontmatter);
   
   // Count by status
   const upToDateCount = syncStatus.filter(f => f.status === 'up-to-date').length;
