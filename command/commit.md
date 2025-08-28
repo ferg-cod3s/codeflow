@@ -10,8 +10,9 @@ You are tasked with creating git commits for the changes made during this sessio
 
 1. **Think about what changed:**
    - Review the conversation history and understand what was accomplished
-   - Review the `git status` to get an idea of what files changed
+   - Review the `git status -s` to get an idea of what files changed
    - Consider whether changes should be one commit or multiple logical commits
+   - Use `git diff` on specific files if you need more context. Only do this if you have no knowledge of the changes in that file.
 
 2. **Plan your commit(s):**
    - Identify which files belong together
@@ -34,8 +35,4 @@ You are tasked with creating git commits for the changes made during this sessio
 - Group related changes together
 - Keep commits focused and atomic when possible
 - The user trusts your judgment - they asked you to commit
-
-**git status**
-
-!`git status -s`
 

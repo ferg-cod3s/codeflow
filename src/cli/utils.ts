@@ -1,7 +1,14 @@
 import { join, dirname, resolve } from "node:path";
 import { existsSync, mkdirSync } from "node:fs";
-import { readdir, stat } from "node:fs/promises";
+import { readdir, stat, readFile } from "node:fs/promises";
 import { homedir } from "node:os";
+
+interface AgenticConfig {
+  thoughts: string;
+  agents: {
+    model: string;
+  };
+}
 
 export interface FileSync {
   path: string;
@@ -27,32 +34,86 @@ async function getFileHash(path: string): Promise<string> {
   return hasher.digest("hex");
 }
 
-export function findAgenticInstallDir(): string {
-  // Find where agentic is installed (with agent/command directories)
-  // Check multiple possible locations
-  const possiblePaths = [
-    // Development mode - running from source
-    join(import.meta.dir, "../.."),
-    // When installed globally via npm/bun
-    join(process.execPath, "../../../agentic-cli"),
-    join(process.execPath, "../../.."),
-    // Check relative to cwd for local development
-    process.cwd(),
-  ];
-  
-  for (const path of possiblePaths) {
-    // Check if this directory has the agent and command directories
-    if (existsSync(join(path, "agent")) && existsSync(join(path, "command"))) {
-      return path;
-    }
+async function readAgenticConfig(projectPath: string): Promise<AgenticConfig | null> {
+  const configPath = join(projectPath, ".opencode", "agentic.json");
+
+  if (!existsSync(configPath)) {
+    return null;
   }
-  
-  throw new Error("Could not find agentic installation directory with agent/command folders");
+
+  try {
+    const configContent = await readFile(configPath, 'utf-8');
+    return JSON.parse(configContent);
+  } catch {
+    return null;
+  }
 }
 
-export async function findOutOfSyncFiles(targetPath: string): Promise<FileSync[]> {
+export function resolveAgentModel(cliModel: string | undefined, projectPath: string): Promise<string | undefined> {
+  return new Promise(async (resolve) => {
+    // 1. CLI parameter has highest priority
+    if (cliModel) {
+      resolve(cliModel);
+      return;
+    }
+
+    // 2. Check agentic.json config
+    const config = await readAgenticConfig(projectPath);
+    if (config?.agents?.model) {
+      resolve(config.agents.model);
+      return;
+    }
+
+    // 3. No model specified
+    resolve(undefined);
+  });
+}
+
+export async function processAgentTemplate(filePath: string, agentModel?: string): Promise<string> {
+  const content = await readFile(filePath, 'utf-8');
+
+  // If no agent model specified, return original content
+  if (!agentModel) {
+    return content;
+  }
+
+  // Replace model field in frontmatter
+  const modelRegex = /^model:\s*.+$/gm;
+  const newModelLine = `model: ${agentModel}`;
+
+  return content.replace(modelRegex, newModelLine);
+}
+
+export function findAgenticInstallDir(): string {
+  // When using bun link, the binary is in global node_modules/agentic-cli/bin/
+  // and the source files are in global node_modules/agentic-cli/
+  const binaryDir = dirname(process.execPath);
+
+  // The source files should be in the same directory as the bin folder
+  const packageDir = dirname(binaryDir);
+
+  if (existsSync(join(packageDir, "agent")) && existsSync(join(packageDir, "command"))) {
+    return packageDir;
+  }
+
+  // Fallback: check if we're running from local repo during development
+  const localPackageDir = join(dirname(dirname(process.execPath)), "..");
+  if (existsSync(join(localPackageDir, "agent")) && existsSync(join(localPackageDir, "command"))) {
+    return localPackageDir;
+  }
+
+  throw new Error(`Could not find agent/command directories. Binary dir: ${binaryDir}, Package dir: ${packageDir}`);
+}
+
+export async function findOutOfSyncFiles(targetPath: string, agentModel?: string, projectPath?: string): Promise<FileSync[]> {
   const sourceDir = findAgenticInstallDir();
   const results: FileSync[] = [];
+
+  // Resolve the project path (parent of .opencode directory)
+  const resolvedProjectPath = projectPath || dirname(targetPath);
+
+  // Resolve the agent model with proper priority
+  const resolvedModel = await resolveAgentModel(agentModel, resolvedProjectPath);
   
   // Directories to sync
   const dirsToSync = ["agent", "command"];
@@ -68,15 +129,23 @@ export async function findOutOfSyncFiles(targetPath: string): Promise<FileSync[]
     for await (const sourceFile of walkDir(sourceDirPath)) {
       const relativePath = sourceFile.slice(sourceDir.length + 1);
       const targetFile = join(targetPath, relativePath);
-      
+
       if (!existsSync(targetFile)) {
         results.push({ path: relativePath, status: 'missing' });
       } else {
-        // Compare file contents
-        const sourceHash = await getFileHash(sourceFile);
-        const targetHash = await getFileHash(targetFile);
-        
-        if (sourceHash === targetHash) {
+        // For agent files, process as templates before comparison
+        let sourceContent: string;
+        if (relativePath.startsWith('agent/') && relativePath.endsWith('.md')) {
+          sourceContent = await processAgentTemplate(sourceFile, resolvedModel);
+        } else {
+          sourceContent = await readFile(sourceFile, 'utf-8');
+        }
+
+        // Get target content
+        const targetContent = await readFile(targetFile, 'utf-8');
+
+        // Compare processed content
+        if (sourceContent === targetContent) {
           results.push({ path: relativePath, status: 'up-to-date' });
         } else {
           results.push({ path: relativePath, status: 'outdated' });

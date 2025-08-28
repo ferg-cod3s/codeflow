@@ -5,6 +5,7 @@ import { pull } from "./pull";
 import { status } from "./status";
 import { metadata } from "./metadata";
 import { init } from "./init";
+import { config } from "./config";
 import packageJson from "../../package.json";
 
 let values: any;
@@ -29,6 +30,9 @@ try {
         default: false,
       },
       "thoughts-dir": {
+        type: "string",
+      },
+      "agent-model": {
         type: "string",
       },
     },
@@ -68,15 +72,17 @@ Commands:
   init [project-path]    Initialize agentic in a project with config and thoughts directory
   pull [project-path]    Pull agents and commands to a project's .opencode directory
   status [project-path]  Check which files are up-to-date or outdated
+  config [project-path]  Get or set configuration values using dot syntax
   metadata               Display project metadata for research documentation
   version                Show the version of agentic
   help                   Show this help message
 
 Options:
-  -h, --help          Show this help message
-  -g, --global        Use ~/.config/opencode instead of .opencode directory
-  --version           Show the version of agentic
-  --thoughts-dir      Specify thoughts directory (for init command)
+   -h, --help          Show this help message
+   -g, --global        Use ~/.config/opencode instead of .opencode directory
+   --version           Show the version of agentic
+   --thoughts-dir      Specify thoughts directory (for init command)
+   --agent-model       Specify model for subagents (for status and pull commands)
 
 Examples:
   agentic init                       # Initialize in current directory
@@ -87,6 +93,9 @@ Examples:
   agentic status ~/projects/my-app
   agentic status                     # Auto-detect project from current dir
   agentic status -g                  # Check status of ~/.config/opencode
+  agentic config                     # Show current configuration
+  agentic config agent.model         # Show current agent model
+  agentic config agent.model opus-4-1 # Set agent model to opus-4-1
   agentic metadata                   # Display project metadata
 `);
   process.exit(0);
@@ -98,20 +107,25 @@ switch (command) {
     await init(initPath, values["thoughts-dir"]);
     break;
   case "pull":
+  case "status":
     const projectPath = args[1];
     if (values.global && projectPath) {
       console.error("Error: Cannot use --global flag with a project path");
       process.exit(1);
     }
-    await pull(projectPath, values.global);
-    break;
-  case "status":
-    const statusPath = args[1];
-    if (values.global && statusPath) {
-      console.error("Error: Cannot use --global flag with a project path");
-      process.exit(1);
+
+    if (command === "pull") {
+      await pull(projectPath, values.global, values["agent-model"]);
+    } else if (command === "status") {
+      await status(projectPath, values.global, values["agent-model"]);
     }
-    await status(statusPath, values.global);
+    break;
+  case "config":
+    // For config command, args[1] is the key, args[2] is the value, args[3] could be project path
+    const configKey = args[1];
+    const configValue = args[2];
+    const configProjectPath = args[3]; // Optional project path override
+    await config(configProjectPath, configKey, configValue);
     break;
   case "metadata":
     await metadata();

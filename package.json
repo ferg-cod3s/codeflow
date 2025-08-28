@@ -3,6 +3,9 @@
   "version": "0.1.7",
   "description": "Modular AI agent system with specialized subagents and commands for enhanced OpenCode capabilities",
   "type": "module",
+  "bin": {
+    "agentic": "./bin/agentic"
+  },
   "scripts": {
     "typecheck": "tsc --noEmit",
     "build": "bun build ./src/cli/index.ts --compile --outfile ./bin/agentic",

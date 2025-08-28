@@ -5,6 +5,9 @@ import { stdin as input, stdout as output } from "node:process";
 
 interface AgenticConfig {
   thoughts: string;
+  agents: {
+    model: string;
+  };
 }
 
 export async function init(projectPath?: string, thoughtsDirOverride?: string): Promise<void> {
@@ -82,7 +85,10 @@ export async function init(projectPath?: string, thoughtsDirOverride?: string): 
     
     // Create config object
     const config: AgenticConfig = {
-      thoughts: thoughtsDir
+      thoughts: thoughtsDir,
+      agents: {
+        model: "sonic-fast"
+      }
     };
     
     // Write config file
