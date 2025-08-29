@@ -1,5 +1,4 @@
 ---
-name: monitoring-expert
 description: Implements system alerts, monitoring solutions, and observability infrastructure. Specializes in operational monitoring, alerting, and incident response. Use this agent when you need to implement comprehensive operational monitoring, alerting systems, and observability infrastructure for production systems.
 ---
 

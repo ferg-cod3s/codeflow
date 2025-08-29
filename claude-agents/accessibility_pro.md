@@ -1,5 +1,4 @@
 ---
-name: accessibility-pro
 description: Ensures app accessibility and compliance with WCAG guidelines. Specializes in making applications usable for all users. Use this agent when you need to ensure your application is accessible to users with disabilities.
 ---
 

@@ -1,5 +1,4 @@
 ---
-name: infrastructure-builder
 description: Designs scalable cloud architecture and manages infrastructure as code. Specializes in cloud infrastructure and scalability. Use this agent when you need to design or optimize cloud infrastructure and ensure scalability.
 ---
 

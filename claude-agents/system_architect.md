@@ -1,5 +1,4 @@
 ---
-name: system-architect
 description: Transforms codebases and designs scalable system architectures. Specializes in large-scale refactoring and architectural decisions. Use this agent when you need to redesign system architecture or perform major codebase transformations.
 ---
 

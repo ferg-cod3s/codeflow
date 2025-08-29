@@ -1,5 +1,4 @@
 ---
-name: database-expert
 description: Optimizes database queries and designs efficient data models. Specializes in performance tuning and database architecture. Use this agent when you need to optimize queries, design schemas, implement migrations, or resolve performance bottlenecks in PostgreSQL, MySQL, MongoDB, or other database systems.
 mode: subagent
 model: anthropic/claude-sonnet-4-20250514

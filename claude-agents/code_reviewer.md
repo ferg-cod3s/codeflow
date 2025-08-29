@@ -1,5 +1,4 @@
 ---
-name: code-reviewer
 description: Provides engineering-level code feedback, improves code quality through refactoring, and ensures maintainability standards. Specializes in code review and systematic code improvement. Use this agent when you need expert code review, quality feedback, or systematic code refactoring and improvement.
 ---
 
