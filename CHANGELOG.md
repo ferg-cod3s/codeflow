@@ -1,167 +1,26 @@
-# Changelog
+# [0.2.0](https://github.com/ferg-cod3s/codeflow/compare/a7cbf1b46124ab6ae508b217e965a6b6f91f63e8...v0.2.0) (2025-08-29)
 
-All notable changes to the Agentic Workflow system will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+### Bug Fixes
 
-## [0.2.0] - 2025-08-29
+* handle undefined and null values properly in YAML parser ([1f7b526](https://github.com/ferg-cod3s/codeflow/commit/1f7b52672d8832eb2a55fbce450837647f7c39ca))
+* update binary name to agentic-codeflow-mcp in v0.1.1 ([558eab3](https://github.com/ferg-cod3s/codeflow/commit/558eab3e6443128e17e710088dc33c1c88f934d2))
+* update package name to non-scoped codeflow-mcp-server ([a7cbf1b](https://github.com/ferg-cod3s/codeflow/commit/a7cbf1b46124ab6ae508b217e965a6b6f91f63e8))
 
-### Added
 
-#### OpenCode Model Format Support
-- **Automatic Model Format Conversion** for OpenCode agents
-  - Converts models to proper `providerId/modelId` format required by models.dev
-  - Automatically upgrades Claude models to latest `anthropic/claude-sonnet-4-20250514`
-  - Supports OpenAI, Google, GitHub Copilot, and other providers
-  - Applied during sync operations to ensure compatibility
+### Features
 
-#### Enhanced YAML Parser
-- **Proper handling of undefined and null values**
-  - Converts string "undefined" to JavaScript `undefined`
-  - Converts string "null" to JavaScript `null`
-  - Fixes validation errors for agents with `tools: undefined`
+* add proper model format conversion for OpenCode agents ([538f84a](https://github.com/ferg-cod3s/codeflow/commit/538f84ac6ddab9742c877d8b30f2c2cbcc0c6de8))
+* complete Phase 4 - Automatic Synchronization system ([c9934f3](https://github.com/ferg-cod3s/codeflow/commit/c9934f36e624616ce8ea66214ecae49f353f4e01))
+* complete Phase 6 - Cross-Platform Testing Framework ([a5da21d](https://github.com/ferg-cod3s/codeflow/commit/a5da21d21267682579560f1cf32b527e53a3fc12))
+* complete Phase 7 - Integration and Validation ✅ ([48803c8](https://github.com/ferg-cod3s/codeflow/commit/48803c8c703f294e7521c4dad7ee79c71860ba3a))
+* implement agent format conversion system - Phase 2 complete ([cd38201](https://github.com/ferg-cod3s/codeflow/commit/cd382019e63ef3f0f899b7b7643a6954795b676b))
+* implement global agent distribution and format sync - Phase 3 complete ([1b8f0cc](https://github.com/ferg-cod3s/codeflow/commit/1b8f0cc968578bd76d953c72a1886cec9ffa2d69))
+* migrate to @agentic-codeflow/mcp-server scoped package ([6ad03da](https://github.com/ferg-cod3s/codeflow/commit/6ad03daf1cc0f3a7f09c578c0b73d67ff6fce1b1))
+* rename CLI from 'agentic' to 'codeflow' - Phase 1 complete ([648febd](https://github.com/ferg-cod3s/codeflow/commit/648febd5687879379d061f25bac6bffe20192250))
+* synchronize commands across all locations for consistency ([bc35e84](https://github.com/ferg-cod3s/codeflow/commit/bc35e840d6616bd403346f4101ac168134ab4801))
+* update Cursor MCP config to use published package ([39d24b3](https://github.com/ferg-cod3s/codeflow/commit/39d24b3dda1a6a7475374a7dea3ffc320179d849))
+* update OpenCode agents to use Claude Sonnet 4 with correct provider format ([dac6526](https://github.com/ferg-cod3s/codeflow/commit/dac65262b724e64e33deda1907c8d14c3fb4ddad))
 
-#### Improved Agent Sync System
-- **100% Agent Sync Success Rate**
-  - All 54 agents now sync successfully across all formats (base, claude-code, opencode)
-  - Fixed validation failures that previously blocked 39 agents
-  - Enhanced reliability and error handling
 
-#### MCP Integration
-- **Model Context Protocol (MCP) Server** (`mcp/codeflow-server.mjs`)
-  - Dynamic tool discovery and registration from filesystem
-  - Stable semantic naming for all commands and agents
-  - Parameterized tool access (`codeflow.get_command`, `codeflow.get_agent`)
-  - Support for both core and opencode agent scopes
-  - Compatible with Claude Desktop, OpenCode, and other MCP clients
 
-#### New Commands
-- **`/test`** command for comprehensive test generation
-  - Unit, integration, and end-to-end test creation
-  - Follows project testing patterns and frameworks
-  - Comprehensive coverage of functionality and edge cases
-
-- **`/document`** command for documentation generation  
-  - User guides, API documentation, and technical specifications
-  - Inline code comments and README updates
-  - Multiple audience support (user, api, developer, mixed)
-
-#### Dependencies
-- `@modelcontextprotocol/sdk@^1.17.4` - Official MCP SDK for server implementation
-- `zod@^4.1.1` - Schema validation and type safety for MCP operations
-
-### Enhanced
-
-#### Format Converter
-- **Smart Model Format Detection and Conversion**
-  - `convertModelForOpenCode()` method with comprehensive provider support
-  - Handles Anthropic, OpenAI, Google, and GitHub Copilot models
-  - Ensures models.dev compatibility for OpenCode format
-  - Preserves existing correct formats while upgrading incorrect ones
-
-#### Documentation
-- **Comprehensive MCP documentation suite**:
-  - `MCP_INTEGRATION.md` - Complete technical integration guide
-  - `MCP_QUICKSTART.md` - 5-minute setup guide
-  - `MCP_USAGE_EXAMPLES.md` - Practical workflow examples
-- **Updated existing documentation**:
-  - Enhanced `README.md` with MCP integration overview
-  - Updated `CLAUDE.md` with MCP architecture details  
-  - Enhanced `SLASH_COMMANDS.md` with MCP tool references
-
-#### Tool Access
-- **50+ MCP Tools Available**:
-  - 7 workflow commands (research, plan, execute, test, document, commit, review)
-  - 6+ core agents (codebase analysis, documentation, web research)
-  - 5+ domain specialist agents (operations, migrations, performance, SEO, localization)
-  - 25+ OpenCode agents (full-stack development, API building, security, UX)
-  - 2 utility tools (parameterized access by name/scope)
-
-#### Naming Convention
-- **Stable Tool Names**:
-  - Commands: `codeflow.command.{name}` (e.g., `codeflow.command.research`)
-  - Core Agents: `codeflow.agent.{name}` (e.g., `codeflow.agent.codebase_locator`)
-  - OpenCode Agents: `codeflow.agent.opencode.{name}` (e.g., `codeflow.agent.opencode.api_builder`)
-
-### Fixed
-
-#### Agent Validation Issues
-- **YAML Parser Improvements**
-  - Fixed parsing of `undefined` and `null` string values
-  - Resolves validation errors where tools field was incorrectly parsed
-  - Enables successful validation and sync of all agents
-
-#### OpenCode Model Compatibility  
-- **Corrected Model Format Issues**
-  - Fixed OpenCode agents using incorrect model format (missing provider prefix)
-  - Ensures compatibility with OpenCode and models.dev standards
-  - Automatic conversion during sync operations
-
-#### CLI Commands
-- Corrected documentation references from `push` to `pull` command in README
-
-### Changed
-
-#### Workflow Enhancement
-- Extended workflow to include testing and documentation phases
-- Complete workflow now: research → plan → execute → test → document → commit → review
-
-#### Package Structure
-- MCP server code added to dedicated `/mcp` directory
-- Enhanced TypeScript configuration for ES modules with MCP types
-
-#### Agent Sync Process
-- **Improved Reliability**: 486 total agents now sync successfully (54 agents × 3 formats × 3 directories)
-- **Better Error Handling**: Clear validation messages and automatic format corrections
-- **Enhanced Performance**: Streamlined sync process with better validation
-
-## [0.1.0] - Previous Release
-
-### Added
-- Initial Agentic Workflow CLI implementation
-- Core workflow commands (research, plan, execute, commit, review)
-- Specialized agents for codebase analysis and domain expertise
-- CLI commands for project setup (`pull`, `status`, `version`)
-- Comprehensive agent registry and documentation system
-
----
-
-## Upgrade Guide
-
-### From 0.1.0 to 0.2.0
-
-1. **Install New Dependencies**:
-   ```bash
-   bun install  # Installs @modelcontextprotocol/sdk and zod
-   ```
-
-2. **Configure MCP Client** (Optional - for Claude Desktop integration):
-   ```json
-   {
-     "mcpServers": {
-       "agentic-tools": {
-         "command": "bun",
-         "args": ["run", "/path/to/agentic/mcp/agentic-server.mjs"]
-       }
-     }
-   }
-   ```
-
-3. **Start Using New Commands**:
-   - Try `/test` for comprehensive test generation
-   - Try `/document` for documentation creation
-   - Use MCP tools directly in compatible AI clients
-
-4. **Update Workflows**:
-   - Include testing and documentation phases in development workflow
-   - Leverage MCP integration for seamless AI client access
-
-### Breaking Changes
-- None. All existing CLI functionality remains unchanged.
-
-### Deprecations
-- None in this release.
-
----
-
-**For complete setup instructions, see [MCP_QUICKSTART.md](./MCP_QUICKSTART.md)**
