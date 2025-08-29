@@ -125,6 +125,9 @@ function parseFrontmatter(content: string): { frontmatter: any; body: string } {
       // Handle different value types
       if (value === 'true' || value === 'false') {
         frontmatter[key] = value === 'true';
+      } else if (value === 'undefined' || value === 'null') {
+        // Handle undefined and null values properly
+        frontmatter[key] = value === 'undefined' ? undefined : null;
       } else if (!isNaN(Number(value)) && value !== '' && !value.includes('/')) {
         // Don't convert model names like "github-copilot/gpt-5" to numbers
         frontmatter[key] = Number(value);
