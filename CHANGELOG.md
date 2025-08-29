@@ -1,3 +1,25 @@
+## [0.2.1](https://github.com/ferg-cod3s/codeflow/compare/v0.2.0...v0.2.1) (2025-08-29)
+
+
+### Bug Fixes
+
+* correct all OpenCode agent model formats for models.dev compatibility ([e9ffe06](https://github.com/ferg-cod3s/codeflow/commit/e9ffe0656c288b779491715282f111c378b22ce8))
+* correct Claude Code global agent directory path ([eb7478c](https://github.com/ferg-cod3s/codeflow/commit/eb7478cfe90cac2c0d21fabbb0da960e40a1a5c1))
+* update agent files and fix test expectations ([ff8d6ad](https://github.com/ferg-cod3s/codeflow/commit/ff8d6ad83926d3602473bc8c8c6378413d939ad6))
+* update Husky hooks to use modern format ([8b07e69](https://github.com/ferg-cod3s/codeflow/commit/8b07e69d0a2a690b0b21b6e97157d190c0999947))
+
+
+### Features
+
+* setup Husky with automated changelog generation ([9b76509](https://github.com/ferg-cod3s/codeflow/commit/9b76509168955ccf1e84dbd74e5481718b3a2664))
+
+
+### BREAKING CHANGES
+
+* Global agent directory structure updated for Claude Code compatibility
+
+
+
 # [0.2.0](https://github.com/ferg-cod3s/codeflow/compare/a7cbf1b46124ab6ae508b217e965a6b6f91f63e8...v0.2.0) (2025-08-29)
 
 
