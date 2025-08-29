@@ -1,4 +1,5 @@
 ---
+name: security-scanner
 description: Identifies vulnerabilities and implements security best practices. Specializes in security analysis and threat detection. Use this agent when you need to assess and improve the security posture of your applications.
 mode: subagent
 model: github-copilot/gpt-5

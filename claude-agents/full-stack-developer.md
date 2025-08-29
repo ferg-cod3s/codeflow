@@ -1,4 +1,5 @@
 ---
+name: full-stack-developer
 description: Handles cross-functional development tasks requiring broad technical knowledge across frontend, backend, and infrastructure for smaller projects or rapid prototyping scenarios. Use this agent for smaller projects requiring end-to-end implementation, rapid prototyping, quick feature additions spanning multiple technical domains, or when you need broad technical guidance before engaging specialists.
 mode: primary
 model: anthropic/claude-sonnet-4-20250514

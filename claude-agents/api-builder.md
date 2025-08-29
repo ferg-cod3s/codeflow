@@ -1,4 +1,5 @@
 ---
+name: api-builder
 description: Creates developer-friendly APIs with proper documentation and standards compliance. Specializes in REST, GraphQL, and modern API design. Use this agent when you need to design and implement robust, developer-friendly APIs.
 mode: subagent
 model: anthropic/claude-sonnet-4-20250514

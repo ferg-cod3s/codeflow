@@ -15,7 +15,6 @@ tools:
   todoread: false
   todowrite: false
   webfetch: true
-name: web-search-researcher
 enabled: false
 ---
 

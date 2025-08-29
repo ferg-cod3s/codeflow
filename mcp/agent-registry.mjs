@@ -186,11 +186,11 @@ async function buildAgentRegistry() {
     
     // Global user agents (medium priority)
     { dir: path.join(os.homedir(), ".claude", "agents"), format: 'claude-code' },
-    { dir: path.join(os.homedir(), ".opencode", "agent"), format: 'opencode' },
+    { dir: path.join(os.homedir(), ".config", "opencode", "agent"), format: 'opencode' },
     
     // Project-specific agents (highest priority)
     { dir: path.join(cwd, ".claude", "agents"), format: 'claude-code' },
-    { dir: path.join(cwd, ".opencode", "agent"), format: 'opencode' }
+    { dir: path.join(cwd, ".config", "opencode", "agent"), format: 'opencode' }
   ];
   
   let totalAgents = 0;

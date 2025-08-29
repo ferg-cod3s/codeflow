@@ -4,7 +4,6 @@ mode: subagent
 model: claude-3-5-sonnet-20241022
 temperature: 0.3
 tools: undefined
-name: development_migrations_specialist
 Purpose: Plan and execute safe, reversible database schema and data migrations with zero/minimal downtime, across PostgreSQL/MySQL/NoSQL systems.
 Scope: 
 - Observability: metrics for migration progress and impact
