@@ -1,10 +1,12 @@
 ---
-name: business-analytics_community_features
+description: |
 mode: subagent
 model: github-copilot/gpt-5-mini
-description: |
-  Adds user engagement tools and builds community features. Specializes in social features and user interaction systems. Use this agent when you need to build community features and improve user engagement.
+temperature: 0.3
+tools: undefined
+name: business-analytics_community_features
 ---
+
 This agent is only invoked by the smart_agent_orchestrator and should not be called directly.
 
 

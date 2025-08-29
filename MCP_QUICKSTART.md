@@ -1,17 +1,17 @@
 # MCP Quick Start Guide
 
-Get up and running with Agentic Workflow MCP integration in 5 minutes.
+Get up and running with Codeflow MCP integration in 5 minutes.
 
 ## Prerequisites
 
 - **Bun Runtime** installed ([get it here](https://bun.sh))
-- **Claude Desktop** or other MCP-compatible AI client
-- **Agentic Workflow** system cloned locally
+- **MCP Client**: Claude Desktop, Warp Terminal, or other MCP-compatible AI client
+- **Codeflow** system cloned locally
 
 ## 1. Install Dependencies
 
 ```bash
-cd /path/to/agentic
+cd /path/to/codeflow
 bun install
 bun run install  # Links CLI globally
 ```
@@ -26,38 +26,89 @@ bun run mcp:server
 bun run mcp:dev
 
 # Or directly
-bun run mcp/agentic-server.mjs
+bun run mcp/codeflow-server.mjs
 ```
 
 **Server Status**: Look for "MCP server started" message. Server runs on stdio transport.
 
-## 3. Configure Claude Desktop
+## 3. Configure Your MCP Client
 
-Add to your Claude Desktop settings (`~/Claude/mcp_settings.json`):
+### Option A: Claude Desktop
+
+Preferred: configure automatically via the CLI
+
+```bash
+codeflow mcp configure claude-desktop
+```
+
+Manual configuration (macOS path): `~/Library/Application Support/Claude/claude_desktop_config.json`
 
 ```json
 {
   "mcpServers": {
-    "agentic-tools": {
+    "codeflow-tools": {
       "command": "bun",
-      "args": ["run", "/full/path/to/agentic/mcp/agentic-server.mjs"]
+      "args": ["run", "/full/path/to/codeflow/mcp/codeflow-server.mjs"]
     }
   }
 }
 ```
 
-**Important**: Use the full absolute path to the server file.
+### Option B: Warp Terminal
 
-## 4. Restart Claude Desktop
+Preferred: configure automatically via the CLI
 
-Completely quit and restart Claude Desktop for MCP configuration to take effect.
+```bash
+codeflow mcp configure warp
+```
+
+Or manually add in Warp Settings → AI → Tools (MCP):
+- **Name**: codeflow-tools
+- **Command**: bun
+- **Args**: run /full/path/to/codeflow/mcp/codeflow-server.mjs
+
+### Option C: Cursor IDE
+
+Configure automatically via the CLI
+
+```bash
+codeflow mcp configure cursor
+```
+
+This sets up MCP configuration in Cursor's settings (similar to Claude Desktop).
+
+### Option D: Claude.ai (Web)
+
+Claude.ai uses slash commands instead of MCP:
+
+```bash
+codeflow setup . --type claude-code
+```
+
+No MCP server needed - commands work directly in claude.ai.
+
+### Option E: OpenCode
+
+OpenCode uses its own command system:
+
+```bash
+codeflow setup . --type opencode
+```
+
+No MCP configuration needed.
+
+**Important**: Use the full absolute path to the server file for MCP clients.
+
+## 4. Restart Your Client
+
+Completely quit and restart Claude Desktop or Warp for MCP configuration to take effect.
 
 ## 5. Verify Integration
 
 In a new Claude Desktop conversation:
 
 ```
-I want to see what agentic workflow tools are available. Can you list the available MCP tools?
+I want to see what codeflow workflow tools are available. Can you list the available MCP tools?
 ```
 
 You should see tools like:
@@ -121,7 +172,7 @@ DEBUG=* bun run mcp:server
 ### ❌ Permission errors
 ```bash
 # Ensure proper permissions
-chmod +x mcp/agentic-server.mjs
+chmod +x mcp/codeflow-server.mjs
 
 # Check file ownership
 ls -la mcp/
@@ -160,10 +211,10 @@ bun run mcp:server
 bun run mcp:dev
 
 # Check available commands
-bun run agentic commands
+codeflow commands
 
 # Install to project
-bun run agentic pull ~/my-project
+codeflow pull ~/my-project
 ```
 
 ## Support
@@ -174,4 +225,4 @@ bun run agentic pull ~/my-project
 
 ---
 
-**🎉 You're ready!** Start using the agentic workflow system through MCP integration for powerful AI-assisted development.
+**🎉 You're ready!** Start using the codeflow system through MCP integration for powerful AI-assisted development.

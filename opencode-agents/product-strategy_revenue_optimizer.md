@@ -1,10 +1,12 @@
 ---
-name: product-strategy_revenue_optimizer
+description: |
 mode: subagent
 model: github-copilot/gpt-5-mini
-description: |
-  Identifies monetization opportunities and optimizes revenue streams. Analyzes product features for revenue potential and implements monetization strategies. Use this agent when you need to optimize revenue generation and identify new monetization opportunities.
+temperature: 0.3
+tools: undefined
+name: product-strategy_revenue_optimizer
 ---
+
 This agent is only invoked by the smart_agent_orchestrator and should not be called directly.
 
 

@@ -313,6 +313,16 @@ export async function setup(projectPath: string | undefined, options: { force?: 
     // Create/update README
     await createProjectReadme(resolvedPath, projectType);
     
+    // Ensure .codeflow scaffold exists for developer workflows
+    const codeflowScaffoldDirs = [".codeflow", ".codeflow/agent", ".codeflow/command"]; 
+    for (const d of codeflowScaffoldDirs) {
+      const targetDir = join(resolvedPath, d);
+      if (!existsSync(targetDir)) {
+        await mkdir(targetDir, { recursive: true });
+        console.log(`  ✓ Created directory: ${d}`);
+      }
+    }
+    
     // Create appropriate .gitignore entries
     const gitignorePath = join(resolvedPath, ".gitignore");
     let gitignoreContent = "";

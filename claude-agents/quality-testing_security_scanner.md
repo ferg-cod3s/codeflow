@@ -1,11 +1,12 @@
 ---
-name: quality-testing_security_scanner
+description: Identifies vulnerabilities and implements security best practices. Specializes in security analysis and threat detection. Use this agent when you need to assess and improve the security posture of your applications.
 mode: subagent
 model: github-copilot/gpt-5-mini
-description: |
-  Identifies vulnerabilities and implements security best practices. Specializes in security analysis and threat detection. Use this agent when you need to assess and improve the security posture of your applications.
-
+temperature: 0.3
+tools: undefined
+name: quality-testing_security_scanner
 ---
+
 This agent is only invoked by the smart_agent_orchestrator and should not be called directly.
 
 

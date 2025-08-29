@@ -10,16 +10,16 @@ The Codeflow Automation Enhancement CLI now includes **Model Context Protocol (M
 
 The MCP server is implemented in `mcp/codeflow-server.mjs` and provides:
 
-- **Dynamic Tool Discovery**: Automatically registers all commands and agents as MCP tools
-- **Stable Naming**: Provides both unique IDs and stable semantic names for consistency
-- **Parameterized Access**: Enables direct retrieval of specific commands/agents by name
+- **Dynamic Tool Discovery**: Automatically registers the core workflow commands as MCP tools (agents remain internal)
+- **Stable Naming**: Provides stable semantic names for predictable access
+- **Parameterized Access**: Enables direct retrieval of specific commands by name
 - **Cross-Platform Compatibility**: Works with any MCP-compatible AI client
 
 ### Key Components
 
 ```javascript
 // Core server setup
-const server = new McpServer({ name: "codeflow-tools", version: "1.0.0" });
+const server = new McpServer({ name: "codeflow-tools", version: "0.1.0" });
 const transport = new StdioServerTransport();
 
 // Dynamic tool registration from filesystem
@@ -41,7 +41,7 @@ const toolEntries = await buildTools();
 
 ```json
 {
-  "devDependencies": {
+  "dependencies": {
     "@modelcontextprotocol/sdk": "^1.17.4",
     "zod": "^4.1.1"
   }
@@ -69,11 +69,10 @@ Each tool gets both a unique ID (with hash for collision prevention) and a stabl
 
 ```javascript
 // Commands: codeflow.command.{slug}
-// Core Agents: codeflow.agent.{slug}  
-// OpenCode Agents: codeflow.agent.opencode.{slug}
+// (Agent tool names reserved for future use; agents are kept internal and orchestrated by commands.)
 ```
 
-This dual naming system ensures tools remain accessible even if file paths change.
+This stable naming ensures tools remain accessible even if file paths change.
 
 ## Available MCP Tools
 
@@ -117,19 +116,93 @@ const executeCommand = await client.callTool("execute");
 
 ### Claude Desktop Configuration
 
-Add to Claude Desktop's MCP settings:
+Preferred: configure automatically via CLI on macOS
+
+```bash
+codeflow mcp configure claude-desktop
+```
+
+Manual configuration (macOS path): `~/Library/Application Support/Claude/claude_desktop_config.json`
 
 ```json
 {
   "mcpServers": {
     "codeflow-tools": {
-      "command": "node",
-      "args": ["/path/to/codeflow/mcp/codeflow-server.mjs"],
+      "command": "bun",
+      "args": ["run", "/absolute/path/to/codeflow/mcp/codeflow-server.mjs"],
       "env": {}
     }
   }
 }
 ```
+
+### Warp Terminal Configuration
+
+Preferred: configure automatically via CLI
+
+```bash
+codeflow mcp configure warp
+```
+
+This creates a config file at `~/.warp/mcp_config.json` (macOS/Linux) or `%APPDATA%/Warp/mcp_config.json` (Windows).
+
+Alternatively, add manually in Warp:
+1. Open Warp Settings → AI → Tools (MCP)
+2. Add a new MCP server:
+   - **Name**: codeflow-tools
+   - **Command**: bun
+   - **Args**: run /absolute/path/to/codeflow/mcp/codeflow-server.mjs
+
+```json
+{
+  "mcpServers": {
+    "codeflow-tools": {
+      "name": "Codeflow Tools",
+      "command": "bun",
+      "args": ["run", "/absolute/path/to/codeflow/mcp/codeflow-server.mjs"],
+      "env": {},
+      "description": "Codeflow workflow automation tools"
+    }
+  }
+}
+```
+
+### Cursor Configuration
+
+Cursor IDE also supports MCP integration. Configure it automatically via CLI:
+
+```bash
+codeflow mcp configure cursor
+```
+
+This creates a config file at:
+- macOS: `~/Library/Application Support/Cursor/mcp_config.json`
+- Windows: `%APPDATA%\Cursor\mcp_config.json`
+- Linux: `~/.config/Cursor/mcp_config.json`
+
+The configuration format is the same as Claude Desktop.
+
+### Claude.ai (Web) - Slash Commands
+
+Claude.ai uses native slash commands instead of MCP. Set up with:
+
+```bash
+codeflow setup . --type claude-code
+```
+
+This creates `.claude/commands/` directory with command files in YAML frontmatter format.
+No MCP configuration is needed - commands work directly in claude.ai conversations.
+
+### OpenCode - Direct Commands
+
+OpenCode uses its own command system without MCP. Set up with:
+
+```bash
+codeflow setup . --type opencode
+```
+
+This creates `.opencode/command/` directory with command files.
+No MCP configuration is needed - OpenCode accesses commands directly.
 
 ## Technical Implementation Details
 
@@ -138,34 +211,27 @@ Add to Claude Desktop's MCP settings:
 ```javascript
 async function buildTools() {
   const tools = [];
-  
-  // Scan command directory
-  const commandFiles = await loadMarkdownFiles(COMMAND_DIR);
-  
-  // Scan agent directories (core + opencode)
-  const agentFiles = [
-    ...(await loadMarkdownFiles(AGENT_DIR)),
-    ...(await loadMarkdownFiles(path.join(AGENT_DIR, "opencode"))),
-  ];
-  
+  // Load core workflow commands from the highest-priority directory
+  const commandFiles = await loadMarkdownFiles(preferredCommandDir);
+  // Register only the 7 core commands; agents remain internal
   return tools;
 }
 ```
 
 ### Cross-Repository Support
 
-The MCP server now works from any directory or repository:
+The MCP server works from any project directory by searching in priority order:
 
 ```javascript
 function findCodeflowPaths() {
   const cwd = process.cwd();
-  const cwdCommandDir = path.join(cwd, ".codeflow", "command");
+  const cwdOpenCodeDir = path.join(cwd, ".opencode", "command");
   const cwdClaudeCommandDir = path.join(cwd, ".claude", "commands");
   const codeflowCommandDir = path.join(codeflowRoot, "command");
   
   return {
-    // Priority: .codeflow/command, .claude/commands, then codeflow/command
-    commandDirs: [cwdCommandDir, cwdClaudeCommandDir, codeflowCommandDir]
+    // Priority: .opencode/command → .claude/commands → codeflow/command
+    commandDirs: [cwdOpenCodeDir, cwdClaudeCommandDir, codeflowCommandDir]
   };
 }
 ```
@@ -223,7 +289,7 @@ The server maintains a persistent connection for real-time tool access.
 1. **Seamless Integration**: Use agentic workflows directly from any MCP-compatible AI
 2. **Project-Aware**: Automatically finds commands in current project or falls back to global installation
 3. **Complete Workflow**: Full research → plan → execute → test → document → commit → review cycle
-4. **Cross-Platform Support**: Works with Claude Desktop, OpenCode, and other MCP clients
+4. **Cross-Platform Support**: Works with Claude Desktop, Warp Terminal, OpenCode, and other MCP clients
 
 ## Future Enhancements
 
@@ -266,7 +332,7 @@ The server maintains a persistent connection for real-time tool access.
 Run the server with additional logging:
 
 ```bash
-DEBUG=* bun run mcp/agentic-server.mjs
+DEBUG=* bun run mcp/codeflow-server.mjs
 ```
 
 This provides detailed information about tool registration and client interactions.
@@ -288,11 +354,11 @@ Tools return markdown content only - actual command execution happens in the AI 
 
 All tool inputs are validated using Zod schemas to prevent malformed requests.
 
-## Migration Guide
+### Migration Guide
 
-### From CLI-Only Usage
+#### From CLI-Only Usage
 
-Existing CLI workflows (`agentic pull`, `agentic status`) continue to work unchanged. MCP provides an additional access method without breaking existing functionality.
+Existing CLI workflows (`codeflow pull`, `codeflow status`) continue to work unchanged. MCP provides an additional access method without breaking existing functionality.
 
 ### Agent Updates
 

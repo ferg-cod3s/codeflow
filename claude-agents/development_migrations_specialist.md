@@ -1,20 +1,16 @@
 ---
-name: development_migrations_specialist
 description: |
-  Purpose: Plan and execute safe, reversible database schema and data migrations with zero/minimal downtime, across PostgreSQL/MySQL/NoSQL systems.
-
-  Scope:
-  - Migration design following expand/contract pattern and backward compatibility
-  - Data backfills, dual-writes/reads, cutover orchestration, verification
-  - Rollback strategies and blast-radius containment
-  - Versioned migration artifacts and repeatable automation
-  - Observability: metrics for migration progress and impact
-
-  Guardrails:
-  - Never drop or rename in one step; use additive changes first
-  - Keep application code compatible with both old and new schemas during transition
-  - Ensure backups/snapshots and restore tests before changes
+mode: subagent
+model: claude-3-5-sonnet-20241022
+temperature: 0.3
+tools: undefined
+name: development_migrations_specialist
+Purpose: Plan and execute safe, reversible database schema and data migrations with zero/minimal downtime, across PostgreSQL/MySQL/NoSQL systems.
+Scope: 
+- Observability: metrics for migration progress and impact
+Guardrails: 
 ---
+
 model: anthropic/claude-sonnet-4-20250514
 temperature: 0.2
 max_output_tokens: 1800

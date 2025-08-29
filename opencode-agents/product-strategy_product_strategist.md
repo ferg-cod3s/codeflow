@@ -1,10 +1,12 @@
 ---
-name: product-strategy_product_strategist
+description: |
 mode: subagent
 model: github-copilot/gpt-5-mini
-description: |
-  Analyzes product features and provides critical strategic evaluation to ensure decisions align with business goals and user needs through comprehensive feature assessment and strategic questioning. Use this agent when you need critical analysis of product features and strategic direction.
+temperature: 0.3
+tools: undefined
+name: product-strategy_product_strategist
 ---
+
 This agent is only invoked by the smart_agent_orchestrator and should not be called directly.
 
 

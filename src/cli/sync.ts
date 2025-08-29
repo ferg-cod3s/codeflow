@@ -12,6 +12,7 @@ interface SyncOptions {
   format?: 'all' | 'base' | 'claude-code' | 'opencode';
   validate?: boolean;
   dryRun?: boolean;
+  sourceOfTruth?: 'base' | 'claude-code' | 'opencode' | 'auto';
 }
 
 /**
@@ -23,7 +24,8 @@ export async function syncGlobalAgents(options: SyncOptions = {}) {
     includeWorkflow = true,
     format = 'all',
     validate = true,
-    dryRun = false
+    dryRun = false,
+    sourceOfTruth = 'auto'
   } = options;
   
   console.log("🌐 Synchronizing agents to global directories...");
@@ -38,12 +40,19 @@ export async function syncGlobalAgents(options: SyncOptions = {}) {
   const codeflowDir = join(import.meta.dir, "../..");
   const globalPaths = getGlobalPaths();
   
-  // Define source directories
-  const sourceDirs = [
+  // Define all possible source directories
+  const allSourceDirs = [
     { path: join(codeflowDir, "agent"), format: 'base' as const },
     { path: join(codeflowDir, "claude-agents"), format: 'claude-code' as const },
     { path: join(codeflowDir, "opencode-agents"), format: 'opencode' as const }
   ];
+  
+  // Filter source directories based on source-of-truth setting
+  let sourceDirs = allSourceDirs;
+  if (sourceOfTruth !== 'auto') {
+    sourceDirs = allSourceDirs.filter(dir => dir.format === sourceOfTruth);
+    console.log(`🎯 Using ${sourceOfTruth} as source of truth`);
+  }
   
   // Define target formats to sync
   const targetFormats: ('base' | 'claude-code' | 'opencode')[] = 
@@ -145,6 +154,14 @@ export async function syncGlobalAgents(options: SyncOptions = {}) {
     console.log("🔍 Dry run complete - no files were written");
   } else {
     console.log(`✅ Global sync complete!`);
+    
+    // Provide MCP restart guidance if agents were synced
+    if (totalSynced > 0) {
+      console.log("");
+      console.log("💡 MCP Server Restart:");
+      console.log("   If you're using MCP integration, restart the server to use updated agents:");
+      console.log("   codeflow mcp restart");
+    }
   }
   
   console.log(`📊 Summary: ${totalSynced} agents synced, ${totalErrors} errors`);

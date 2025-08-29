@@ -1,10 +1,12 @@
 ---
-name: generalist_product_designer
+description: |
 mode: subagent
 model: github-copilot/gpt-5-mini
-description: |
-  Provides holistic design guidance combining user experience, visual design, and content strategy for cohesive product experiences and cross-functional design decisions. Use this agent for holistic design strategy, cross-product design consistency, integrated UX/UI/content projects, or when you need design leadership spanning multiple design disciplines before engaging specialists.
+temperature: 0.3
+tools: undefined
+name: generalist_product_designer
 ---
+
 This agent is only invoked by the smart_agent_orchestrator and should not be called directly.
 
 

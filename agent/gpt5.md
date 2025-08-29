@@ -2,7 +2,7 @@
 description: Primary agent using GitHub Copilot GPT-5 for maximum capability
 mode: primary
 model: github-copilot/gpt-5
-temperature: undefined
+temperature: 0.3
 tools: undefined
 name: gpt5
 ---

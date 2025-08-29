@@ -2,7 +2,7 @@
 description: |
 mode: primary
 model: github-copilot/gpt-5-mini
-temperature: undefined
+temperature: 0.3
 tools: undefined
 name: operations_agent_prompt_updater
 ---

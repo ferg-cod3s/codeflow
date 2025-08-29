@@ -1,10 +1,12 @@
 ---
-name: generalist_product_strategy_lead
+description: |
 mode: subagent
 model: github-copilot/gpt-5-mini
-description: |
-  Drives product vision, identifies market opportunities, optimizes user acquisition and retention, and ensures product-market fit for cross-functional teams. Use this agent for initial product ideation, market validation, feature roadmap planning, business model optimization, and when you need comprehensive product strategy guidance for smaller projects or cross-functional team initiatives that require integrated product and strategy expertise.
+temperature: 0.3
+tools: undefined
+name: generalist_product_strategy_lead
 ---
+
 This agent is only invoked by the smart_agent_orchestrator and should not be called directly.
 
 

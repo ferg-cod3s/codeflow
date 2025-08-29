@@ -39,41 +39,43 @@ codeflow status ~/projects/my-app
 
 ## Platform Integration
 
-The codeflow automation system supports **three integration approaches**:
+The codeflow automation system supports **multiple integration approaches**:
 
-### **Claude Code**: Native Slash Commands
+### **MCP Clients** (Claude Desktop, Warp, Cursor)
+- Use Model Context Protocol for tool access
+- Configure with: `codeflow mcp configure <client>`
+- Supported clients: `claude-desktop`, `warp`, `cursor`
+
+### **Claude.ai (Web)**: Native Slash Commands
 - Built-in `/research`, `/plan`, `/execute` commands
-- Zero setup required - works immediately
+- Setup with: `codeflow setup . --type claude-code`
 - Commands stored in `.claude/commands/`
 
-### **NPM Package**: Universal MCP Server
-- **Quick start**: `npx @codeflow/mcp-server`
-- Works with Claude Desktop, OpenCode, any MCP client
+### **OpenCode**: Direct Commands
+- Uses `.opencode/command/` directory
+- Setup with: `codeflow setup . --type opencode`
+- No MCP configuration needed
+
+### **Bunx**: Universal MCP Server
+- **Quick start**: `bun x @codeflow/mcp-server`
+- Works with any MCP-compatible client
 - Privacy-safe built-in templates
 - No project setup required
 
-### **Full Integration**: Project-Aware MCP
-- Enhanced with project-specific customizations
-- Uses codeflow CLI for setup and management
-- Combines NPM package with local commands
-
 ## Quick Start Options
 
-### Option 1: NPX (Instant Setup)
+### Option 1: MCP Clients (Claude Desktop, Warp, Cursor)
 ```bash
-# Instant MCP server - no installation required
-npx @codeflow/mcp-server
+# Configure for your MCP client
+codeflow mcp configure claude-desktop  # For Claude Desktop
+codeflow mcp configure warp           # For Warp Terminal
+codeflow mcp configure cursor         # For Cursor IDE
 
-# Configure Claude Desktop
-# Add to ~/.../Claude/claude_desktop_config.json:
-{
-  "mcpServers": {
-    "codeflow-workflows": {
-      "command": "npx", 
-      "args": ["@codeflow/mcp-server"]
-    }
-  }
-}
+# Start MCP server
+codeflow mcp start
+
+# Or start in background
+codeflow mcp start --background
 ```
 
 ### Option 2: Project-Aware Setup
@@ -125,7 +127,7 @@ codeflow mcp status
 
 **Documentation**:
 - 🏗️ [Architecture Overview](./ARCHITECTURE_OVERVIEW.md) - Native slash commands vs MCP integration
-- 📦 [NPM Package](./packages/codeflow-mcp/README.md) - Standalone MCP server via NPX
+- 📦 [NPM Package](./packages/agentic-mcp/README.md) - Standalone MCP server via NPX
 - 🚀 [Quick Start Guide](./MCP_QUICKSTART.md) - Get running in 5 minutes
 - 📖 [Complete Integration Guide](./MCP_INTEGRATION.md) - Full technical documentation
 - 💡 [Usage Examples](./MCP_USAGE_EXAMPLES.md) - Practical workflow examples

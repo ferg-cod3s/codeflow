@@ -1,0 +1,64 @@
+# Development files
+.env*
+.git*
+.vscode/
+.idea/
+*.log
+*.tmp
+*.temp
+
+# Test files
+tests/
+__tests__/
+*.test.*
+*.spec.*
+coverage/
+.nyc_output/
+
+# Development dependencies
+node_modules/
+.pnpm-store/
+bun.lockb
+
+# Build artifacts
+dist/
+build/
+.next/
+.nuxt/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+*.swp
+*.swo
+*~
+
+# Temporary files
+tmp/
+temp/
+
+# Documentation development
+docs/development/
+thoughts/
+
+# TypeScript cache
+tsconfig.tsbuildinfo
+*.tsbuildinfo
+
+# Backup files
+*.bak
+*.backup
+
+# Documentation development
+thoughts/
+
+# Exclude development artifacts
+**/*.bak
+.editorconfig

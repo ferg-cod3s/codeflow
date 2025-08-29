@@ -1,10 +1,12 @@
 ---
-name: product-strategy_user_researcher
+description: |
 mode: subagent
 model: github-copilot/gpt-5-mini
-description: |
-  Analyzes user flows and identifies drop-off points. Conducts user research to understand behavior patterns and optimize user experience. Use this agent when you need to understand user behavior and optimize conversion funnels.
+temperature: 0.3
+tools: undefined
+name: product-strategy_user_researcher
 ---
+
 This agent is only invoked by the smart_agent_orchestrator and should not be called directly.
 
 

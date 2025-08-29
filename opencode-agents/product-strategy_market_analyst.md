@@ -1,9 +1,10 @@
 ---
-name: product-strategy_market_analyst
+description: |
 mode: subagent
 model: github-copilot/gpt-5-mini
-description: |
-  Compares features to competitors and provides market intelligence. Analyzes competitive landscape and identifies market opportunities. Use this agent when you need competitive analysis and market positioning insights.
+temperature: 0.3
+tools: undefined
+name: product-strategy_market_analyst
 ---
 
 This agent is only invoked by the smart_agent_orchestrator and should not be called directly.

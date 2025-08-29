@@ -2,7 +2,7 @@
 description: |
 mode: subagent
 model: github-copilot/gpt-5
-temperature: undefined
+temperature: 0.3
 tools: undefined
 name: operations_agent_architect
 **Dynamic Agent Creation and Design: **

@@ -7,15 +7,28 @@ import os from "node:os";
  * Global directory paths for codeflow
  */
 export function getGlobalPaths() {
+  const envBase = process.env.CODEFLOW_GLOBAL_CONFIG || process.env.CODEFLOW_HOME;
+  if (envBase && envBase.trim().length > 0) {
+    // Test environment: flat structure
+    return {
+      global: envBase,
+      commands: join(envBase, 'command'),
+      agents: {
+        base: join(envBase, 'agent'),
+        claudeCode: join(envBase, 'agent'),
+        opencode: join(envBase, 'agent')
+      }
+    };
+  }
+
   const home = os.homedir();
-  
   return {
-    // Base global directory
+    // Base global directory under home for normal usage
     global: join(home, '.claude'),
-    
+
     // Command directories
     commands: join(home, '.claude', 'commands'),
-    
+
     // Agent directories by format
     agents: {
       base: join(home, '.claude', 'agents', 'base'),
@@ -28,11 +41,34 @@ export function getGlobalPaths() {
 /**
  * Setup global agent directories
  */
-export async function setupGlobalAgents(): Promise<void> {
+export async function setupGlobalAgents(baseDir?: string): Promise<void> {
   const paths = getGlobalPaths();
   
   console.log("📁 Setting up global agent directories...");
+
+  const envOverride = baseDir && baseDir.trim().length > 0 ? baseDir : (process.env.CODEFLOW_GLOBAL_CONFIG || process.env.CODEFLOW_HOME);
+  const usingEnv = !!envOverride && envOverride.trim().length > 0;
+
+  if (usingEnv) {
+    const base = envOverride!.trim();
+    // Flat structure for tests: create <base>/agent and <base>/command
+    const agentDir = join(base, 'agent');
+    const commandDir = join(base, 'command');
+
+    if (!existsSync(agentDir)) {
+      await mkdir(agentDir, { recursive: true });
+      console.log(`  ✓ Created ${agentDir}`);
+    }
+    if (!existsSync(commandDir)) {
+      await mkdir(commandDir, { recursive: true });
+      console.log(`  ✓ Created ${commandDir}`);
+    }
+
+    console.log("✅ Global directories ready (env-based)");
+    return;
+  }
   
+  // Default structure under ~/.claude
   // Create main agents directory
   const agentsDir = join(paths.global, 'agents');
   if (!existsSync(agentsDir)) {
@@ -41,11 +77,17 @@ export async function setupGlobalAgents(): Promise<void> {
   }
   
   // Create format-specific subdirectories
-  for (const [format, path] of Object.entries(paths.agents)) {
-    if (!existsSync(path)) {
-      await mkdir(path, { recursive: true });
-      console.log(`  ✓ Created ${format} agents directory: ${path}`);
+  for (const [format, p] of Object.entries(paths.agents)) {
+    if (!existsSync(p)) {
+      await mkdir(p, { recursive: true });
+      console.log(`  ✓ Created ${format} agents directory: ${p}`);
     }
+  }
+
+  // Ensure commands directory exists
+  if (!existsSync(paths.commands)) {
+    await mkdir(paths.commands, { recursive: true });
+    console.log(`  ✓ Created commands directory: ${paths.commands}`);
   }
   
   // Create a README explaining the structure

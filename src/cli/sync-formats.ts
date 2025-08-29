@@ -197,6 +197,11 @@ export async function syncAllFormats(options: SyncFormatsOptions = {}) {
   
   if (dryRun) {
     console.log("🔍 Dry run complete - no files were written");
+  } else if (totalSynced > 0) {
+    console.log("");
+    console.log("💡 MCP Server Restart:");
+    console.log("   If you're using MCP integration, restart the server to use updated agents:");
+    console.log("   codeflow mcp restart");
   }
 
   return {

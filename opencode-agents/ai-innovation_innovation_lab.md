@@ -1,10 +1,12 @@
 ---
-name: ai-innovation_innovation_lab
+description: |
 mode: subagent
 model: github-copilot/gpt-5-mini
-description: |
-  Experiments with cutting-edge tech and explores new technologies. Specializes in emerging technology exploration and prototyping. Use this agent when you need to explore new technologies and experiment with innovative solutions.
+temperature: 0.3
+tools: undefined
+name: ai-innovation_innovation_lab
 ---
+
 This agent is only invoked by the smart_agent_orchestrator and should not be called directly.
 
 

@@ -129,7 +129,7 @@ describe("CLI Commands", () => {
     
     expect(result.exitCode).toBe(1);
     expect(result.stderr).toContain("Error: MCP client name required");
-    expect(result.stderr).toContain("Available clients: claude-desktop");
+    expect(result.stderr).toContain("Available clients: claude-desktop, warp, cursor");
   });
 
   test("codeflow convert without required args shows error", async () => {

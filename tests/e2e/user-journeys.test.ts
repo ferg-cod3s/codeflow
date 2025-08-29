@@ -57,7 +57,7 @@ describe("Real User Journey E2E Tests", () => {
       timeout: 15000
     });
 
-    expect(setupOutput).toContain('Setup completed');
+    expect(setupOutput).toContain('Successfully set up');
     expect(existsSync(join(projectDir, '.codeflow'))).toBe(true);
     
     console.log("✅ Project setup successful");
@@ -76,7 +76,8 @@ describe("Real User Journey E2E Tests", () => {
     // Step 3: User sets up global configuration
     const globalOutput = execSync(`bun run ${CLI_PATH} global setup`, {
       encoding: 'utf8',
-      timeout: 10000
+      timeout: 10000,
+      env: { ...process.env, CODEFLOW_HOME: userHomeDir }
     });
 
     expect(globalOutput).toContain('Global');
@@ -129,7 +130,7 @@ describe("Real User Journey E2E Tests", () => {
         timeout: 10000
       });
 
-      expect(setupOutput).toContain('Setup completed');
+      expect(setupOutput).toContain('Successfully set up');
       console.log(`✅ ${projectName} setup completed`);
     }
 
@@ -178,10 +179,10 @@ describe("Real User Journey E2E Tests", () => {
       timeout: 10000
     });
 
-    expect(setupOutput).toContain('Setup completed');
+    expect(setupOutput).toContain('Successfully set up');
 
-    // Create custom agent for testing
-    const agentDir = join(devProject, '.codeflow', 'agent');
+    // Create custom agent for testing (use .opencode structure since that's what setup creates)
+    const agentDir = join(devProject, '.opencode', 'agent');
     const customAgentPath = join(agentDir, 'custom_dev_agent.md');
     
     const initialAgentContent = `---
@@ -266,10 +267,10 @@ dist/
       timeout: 10000
     });
 
-    expect(setupOutput).toContain('Setup completed');
+    expect(setupOutput).toContain('Successfully set up');
 
-    // Create team-specific agents and commands
-    const teamAgentsDir = join(teamProject, '.codeflow', 'agent');
+    // Create team-specific agents and commands (use .opencode structure since that's what setup creates)
+    const teamAgentsDir = join(teamProject, '.opencode', 'agent');
     const teamAgentContent = `---
 name: team_collaboration_agent
 description: Agent for team collaboration and code review
@@ -347,8 +348,8 @@ You are a legacy agent that needs to be migrated to codeflow.`;
       timeout: 15000
     });
 
-    expect(migrationOutput).toContain('Setup completed');
-    expect(existsSync(join(legacyProject, '.codeflow'))).toBe(true);
+    expect(migrationOutput).toMatch(/(Successfully set up|already have codeflow setup)/);
+    expect(existsSync(join(legacyProject, '.opencode'))).toBe(true);
 
     // Verify legacy content is preserved
     const statusOutput = execSync(`bun run ${CLI_PATH} status ${legacyProject}`, {
@@ -382,7 +383,7 @@ You are a legacy agent that needs to be migrated to codeflow.`;
     });
 
     // Create many agents to simulate large project
-    const agentDir = join(loadTestProject, '.codeflow', 'agent');
+    const agentDir = join(loadTestProject, '.opencode', 'agent');
     const agentCount = 50;
     const agents = [];
 

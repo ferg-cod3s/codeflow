@@ -2,7 +2,7 @@
 description: |
 mode: subagent
 model: github-copilot/gpt-5-mini
-temperature: undefined
+temperature: 0.3
 tools: undefined
 name: generalist_product_designer
 ---

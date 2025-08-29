@@ -1,9 +1,10 @@
 ---
-name: development_accessibility_pro
+description: Ensures app accessibility and compliance with WCAG guidelines. Specializes in making applications usable for all users. Use this agent when you need to ensure your application is accessible to users with disabilities.
 mode: subagent
 model: github-copilot/gpt-5-mini
-description: Ensures app accessibility and compliance with WCAG guidelines. Specializes in making applications usable for all users. Use this agent when you need to ensure your application is accessible to users with disabilities.
-
+temperature: 0.3
+tools: undefined
+name: development_accessibility_pro
 ---
 
 This agent is only invoked by the smart_agent_orchestrator and should not be called directly.

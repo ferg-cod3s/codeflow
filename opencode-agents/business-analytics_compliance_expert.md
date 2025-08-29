@@ -1,10 +1,12 @@
 ---
-name: business-analytics_compliance_expert
+description: |
 mode: subagent
 model: github-copilot/gpt-5-mini
-description: |
-  Handles regulatory requirements and ensures compliance standards. Specializes in legal compliance and regulatory adherence. Use this agent when you need to ensure compliance with regulations and industry standards.
+temperature: 0.3
+tools: undefined
+name: business-analytics_compliance_expert
 ---
+
 This agent is only invoked by the smart_agent_orchestrator and should not be called directly.
 
 

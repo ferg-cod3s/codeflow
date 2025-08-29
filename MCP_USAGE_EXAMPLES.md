@@ -1,22 +1,22 @@
 # MCP Usage Examples
 
-This document provides practical examples for using the Agentic Workflow System through Model Context Protocol (MCP) integration.
+This document provides practical examples for using the Codeflow system through Model Context Protocol (MCP) integration.
 
 ## Prerequisites
 
 1. **Start the MCP Server**:
    ```bash
-   cd /path/to/agentic
-   bun run mcp/agentic-server.mjs
+   cd /path/to/codeflow
+   bun run mcp/codeflow-server.mjs
    ```
 
 2. **Configure Claude Desktop** (add to settings):
    ```json
    {
      "mcpServers": {
-       "agentic-tools": {
+      "codeflow-tools": {
          "command": "bun",
-         "args": ["run", "/path/to/agentic/mcp/agentic-server.mjs"],
+         "args": ["run", "/path/to/codeflow/mcp/codeflow-server.mjs"],
          "env": {}
        }
      }
@@ -237,7 +237,7 @@ const implementation = await client.callTool('execute', {
    Input: { "name": "research" }
 
 2. Verify server is running:
-   bun run mcp/agentic-server.mjs
+   bun run mcp/codeflow-server.mjs
 
 3. Check MCP client configuration
 ```
@@ -255,11 +255,11 @@ Input: { "name": "invalid-command-name" }
 ### Missing Dependencies
 ```
 # Ensure all dependencies are installed:
-cd /path/to/agentic
+cd /path/to/codeflow
 bun install
 
 # Verify MCP SDK is available:
-bun run mcp/agentic-server.mjs --version
+bun run mcp/codeflow-server.mjs --version
 ```
 
 ## Best Practices
@@ -285,7 +285,7 @@ bun run mcp/agentic-server.mjs --version
 - Use review tools for quality assurance
 
 ### 4. Tool Usage
-- Use stable command names (agentic.command.X) for reliability
+- Use stable command names (codeflow.command.X) for reliability
 - Leverage get_command for dynamic access to command documentation
 - Commands automatically orchestrate internal agents - no need to call them separately
 

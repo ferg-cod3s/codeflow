@@ -1,10 +1,12 @@
 ---
-name: product-strategy_growth_engineer
+description: |
 mode: subagent
 model: github-copilot/gpt-5-mini
-description: |
-  Identifies user engagement opportunities and implements growth mechanisms. Specializes in user acquisition strategies, retention optimization, and viral growth feature development. Use this agent when you need to optimize for user growth and engagement.
+temperature: 0.3
+tools: undefined
+name: product-strategy_growth_engineer
 ---
+
 This agent is only invoked by the smart_agent_orchestrator and should not be called directly.
 
 

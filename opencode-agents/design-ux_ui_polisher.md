@@ -1,10 +1,12 @@
 ---
-name: design-ux_ui_polisher
+description: |
 mode: subagent
 model: github-copilot/gpt-5-mini
-description: |
-  Adds premium design elements and enhances visual appeal. Specializes in visual design refinement and modern UI patterns. Use this agent when you need to improve the visual design and polish of your user interface.
+temperature: 0.3
+tools: undefined
+name: design-ux_ui_polisher
 ---
+
 This agent is only invoked by the smart_agent_orchestrator and should not be called directly.
 
 
