@@ -7,6 +7,7 @@
 * correct Claude Code global agent directory path ([eb7478c](https://github.com/ferg-cod3s/codeflow/commit/eb7478cfe90cac2c0d21fabbb0da960e40a1a5c1))
 * update agent files and fix test expectations ([ff8d6ad](https://github.com/ferg-cod3s/codeflow/commit/ff8d6ad83926d3602473bc8c8c6378413d939ad6))
 * update Husky hooks to use modern format ([8b07e69](https://github.com/ferg-cod3s/codeflow/commit/8b07e69d0a2a690b0b21b6e97157d190c0999947))
+* update MCP server to support new global agent directory structure ([3a64a2c](https://github.com/ferg-cod3s/codeflow/commit/3a64a2c7594a4124fd65e47de09cced770e8171a))
 
 
 ### Features
