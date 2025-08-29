@@ -35,6 +35,11 @@ export class FormatConverter {
     // OpenCode format includes all base properties plus potential extensions
     const openCodeFrontmatter: OpenCodeAgent = { ...agent.frontmatter };
     
+    // Convert model format for OpenCode if needed
+    if (openCodeFrontmatter.model) {
+      openCodeFrontmatter.model = this.convertModelForOpenCode(openCodeFrontmatter.model);
+    }
+    
     return {
       ...agent,
       format: 'opencode',
@@ -68,9 +73,19 @@ export class FormatConverter {
       throw new Error(`Expected claude-code format, got ${agent.format}`);
     }
     
-    // Convert to base first, then to OpenCode
-    const baseAgent = this.claudeCodeToBase(agent);
-    return this.baseToOpenCode(baseAgent);
+    // Direct conversion with model format handling
+    const openCodeFrontmatter: OpenCodeAgent = { ...agent.frontmatter };
+    
+    // Convert model format for OpenCode if needed
+    if (openCodeFrontmatter.model) {
+      openCodeFrontmatter.model = this.convertModelForOpenCode(openCodeFrontmatter.model);
+    }
+    
+    return {
+      ...agent,
+      format: 'opencode',
+      frontmatter: openCodeFrontmatter
+    };
   }
   
   /**
@@ -214,5 +229,45 @@ export class FormatConverter {
       success: errors.length === 0,
       errors
     };
+  }
+  
+  /**
+   * Convert model format for OpenCode compatibility
+   * Uses models.dev provider/model format (providerId/modelId)
+   */
+  private convertModelForOpenCode(model: string): string {
+    // If already in provider/model format, return as-is
+    if (model.includes('/')) {
+      return model;
+    }
+    
+    // Convert Claude models to anthropic provider format
+    if (model.startsWith('claude-')) {
+      // Use latest Claude Sonnet 4 from models.dev
+      if (model.includes('sonnet') || model.includes('claude-3-5-sonnet')) {
+        return 'anthropic/claude-sonnet-4-20250514';
+      }
+      // For other Claude models, add anthropic provider prefix
+      return `anthropic/${model}`;
+    }
+    
+    // Convert OpenAI models
+    if (model.startsWith('gpt-') || model.startsWith('o1-')) {
+      return `openai/${model}`;
+    }
+    
+    // Convert Google models  
+    if (model.startsWith('gemini-')) {
+      return `google/${model}`;
+    }
+    
+    // Convert GitHub Copilot models (already handled above but being explicit)
+    if (model.startsWith('github-copilot-')) {
+      return `github-copilot/${model.replace('github-copilot-', '')}`;
+    }
+    
+    // Default: return as-is with warning comment
+    console.warn(`Unknown model format for OpenCode conversion: ${model}`);
+    return model;
   }
 }
