@@ -10,7 +10,7 @@
     "cli",
     "ai",
     "development",
-    "workflow", 
+    "workflow",
     "automation",
     "agent",
     "mcp",
@@ -29,7 +29,7 @@
   "license": "MIT",
   "files": [
     "src",
-    "mcp", 
+    "mcp",
     "agent",
     "claude-agents",
     "opencode-agents",
@@ -51,22 +51,29 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
+    "changelog:first": "conventional-changelog -p angular -i CHANGELOG.md -s",
     "prepublishOnly": "bun run typecheck && bun run test && bun run lint",
-    "prepack": "bun run typecheck"
+    "prepack": "bun run typecheck",
+    "prepare": "husky"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.17.4",
     "zod": "^4.1.1"
   },
   "devDependencies": {
-    "@types/bun": "latest",
-    "typescript": "^5.9.2",
-    "eslint": "^9.9.0",
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
     "@eslint/js": "^9.9.0",
-    "@typescript-eslint/parser": "^8.0.0",
+    "@types/bun": "latest",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "conventional-changelog-cli": "^5.0.0",
+    "eslint": "^9.9.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-jsx-a11y": "^6.9.0",
-    "prettier": "^3.3.3"
+    "husky": "^9.1.7",
+    "prettier": "^3.3.3",
+    "typescript": "^5.9.2"
   }
 }

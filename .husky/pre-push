@@ -1,0 +1,25 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Check if we're pushing to main/master branch
+protected_branch='master'
+current_branch=$(git symbolic-ref HEAD | sed -e 's,.*/\(.*\),\1,')
+
+if [ $protected_branch = $current_branch ]; then
+    echo "🔄 Updating changelog before push to $current_branch..."
+    
+    # Generate changelog entry for unreleased changes
+    bunx conventional-changelog -p angular -i CHANGELOG.md -s -r 0
+    
+    # Check if changelog was updated
+    if [ -n "$(git status --porcelain CHANGELOG.md)" ]; then
+        echo "📝 Changelog updated automatically"
+        git add CHANGELOG.md
+        git commit -m "docs: update changelog [skip ci]" --no-verify
+        echo "✅ Changelog committed"
+    else
+        echo "📝 No changelog updates needed"
+    fi
+fi
+
+echo "🚀 Pushing to $current_branch..."
