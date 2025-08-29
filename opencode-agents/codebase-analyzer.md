@@ -1,7 +1,7 @@
 ---
 description: Analyzes codebase implementation details. Call the codebase-analyzer agent when you need to find detailed information about specific components.
 mode: subagent
-model: anthropic/claude-opus-4-1
+model: github-copilot/gpt-4.1
 temperature: 0.1
 tools:
   read: true

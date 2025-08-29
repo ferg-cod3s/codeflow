@@ -1,7 +1,7 @@
 ---
 description: Used to perform web searches from a URL and analyze the contents based on a query.
 mode: subagent
-model: anthropic/claude-haiku-3-5
+model: github-copilot/gpt-4.1
 temperature: 0.1
 tools:
   read: true

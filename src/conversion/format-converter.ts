@@ -251,7 +251,17 @@ export class FormatConverter {
       return `anthropic/${model}`;
     }
     
-    // Convert OpenAI models
+    // Convert GitHub Copilot models (check these first to avoid conflicts)
+    if (model.startsWith('github-copilot-') || model.startsWith('gpt-4') || model.startsWith('gpt-5')) {
+      // Handle already prefixed models
+      if (model.startsWith('github-copilot-')) {
+        return `github-copilot/${model.replace('github-copilot-', '')}`;
+      }
+      // Handle models that should use GitHub Copilot provider
+      return `github-copilot/${model}`;
+    }
+    
+    // Convert OpenAI models (general gpt- models that aren't gpt-4 or gpt-5)
     if (model.startsWith('gpt-') || model.startsWith('o1-')) {
       return `openai/${model}`;
     }
@@ -259,11 +269,6 @@ export class FormatConverter {
     // Convert Google models  
     if (model.startsWith('gemini-')) {
       return `google/${model}`;
-    }
-    
-    // Convert GitHub Copilot models (already handled above but being explicit)
-    if (model.startsWith('github-copilot-')) {
-      return `github-copilot/${model.replace('github-copilot-', '')}`;
     }
     
     // Default: return as-is with warning comment
