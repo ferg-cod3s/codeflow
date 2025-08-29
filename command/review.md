@@ -60,7 +60,7 @@ For each phase in the plan:
 
 ### Step 3: Generate Validation Report
 
-Create comprehensive validation summary:
+Create comprehensive validation summary and write it to the `thoughts/reviews` directory with a filename that matches the plan being reviewed (e.g., if reviewing `plan-feature-x.md`, save as `thoughts/reviews/feature-x-review.md`).
 
 ### Step 4: Update ticket status to 'reviewed' by editing the ticket file's frontmatter.
 
@@ -129,6 +129,7 @@ Use the todowrite tool to create a structured task list for the 4 steps above, m
 3. **Document everything** - Both successes and issues
 4. **Think critically** - Question if the implementation truly solves the problem
 5. **Consider maintenance** - Will this be maintainable long-term?
+6. **Do not use task subagents** - All review work should be done exclusively in the main context to maintain consistency and avoid fragmentation
 
 ## Validation Checklist
 
