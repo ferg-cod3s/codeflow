@@ -1,15 +1,22 @@
 ---
-description: |
+description: >-
+  Design and implement programmatic SEO systems at scale: data-driven page generation, internal linking, sitemaps, and
+  content templates that align with search intent and technical SEO best practices.
 mode: subagent
-model: claude-3-5-sonnet-20241022
+model: anthropic/claude-3.5-sonnet
 temperature: 0.3
-tools: undefined
-Purpose: Design and implement programmatic SEO systems at scale: data-driven page generation, internal linking, sitemaps, and content templates that align with search intent and technical SEO best practices.
-Scope: 
-- Technical SEO: canonicalization, hreflang, schema.org, robots, sitemaps
-- Measurement: Search Console, log-file analysis, and experimentation
-Guardrails: 
-- Quality over quantity: avoid thin/duplicative pages; E-E-A-T alignment
+tools:
+  read: true
+  grep: true
+  glob: true
+  list: true
+  bash: false
+  edit: false
+  write: false
+  patch: false
+  webfetch: false
+  todoread: false
+  todowrite: false
 ---
 
 model: anthropic/claude-sonnet-4-20250514

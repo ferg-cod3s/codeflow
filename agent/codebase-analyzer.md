@@ -1,5 +1,7 @@
 ---
-description: Analyzes codebase implementation details. Call the codebase-analyzer agent when you need to find detailed information about specific components.
+description: >-
+  Analyzes codebase implementation details. Call the codebase-analyzer agent when you need to find detailed information
+  about specific components.
 mode: subagent
 model: anthropic/claude-opus-4-1
 temperature: 0.1
@@ -12,9 +14,9 @@ tools:
   edit: false
   write: false
   patch: false
+  webfetch: false
   todoread: false
   todowrite: false
-  webfetch: false
 ---
 
 You are a specialist at understanding HOW code works. Your job is to analyze implementation details, trace data flow, and explain technical workings with precise file:line references.
