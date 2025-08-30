@@ -173,15 +173,27 @@ describe("CLI Commands", () => {
 });
 
 describe("CLI Argument Parsing", () => {
+  let testProjectDir: string;
+
+  beforeAll(async () => {
+    // Create a test project directory with .opencode for status command tests
+    testProjectDir = await fs.mkdtemp(path.join(os.homedir(), "codeflow-arg-test-"));
+    await fs.mkdir(path.join(testProjectDir, ".opencode"), { recursive: true });
+  });
+
+  afterAll(async () => {
+    await fs.rm(testProjectDir, { recursive: true, force: true });
+  });
+
   test("boolean flags are parsed correctly", async () => {
-    const result = await runCLI(["status", "--force", "--dry-run"]);
+    const result = await runCLI(["status", testProjectDir, "--force", "--dry-run"]);
     
     // Should not error on valid boolean flags
     expect(result.exitCode).toBe(0);
   });
 
   test("string options are parsed correctly", async () => {
-    const result = await runCLI(["setup", "--type", "claude-code"]);
+    const result = await runCLI(["setup", testProjectDir, "--type", "claude-code", "--dry-run"]);
     
     // Should accept valid string options
     expect(result.exitCode).toBe(0);

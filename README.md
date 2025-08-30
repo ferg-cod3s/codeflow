@@ -17,7 +17,7 @@ codeflow --help
 
 ## 🎯 Core Features
 
-- **🤖 Agent Orchestration**: 54+ specialized agents for different domains
+- **🤖 Agent Orchestration**: 100+ specialized agents across multiple formats (43 base, 29 Claude Code, 29 OpenCode)
 - **⚡ Automatic Synchronization**: Real-time file watching and format conversion
 - **🌐 Cross-Platform**: Works on macOS, Windows, and Linux
 - **🔧 Multiple Integrations**: Claude Code, MCP Protocol, Universal NPM package
