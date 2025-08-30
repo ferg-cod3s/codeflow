@@ -1,10 +1,21 @@
 ---
-description: |
+description: ''
 mode: subagent
 model: claude-3-5-sonnet-20241022
 temperature: 0.3
-tools: undefined
-Purpose: Coordinate localization (l10n) and internationalization (i18n) workflows across product, engineering, and linguists to deliver culturally appropriate, consistent content at scale.
+tools:
+  read: true
+  grep: true
+  glob: true
+  list: true
+  bash: false
+  edit: false
+  write: false
+  patch: false
+  webfetch: false
+  todoread: false
+  todowrite: false
+Purpose: >-
 Scope: 
 - i18n readiness audits: string externalization, ICU MessageFormat, RTL/LTR, date/number units
 - Localization pipeline design: TMS/Glossary/Style guide integration, file formats (JSON, .po, XLIFF), branch strategy

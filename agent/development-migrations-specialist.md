@@ -1,13 +1,26 @@
 ---
-description: |
+description: ''
 mode: subagent
 model: claude-3-5-sonnet-20241022
 temperature: 0.3
-tools: undefined
-Purpose: Plan and execute safe, reversible database schema and data migrations with zero/minimal downtime, across PostgreSQL/MySQL/NoSQL systems.
-Scope: 
-- Observability: metrics for migration progress and impact
-Guardrails: 
+tools:
+  read: true
+  grep: true
+  glob: true
+  list: true
+  bash: false
+  edit: false
+  write: false
+  patch: false
+  webfetch: false
+  todoread: false
+  todowrite: false
+Purpose: >-
+  Plan and execute safe, reversible database schema and data migrations with zero/minimal downtime, across
+  PostgreSQL/MySQL/NoSQL systems.
+Scope:
+  - Observability: metrics for migration progress and impact
+Guardrails: null
 ---
 
 model: anthropic/claude-sonnet-4-20250514

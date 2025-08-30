@@ -6,7 +6,7 @@ import { status } from "./status";
 import { setup } from "./setup";
 import { mcpServer, mcpConfigure, mcpList } from "./mcp";
 import { convert, convertAll, listDifferences } from "./convert";
-import { syncGlobalAgents, checkGlobalSync } from "./sync";
+import { syncGlobalAgents } from "./sync";
 import { syncAllFormats, showFormatDifferences } from "./sync-formats";
 import { startWatch, stopWatch, watchStatus, watchLogs, restartWatch } from "./watch";
 import packageJson from "../../package.json";
@@ -23,14 +23,16 @@ function getFormatDirectory(format: 'base' | 'claude-code' | 'opencode', project
     case 'base':
       // Base format refers to the global codeflow agent directory
       return join(codeflowRoot, "agent");
-    case 'claude-code':
+    case 'claude-code': {
       // For projects, use .claude/agents if it exists, otherwise use global
       const projectClaudeDir = join(projectPath, '.claude', 'agents');
       return existsSync(projectClaudeDir) ? projectClaudeDir : join(codeflowRoot, "claude-agents");
-    case 'opencode':
+    }
+    case 'opencode': {
       // For projects, use .opencode/agent if it exists, otherwise use global  
       const projectOpenCodeDir = join(projectPath, '.opencode', 'agent');
       return existsSync(projectOpenCodeDir) ? projectOpenCodeDir : join(codeflowRoot, "opencode-agents");
+    }
     default:
       throw new Error(`Unknown format: ${format}`);
   }
@@ -280,19 +282,22 @@ Examples:
 }
 
 switch (command) {
-  case "setup":
+  case "setup": {
     const setupPath = args[1];
     await setup(setupPath, { force: values.force, type: values.type });
     break;
-  case "pull":
+  }
+  case "pull": {
     const projectPath = args[1];
     await pull(projectPath);
     break;
-  case "status":
+  }
+  case "status": {
     const statusPath = args[1];
     await status(statusPath);
     break;
-  case "mcp":
+  }
+  case "mcp": {
     const mcpAction = args[1];
     if (!mcpAction) {
       await mcpList();
@@ -312,7 +317,7 @@ switch (command) {
       case "status":
         await mcpServer("status");
         break;
-      case "configure":
+      case "configure": {
         const client = args[2];
         if (!client) {
           console.error("Error: MCP client name required");
@@ -325,6 +330,7 @@ switch (command) {
         }
         await mcpConfigure(client, { remove: values.remove });
         break;
+      }
       case "list":
         await mcpList();
         break;
@@ -334,11 +340,13 @@ switch (command) {
         process.exit(1);
     }
     break;
-  case "commands":
+  }
+  case "commands": {
     const { commands } = await import("./commands");
     await commands();
     break;
-  case "convert":
+  }
+  case "convert": {
     // Support flag-based usage: --source, --target, --project
     if (values.source && values.target) {
       const { convert } = await import("./convert");
@@ -386,16 +394,19 @@ switch (command) {
       dryRun: values["dry-run"]
     });
     break;
-  case "convert-all":
+  }
+  case "convert-all": {
     await convertAll(args[1], {
       validate: values.validate !== false,
       dryRun: values["dry-run"]
     });
     break;
-  case "list-differences":
+  }
+  case "list-differences": {
     await listDifferences(args[1]);
     break;
-  case "sync":
+  }
+  case "sync": {
     if (values.project) {
       const { syncGlobalAgents } = await import("./sync");
       const { existsSync } = await import("node:fs");
@@ -425,7 +436,8 @@ switch (command) {
     console.log("Usage: codeflow sync --project <path>");
     process.exit(0);
     break;
-  case "sync-formats":
+  }
+  case "sync-formats": {
     const direction = args[1] as 'to-all' | 'from-opencode' | 'bidirectional' | undefined;
     await syncAllFormats({
       validate: values.validate !== false,
@@ -433,16 +445,19 @@ switch (command) {
       direction: direction || 'from-opencode'
     });
     break;
-  case "sync-global":
+  }
+  case "sync-global": {
     await syncGlobalAgents({
       validate: values.validate !== false,
       dryRun: values["dry-run"],
       sourceOfTruth: determineSourceOfTruth(values["source-of-truth"])
     });
     break;
-  case "show-format-differences":
+  }
+  case "show-format-differences": {
     await showFormatDifferences();
     break;
+  }
   case "global":
     {
       const action = args[1];
@@ -455,7 +470,7 @@ switch (command) {
       process.exit(1);
     }
     break;
-  case "watch":
+  case "watch": {
     const watchAction = args[1];
     const codeflowRoot = import.meta.dir + "/../.."; // Get codeflow root directory
     
@@ -505,12 +520,15 @@ switch (command) {
         process.exit(1);
     }
     break;
-  case "version":
+  }
+  case "version": {
     console.log(`Codeflow ${packageJson.version}`);
     break;
-  case "help":
+  }
+  case "help": {
     // Already handled above, but included for completeness
     break;
+  }
   default:
     console.error(`Error: Unknown command '${command}'`);
     console.error("Run 'codeflow --help' for usage information");

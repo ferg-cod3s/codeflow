@@ -1,17 +1,11 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import url from 'node:url';
-import crypto from 'node:crypto';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import { z } from 'zod';
-import { buildAgentRegistry, categorizeAgents, suggestAgents } from './agent-registry.mjs';
+import { buildAgentRegistry, categorizeAgents } from './agent-registry.mjs';
 import {
-  spawnAgentTask,
-  executeParallelAgents,
-  executeSequentialAgents,
   createWorkflowOrchestrator,
-  validateAgentExecution,
 } from './agent-spawner.mjs';
 
 const __filename = url.fileURLToPath(import.meta.url);
@@ -48,20 +42,13 @@ function toSlug(filePath) {
   return base.replace(/[^a-zA-Z0-9]+/g, '_');
 }
 
-function toUniqueId(prefix, filePath) {
-  const slug = toSlug(filePath);
-  // Use cross-platform crypto for hashing
-  const hash = crypto.createHash('sha1').update(filePath).digest('hex').slice(0, 8);
-  return `${prefix}.${slug}__${hash}`;
-}
-
 async function loadMarkdownFiles(dir) {
   try {
     const entries = await fs.readdir(dir, { withFileTypes: true });
     return entries
       .filter((e) => e.isFile() && e.name.toLowerCase().endsWith('.md'))
       .map((e) => path.join(dir, e.name));
-  } catch (err) {
+  } catch {
     return [];
   }
 }
@@ -177,7 +164,7 @@ async function run() {
         title: entry.id,
         description: entry.description + ' (Enhanced with agent orchestration capabilities)',
       },
-      async (args = {}) => {
+      async (_args = {}) => {
         const commandContent = await fs.readFile(entry.filePath, 'utf8');
 
         // Enhanced context with available agents
@@ -185,21 +172,6 @@ async function run() {
           availableAgents: Array.from(globalAgentRegistry.keys()),
           agentCategories,
           totalAgents: globalAgentRegistry.size,
-
-          // Agent execution functions (for command reference)
-          spawnAgent: (agentId, task) => spawnAgentTask(agentId, task, globalAgentRegistry),
-          parallelAgents: (agentIds, tasks) =>
-            executeParallelAgents(agentIds, tasks, globalAgentRegistry),
-          sequentialAgents: (agentSpecs) =>
-            executeSequentialAgents(agentSpecs, globalAgentRegistry),
-          suggestAgents: (taskDescription) => suggestAgents(globalAgentRegistry, taskDescription),
-          validateAgent: (agentId) => validateAgentExecution(agentId, globalAgentRegistry),
-
-          // Workflow orchestrators
-          executeResearchWorkflow: (domain, query) =>
-            workflowOrchestrator.executeResearchWorkflow(domain, query),
-          executePlanningWorkflow: (requirements, context) =>
-            workflowOrchestrator.executePlanningWorkflow(requirements, context),
         };
 
         // Add agent context information to command content
@@ -270,15 +242,21 @@ async function run() {
     // Bun sometimes doesn't keep the event loop alive on stdio alone; explicitly wait.
     try {
       process.stdin.resume();
-    } catch {}
+    } catch {
+      // Ignore errors if stdin is not available
+    }
     try {
       process.stdin.on('end', onClose);
       process.stdin.on('close', onClose);
-    } catch {}
+    } catch {
+      // Ignore errors if stdin events are not available
+    }
     try {
       process.on('SIGINT', onClose);
       process.on('SIGTERM', onClose);
-    } catch {}
+    } catch {
+      // Ignore errors if signal handlers are not available
+    }
   });
 }
 

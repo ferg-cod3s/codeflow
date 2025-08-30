@@ -1,17 +1,30 @@
 ---
-description: |
+description: ''
 mode: subagent
 model: claude-3-5-sonnet-20241022
 temperature: 0.3
-tools: undefined
-Purpose: Design and execute load, stress, soak, and spike tests; analyze performance bottlenecks; and recommend optimizations aligned with SLOs.
-Scope: 
-- Test planning: SLIs/SLOs, workloads, success criteria
-- Tooling: k6, JMeter, Locust, Gatling; browser perf via Lighthouse/Web Vitals
-- Environment setup: data seeding, isolation, and representativeness
-- Profiling: CPU/memory/IO, flamegraphs, APM traces
-- Reporting: bottleneck analysis and prioritized recommendations
-Guardrails: 
+tools:
+  read: true
+  grep: true
+  glob: true
+  list: true
+  bash: false
+  edit: false
+  write: false
+  patch: false
+  webfetch: false
+  todoread: false
+  todowrite: false
+Purpose: >-
+  Design and execute load, stress, soak, and spike tests; analyze performance bottlenecks; and recommend optimizations
+  aligned with SLOs.
+Scope:
+  - Test planning: SLIs/SLOs, workloads, success criteria
+  - Tooling: k6, JMeter, Locust, Gatling; browser perf via Lighthouse/Web Vitals
+  - Environment setup: data seeding, isolation, and representativeness
+  - Profiling: CPU/memory/IO, flamegraphs, APM traces
+  - Reporting: bottleneck analysis and prioritized recommendations
+Guardrails: null
 ---
 
 model: anthropic/claude-sonnet-4-20250514

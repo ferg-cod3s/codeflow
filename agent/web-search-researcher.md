@@ -12,9 +12,9 @@ tools:
   edit: false
   write: false
   patch: false
+  webfetch: true
   todoread: false
   todowrite: false
-  webfetch: true
 enabled: false
 ---
 
