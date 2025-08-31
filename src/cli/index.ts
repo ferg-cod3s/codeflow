@@ -1,36 +1,41 @@
 #!/usr/bin/env bun
 
-import { parseArgs } from "util";
-import { pull } from "./pull";
-import { status } from "./status";
-import { setup } from "./setup";
-import { mcpServer, mcpConfigure, mcpList } from "./mcp";
-import { convert, convertAll, listDifferences } from "./convert";
-import { syncGlobalAgents, checkGlobalSync } from "./sync";
-import { syncAllFormats, showFormatDifferences } from "./sync-formats";
-import { startWatch, stopWatch, watchStatus, watchLogs, restartWatch } from "./watch";
-import packageJson from "../../package.json";
-import { join } from "node:path";
-import { existsSync } from "node:fs";
+import { parseArgs } from 'util';
+import { pull } from './pull';
+import { status } from './status';
+import { setup } from './setup';
+import { mcpServer, mcpConfigure, mcpList } from './mcp';
+import { convert, convertAll, listDifferences } from './convert';
+import { syncGlobalAgents, checkGlobalSync } from './sync';
+import { syncAllFormats, showFormatDifferences } from './sync-formats';
+import { startWatch, stopWatch, watchStatus, watchLogs, restartWatch } from './watch';
+import packageJson from '../../package.json';
+import { join } from 'node:path';
+import { existsSync } from 'node:fs';
 
 /**
  * Helper function to determine directory path for agent format
  */
-function getFormatDirectory(format: 'base' | 'claude-code' | 'opencode', projectPath: string): string {
-  const codeflowRoot = join(import.meta.dir, "../..");
+function getFormatDirectory(
+  format: 'base' | 'claude-code' | 'opencode',
+  projectPath: string
+): string {
+  const codeflowRoot = join(import.meta.dir, '../..');
 
   switch (format) {
     case 'base':
       // Base format refers to the global codeflow agent directory
-      return join(codeflowRoot, "codeflow-agents");
+      return join(codeflowRoot, 'codeflow-agents');
     case 'claude-code':
       // For projects, use .claude/agents if it exists, otherwise use global
       const projectClaudeDir = join(projectPath, '.claude', 'agents');
-      return existsSync(projectClaudeDir) ? projectClaudeDir : join(codeflowRoot, "claude-agents");
+      return existsSync(projectClaudeDir) ? projectClaudeDir : join(codeflowRoot, 'claude-agents');
     case 'opencode':
       // For projects, use .opencode/agent if it exists, otherwise use global
       const projectOpenCodeDir = join(projectPath, '.opencode', 'agent');
-      return existsSync(projectOpenCodeDir) ? projectOpenCodeDir : join(codeflowRoot, "opencode-agents");
+      return existsSync(projectOpenCodeDir)
+        ? projectOpenCodeDir
+        : join(codeflowRoot, 'opencode-agents');
     default:
       throw new Error(`Unknown format: ${format}`);
   }
@@ -39,7 +44,9 @@ function getFormatDirectory(format: 'base' | 'claude-code' | 'opencode', project
 /**
  * Helper function to determine source of truth format
  */
-function determineSourceOfTruth(sourceOfTruthFlag?: string): 'base' | 'claude-code' | 'opencode' | 'auto' {
+function determineSourceOfTruth(
+  sourceOfTruthFlag?: string
+): 'base' | 'claude-code' | 'opencode' | 'auto' {
   if (!sourceOfTruthFlag) return 'auto';
 
   const validFormats = ['base', 'claude-code', 'opencode', 'auto'];
@@ -60,86 +67,86 @@ try {
     args: Bun.argv,
     options: {
       help: {
-        type: "boolean",
-        short: "h",
+        type: 'boolean',
+        short: 'h',
         default: false,
       },
       version: {
-        type: "boolean",
+        type: 'boolean',
         default: false,
       },
       force: {
-        type: "boolean",
-        short: "f",
+        type: 'boolean',
+        short: 'f',
         default: false,
       },
       type: {
-        type: "string",
-        short: "t",
+        type: 'string',
+        short: 't',
       },
       background: {
-        type: "boolean",
-        short: "b",
+        type: 'boolean',
+        short: 'b',
         default: false,
       },
       remove: {
-        type: "boolean",
-        short: "r",
+        type: 'boolean',
+        short: 'r',
         default: false,
       },
       validate: {
-        type: "boolean",
+        type: 'boolean',
         default: true,
       },
-      "dry-run": {
-        type: "boolean",
+      'dry-run': {
+        type: 'boolean',
         default: false,
       },
-      "source-of-truth": {
-        type: "string",
-        short: "T",
+      'source-of-truth': {
+        type: 'string',
+        short: 'T',
       },
       global: {
-        type: "boolean",
-        short: "g",
+        type: 'boolean',
+        short: 'g',
         default: false,
       },
       projects: {
-        type: "string",
-        short: "p",
+        type: 'string',
+        short: 'p',
       },
-      "auto-convert": {
-        type: "boolean",
+      'auto-convert': {
+        type: 'boolean',
         default: true,
       },
-      "health-check": {
-        type: "string",
-        default: "15",
+      'health-check': {
+        type: 'string',
+        default: '15',
       },
       follow: {
-        type: "boolean",
+        type: 'boolean',
         default: false,
       },
       lines: {
-        type: "string",
-        default: "50",
+        type: 'string',
+        default: '50',
       },
       clear: {
-        type: "boolean",
+        type: 'boolean',
         default: false,
       },
       json: {
-        type: "boolean",
+        type: 'boolean',
         default: false,
       },
       project: {
-        type: "string",
+        type: 'string',
       },
       source: {
-        type: "string",
+        type: 'string',
       },
       target: {
-        type: "string",
+        type: 'string',
       },
     },
     strict: true,
@@ -148,7 +155,7 @@ try {
   values = parsed.values;
   positionals = parsed.positionals;
 } catch (error: any) {
-  if (error.code === "ERR_PARSE_ARGS_UNKNOWN_OPTION") {
+  if (error.code === 'ERR_PARSE_ARGS_UNKNOWN_OPTION') {
     console.error(`Error: ${error.message}`);
     console.error("Run 'codeflow --help' for usage information");
     process.exit(1);
@@ -167,7 +174,7 @@ if (values.version) {
 }
 
 // Handle help (both --help flag and help command)
-if (values.help || command === "help" || !command) {
+if (values.help || command === 'help' || !command) {
   console.log(`
 codeflow - Intelligent AI workflow management
 
@@ -280,19 +287,19 @@ Examples:
 }
 
 switch (command) {
-  case "setup":
+  case 'setup':
     const setupPath = args[1];
     await setup(setupPath, { force: values.force, type: values.type });
     break;
-  case "pull":
+  case 'pull':
     const projectPath = args[1];
     await pull(projectPath);
     break;
-  case "status":
+  case 'status':
     const statusPath = args[1];
     await status(statusPath);
     break;
-  case "mcp":
+  case 'mcp':
     const mcpAction = args[1];
     if (!mcpAction) {
       await mcpList();
@@ -300,48 +307,48 @@ switch (command) {
     }
 
     switch (mcpAction) {
-      case "start":
-        await mcpServer("start", { background: values.background });
+      case 'start':
+        await mcpServer('start', { background: values.background });
         break;
-      case "stop":
-        await mcpServer("stop");
+      case 'stop':
+        await mcpServer('stop');
         break;
-      case "restart":
-        await mcpServer("restart", { background: values.background });
+      case 'restart':
+        await mcpServer('restart', { background: values.background });
         break;
-      case "status":
-        await mcpServer("status");
+      case 'status':
+        await mcpServer('status');
         break;
-      case "configure":
+      case 'configure':
         const client = args[2];
         if (!client) {
-          console.error("Error: MCP client name required");
-          console.error("Usage: codeflow mcp configure <client>");
-          console.error("Available clients: claude-desktop, warp, cursor");
-          console.error("\nNote: Some platforms use different setups:");
+          console.error('Error: MCP client name required');
+          console.error('Usage: codeflow mcp configure <client>');
+          console.error('Available clients: claude-desktop, warp, cursor');
+          console.error('\nNote: Some platforms use different setups:');
           console.error("  • Claude.ai: Use 'codeflow setup . --type claude-code'");
           console.error("  • OpenCode: Use 'codeflow setup . --type opencode'");
           process.exit(1);
         }
         await mcpConfigure(client, { remove: values.remove });
         break;
-      case "list":
+      case 'list':
         await mcpList();
         break;
       default:
         console.error(`Error: Unknown MCP action '${mcpAction}'`);
-        console.error("Available actions: start, stop, restart, status, configure, list");
+        console.error('Available actions: start, stop, restart, status, configure, list');
         process.exit(1);
     }
     break;
-  case "commands":
-    const { commands } = await import("./commands");
+  case 'commands':
+    const { commands } = await import('./commands');
     await commands();
     break;
-  case "convert":
+  case 'convert':
     // Support flag-based usage: --source, --target, --project
     if (values.source && values.target) {
-      const { convert } = await import("./convert");
+      const { convert } = await import('./convert');
       const projectPath = values.project || process.cwd();
 
       // Determine source and target directories based on format and project
@@ -356,7 +363,7 @@ switch (command) {
         target: targetDir,
         format: targetFormat,
         validate: values.validate !== false,
-        dryRun: values["dry-run"]
+        dryRun: values['dry-run'],
       });
       break;
     }
@@ -366,15 +373,15 @@ switch (command) {
     const format = args[3] as 'base' | 'claude-code' | 'opencode';
 
     if (!source || !target || !format) {
-      console.error("Error: convert requires source, target, and format arguments");
-      console.error("Usage: codeflow convert <source> <target> <format>");
-      console.error("Formats: base, claude-code, opencode");
+      console.error('Error: convert requires source, target, and format arguments');
+      console.error('Usage: codeflow convert <source> <target> <format>');
+      console.error('Formats: base, claude-code, opencode');
       process.exit(1);
     }
 
     if (!['base', 'claude-code', 'opencode'].includes(format)) {
       console.error(`Error: Invalid format '${format}'`);
-      console.error("Valid formats: base, claude-code, opencode");
+      console.error('Valid formats: base, claude-code, opencode');
       process.exit(1);
     }
 
@@ -383,23 +390,23 @@ switch (command) {
       target,
       format,
       validate: values.validate !== false,
-      dryRun: values["dry-run"]
+      dryRun: values['dry-run'],
     });
     break;
-  case "convert-all":
+  case 'convert-all':
     await convertAll(args[1], {
       validate: values.validate !== false,
-      dryRun: values["dry-run"]
+      dryRun: values['dry-run'],
     });
     break;
-  case "list-differences":
+  case 'list-differences':
     await listDifferences(args[1]);
     break;
-  case "sync":
+  case 'sync':
     if (values.project) {
-      const { syncGlobalAgents } = await import("./sync");
-      const { existsSync } = await import("node:fs");
-      const { resolve } = await import("node:path");
+      const { syncGlobalAgents } = await import('./sync');
+      const { existsSync } = await import('node:fs');
+      const { resolve } = await import('node:path');
 
       const projectPath = resolve(values.project);
       console.log(`🔄 Synchronizing project: ${projectPath}`);
@@ -411,104 +418,102 @@ switch (command) {
       }
 
       // Determine source of truth for sync operation
-      const sourceOfTruth = determineSourceOfTruth(values["source-of-truth"]);
+      const sourceOfTruth = determineSourceOfTruth(values['source-of-truth']);
 
       // Sync project agents to global directories
       await syncGlobalAgents({
         validate: values.validate !== false,
-        dryRun: values["dry-run"],
-        sourceOfTruth: sourceOfTruth
+        dryRun: values['dry-run'],
       });
-      console.log("✅ Synchronization complete");
+      console.log('✅ Synchronization complete');
       break;
     }
-    console.log("Usage: codeflow sync --project <path>");
+    console.log('Usage: codeflow sync --project <path>');
     process.exit(0);
     break;
-  case "sync-formats":
+  case 'sync-formats':
     const direction = args[1] as 'to-all' | 'from-opencode' | 'bidirectional' | undefined;
     await syncAllFormats({
       validate: values.validate !== false,
-      dryRun: values["dry-run"],
-      direction: direction || 'from-opencode'
+      dryRun: values['dry-run'],
+      direction: direction || 'from-opencode',
     });
     break;
-  case "sync-global":
+  case 'sync-global':
     await syncGlobalAgents({
       validate: values.validate !== false,
-      dryRun: values["dry-run"],
-      sourceOfTruth: determineSourceOfTruth(values["source-of-truth"])
+      dryRun: values['dry-run'],
     });
     break;
-  case "show-format-differences":
+  case 'show-format-differences':
     await showFormatDifferences();
     break;
-  case "global":
+  case 'global':
     {
       const action = args[1];
-      if (action === "setup") {
-        const { setupGlobalAgents } = await import("./global");
+      if (action === 'setup') {
+        const { setupGlobalAgents } = await import('./global');
         await setupGlobalAgents(process.env.CODEFLOW_GLOBAL_CONFIG || undefined);
         break;
       }
-      console.error("Usage: codeflow global setup");
+      console.error('Usage: codeflow global setup');
       process.exit(1);
     }
     break;
-  case "watch":
+  case 'watch':
     const watchAction = args[1];
-    const codeflowRoot = import.meta.dir + "/../.."; // Get codeflow root directory
+    const codeflowRoot = import.meta.dir + '/../..'; // Get codeflow root directory
 
     if (!watchAction) {
-      console.error("Error: watch action required");
-      console.error("Usage: codeflow watch <action>");
-      console.error("Available actions: start, stop, status, logs, restart");
+      console.error('Error: watch action required');
+      console.error('Usage: codeflow watch <action>');
+      console.error('Available actions: start, stop, status, logs, restart');
       process.exit(1);
     }
 
     switch (watchAction) {
-      case "start":
+      case 'start':
         await startWatch(codeflowRoot, {
           global: values.global,
           projects: values.projects,
-          autoConvert: values["auto-convert"],
-          healthCheck: parseInt(values["health-check"]),
-          background: !values.foreground // Default to background unless --foreground specified
+          autoConvert: values['auto-convert'],
+          healthCheck: parseInt(values['health-check']),
+          background: !values.foreground, // Default to background unless --foreground specified
         });
         break;
-      case "stop":
+      case 'stop':
         await stopWatch();
         break;
-      case "status":
+      case 'status':
         await watchStatus({
-          json: values.json
+          json: values.json,
         });
         break;
-      case "logs":
+      case 'logs':
         await watchLogs({
           follow: values.follow,
           lines: parseInt(values.lines),
-          clear: values.clear
+          clear: values.clear,
         });
         break;
-      case "restart":
+      case 'restart':
         await restartWatch(codeflowRoot, {
           global: values.global,
           projects: values.projects,
-          autoConvert: values["auto-convert"],
-          healthCheck: parseInt(values["health-check"])
+          autoConvert: values['auto-convert'],
+          healthCheck: parseInt(values['health-check']),
         });
         break;
       default:
         console.error(`Error: Unknown watch action '${watchAction}'`);
-        console.error("Available actions: start, stop, status, logs, restart");
+        console.error('Available actions: start, stop, status, logs, restart');
         process.exit(1);
     }
     break;
-  case "version":
+  case 'version':
     console.log(`Codeflow ${packageJson.version}`);
     break;
-  case "help":
+  case 'help':
     // Already handled above, but included for completeness
     break;
   default:

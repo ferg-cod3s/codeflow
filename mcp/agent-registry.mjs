@@ -183,8 +183,9 @@ async function buildAgentRegistry() {
   const agentDirs = [
     // Global codeflow agents (lowest priority)
     { dir: path.join(codeflowRoot, 'codeflow-agents'), format: 'base' },
-    { dir: path.join(codeflowRoot, 'claude-agents'), format: 'claude-code' },
-    { dir: path.join(codeflowRoot, 'opencode-agents'), format: 'opencode' },
+    // Deprecated directories (for backward compatibility)
+    { dir: path.join(codeflowRoot, 'deprecated', 'claude-agents'), format: 'claude-code' },
+    { dir: path.join(codeflowRoot, 'deprecated', 'opencode-agents'), format: 'opencode' },
 
     // Global user agents (medium priority)
     { dir: path.join(os.homedir(), '.codeflow', 'agents'), format: 'base' },

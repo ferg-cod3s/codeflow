@@ -5,44 +5,51 @@ This file catalogs all available agents in the CodeFlow system, organized by cat
 ## 🎯 **Single Format Architecture**
 
 All agents are defined once in the `BaseAgent` format and automatically converted to:
-- **Claude Code Format** (`claude-agents/`) - For Claude Code subagents
-- **OpenCode Format** (`opencode-agents/`) - For OpenCode platform
+
+- **Claude Code Format** (`.claude/agents/`) - For Claude Code subagents (minimal format: name, description, optional tools)
+- **OpenCode Format** (`.opencode/agent/`) - For OpenCode platform
 
 ## 🔍 **Core Research Agents**
 
 These agents are specifically designed for the research workflow system:
 
 ### **codebase-locator**
+
 - **Purpose**: Find WHERE files and components exist in the codebase
 - **When to use**: Initial exploration phase, locating relevant code sections
 - **Always run before**: codebase-analyzer, codebase-pattern-finder
 - **Format**: BaseAgent (auto-converted to all platforms)
 
 ### **codebase-pattern-finder**
+
 - **Purpose**: Discover similar implementation patterns and examples
 - **When to use**: When you need examples of how similar features are implemented
 - **Run after**: codebase-locator
 - **Format**: BaseAgent (auto-converted to all platforms)
 
 ### **codebase-analyzer**
+
 - **Purpose**: Understand HOW specific code works in detail
 - **When to use**: Deep analysis of identified code sections
 - **Run after**: codebase-locator and codebase-pattern-finder
 - **Format**: BaseAgent (auto-converted to all platforms)
 
 ### **thoughts-locator**
+
 - **Purpose**: Discover what documents exist in the thoughts directory
 - **When to use**: Finding existing documentation, decisions, and architectural thoughts
 - **Always run before**: thoughts-analyzer
 - **Format**: BaseAgent (auto-converted to all platforms)
 
 ### **thoughts-analyzer**
+
 - **Purpose**: Extract key insights from specific documents
 - **When to use**: Analyzing the most relevant documents found by thoughts-locator
 - **Run after**: thoughts-locator
 - **Format**: BaseAgent (auto-converted to all platforms)
 
 ### **web-search-researcher**
+
 - **Purpose**: Perform targeted web research for missing information
 - **When to use**: When codebase and thoughts research reveals gaps needing external documentation
 - **Format**: BaseAgent (auto-converted to all platforms)
@@ -54,6 +61,7 @@ These agents provide expert capabilities in specific domains:
 ### **Operations & Infrastructure**
 
 #### **operations-incident-commander**
+
 - **Model**: github-copilot/gpt-5
 - **Purpose**: Lead incident response from detection through resolution
 - **Capabilities**:
@@ -68,6 +76,7 @@ These agents provide expert capabilities in specific domains:
 ### **Development & Engineering**
 
 #### **development-migrations-specialist**
+
 - **Model**: anthropic/claude-sonnet-4-20250514
 - **Purpose**: Plan and execute safe database schema and data migrations
 - **Capabilities**:
@@ -82,6 +91,7 @@ These agents provide expert capabilities in specific domains:
 ### **Quality & Testing**
 
 #### **quality-testing-performance-tester**
+
 - **Model**: anthropic/claude-sonnet-4-20250514
 - **Purpose**: Design and execute comprehensive performance testing
 - **Capabilities**:
@@ -96,6 +106,7 @@ These agents provide expert capabilities in specific domains:
 ### **Business & Analytics**
 
 #### **programmatic-seo-engineer**
+
 - **Model**: anthropic/claude-sonnet-4-20250514
 - **Purpose**: Design and implement programmatic SEO systems at scale
 - **Capabilities**:
@@ -108,6 +119,7 @@ These agents provide expert capabilities in specific domains:
 - **Format**: BaseAgent (auto-converted to all platforms)
 
 #### **content-localization-coordinator**
+
 - **Model**: github-copilot/gpt-5
 - **Purpose**: Coordinate localization and internationalization workflows
 - **Capabilities**:
@@ -141,17 +153,20 @@ Additional agents available in the unified format:
 ## 📋 **Agent Selection Guidelines**
 
 ### **For Research Phase**
+
 1. **Always start with locators**: Run codebase-locator and thoughts-locator in parallel
 2. **Then use pattern-finders**: If you need implementation examples
 3. **Finally run analyzers**: For deep understanding of identified code/documents
 4. **Add specialized agents selectively**: Only when the research domain matches their expertise
 
 ### **For Planning Phase**
+
 - Use specialized agents that match the implementation domain
 - Consider agent handoff capabilities for complex features
 - Review agent constraints and escalation paths
 
 ### **For Execution Phase**
+
 - Specialized agents can handle domain-specific implementation
 - Use their built-in quality gates and success criteria
 - Follow their escalation guidelines for complex scenarios
@@ -167,16 +182,20 @@ Additional agents available in the unified format:
 All agents are automatically converted to the appropriate format for your platform:
 
 ### **Claude Code Users**
-- Agents are converted to Claude Code format with comma-separated tools
+
+- Agents are converted to Claude Code format with minimal required fields (name, description, optional tools)
 - Available as native slash commands: `/research`, `/plan`, `/execute`
 - No server setup required
+- Follows official Claude Code subagent specification
 
 ### **OpenCode Users**
+
 - Agents are converted to OpenCode format with full metadata
 - Available as MCP tools through the CodeFlow MCP server
 - Requires MCP server configuration
 
 ### **Other MCP Clients**
+
 - Agents are converted to base format for maximum compatibility
 - Available as MCP tools through the CodeFlow MCP server
 - Works with any MCP-compatible AI client
@@ -184,12 +203,14 @@ All agents are automatically converted to the appropriate format for your platfo
 ## 🧪 **Agent Development & Testing**
 
 ### **Adding New Agents**
+
 1. Create agent file in `codeflow-agents/` using BaseAgent format
 2. Run validation: `codeflow validate`
 3. Test conversion: `codeflow convert-all --dry-run`
 4. Deploy to all formats: `codeflow convert-all`
 
 ### **Agent Validation**
+
 - All agents must have `name` and `description` fields
 - Name format: lowercase letters, numbers, and hyphens only
 - Mode values: `'subagent'`, `'primary'`, or `'agent'`
@@ -197,6 +218,7 @@ All agents are automatically converted to the appropriate format for your platfo
 - Tools format: object with boolean values
 
 ### **Quality Assurance**
+
 - Round-trip conversion testing ensures data integrity
 - Cross-format validation maintains consistency
 - Performance benchmarking for conversion and validation
@@ -205,6 +227,7 @@ All agents are automatically converted to the appropriate format for your platfo
 ## 🔗 **Integration with CodeFlow Workflow**
 
 All agents integrate with the core CodeFlow workflow commands:
+
 - `/research` - Uses appropriate agents based on research domain
 - `/plan` - Leverages specialized agents for implementation planning
 - `/execute` - Delegates implementation to domain experts

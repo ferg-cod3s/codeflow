@@ -1,13 +1,12 @@
-import { Agent, BaseAgent, ClaudeCodeAgent, OpenCodeAgent } from "./agent-parser";
+import { Agent, BaseAgent, ClaudeCodeAgent, OpenCodeAgent } from './agent-parser';
 
 /**
  * Format conversion engine for agents
  */
 export class FormatConverter {
-
   /**
    * Convert Base format to Claude Code format
-   * Currently identical structure, but may diverge in the future
+   * Claude Code only requires name, description, and optionally tools
    */
   baseToClaudeCode(agent: Agent): Agent {
     if (agent.format !== 'base') {
@@ -15,21 +14,25 @@ export class FormatConverter {
     }
 
     const baseAgent = agent.frontmatter as BaseAgent;
-    // Convert tools object to comma-separated string for Claude Code format
-    const claudeCodeFrontmatter: ClaudeCodeAgent = { 
-      ...baseAgent,
-      tools: baseAgent.tools ? 
-        Object.entries(baseAgent.tools)
-          .filter(([, enabled]) => enabled)
-          .map(([tool]) => tool)
-          .join(', ') 
-        : undefined
+
+    // Claude Code only requires name, description, and optionally tools
+    // All other fields are not used by Claude Code
+    const claudeCodeFrontmatter: ClaudeCodeAgent = {
+      name: baseAgent.name,
+      description: baseAgent.description,
+      // Convert tools object to comma-separated string for Claude Code format
+      tools: baseAgent.tools
+        ? Object.entries(baseAgent.tools)
+            .filter(([, enabled]) => enabled)
+            .map(([tool]) => tool)
+            .join(', ')
+        : undefined,
     };
 
     return {
       ...agent,
       format: 'claude-code',
-      frontmatter: claudeCodeFrontmatter
+      frontmatter: claudeCodeFrontmatter,
     };
   }
 
@@ -42,7 +45,7 @@ export class FormatConverter {
     }
 
     // OpenCode format includes all base properties plus potential extensions
-    const openCodeFrontmatter: OpenCodeAgent = { ...agent.frontmatter as BaseAgent };
+    const openCodeFrontmatter: OpenCodeAgent = { ...(agent.frontmatter as BaseAgent) };
 
     // Convert model format for OpenCode if needed
     if (openCodeFrontmatter.model) {
@@ -52,7 +55,7 @@ export class FormatConverter {
     return {
       ...agent,
       format: 'opencode',
-      frontmatter: openCodeFrontmatter
+      frontmatter: openCodeFrontmatter,
     };
   }
 
@@ -66,22 +69,25 @@ export class FormatConverter {
 
     const claudeAgent = agent.frontmatter as ClaudeCodeAgent;
     // Convert tools string back to object for Base format
-    const tools = claudeAgent.tools ? 
-      claudeAgent.tools.split(',').reduce((acc, tool) => {
-        acc[tool.trim()] = true;
-        return acc;
-      }, {} as Record<string, boolean>) 
+    const tools = claudeAgent.tools
+      ? claudeAgent.tools.split(',').reduce(
+          (acc, tool) => {
+            acc[tool.trim()] = true;
+            return acc;
+          },
+          {} as Record<string, boolean>
+        )
       : undefined;
 
-    const baseFrontmatter: BaseAgent = { 
+    const baseFrontmatter: BaseAgent = {
       ...claudeAgent,
-      tools
+      tools,
     };
 
     return {
       ...agent,
       format: 'base',
-      frontmatter: baseFrontmatter
+      frontmatter: baseFrontmatter,
     };
   }
 
@@ -95,7 +101,7 @@ export class FormatConverter {
 
     // Convert Claude Code to OpenCode via Base format first
     const baseAgent = this.claudeCodeToBase(agent);
-    const openCodeFrontmatter: OpenCodeAgent = { ...baseAgent.frontmatter as BaseAgent };
+    const openCodeFrontmatter: OpenCodeAgent = { ...(baseAgent.frontmatter as BaseAgent) };
 
     // Convert model format for OpenCode if needed
     if (openCodeFrontmatter.model) {
@@ -105,7 +111,7 @@ export class FormatConverter {
     return {
       ...agent,
       format: 'opencode',
-      frontmatter: openCodeFrontmatter
+      frontmatter: openCodeFrontmatter,
     };
   }
 
@@ -117,7 +123,7 @@ export class FormatConverter {
       throw new Error(`Expected opencode format, got ${agent.format}`);
     }
 
-        // Extract only base properties, removing OpenCode-specific ones
+    // Extract only base properties, removing OpenCode-specific ones
     const frontmatter = agent.frontmatter as BaseAgent;
     const baseFrontmatter: BaseAgent = {
       name: frontmatter.name,
@@ -132,13 +138,13 @@ export class FormatConverter {
       escalation: frontmatter.escalation,
       examples: frontmatter.examples,
       prompts: frontmatter.prompts,
-      constraints: frontmatter.constraints
+      constraints: frontmatter.constraints,
     };
 
     return {
       ...agent,
       format: 'base',
-      frontmatter: baseFrontmatter
+      frontmatter: baseFrontmatter,
     };
   }
 
@@ -166,20 +172,26 @@ export class FormatConverter {
     switch (agent.format) {
       case 'base':
         switch (targetFormat) {
-          case 'claude-code': return this.baseToClaudeCode(agent);
-          case 'opencode': return this.baseToOpenCode(agent);
+          case 'claude-code':
+            return this.baseToClaudeCode(agent);
+          case 'opencode':
+            return this.baseToOpenCode(agent);
         }
         break;
       case 'claude-code':
         switch (targetFormat) {
-          case 'base': return this.claudeCodeToBase(agent);
-          case 'opencode': return this.claudeCodeToOpenCode(agent);
+          case 'base':
+            return this.claudeCodeToBase(agent);
+          case 'opencode':
+            return this.claudeCodeToOpenCode(agent);
         }
         break;
       case 'opencode':
         switch (targetFormat) {
-          case 'base': return this.openCodeToBase(agent);
-          case 'claude-code': return this.baseToClaudeCode(this.openCodeToBase(agent));
+          case 'base':
+            return this.openCodeToBase(agent);
+          case 'claude-code':
+            return this.baseToClaudeCode(this.openCodeToBase(agent));
         }
         break;
     }
@@ -190,7 +202,11 @@ export class FormatConverter {
   /**
    * Convert all agents in a directory to target format
    */
-  convertAll(sourceDir: string, targetFormat: 'base' | 'claude-code' | 'opencode', outputDir: string): void {
+  convertAll(
+    sourceDir: string,
+    targetFormat: 'base' | 'claude-code' | 'opencode',
+    outputDir: string
+  ): void {
     // Implementation remains the same
   }
 
@@ -198,7 +214,7 @@ export class FormatConverter {
    * Convert a batch of agents to target format
    */
   convertBatch(agents: Agent[], targetFormat: 'base' | 'claude-code' | 'opencode'): Agent[] {
-    return agents.map(agent => this.convert(agent, targetFormat));
+    return agents.map((agent) => this.convert(agent, targetFormat));
   }
 
   /**
@@ -222,12 +238,12 @@ export class FormatConverter {
 
       return {
         success: errors.length === 0,
-        errors
+        errors,
       };
     } catch (error: any) {
       return {
         success: false,
-        errors: [error.message]
+        errors: [error.message],
       };
     }
   }

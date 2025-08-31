@@ -1,7 +1,130 @@
-import { readdir, mkdir, copyFile, stat, writeFile, readFile } from "node:fs/promises";
-import { join, basename } from "node:path";
-import { existsSync } from "node:fs";
-import { validatePath, secureFileOperation, sanitizeInput } from "../security/validation.js";
+import { readdir, mkdir, copyFile, stat, writeFile, readFile } from 'node:fs/promises';
+import { join, basename } from 'node:path';
+import { existsSync } from 'node:fs';
+import { validatePath, secureFileOperation, sanitizeInput } from '../security/validation.js';
+import { parseAgentsFromDirectory, serializeAgent } from '../conversion/agent-parser.js';
+import { FormatConverter } from '../conversion/format-converter.js';
+
+// Strategy Pattern for Agent Setup
+export interface AgentSetupStrategy {
+  shouldHandle(setupDir: string): boolean;
+  setup(sourcePath: string, targetDir: string, projectType: ProjectType): Promise<AgentSetupResult>;
+}
+
+export interface AgentSetupResult {
+  success: boolean;
+  count: number;
+  errors: string[];
+  warnings: string[];
+}
+
+// Configuration-driven format mapping
+// Note: claude-agents/ and opencode-agents/ directories have been deprecated
+// Agents are now converted on-demand from codeflow-agents/
+export const FORMAT_MAPPINGS = {
+  '.claude/agents': 'claude-code',
+  '.opencode/agent': 'opencode',
+  // Future formats can be added here when converter supports them
+  // '.cursor/agents': 'cursor',
+  // '.windsurf/agents': 'windsurf',
+} as const;
+
+export type SupportedFormat = 'base' | 'claude-code' | 'opencode';
+
+// Utility function for format determination
+export function getTargetFormat(setupDir: string): SupportedFormat | null {
+  for (const [pattern, format] of Object.entries(FORMAT_MAPPINGS)) {
+    if (setupDir.includes(pattern.replace('/agents', ''))) {
+      return format as SupportedFormat;
+    }
+  }
+  return null;
+}
+
+// Command Setup Strategy - handles direct file copying
+export class CommandSetupStrategy implements AgentSetupStrategy {
+  shouldHandle(setupDir: string): boolean {
+    return setupDir.includes('command');
+  }
+
+  async setup(sourcePath: string, targetDir: string): Promise<AgentSetupResult> {
+    const result: AgentSetupResult = {
+      success: false,
+      count: 0,
+      errors: [],
+      warnings: [],
+    };
+
+    try {
+      // For commands, always use the command source directory
+      const sourceDir = join(sourcePath, 'command');
+
+      if (!existsSync(sourceDir)) {
+        result.errors.push(`Source directory not found: ${sourceDir}`);
+        return result;
+      }
+
+      // Direct copy for commands
+      const files = await readdir(sourceDir, { withFileTypes: true });
+      for (const file of files) {
+        if (file.isFile() && file.name.endsWith('.md')) {
+          const sourcefile = join(sourceDir, file.name);
+          const targetFile = join(targetDir, file.name);
+          await copyFile(sourcefile, targetFile);
+          result.count++;
+        }
+      }
+
+      result.success = true;
+    } catch (error: any) {
+      result.errors.push(`Command setup failed: ${error.message}`);
+    }
+
+    return result;
+  }
+}
+
+// Agent Setup Strategy - handles conversion
+export class AgentSetupStrategyImpl implements AgentSetupStrategy {
+  shouldHandle(setupDir: string): boolean {
+    return setupDir.includes('agent');
+  }
+
+  async setup(
+    sourcePath: string,
+    targetDir: string,
+    projectType: ProjectType
+  ): Promise<AgentSetupResult> {
+    const result: AgentSetupResult = {
+      success: false,
+      count: 0,
+      errors: [],
+      warnings: [],
+    };
+
+    try {
+      const targetFormat = getTargetFormat(targetDir);
+      if (!targetFormat) {
+        result.errors.push(`Could not determine target format for: ${targetDir}`);
+        return result;
+      }
+
+      const sourceDir = join(sourcePath, 'codeflow-agents');
+      if (!existsSync(sourceDir)) {
+        result.errors.push(`Source directory not found: ${sourceDir}`);
+        return result;
+      }
+
+      const count = await copyAgentsWithConversion(sourceDir, targetDir, targetFormat);
+      result.success = true;
+      result.count = count;
+    } catch (error: any) {
+      result.errors.push(`Agent setup failed: ${error.message}`);
+    }
+
+    return result;
+  }
+}
 
 interface ProjectType {
   name: string;
@@ -13,57 +136,48 @@ interface ProjectType {
 
 const PROJECT_TYPES: ProjectType[] = [
   {
-    name: "claude-code",
+    name: 'claude-code',
     detector: async (path: string) => {
       // Check for Claude Code indicators
-      const indicators = [
-        ".claude/claude_config.json",
-        ".claude/commands",
-        "claude.json"
-      ];
-      return indicators.some(indicator => existsSync(join(path, indicator)));
+      const indicators = ['.claude/claude_config.json', '.claude/commands', 'claude.json'];
+      return indicators.some((indicator) => existsSync(join(path, indicator)));
     },
-    setupDirs: [".claude/commands"],
-    description: "Claude Code project with native slash commands",
+    setupDirs: ['.claude/commands', '.claude/agents'],
+    description: 'Claude Code project with native slash commands',
     additionalSetup: async (projectPath: string) => {
-      const configPath = join(projectPath, ".claude/claude_config.json");
+      const configPath = join(projectPath, '.claude/claude_config.json');
       if (!existsSync(configPath)) {
         const config = {
-          "commands": {
-            "enabled": true,
-            "directory": "commands"
-          }
+          commands: {
+            enabled: true,
+            directory: 'commands',
+          },
         };
         await writeFile(configPath, JSON.stringify(config, null, 2));
-        console.log("  ✓ Created Claude Code configuration");
+        console.log('  ✓ Created Claude Code configuration');
       }
-    }
+    },
   },
   {
-    name: "opencode",
+    name: 'opencode',
     detector: async (path: string) => {
       // Check for OpenCode indicators
-      const indicators = [
-        ".opencode",
-        ".opencode/agent",
-        ".opencode/command",
-        "opencode.json"
-      ];
-      return indicators.some(indicator => existsSync(join(path, indicator)));
+      const indicators = ['.opencode', '.opencode/agent', '.opencode/command', 'opencode.json'];
+      return indicators.some((indicator) => existsSync(join(path, indicator)));
     },
-    setupDirs: [".opencode/command", ".opencode/agent"],
-    description: "OpenCode project with MCP integration",
+    setupDirs: ['.opencode/command', '.opencode/agent'],
+    description: 'OpenCode project with MCP integration',
   },
   {
-    name: "general",
+    name: 'general',
     detector: async () => true, // Always matches as fallback
-    setupDirs: [".opencode/command", ".opencode/agent", ".claude/commands"],
-    description: "General project (supports both Claude Code and MCP)",
+    setupDirs: ['.opencode/command', '.opencode/agent', '.claude/commands', '.claude/agents'],
+    description: 'General project (supports both Claude Code and MCP)',
     additionalSetup: async (projectPath: string) => {
-      console.log("  ℹ️  Set up for both Claude Code and MCP compatibility");
-      console.log("  ℹ️  Use /commands in Claude Code, or MCP tools in other clients");
-    }
-  }
+      console.log('  ℹ️  Set up for both Claude Code and MCP compatibility');
+      console.log('  ℹ️  Use /commands in Claude Code, or MCP tools in other clients');
+    },
+  },
 ];
 
 async function detectProjectType(projectPath: string): Promise<ProjectType> {
@@ -75,8 +189,138 @@ async function detectProjectType(projectPath: string): Promise<ProjectType> {
   return PROJECT_TYPES[PROJECT_TYPES.length - 1]; // fallback to general
 }
 
-async function copyCommands(sourcePath: string, targetPath: string, projectType: ProjectType): Promise<number> {
+async function copyAgentsWithConversion(
+  sourceDir: string,
+  targetDir: string,
+  targetFormat: SupportedFormat
+): Promise<number> {
+  // Parse base format agents
+  const { agents, errors: parseErrors } = await parseAgentsFromDirectory(sourceDir, 'base');
+
+  if (parseErrors.length > 0) {
+    console.error(`❌ Failed to parse agents from ${sourceDir}:`);
+    for (const error of parseErrors) {
+      console.error(`  • ${error.filePath}: ${error.message}`);
+    }
+    return 0;
+  }
+
+  if (agents.length === 0) {
+    console.log(`⚠️  No agents found in ${sourceDir}`);
+    return 0;
+  }
+
+  // Convert to target format
+  const converter = new FormatConverter();
+  const convertedAgents = converter.convertBatch(agents, targetFormat);
+
+  // Serialize and write
+  let writeCount = 0;
+  for (const agent of convertedAgents) {
+    try {
+      // Calculate relative path to preserve folder structure
+      const relativePath = agent.filePath.replace(sourceDir, '').replace(/^\//, '');
+      const pathParts = relativePath.split('/').slice(0, -1); // Remove filename
+      const categoryDir = pathParts.length > 0 ? pathParts[0] : null;
+
+      // For Claude agents, preserve folder structure by category
+      let targetSubDir = targetDir;
+      if (targetFormat === 'claude-code' && categoryDir) {
+        targetSubDir = join(targetDir, categoryDir);
+        // Ensure the category directory exists
+        await mkdir(targetSubDir, { recursive: true });
+      }
+
+      const filename = `${agent.frontmatter.name}.md`;
+      const targetFile = join(targetSubDir, filename);
+      const serialized = serializeAgent(agent);
+      await writeFile(targetFile, serialized);
+
+      const displayPath =
+        targetFormat === 'claude-code' && categoryDir
+          ? `${targetFormat}/${categoryDir}/${filename}`
+          : `${targetFormat}/${filename}`;
+      console.log(`  ✓ Converted and copied: ${displayPath}`);
+      writeCount++;
+    } catch (error: any) {
+      console.error(`❌ Failed to write ${agent.frontmatter.name}: ${error.message}`);
+    }
+  }
+
+  return writeCount;
+}
+
+// Performance optimizations for large agent sets
+async function processAgentsInBatches<T>(
+  agents: T[],
+  batchSize: number,
+  processor: (batch: T[]) => Promise<void>
+): Promise<void> {
+  for (let i = 0; i < agents.length; i += batchSize) {
+    const batch = agents.slice(i, i + batchSize);
+    await processor(batch);
+
+    // Optional: Add progress reporting for large sets
+    if (agents.length > 50) {
+      console.log(
+        `  📊 Processed ${Math.min(i + batchSize, agents.length)}/${agents.length} agents`
+      );
+    }
+  }
+}
+
+// Memory-efficient streaming for very large agent sets
+async function streamAgentConversion(
+  sourceDir: string,
+  targetDir: string,
+  targetFormat: SupportedFormat
+): Promise<number> {
+  const files = await readdir(sourceDir, { withFileTypes: true });
+  const agentFiles = files.filter((f) => f.isFile() && f.name.endsWith('.md'));
+
+  let processedCount = 0;
+
+  for (const file of agentFiles) {
+    try {
+      // Process one agent at a time to minimize memory usage
+      const sourceFile = join(sourceDir, file.name);
+      const content = await readFile(sourceFile, 'utf8');
+
+      // Parse single agent
+      const frontmatterMatch = content.match(/^---\\s*\\n([\\s\\S]*?)\\n---\\s*\\n/);
+      if (frontmatterMatch) {
+        const frontmatter = frontmatterMatch[1];
+        // Basic validation - could be enhanced
+        if (frontmatter.includes('name:')) {
+          // Simulate conversion by adding format markers
+          const convertedContent = content.replace(
+            /^---\\s*\\n([\\s\\S]*?)\\n---\\s*\\n/,
+            `---\\n$1\\nformat: ${targetFormat}\\n---\\n`
+          );
+
+          const targetFile = join(targetDir, file.name);
+          await writeFile(targetFile, convertedContent);
+          processedCount++;
+        }
+      }
+    } catch (error: any) {
+      console.error(`Failed to process ${file.name}: ${error.message}`);
+    }
+  }
+
+  return processedCount;
+}
+
+async function copyCommands(
+  sourcePath: string,
+  targetPath: string,
+  projectType: ProjectType
+): Promise<number> {
   let fileCount = 0;
+  const strategies: AgentSetupStrategy[] = [
+    new CommandSetupStrategy(),
+    new AgentSetupStrategyImpl(),
+  ];
 
   for (const setupDir of projectType.setupDirs) {
     const targetDir = join(targetPath, setupDir);
@@ -87,33 +331,24 @@ async function copyCommands(sourcePath: string, targetPath: string, projectType:
       console.log(`  ✓ Created directory: ${setupDir}`);
     }
 
-    // Determine source directory based on target
-    let sourceDir: string;
-    if (setupDir.includes(".claude")) {
-      sourceDir = join(sourcePath, "command"); // Claude uses command files
-    } else if (setupDir.includes("command")) {
-      sourceDir = join(sourcePath, "command");
-    } else if (setupDir.includes("agent")) {
-      sourceDir = join(sourcePath, "codeflow-agents");
-    } else {
-      continue;
-    }
+    // Find appropriate strategy and execute
+    const strategy = strategies.find((s) => s.shouldHandle(setupDir));
+    if (strategy) {
+      const result = await strategy.setup(sourcePath, targetDir, projectType);
 
-    if (!existsSync(sourceDir)) {
-      console.log(`  ⚠️  Skipping ${setupDir} - source directory not found`);
-      continue;
-    }
-
-    // Copy files
-    const files = await readdir(sourceDir, { withFileTypes: true });
-    for (const file of files) {
-      if (file.isFile() && file.name.endsWith('.md')) {
-        const sourcefile = join(sourceDir, file.name);
-        const targetFile = join(targetDir, file.name);
-        await copyFile(sourcefile, targetFile);
-        console.log(`  ✓ Copied: ${setupDir}/${file.name}`);
-        fileCount++;
+      if (result.success) {
+        fileCount += result.count;
+        console.log(`  ✓ Processed ${result.count} files for ${setupDir}`);
+      } else {
+        console.log(`  ⚠️  Failed to process ${setupDir}:`);
+        result.errors.forEach((error) => console.log(`    • ${error}`));
       }
+
+      if (result.warnings.length > 0) {
+        result.warnings.forEach((warning) => console.log(`    ⚠️  ${warning}`));
+      }
+    } else {
+      console.log(`  ⚠️  No strategy found for ${setupDir}`);
     }
   }
 
@@ -121,23 +356,23 @@ async function copyCommands(sourcePath: string, targetPath: string, projectType:
 }
 
 async function createProjectReadme(projectPath: string, projectType: ProjectType): Promise<void> {
-  const readmePath = join(projectPath, "README.md");
-  let readmeContent = "";
+  const readmePath = join(projectPath, 'README.md');
+  let readmeContent = '';
 
   if (existsSync(readmePath)) {
     // Check if codeflow section already exists
-    const existingContent = await readFile(readmePath, "utf-8");
-    if (existingContent.includes("## Codeflow Workflow")) {
-      console.log("  ℹ️  README already contains Codeflow Workflow section");
+    const existingContent = await readFile(readmePath, 'utf-8');
+    if (existingContent.includes('## Codeflow Workflow')) {
+      console.log('  ℹ️  README already contains Codeflow Workflow section');
       return;
     }
-    readmeContent = existingContent + "\n\n";
+    readmeContent = existingContent + '\n\n';
   } else {
     readmeContent = `# ${basename(projectPath)}\n\n`;
   }
 
   // Add appropriate section based on project type
-  if (projectType.name === "claude-code") {
+  if (projectType.name === 'claude-code') {
     readmeContent += `## Codeflow Workflow - Claude Code
 
 This project is set up for Claude Code with native slash commands.
@@ -166,7 +401,7 @@ Simply use the slash commands directly in Claude Code:
 
 Commands are located in \`.claude/commands/\` and can be customized for this project.
 `;
-  } else if (projectType.name === "opencode") {
+  } else if (projectType.name === 'opencode') {
     readmeContent += `## Codeflow Workflow - MCP Integration
 
 This project is set up for MCP integration with OpenCode and other compatible AI clients.
@@ -249,10 +484,13 @@ Commands are in \`.opencode/command/\`.
   }
 
   await writeFile(readmePath, readmeContent);
-  console.log("  ✓ Updated README.md with usage instructions");
+  console.log('  ✓ Updated README.md with usage instructions');
 }
 
-export async function setup(projectPath: string | undefined, options: { force?: boolean, type?: string } = {}) {
+export async function setup(
+  projectPath: string | undefined,
+  options: { force?: boolean; type?: string } = {}
+) {
   // Validate and sanitize inputs
   if (options.type) {
     options.type = sanitizeInput(options.type);
@@ -279,7 +517,8 @@ export async function setup(projectPath: string | undefined, options: { force?: 
   // Detect or use specified project type
   let projectType: ProjectType;
   if (options.type) {
-    projectType = PROJECT_TYPES.find(t => t.name === options.type) || PROJECT_TYPES[PROJECT_TYPES.length - 1];
+    projectType =
+      PROJECT_TYPES.find((t) => t.name === options.type) || PROJECT_TYPES[PROJECT_TYPES.length - 1];
     console.log(`📋 Using specified type: ${projectType.description}`);
   } else {
     projectType = await detectProjectType(resolvedPath);
@@ -288,16 +527,18 @@ export async function setup(projectPath: string | undefined, options: { force?: 
 
   // Check if already set up (unless force is specified)
   if (!options.force) {
-    const hasExistingSetup = projectType.setupDirs.some(dir => existsSync(join(resolvedPath, dir)));
+    const hasExistingSetup = projectType.setupDirs.some((dir) =>
+      existsSync(join(resolvedPath, dir))
+    );
     if (hasExistingSetup) {
-      console.log("⚠️  Project appears to already have codeflow setup.");
+      console.log('⚠️  Project appears to already have codeflow setup.');
       console.log("   Use --force to overwrite, or 'codeflow status .' to check current state.");
       return;
     }
   }
 
   // Get codeflow source directory
-  const codeflowDir = join(import.meta.dir, "../..");
+  const codeflowDir = join(import.meta.dir, '../..');
 
   console.log(`📦 Setting up ${projectType.name} configuration...\n`);
 
@@ -314,7 +555,7 @@ export async function setup(projectPath: string | undefined, options: { force?: 
     await createProjectReadme(resolvedPath, projectType);
 
     // Ensure .codeflow scaffold exists for developer workflows
-    const codeflowScaffoldDirs = [".codeflow", ".codeflow/agent", ".codeflow/command"];
+    const codeflowScaffoldDirs = ['.codeflow', '.codeflow/agent', '.codeflow/command'];
     for (const d of codeflowScaffoldDirs) {
       const targetDir = join(resolvedPath, d);
       if (!existsSync(targetDir)) {
@@ -324,19 +565,25 @@ export async function setup(projectPath: string | undefined, options: { force?: 
     }
 
     // Create appropriate .gitignore entries
-    const gitignorePath = join(resolvedPath, ".gitignore");
-    let gitignoreContent = "";
+    const gitignorePath = join(resolvedPath, '.gitignore');
+    let gitignoreContent = '';
 
     if (existsSync(gitignorePath)) {
-      gitignoreContent = await readFile(gitignorePath, "utf-8");
+      gitignoreContent = await readFile(gitignorePath, 'utf-8');
     }
 
     const neededEntries = [];
-    if (projectType.setupDirs.some(dir => dir.includes(".claude")) && !gitignoreContent.includes("!.claude/")) {
-      neededEntries.push("# Keep codeflow Claude Code commands", "!.claude/");
+    if (
+      projectType.setupDirs.some((dir) => dir.includes('.claude')) &&
+      !gitignoreContent.includes('!.claude/')
+    ) {
+      neededEntries.push('# Keep codeflow Claude Code commands', '!.claude/');
     }
-    if (projectType.setupDirs.some(dir => dir.includes(".opencode")) && !gitignoreContent.includes("!.opencode/")) {
-      neededEntries.push("# Keep codeflow OpenCode commands and agents", "!.opencode/");
+    if (
+      projectType.setupDirs.some((dir) => dir.includes('.opencode')) &&
+      !gitignoreContent.includes('!.opencode/')
+    ) {
+      neededEntries.push('# Keep codeflow OpenCode commands and agents', '!.opencode/');
     }
 
     if (neededEntries.length > 0) {
@@ -345,32 +592,31 @@ export async function setup(projectPath: string | undefined, options: { force?: 
       }
       gitignoreContent += '\n' + neededEntries.join('\n') + '\n';
       await writeFile(gitignorePath, gitignoreContent);
-      console.log("  ✓ Updated .gitignore to preserve codeflow files");
+      console.log('  ✓ Updated .gitignore to preserve codeflow files');
     }
 
     console.log(`\n✅ Successfully set up ${projectType.name} project!`);
     console.log(`📁 Installed ${fileCount} files`);
 
     // Show next steps based on project type
-    console.log("\n📋 Next steps:");
-    if (projectType.name === "claude-code") {
-      console.log("  1. Open this project in Claude Code");
-      console.log("  2. Use slash commands: /research, /plan, /execute, etc.");
-      console.log("  3. Commands are ready to use immediately!");
-    } else if (projectType.name === "opencode") {
-      console.log("  1. Configure your MCP client (Claude Desktop, OpenCode, etc.)");
-      console.log("  2. Start MCP server: bun run /path/to/codeflow/mcp/codeflow-server.mjs");
-      console.log("  3. Use MCP tools: research, plan, execute, etc.");
+    console.log('\n📋 Next steps:');
+    if (projectType.name === 'claude-code') {
+      console.log('  1. Open this project in Claude Code');
+      console.log('  2. Use slash commands: /research, /plan, /execute, etc.');
+      console.log('  3. Commands are ready to use immediately!');
+    } else if (projectType.name === 'opencode') {
+      console.log('  1. Configure your MCP client (Claude Desktop, OpenCode, etc.)');
+      console.log('  2. Start MCP server: bun run /path/to/codeflow/mcp/codeflow-server.mjs');
+      console.log('  3. Use MCP tools: research, plan, execute, etc.');
     } else {
-      console.log("  For Claude Code:");
-      console.log("    • Use slash commands: /research, /plan, /execute, etc.");
-      console.log("  For other AI platforms:");
-      console.log("    • Configure MCP client and start server");
-      console.log("    • Use MCP tools: research, plan, execute, etc.");
+      console.log('  For Claude Code:');
+      console.log('    • Use slash commands: /research, /plan, /execute, etc.');
+      console.log('  For other AI platforms:');
+      console.log('    • Configure MCP client and start server');
+      console.log('    • Use MCP tools: research, plan, execute, etc.');
     }
 
-    console.log("\n🔍 Verify setup: codeflow status .");
-
+    console.log('\n🔍 Verify setup: codeflow status .');
   } catch (error: any) {
     console.error(`❌ Setup failed: ${error.message}`);
     process.exit(1);

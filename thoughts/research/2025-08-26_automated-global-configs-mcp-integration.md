@@ -4,7 +4,7 @@ researcher: Claude Code
 git_commit: 39d24b3dda1a6a7475374a7dea3ffc320179d849
 branch: master
 repository: codeflow
-topic: "Automated ways to add Claude agents and commands and OpenCode agents and commands to global configs, and MCP server installation for standalone commands"
+topic: 'Automated ways to add Claude agents and commands and OpenCode agents and commands to global configs, and MCP server installation for standalone commands'
 tags: [research, codebase, automation, global-config, mcp-integration, agent-distribution]
 status: complete
 last_updated: 2025-08-26
@@ -20,10 +20,10 @@ The research ticket asks for automated ways to add Claude Code agents/commands a
 The codeflow repository has a comprehensive automation system for agent and command distribution that supports multiple AI platforms through:
 
 1. **CLI-based Global Setup**: `agentic setup` command with intelligent project detection
-2. **MCP Server Integration**: Standalone MCP server providing 7 core workflow commands 
+2. **MCP Server Integration**: Standalone MCP server providing 7 core workflow commands
 3. **Multi-format Agent Support**: Three distinct agent formats (Base, Claude Code, OpenCode)
 4. **Cross-repository Usage**: Global CLI with project-aware command discovery
-5. **NPM Package Distribution**: `@agentic-codeflow/mcp-server` for universal MCP client compatibility
+5. **NPM Package Distribution**: `@agentic-codeflow/mcp` for universal MCP client compatibility
 
 The system is designed to work both with global configurations and standalone deployments for coding agents that lack subagent access.
 
@@ -32,22 +32,25 @@ The system is designed to work both with global configurations and standalone de
 ### Global Configuration Systems
 
 **Claude Code Global Paths** (src/cli/setup.ts:27-39):
+
 - `~/.claude/global_rules.md` - Global development rules and standards
-- `~/.config/claude_code/global_rules.md` - Alternative location for global rules  
+- `~/.config/claude_code/global_rules.md` - Alternative location for global rules
 - `~/.claude/commands/` - Personal/global commands directory
 - `~/.claude/mcp.json` - Global MCP configuration
 
 **MCP Client Configuration** (src/cli/mcp.ts:15-25):
+
 - **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
 - **Windows**: `%APPDATA%/Claude/claude_desktop_config.json`
 - **Linux**: `~/.config/Claude/claude_desktop_config.json`
 
 **Automated Global Setup Commands**:
+
 ```bash
 # Install CLI globally
 bun install && bun run install
 
-# Configure MCP clients automatically  
+# Configure MCP clients automatically
 agentic mcp configure claude-desktop
 agentic mcp configure claude-desktop --remove
 
@@ -59,11 +62,13 @@ agentic mcp status
 ### CLI Distribution System Architecture
 
 **Smart Project Detection** (src/cli/setup.ts:13-66):
+
 - **Claude Code Projects**: Detects `.claude/claude_config.json`, `.claude/commands`, `claude.json`
 - **OpenCode Projects**: Detects `.opencode`, `.opencode/agent`, `.opencode/command`, `opencode.json`
 - **General Projects**: Fallback supporting both formats
 
 **Automated Setup Flow** (src/cli/setup.ts:254-354):
+
 1. Project type detection or explicit specification via `--type`
 2. Directory structure creation (`.claude/commands/`, `.opencode/command/`, `.opencode/agent/`)
 3. Agent and command file distribution from source directories
@@ -72,35 +77,39 @@ agentic mcp status
 6. .gitignore updates to preserve agentic files
 
 **Cross-Repository Discovery** (mcp/agentic-server.mjs:24-29):
+
 ```javascript
 // Priority order for command discovery
 const commandDirs = [
-  path.join(cwd, ".opencode", "command"),     // Project-specific
-  path.join(cwd, ".claude", "commands"),     // Claude Code
-  path.join(agenticRoot, "command")          // Global fallback
+  path.join(cwd, '.opencode', 'command'), // Project-specific
+  path.join(cwd, '.claude', 'commands'), // Claude Code
+  path.join(agenticRoot, 'command'), // Global fallback
 ];
 ```
 
 ### MCP Server for Standalone Commands
 
 **Development MCP Server** (mcp/agentic-server.mjs):
+
 - Exposes 7 core workflow commands: `research`, `plan`, `execute`, `test`, `document`, `commit`, `review`
 - Project-aware command loading with global fallbacks
 - Usage: `bun run mcp/agentic-server.mjs`
 
 **NPM Package MCP Server** (packages/agentic-mcp/):
-- Published as `@agentic-codeflow/mcp-server`
+
+- Published as `@agentic-codeflow/mcp`
 - Standalone with built-in command templates
 - No project dependencies required
-- Usage: `npx @agentic-codeflow/mcp-server`
+- Usage: `npx @agentic-codeflow/mcp`
 
 **MCP Client Auto-Configuration** (src/cli/mcp.ts:47-89):
+
 ```json
 {
   "mcpServers": {
     "agentic-tools": {
       "command": "npx",
-      "args": ["@agentic-codeflow/mcp-server"],
+      "args": ["@agentic-codeflow/mcp"],
       "description": "Agentic workflow commands"
     }
   }
@@ -131,7 +140,7 @@ const commandDirs = [
 
 - `src/cli/index.ts:78-94` - Main CLI command routing and help system
 - `src/cli/setup.ts:254-354` - Intelligent project setup and type detection
-- `src/cli/mcp.ts:47-89` - MCP client auto-configuration system  
+- `src/cli/mcp.ts:47-89` - MCP client auto-configuration system
 - `mcp/agentic-server.mjs:56-94` - MCP server tool registration and discovery
 - `packages/agentic-mcp/src/server.ts` - NPM package MCP server implementation
 - `config.json:2-4` - Distribution configuration for included directories

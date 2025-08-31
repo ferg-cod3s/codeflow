@@ -1,10 +1,10 @@
-import { join } from "node:path";
-import { existsSync } from "node:fs";
-import { writeFile, mkdir } from "node:fs/promises";
-import { parseAgentsFromDirectory, serializeAgent } from "../conversion/agent-parser";
-import { FormatConverter } from "../conversion/format-converter";
-import { AgentValidator } from "../conversion/validator";
-import { resolveProjectPath } from "./utils";
+import { join } from 'node:path';
+import { existsSync } from 'node:fs';
+import { writeFile, mkdir } from 'node:fs/promises';
+import { parseAgentsFromDirectory, serializeAgent } from '../conversion/agent-parser';
+import { FormatConverter } from '../conversion/format-converter';
+import { AgentValidator } from '../conversion/validator';
+import { resolveProjectPath } from './utils';
 
 interface ConvertOptions {
   source: string;
@@ -22,8 +22,8 @@ export async function convert(options: ConvertOptions) {
 
   console.log(`🔄 Converting agents from ${source} to ${target}`);
   console.log(`📋 Target format: ${format}`);
-  if (dryRun) console.log("🔍 Dry run mode - no files will be written");
-  console.log("");
+  if (dryRun) console.log('🔍 Dry run mode - no files will be written');
+  console.log('');
 
   // Validate source directory exists
   if (!existsSync(source)) {
@@ -34,8 +34,14 @@ export async function convert(options: ConvertOptions) {
   // Determine source format based on directory name
   let sourceFormat: 'base' | 'claude-code' | 'opencode';
   if (source.includes('claude-agents')) {
+    console.warn('⚠️  DEPRECATED: Using claude-agents/ directory');
+    console.warn('   This directory has been moved to /deprecated/');
+    console.warn('   Please use codeflow-agents/ as the single source of truth');
     sourceFormat = 'claude-code';
   } else if (source.includes('opencode-agents')) {
+    console.warn('⚠️  DEPRECATED: Using opencode-agents/ directory');
+    console.warn('   This directory has been moved to /deprecated/');
+    console.warn('   Please use codeflow-agents/ as the single source of truth');
     sourceFormat = 'opencode';
   } else if (source.includes('agent')) {
     sourceFormat = 'base';
@@ -61,7 +67,7 @@ export async function convert(options: ConvertOptions) {
   }
 
   if (agents.length === 0) {
-    console.log("ℹ️  No agents found to convert");
+    console.log('ℹ️  No agents found to convert');
     return;
   }
 
@@ -72,10 +78,12 @@ export async function convert(options: ConvertOptions) {
     const validator = new AgentValidator();
     const { results, summary } = validator.validateBatch(agents);
 
-    console.log(`✅ Validation: ${summary.valid} valid, ${summary.errors} errors, ${summary.warnings} warnings`);
+    console.log(
+      `✅ Validation: ${summary.valid} valid, ${summary.errors} errors, ${summary.warnings} warnings`
+    );
 
     if (summary.errors > 0) {
-      console.log("\n⚠️  Validation errors found:");
+      console.log('\n⚠️  Validation errors found:');
       for (const result of results) {
         if (result.errors.length > 0) {
           console.log(`  ${result.agent.name}:`);
@@ -84,7 +92,7 @@ export async function convert(options: ConvertOptions) {
           }
         }
       }
-      console.log("");
+      console.log('');
     }
   }
 
@@ -99,10 +107,12 @@ export async function convert(options: ConvertOptions) {
     const validator = new AgentValidator();
     const { results, summary } = validator.validateBatch(convertedAgents);
 
-    console.log(`✅ Post-conversion validation: ${summary.valid} valid, ${summary.errors} errors, ${summary.warnings} warnings`);
+    console.log(
+      `✅ Post-conversion validation: ${summary.valid} valid, ${summary.errors} errors, ${summary.warnings} warnings`
+    );
 
     if (summary.errors > 0) {
-      console.log("\n⚠️  Post-conversion validation errors:");
+      console.log('\n⚠️  Post-conversion validation errors:');
       for (const result of results) {
         if (result.errors.length > 0) {
           console.log(`  ${result.agent.name}:`);
@@ -111,7 +121,7 @@ export async function convert(options: ConvertOptions) {
           }
         }
       }
-      console.log("");
+      console.log('');
     }
   }
 
@@ -134,7 +144,7 @@ export async function convert(options: ConvertOptions) {
   }
 
   if (roundTripErrors === 0) {
-    console.log("✅ All round-trip conversions successful");
+    console.log('✅ All round-trip conversions successful');
   } else {
     console.log(`⚠️  ${roundTripErrors}/${sampleSize} agents had round-trip issues`);
   }
@@ -169,7 +179,7 @@ export async function convert(options: ConvertOptions) {
       console.log(`❌ Failed to write ${writeErrors} agents`);
     }
   } else {
-    console.log("\n🔍 Dry run complete - no files were written");
+    console.log('\n🔍 Dry run complete - no files were written');
   }
 
   console.log(`\n📋 Conversion Summary:`);
@@ -184,25 +194,40 @@ export async function convert(options: ConvertOptions) {
 /**
  * Batch convert all agent formats in current project
  */
-export async function convertAll(projectPath?: string, options: { validate?: boolean; dryRun?: boolean } = {}) {
+export async function convertAll(
+  projectPath?: string,
+  options: { validate?: boolean; dryRun?: boolean } = {}
+) {
   const resolvedPath = resolveProjectPath(projectPath);
-  const codeflowDir = join(import.meta.dir, "../..");
+  const codeflowDir = join(import.meta.dir, '../..');
 
   console.log(`🔄 Converting all agent formats for project: ${resolvedPath}`);
-  console.log("");
+  console.log('');
 
   const conversions = [
-    // Convert base to other formats
-    { source: join(codeflowDir, "agent"), target: join(codeflowDir, "claude-agents"), format: 'claude-code' as const },
-    { source: join(codeflowDir, "agent"), target: join(codeflowDir, "opencode-agents"), format: 'opencode' as const },
+    // Convert base to other formats (primary workflow)
+    {
+      source: join(codeflowDir, 'codeflow-agents'),
+      target: join(codeflowDir, 'deprecated', 'claude-agents'),
+      format: 'claude-code' as const,
+    },
+    {
+      source: join(codeflowDir, 'codeflow-agents'),
+      target: join(codeflowDir, 'deprecated', 'opencode-agents'),
+      format: 'opencode' as const,
+    },
 
-    // Convert claude-code to other formats (if it has unique agents)
-    { source: join(codeflowDir, "claude-agents"), target: join(codeflowDir, "codeflow-agents"), format: 'base' as const },
-    { source: join(codeflowDir, "claude-agents"), target: join(codeflowDir, "opencode-agents"), format: 'opencode' as const },
-
-    // Convert opencode to other formats (if it has unique agents)
-    { source: join(codeflowDir, "opencode-agents"), target: join(codeflowDir, "codeflow-agents"), format: 'base' as const },
-    { source: join(codeflowDir, "opencode-agents"), target: join(codeflowDir, "claude-agents"), format: 'claude-code' as const }
+    // Legacy conversions (for deprecated directories)
+    {
+      source: join(codeflowDir, 'deprecated', 'claude-agents'),
+      target: join(codeflowDir, 'codeflow-agents'),
+      format: 'base' as const,
+    },
+    {
+      source: join(codeflowDir, 'deprecated', 'opencode-agents'),
+      target: join(codeflowDir, 'codeflow-agents'),
+      format: 'base' as const,
+    },
   ];
 
   for (const conversion of conversions) {
@@ -213,9 +238,9 @@ export async function convertAll(projectPath?: string, options: { validate?: boo
           target: conversion.target,
           format: conversion.format,
           validate: options.validate,
-          dryRun: options.dryRun
+          dryRun: options.dryRun,
         });
-        console.log("");
+        console.log('');
       } catch (error: any) {
         console.error(`❌ Conversion failed: ${error.message}`);
       }
@@ -229,14 +254,14 @@ export async function convertAll(projectPath?: string, options: { validate?: boo
  * List differences between agent formats
  */
 export async function listDifferences(projectPath?: string) {
-  const codeflowDir = join(import.meta.dir, "../..");
+  const codeflowDir = join(import.meta.dir, '../..');
 
-  console.log("📊 Analyzing differences between agent formats...\n");
+  console.log('📊 Analyzing differences between agent formats...\n');
 
   const directories = [
-    { path: join(codeflowDir, "codeflow-agents"), format: 'base' as const },
-    { path: join(codeflowDir, "claude-agents"), format: 'claude-code' as const },
-    { path: join(codeflowDir, "opencode-agents"), format: 'opencode' as const }
+    { path: join(codeflowDir, 'codeflow-agents'), format: 'base' as const },
+    { path: join(codeflowDir, 'deprecated', 'claude-agents'), format: 'claude-code' as const },
+    { path: join(codeflowDir, 'deprecated', 'opencode-agents'), format: 'opencode' as const },
   ];
 
   const agentsByFormat: Record<string, Set<string>> = {};
@@ -244,7 +269,7 @@ export async function listDifferences(projectPath?: string) {
   for (const dir of directories) {
     if (existsSync(dir.path)) {
       const { agents } = await parseAgentsFromDirectory(dir.path, dir.format);
-      agentsByFormat[dir.format] = new Set(agents.map(a => a.name));
+      agentsByFormat[dir.format] = new Set(agents.map((a) => a.name));
       console.log(`📁 ${dir.format}: ${agents.length} agents`);
     } else {
       agentsByFormat[dir.format] = new Set();
@@ -252,18 +277,18 @@ export async function listDifferences(projectPath?: string) {
     }
   }
 
-  console.log("");
+  console.log('');
 
   // Find unique agents in each format
   const allAgentNames = new Set<string>();
-  Object.values(agentsByFormat).forEach(names => {
-    names.forEach(name => allAgentNames.add(name));
+  Object.values(agentsByFormat).forEach((names) => {
+    names.forEach((name) => allAgentNames.add(name));
   });
 
   const uniqueToFormat: Record<string, string[]> = {
     base: [],
     'claude-code': [],
-    opencode: []
+    opencode: [],
   };
 
   const commonToAll: string[] = [];
@@ -280,14 +305,14 @@ export async function listDifferences(projectPath?: string) {
     }
   }
 
-  console.log("📋 Format Analysis:");
+  console.log('📋 Format Analysis:');
   console.log(`  Common to all formats: ${commonToAll.length}`);
   console.log(`  Unique to base: ${uniqueToFormat.base.length}`);
   console.log(`  Unique to claude-code: ${uniqueToFormat['claude-code'].length}`);
   console.log(`  Unique to opencode: ${uniqueToFormat.opencode.length}`);
 
   if (uniqueToFormat.opencode.length > 0) {
-    console.log("\n📝 Agents unique to OpenCode format:");
+    console.log('\n📝 Agents unique to OpenCode format:');
     for (const agent of uniqueToFormat.opencode.slice(0, 10)) {
       console.log(`  • ${agent}`);
     }

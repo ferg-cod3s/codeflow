@@ -10,8 +10,11 @@
     "github": {
       "command": "docker",
       "args": [
-        "run", "--rm", "-i",
-        "--env-file", "/home/f3rg/.config/claude_code/.env",
+        "run",
+        "--rm",
+        "-i",
+        "--env-file",
+        "/home/f3rg/.config/claude_code/.env",
         "ghcr.io/github/github-mcp-server"
       ]
     },
@@ -44,8 +47,8 @@
       }
     },
     "agentic-codeflow": {
-      "command": "npx",
-      "args": ["@agentic-codeflow/mcp-server"],
+      "command": "agentic-codeflow-mcp",
+      "args": [],
       "description": "Agentic CodeFlow AI development workflows"
     }
   }
