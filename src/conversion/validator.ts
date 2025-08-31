@@ -79,7 +79,7 @@ export class AgentValidator {
     }
 
     // Mode validation - only validate if mode is present and not 'agent'
-    if (agent.mode && agent.mode !== 'agent' && !['subagent', 'primary'].includes(agent.mode)) {
+    if (agent.mode && agent.mode !== 'agent' && !(['subagent', 'primary'] as const).includes(agent.mode as any)) {
       errors.push({
         field: 'mode',
         message: 'Mode must be either "subagent", "primary", or "agent"',
@@ -184,9 +184,17 @@ export class AgentValidator {
    * Validate Claude Code agent format (converted from base)
    */
   validateClaudeCode(agent: ClaudeCodeAgent): ValidationResult {
-    // For now, just validate as base since we're using single format
-    // In the future, this could validate Claude Code specific requirements
-    return this.validateBase(agent);
+    // Convert Claude Code agent to Base format for validation
+    const baseAgent: BaseAgent = {
+      ...agent,
+      tools: agent.tools ? 
+        agent.tools.split(',').reduce((acc, tool) => {
+          acc[tool.trim()] = true;
+          return acc;
+        }, {} as Record<string, boolean>) 
+        : undefined
+    };
+    return this.validateBase(baseAgent);
   }
 
   /**

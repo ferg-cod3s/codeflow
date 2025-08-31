@@ -5,16 +5,7 @@ model: github-copilot/gpt-5
 temperature: 0.2
 category: operations
 tags: [incident-response, operations, coordination, communication, crisis-management, slo-sla]
-tools:
-  read: true
-  grep: true
-  bash: true
-  write: true
-  edit: true
-  patch: false
-  glob: false
-  list: false
-  webfetch: false
+tools: read, grep, bash, write, edit
 name: operations-incident-commander
 ---
 

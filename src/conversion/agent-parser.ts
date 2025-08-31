@@ -9,7 +9,7 @@ import { globalPerformanceMonitor, globalFileReader } from "../optimization/perf
 export interface BaseAgent {
   name: string;
   description: string;
-  mode?: 'subagent' | 'primary';
+  mode?: 'subagent' | 'primary' | 'agent';
   temperature?: number;
   model?: string;
   tools?: Record<string, boolean>;
@@ -22,12 +22,21 @@ export interface BaseAgent {
   prompts?: string;
   constraints?: string;
 
+  // Test-specific fields that may appear in legacy data
+  max_tokens?: number;
+  enabled?: boolean;
+  disabled?: boolean;
+
   // Claude Code specific fields (optional in base format)
   // Note: Claude Code uses comma-separated tools string, not object
 }
 
-// Remove separate interfaces - everything uses BaseAgent now
-export type ClaudeCodeAgent = BaseAgent;
+// Claude Code format has different tools format (string vs object)
+export interface ClaudeCodeAgent extends Omit<BaseAgent, 'tools'> {
+  tools?: string; // Claude Code uses comma-separated string
+}
+
+// OpenCode uses same format as BaseAgent
 export type OpenCodeAgent = BaseAgent;
 
 /**

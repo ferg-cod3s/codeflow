@@ -5,16 +5,7 @@ model: anthropic/claude-sonnet-4-20250514
 temperature: 0.1
 category: development
 tags: [code-review, quality, refactoring, maintainability, best-practices]
-tools:
-  write: false
-  edit: false
-  bash: false
-  patch: false
-  read: true
-  grep: true
-  glob: true
-  list: true
-  webfetch: false
+tools: read, grep, glob, list
 name: code-reviewer
 ---
 

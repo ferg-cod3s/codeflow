@@ -5,16 +5,7 @@ model: github-copilot/gpt-4.1
 temperature: 0.1
 category: generalist
 tags: [thoughts, locator, research, documentation, discovery]
-tools:
-  grep: true
-  glob: true
-  list: true
-  read: true
-  bash: false
-  edit: false
-  write: false
-  patch: false
-  webfetch: false
+tools: grep, glob, list, read
 name: thoughts-locator
 ---
 

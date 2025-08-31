@@ -5,16 +5,7 @@ model: github-copilot/gpt-4.1
 temperature: 0.3
 category: generalist
 tags: [orchestration, project-management, coordination, multi-domain, strategy]
-tools:
-  write: false
-  edit: false
-  bash: false
-  patch: false
-  read: true
-  grep: true
-  glob: true
-  list: true
-  webfetch: true
+tools: read, grep, glob, list, webfetch
 name: smart-subagent-orchestrator
 ---
 

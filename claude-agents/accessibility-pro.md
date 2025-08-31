@@ -5,16 +5,7 @@ model: anthropic/claude-sonnet-4-20250514
 temperature: 0.3
 category: design-ux
 tags: [accessibility, wcag, a11y, inclusive-design, screen-reader, keyboard-navigation]
-tools:
-  write: true
-  edit: true
-  bash: true
-  patch: true
-  read: true
-  grep: true
-  glob: true
-  list: true
-  webfetch: true
+tools: write, edit, bash, patch, read, grep, glob, list, webfetch
 name: accessibility-pro
 ---
 

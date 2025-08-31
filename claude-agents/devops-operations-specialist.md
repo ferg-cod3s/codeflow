@@ -5,16 +5,7 @@ model: github-copilot/gpt-5
 temperature: 0.3
 category: operations
 tags: [devops, operations, strategy, coordination, planning, cross-functional]
-tools:
-  write: true
-  edit: true
-  bash: false
-  patch: false
-  read: true
-  grep: true
-  glob: true
-  list: true
-  webfetch: false
+tools: write, edit, read, grep, glob, list
 name: devops-operations-specialist
 ---
 

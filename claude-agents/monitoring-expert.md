@@ -5,16 +5,7 @@ model: anthropic/claude-sonnet-4-20250514
 temperature: 0.2
 category: operations
 tags: [monitoring, observability, alerting, logging, metrics, tracing, incident-response]
-tools:
-  write: true
-  edit: true
-  bash: true
-  patch: true
-  read: true
-  grep: true
-  glob: true
-  list: true
-  webfetch: true
+tools: write, edit, bash, patch, read, grep, glob, list, webfetch
 name: monitoring-expert
 ---
 

@@ -5,16 +5,7 @@ model: github-copilot/gpt-4.1
 temperature: 0.1
 category: generalist
 tags: [web-search, research, information-gathering, analysis]
-tools:
-  read: true
-  grep: true
-  glob: true
-  list: true
-  bash: false
-  edit: false
-  write: false
-  patch: false
-  webfetch: true
+tools: read, grep, glob, list, webfetch
 name: web-search-researcher
 ---
 

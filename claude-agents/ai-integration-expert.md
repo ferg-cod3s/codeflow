@@ -5,16 +5,7 @@ model: github-copilot/gpt-5
 temperature: 0.2
 category: ai-innovation
 tags: [ai, machine-learning, ml, integration, chatbots, nlp, computer-vision]
-tools:
-  write: true
-  edit: true
-  bash: true
-  patch: true
-  read: true
-  grep: true
-  glob: true
-  list: true
-  webfetch: true
+tools: write, edit, bash, patch, read, grep, glob, list, webfetch
 name: ai-integration-expert
 ---
 

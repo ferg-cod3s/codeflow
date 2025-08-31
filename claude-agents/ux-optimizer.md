@@ -5,16 +5,7 @@ model: github-copilot/gpt-5
 temperature: 0.3
 category: design-ux
 tags: [ux, user-experience, conversion-optimization, interaction-design, usability, a-b-testing]
-tools:
-  write: true
-  edit: true
-  bash: true
-  patch: true
-  read: true
-  grep: true
-  glob: true
-  list: true
-  webfetch: true
+tools: write, edit, bash, patch, read, grep, glob, list, webfetch
 name: ux-optimizer
 ---
 

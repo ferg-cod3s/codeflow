@@ -5,16 +5,7 @@ model: github-copilot/gpt-5
 temperature: 0.3
 category: product-strategy
 tags: [localization, i18n, l10n, translation, cultural-adaptation, internationalization]
-tools:
-  write: true
-  edit: true
-  read: true
-  grep: true
-  bash: true
-  patch: false
-  glob: false
-  list: false
-  webfetch: false
+tools: write, edit, read, grep, bash
 name: content-localization-coordinator
 ---
 

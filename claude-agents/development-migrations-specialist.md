@@ -5,16 +5,7 @@ model: anthropic/claude-sonnet-4-20250514
 temperature: 0.3
 category: development
 tags: [database, migrations, schema-changes, zero-downtime, backfills, safety]
-tools:
-  read: true
-  write: true
-  edit: true
-  grep: true
-  bash: true
-  patch: false
-  glob: false
-  list: false
-  webfetch: false
+tools: read, write, edit, grep, bash
 name: development-migrations-specialist
 ---
 

@@ -5,16 +5,7 @@ model: github-copilot/gpt-4.1
 temperature: 0.1
 category: generalist
 tags: [thoughts, research, analysis, insights, documentation]
-tools:
-  read: true
-  grep: true
-  glob: true
-  list: true
-  bash: false
-  edit: false
-  write: false
-  patch: false
-  webfetch: false
+tools: read, grep, glob, list
 name: thoughts-analyzer
 ---
 

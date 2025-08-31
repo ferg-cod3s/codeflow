@@ -307,6 +307,7 @@ describe("Agent Serialization", () => {
       name: "test-agent",
       format: "base",
       frontmatter: {
+        name: "test-agent",
         description: "Test agent for serialization",
         mode: "subagent",
         model: "gpt-4",
@@ -339,6 +340,7 @@ describe("Agent Serialization", () => {
       name: "simple-agent",
       format: "base",
       frontmatter: {
+        name: "simple-agent",
         description: "Simple test agent",
         mode: "primary"
       },

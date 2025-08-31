@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'bun:test';
 import { FormatConverter } from '../../src/conversion/format-converter';
 import { AgentValidator } from '../../src/conversion/validator';
-import { BaseAgent } from '../../src/conversion/agent-parser';
+import { BaseAgent, ClaudeCodeAgent, Agent } from '../../src/conversion/agent-parser';
 
 describe('Single Format Architecture', () => {
   let converter: FormatConverter;
@@ -101,7 +101,8 @@ describe('Single Format Architecture', () => {
         format: 'base' as const,
         name: 'conversion-test',
         content: 'Test content',
-        frontmatter: baseAgent
+        frontmatter: baseAgent,
+        filePath: '/test/conversion-test.md'
       };
 
       const converted = converter.baseToClaudeCode(agent);
@@ -115,7 +116,8 @@ describe('Single Format Architecture', () => {
         format: 'base' as const,
         name: 'conversion-test',
         content: 'Test content',
-        frontmatter: baseAgent
+        frontmatter: baseAgent,
+        filePath: '/test/conversion-test.md'
       };
 
       const converted = converter.baseToOpenCode(agent);
@@ -125,7 +127,7 @@ describe('Single Format Architecture', () => {
     });
 
     it('should convert claude-code to base format', () => {
-      const claudeAgent = {
+      const claudeAgent: Agent = {
         format: 'claude-code' as const,
         name: 'conversion-test',
         content: 'Test content',
@@ -133,7 +135,8 @@ describe('Single Format Architecture', () => {
           name: 'conversion-test',
           description: 'Test agent for format conversion',
           tools: 'read, edit, bash'
-        }
+        } as ClaudeCodeAgent,
+        filePath: '/test/conversion-test.md'
       };
 
       const converted = converter.claudeCodeToBase(claudeAgent);
@@ -147,7 +150,8 @@ describe('Single Format Architecture', () => {
         format: 'opencode' as const,
         name: 'conversion-test',
         content: 'Test content',
-        frontmatter: baseAgent
+        frontmatter: baseAgent,
+        filePath: '/test/conversion-test.md'
       };
 
       const converted = converter.openCodeToBase(opencodeAgent);
@@ -171,10 +175,10 @@ describe('Single Format Architecture', () => {
           model: 'claude-3-5-sonnet',
           tools: {
             read: true,
-            write: true,
-            edit: false
+            write: true
           }
-        }
+        },
+        filePath: '/test/round-trip-test.md'
       };
 
       // Convert to claude-code and back
@@ -186,6 +190,35 @@ describe('Single Format Architecture', () => {
       expect(validation.valid).toBe(true);
     });
 
+    it('should handle Claude Code format limitation with disabled tools', () => {
+      const baseAgentWithDisabledTools = {
+        format: 'base' as const,
+        name: 'disabled-tools-test',
+        content: 'Test content',
+        frontmatter: {
+          name: 'disabled-tools-test',
+          description: 'Test agent with disabled tools',
+          tools: {
+            read: true,
+            write: false,
+            edit: false
+          }
+        },
+        filePath: '/test/disabled-tools-test.md'
+      };
+
+      // Convert to claude-code and back
+      const toClaude = converter.baseToClaudeCode(baseAgentWithDisabledTools);
+      const backToBase = converter.claudeCodeToBase(toClaude);
+
+      // Claude Code format only lists enabled tools, so disabled tools are lost
+      expect(toClaude.frontmatter.tools).toBe('read');
+      expect(backToBase.frontmatter.tools).toEqual({ read: true });
+      
+      // This is expected behavior - Claude Code format doesn't support disabled tools
+      expect(backToBase.frontmatter.tools).not.toEqual(baseAgentWithDisabledTools.frontmatter.tools);
+    });
+
     it('should handle missing optional fields gracefully', () => {
       const minimalAgent = {
         format: 'base' as const,
@@ -194,7 +227,8 @@ describe('Single Format Architecture', () => {
         frontmatter: {
           name: 'minimal-round-trip',
           description: 'Minimal test agent'
-        }
+        },
+        filePath: '/test/minimal-round-trip.md'
       };
 
       // Convert through all formats
@@ -209,7 +243,7 @@ describe('Single Format Architecture', () => {
 
   describe('Validation Consistency', () => {
     it('should validate all formats consistently', () => {
-      const baseAgent = {
+      const baseAgent: BaseAgent = {
         name: 'validation-test',
         description: 'Test agent for validation consistency',
         mode: 'subagent' as const,
@@ -219,9 +253,16 @@ describe('Single Format Architecture', () => {
         }
       };
 
+      const claudeCodeAgent: ClaudeCodeAgent = {
+        name: 'validation-test',
+        description: 'Test agent for validation consistency',
+        mode: 'subagent' as const,
+        tools: 'read, write'
+      };
+
       // All validation methods should work with the same data
       const baseResult = validator.validateBase(baseAgent);
-      const claudeResult = validator.validateClaudeCode(baseAgent);
+      const claudeResult = validator.validateClaudeCode(claudeCodeAgent);
       const opencodeResult = validator.validateOpenCode(baseAgent);
 
       expect(baseResult.valid).toBe(true);
@@ -237,7 +278,8 @@ describe('Single Format Architecture', () => {
         frontmatter: {
           name: 'recommendation-test',
           description: 'Test agent'
-        }
+        },
+        filePath: '/test/recommendation-test.md'
       };
 
       const recommendations = validator.getRecommendations(agent);
@@ -251,20 +293,28 @@ describe('Single Format Architecture', () => {
         format: 'invalid' as any,
         name: 'error-test',
         content: 'Test content',
-        frontmatter: {}
+        frontmatter: {
+          name: 'error-test',
+          description: 'Error test agent'
+        } as any,
+        filePath: '/test/error-test.md'
       };
 
       expect(() => converter.convert(invalidAgent, 'base')).toThrow();
     });
 
     it('should validate required fields across all formats', () => {
-      const invalidAgent = {
+      const invalidBaseAgent = {
         description: 'Missing name field'
       } as BaseAgent;
 
-      const baseResult = validator.validateBase(invalidAgent);
-      const claudeResult = validator.validateClaudeCode(invalidAgent);
-      const opencodeResult = validator.validateOpenCode(invalidAgent);
+      const invalidClaudeAgent = {
+        description: 'Missing name field'
+      } as ClaudeCodeAgent;
+
+      const baseResult = validator.validateBase(invalidBaseAgent);
+      const claudeResult = validator.validateClaudeCode(invalidClaudeAgent);
+      const opencodeResult = validator.validateOpenCode(invalidBaseAgent);
 
       expect(baseResult.valid).toBe(false);
       expect(claudeResult.valid).toBe(false);

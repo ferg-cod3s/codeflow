@@ -5,16 +5,7 @@ model: github-copilot/gpt-4.1
 temperature: 0.1
 category: development
 tags: [codebase, locator, file-finding, search, organization]
-tools:
-  grep: true
-  glob: true
-  list: true
-  bash: false
-  edit: false
-  write: false
-  patch: false
-  read: false
-  webfetch: false
+tools: grep, glob, list
 name: codebase-locator
 ---
 

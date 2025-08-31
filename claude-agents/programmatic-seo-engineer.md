@@ -5,16 +5,7 @@ model: anthropic/claude-sonnet-4-20250514
 temperature: 0.3
 category: business-analytics
 tags: [seo, programmatic, page-generation, internal-linking, sitemaps, technical-seo]
-tools:
-  read: true
-  write: true
-  edit: true
-  grep: true
-  bash: true
-  patch: false
-  glob: false
-  list: false
-  webfetch: false
+tools: read, write, edit, grep, bash
 name: programmatic-seo-engineer
 ---
 
