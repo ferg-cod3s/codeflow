@@ -1,5 +1,5 @@
 import { existsSync } from 'node:fs';
-import { writeFile, readdir } from 'node:fs/promises';
+import { writeFile, readdir, copyFile, mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { getGlobalPaths, setupGlobalAgents } from './global';
 import { parseAgentsFromDirectory, serializeAgent } from '../conversion/agent-parser';
@@ -12,6 +12,55 @@ interface SyncOptions {
   format?: 'all' | 'claude-code' | 'opencode';
   validate?: boolean;
   dryRun?: boolean;
+}
+
+/**
+ * Sync commands to global directories
+ */
+async function syncGlobalCommands(): Promise<void> {
+  const codeflowDir = join(import.meta.dir, '../..');
+  const globalPaths = getGlobalPaths();
+
+  // Source command directory
+  const sourceCommandPath = join(codeflowDir, 'command');
+
+  // Target command directory
+  const targetCommandPath = globalPaths.commands;
+
+  // Ensure target directory exists
+  await mkdir(targetCommandPath, { recursive: true });
+
+  // Check if source directory exists
+  if (!existsSync(sourceCommandPath)) {
+    console.log(`⚠️  Source command directory not found: ${sourceCommandPath}`);
+    return;
+  }
+
+  // Get all command files
+  const commandFiles = await readdir(sourceCommandPath);
+  const mdFiles = commandFiles.filter((file) => file.endsWith('.md'));
+
+  if (mdFiles.length === 0) {
+    console.log(`ℹ️  No command files found in ${sourceCommandPath}`);
+    return;
+  }
+
+  console.log(`📋 Syncing ${mdFiles.length} commands to global directory...`);
+
+  let syncedCount = 0;
+  for (const file of mdFiles) {
+    try {
+      const sourceFile = join(sourceCommandPath, file);
+      const targetFile = join(targetCommandPath, file);
+
+      await copyFile(sourceFile, targetFile);
+      syncedCount++;
+    } catch (error: any) {
+      console.log(`❌ Failed to sync command ${file}: ${error.message}`);
+    }
+  }
+
+  console.log(`✅ Synced ${syncedCount} commands to global directory`);
 }
 
 /**
@@ -155,6 +204,12 @@ export async function syncGlobalAgents(options: SyncOptions = {}) {
 
     console.log(`    ✅ Synced ${syncCount} agents to ${targetFormat}`);
     totalSynced += syncCount;
+  }
+
+  // Sync commands to global directory
+  if (!dryRun) {
+    console.log('');
+    await syncGlobalCommands();
   }
 
   if (dryRun) {

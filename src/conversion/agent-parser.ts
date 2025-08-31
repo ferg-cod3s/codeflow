@@ -1,6 +1,6 @@
-import { readFile } from "node:fs/promises";
-import { basename } from "node:path";
-import { globalPerformanceMonitor, globalFileReader } from "../optimization/performance.js";
+import { readFile } from 'node:fs/promises';
+import { basename } from 'node:path';
+import { globalPerformanceMonitor, globalFileReader } from '../optimization/performance.js';
 
 /**
  * Base agent format - the single source of truth for all agents
@@ -36,8 +36,15 @@ export interface ClaudeCodeAgent extends Omit<BaseAgent, 'tools'> {
   tools?: string; // Claude Code uses comma-separated string
 }
 
-// OpenCode uses same format as BaseAgent
-export type OpenCodeAgent = BaseAgent;
+// OpenCode format - based on official OpenCode documentation
+export interface OpenCodeAgent {
+  name?: string; // Optional - OpenCode gets name from filename
+  description: string; // Required
+  mode: 'primary' | 'subagent'; // Required
+  model?: string; // Optional
+  temperature?: number; // Optional
+  tools?: Record<string, boolean>; // Optional - object format
+}
 
 /**
  * Generic agent interface that can represent any format
@@ -115,7 +122,7 @@ function parseFrontmatter(content: string): { frontmatter: any; body: string } {
       if (indentLevel <= toolsIndentLevel && trimmedLine !== '') {
         inTools = false;
       } else if (trimmedLine.includes(':')) {
-        const [key, value] = trimmedLine.split(':').map(s => s.trim());
+        const [key, value] = trimmedLine.split(':').map((s) => s.trim());
         frontmatter.tools[key] = value === 'true' ? true : value === 'false' ? false : value;
         continue;
       }
@@ -148,14 +155,17 @@ function parseFrontmatter(content: string): { frontmatter: any; body: string } {
 
   return {
     frontmatter,
-    body: bodyLines.join('\n').trim()
+    body: bodyLines.join('\n').trim(),
   };
 }
 
 /**
  * Parse an agent file from any format
  */
-export async function parseAgentFile(filePath: string, format: 'base' | 'claude-code' | 'opencode'): Promise<Agent> {
+export async function parseAgentFile(
+  filePath: string,
+  format: 'base' | 'claude-code' | 'opencode'
+): Promise<Agent> {
   const parseCache = globalPerformanceMonitor.getParseCache();
 
   // Check cache first
@@ -191,7 +201,7 @@ export async function parseAgentFile(filePath: string, format: 'base' | 'claude-
       format,
       frontmatter,
       content: body,
-      filePath
+      filePath,
     };
 
     // Cache successful parse
@@ -204,7 +214,7 @@ export async function parseAgentFile(filePath: string, format: 'base' | 'claude-
   } catch (error: any) {
     const parseError: ParseError = {
       message: `Failed to parse agent file ${filePath}: ${error.message}`,
-      filePath
+      filePath,
     };
 
     // Cache the error
@@ -221,9 +231,9 @@ export async function parseAgentsFromDirectory(
   directory: string,
   format: 'base' | 'claude-code' | 'opencode'
 ): Promise<{ agents: Agent[]; errors: ParseError[] }> {
-  const { readdir } = await import("node:fs/promises");
-  const { join } = await import("node:path");
-  const { existsSync } = await import("node:fs");
+  const { readdir } = await import('node:fs/promises');
+  const { join } = await import('node:path');
+  const { existsSync } = await import('node:fs');
 
   const agents: Agent[] = [];
   const errors: ParseError[] = [];
@@ -240,7 +250,7 @@ export async function parseAgentsFromDirectory(
 
       for (const item of files) {
         const itemPath = join(directory, item);
-        const stat = await import("node:fs/promises").then(fs => fs.stat(itemPath));
+        const stat = await import('node:fs/promises').then((fs) => fs.stat(itemPath));
 
         if (stat.isDirectory()) {
           // This is a subdirectory, parse agents from it
@@ -251,7 +261,7 @@ export async function parseAgentsFromDirectory(
           } catch (error: any) {
             errors.push({
               message: `Failed to parse subdirectory ${item}: ${error.message}`,
-              filePath: itemPath
+              filePath: itemPath,
             });
           }
         } else if (item.endsWith('.md') && !item.startsWith('README')) {
@@ -262,7 +272,7 @@ export async function parseAgentsFromDirectory(
           } catch (error: any) {
             errors.push({
               message: error.message,
-              filePath: itemPath
+              filePath: itemPath,
             });
           }
         }
@@ -270,7 +280,7 @@ export async function parseAgentsFromDirectory(
     } else {
       // OpenCode agents are in flat directory structure
       const files = await readdir(directory);
-      const mdFiles = files.filter(f => f.endsWith('.md') && !f.startsWith('README'));
+      const mdFiles = files.filter((f) => f.endsWith('.md') && !f.startsWith('README'));
 
       for (const file of mdFiles) {
         const filePath = join(directory, file);
@@ -280,7 +290,7 @@ export async function parseAgentsFromDirectory(
         } catch (error: any) {
           errors.push({
             message: error.message,
-            filePath
+            filePath,
           });
         }
       }
@@ -288,7 +298,7 @@ export async function parseAgentsFromDirectory(
   } catch (error: any) {
     errors.push({
       message: `Failed to read directory ${directory}: ${error.message}`,
-      filePath: directory
+      filePath: directory,
     });
   }
 

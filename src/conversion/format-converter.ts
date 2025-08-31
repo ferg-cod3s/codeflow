@@ -38,14 +38,25 @@ export class FormatConverter {
 
   /**
    * Convert Base format to OpenCode format
+   * OpenCode only supports specific fields: description, mode, model, temperature, tools, permission
    */
   baseToOpenCode(agent: Agent): Agent {
     if (agent.format !== 'base') {
       throw new Error(`Expected base format, got ${agent.format}`);
     }
 
-    // OpenCode format includes all base properties plus potential extensions
-    const openCodeFrontmatter: OpenCodeAgent = { ...(agent.frontmatter as BaseAgent) };
+    const baseAgent = agent.frontmatter as BaseAgent;
+
+    // OpenCode format - include name for compatibility, but OpenCode primarily uses filename
+    const openCodeFrontmatter: OpenCodeAgent = {
+      name: baseAgent.name, // Include for compatibility, though OpenCode uses filename
+      description: baseAgent.description,
+      mode: 'subagent', // All our agents are subagents in OpenCode (not "agent")
+      model: baseAgent.model,
+      temperature: baseAgent.temperature,
+      tools: baseAgent.tools,
+      // Note: OpenCode doesn't support category, tags, or other extended fields
+    };
 
     // Convert model format for OpenCode if needed
     if (openCodeFrontmatter.model) {
@@ -101,7 +112,17 @@ export class FormatConverter {
 
     // Convert Claude Code to OpenCode via Base format first
     const baseAgent = this.claudeCodeToBase(agent);
-    const openCodeFrontmatter: OpenCodeAgent = { ...(baseAgent.frontmatter as BaseAgent) };
+    const baseFrontmatter = baseAgent.frontmatter as BaseAgent;
+
+    // Create OpenCode frontmatter with only supported fields
+    const openCodeFrontmatter: OpenCodeAgent = {
+      name: baseFrontmatter.name,
+      description: baseFrontmatter.description,
+      mode: 'subagent', // Claude Code agents become subagents in OpenCode
+      model: baseFrontmatter.model,
+      temperature: baseFrontmatter.temperature,
+      tools: baseFrontmatter.tools,
+    };
 
     // Convert model format for OpenCode if needed
     if (openCodeFrontmatter.model) {
@@ -123,22 +144,15 @@ export class FormatConverter {
       throw new Error(`Expected opencode format, got ${agent.format}`);
     }
 
-    // Extract only base properties, removing OpenCode-specific ones
-    const frontmatter = agent.frontmatter as BaseAgent;
+    // Extract only base properties from OpenCode agent
+    const frontmatter = agent.frontmatter as OpenCodeAgent;
     const baseFrontmatter: BaseAgent = {
-      name: frontmatter.name,
+      name: frontmatter.name || agent.name, // Use agent name if frontmatter name is missing
       description: frontmatter.description,
       mode: frontmatter.mode,
       model: frontmatter.model,
       temperature: frontmatter.temperature,
       tools: frontmatter.tools,
-      // Keep OpenCode fields for potential future use
-      usage: frontmatter.usage,
-      do_not_use_when: frontmatter.do_not_use_when,
-      escalation: frontmatter.escalation,
-      examples: frontmatter.examples,
-      prompts: frontmatter.prompts,
-      constraints: frontmatter.constraints,
     };
 
     return {
