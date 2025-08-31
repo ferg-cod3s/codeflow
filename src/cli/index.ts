@@ -18,17 +18,17 @@ import { existsSync } from "node:fs";
  */
 function getFormatDirectory(format: 'base' | 'claude-code' | 'opencode', projectPath: string): string {
   const codeflowRoot = join(import.meta.dir, "../..");
-  
+
   switch (format) {
     case 'base':
       // Base format refers to the global codeflow agent directory
-      return join(codeflowRoot, "agent");
+      return join(codeflowRoot, "codeflow-agents");
     case 'claude-code':
       // For projects, use .claude/agents if it exists, otherwise use global
       const projectClaudeDir = join(projectPath, '.claude', 'agents');
       return existsSync(projectClaudeDir) ? projectClaudeDir : join(codeflowRoot, "claude-agents");
     case 'opencode':
-      // For projects, use .opencode/agent if it exists, otherwise use global  
+      // For projects, use .opencode/agent if it exists, otherwise use global
       const projectOpenCodeDir = join(projectPath, '.opencode', 'agent');
       return existsSync(projectOpenCodeDir) ? projectOpenCodeDir : join(codeflowRoot, "opencode-agents");
     default:
@@ -41,14 +41,14 @@ function getFormatDirectory(format: 'base' | 'claude-code' | 'opencode', project
  */
 function determineSourceOfTruth(sourceOfTruthFlag?: string): 'base' | 'claude-code' | 'opencode' | 'auto' {
   if (!sourceOfTruthFlag) return 'auto';
-  
+
   const validFormats = ['base', 'claude-code', 'opencode', 'auto'];
   if (!validFormats.includes(sourceOfTruthFlag)) {
     console.error(`❌ Invalid source-of-truth value: ${sourceOfTruthFlag}`);
     console.error(`Valid values: ${validFormats.join(', ')}`);
     process.exit(1);
   }
-  
+
   return sourceOfTruthFlag as 'base' | 'claude-code' | 'opencode' | 'auto';
 }
 
@@ -240,38 +240,38 @@ Watch Options:
 Examples:
   # Smart project setup (detects Claude Code vs MCP needs)
   codeflow setup ~/my-project
-  
+
   # Force setup for specific type
   codeflow setup . --type claude-code    # For Claude.ai (slash commands)
   codeflow setup . --type opencode       # For OpenCode (commands)
-  
+
   # Convert agents between formats
-  codeflow convert ./agent ./claude-agents claude-code
+      codeflow convert ./codeflow-agents ./claude-agents claude-code
   codeflow convert-all --dry-run
-  
+
   # Sync agents across formats
   codeflow sync-formats --dry-run
   codeflow sync-global
   codeflow sync-global -T claude-code
-  
+
   # Start MCP server for current project
   codeflow mcp start
-  
+
   # Configure Claude Desktop for MCP
   codeflow mcp configure claude-desktop
-  
+
   # Restart MCP server after updating agents
   codeflow sync-global && codeflow mcp restart
-  
+
   # Start file watching with global sync
   codeflow watch start --global
-  
+
   # Watch specific projects
   codeflow watch start --projects ~/project1,~/project2
-  
+
   # Project sync
   codeflow sync --project ~/my-project
-  
+
   # View daemon status and logs
   codeflow watch status
   codeflow watch logs --follow
@@ -298,7 +298,7 @@ switch (command) {
       await mcpList();
       break;
     }
-    
+
     switch (mcpAction) {
       case "start":
         await mcpServer("start", { background: values.background });
@@ -343,14 +343,14 @@ switch (command) {
     if (values.source && values.target) {
       const { convert } = await import("./convert");
       const projectPath = values.project || process.cwd();
-      
+
       // Determine source and target directories based on format and project
       const sourceFormat = values.source as 'base' | 'claude-code' | 'opencode';
       const targetFormat = values.target as 'base' | 'claude-code' | 'opencode';
-      
+
       const sourceDir = getFormatDirectory(sourceFormat, projectPath);
       const targetDir = getFormatDirectory(targetFormat, projectPath);
-      
+
       await convert({
         source: sourceDir,
         target: targetDir,
@@ -364,20 +364,20 @@ switch (command) {
     const source = args[1];
     const target = args[2];
     const format = args[3] as 'base' | 'claude-code' | 'opencode';
-    
+
     if (!source || !target || !format) {
       console.error("Error: convert requires source, target, and format arguments");
       console.error("Usage: codeflow convert <source> <target> <format>");
       console.error("Formats: base, claude-code, opencode");
       process.exit(1);
     }
-    
+
     if (!['base', 'claude-code', 'opencode'].includes(format)) {
       console.error(`Error: Invalid format '${format}'`);
       console.error("Valid formats: base, claude-code, opencode");
       process.exit(1);
     }
-    
+
     await convert({
       source,
       target,
@@ -400,19 +400,19 @@ switch (command) {
       const { syncGlobalAgents } = await import("./sync");
       const { existsSync } = await import("node:fs");
       const { resolve } = await import("node:path");
-      
+
       const projectPath = resolve(values.project);
       console.log(`🔄 Synchronizing project: ${projectPath}`);
-      
+
       // Verify project path exists
       if (!existsSync(projectPath)) {
         console.error(`❌ Project path does not exist: ${projectPath}`);
         process.exit(1);
       }
-      
+
       // Determine source of truth for sync operation
       const sourceOfTruth = determineSourceOfTruth(values["source-of-truth"]);
-      
+
       // Sync project agents to global directories
       await syncGlobalAgents({
         validate: values.validate !== false,
@@ -458,14 +458,14 @@ switch (command) {
   case "watch":
     const watchAction = args[1];
     const codeflowRoot = import.meta.dir + "/../.."; // Get codeflow root directory
-    
+
     if (!watchAction) {
       console.error("Error: watch action required");
       console.error("Usage: codeflow watch <action>");
       console.error("Available actions: start, stop, status, logs, restart");
       process.exit(1);
     }
-    
+
     switch (watchAction) {
       case "start":
         await startWatch(codeflowRoot, {

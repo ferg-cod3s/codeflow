@@ -25,46 +25,46 @@ async function getFileHash(path: string): Promise<string> {
 export async function status(projectPath: string | undefined) {
   // Resolve the project path (will exit if invalid)
   const resolvedProjectPath = resolveProjectPath(projectPath);
-  
+
   // Load config - find the codeflow installation directory
   // import.meta.dir gives us the src/cli directory
   const codeflowDir = join(import.meta.dir, "../..");
   const configPath = join(codeflowDir, "config.json");
   const config = await Bun.file(configPath).json();
   const includes = config.pull?.include || ["agent", "command"];
-  
+
   // Resolve paths
   const sourcePath = codeflowDir;
   const targetBase = join(resolvedProjectPath, ".opencode");
-  
+
   console.log(`📊 Status for: ${targetBase}`);
   // Include pluralized labels to satisfy tests expecting 'agents'
   const pluralized = includes.map((d: string) => d === 'agent' ? 'agents' : (d === 'command' ? 'commands' : d));
   console.log(`📁 Checking: ${pluralized.join(", ")}\n`);
-  
+
   let upToDateCount = 0;
   let outdatedCount = 0;
   let missingCount = 0;
-  
+
   for (const includeDir of includes) {
     const sourceDir = join(sourcePath, includeDir);
-    
+
     // Check if source directory exists
     if (!existsSync(sourceDir)) {
       continue;
     }
-    
+
     // Check if it's a directory
     const stats = await stat(sourceDir);
     if (!stats.isDirectory()) {
       continue;
     }
-    
+
     // Walk through all files in the source directory
     for await (const sourceFile of walkDir(sourceDir)) {
       const relativePath = relative(sourcePath, sourceFile);
       const targetFile = join(targetBase, relativePath);
-      
+
       if (!existsSync(targetFile)) {
         console.log(`❌ ${relativePath} (missing in project)`);
         missingCount++;
@@ -72,7 +72,7 @@ export async function status(projectPath: string | undefined) {
         // Compare file contents using hash
         const sourceHash = await getFileHash(sourceFile);
         const targetHash = await getFileHash(targetFile);
-        
+
         if (sourceHash === targetHash) {
           console.log(`✅ ${relativePath}`);
           upToDateCount++;
@@ -83,42 +83,42 @@ export async function status(projectPath: string | undefined) {
       }
     }
   }
-  
+
   // Check for extra files in target that don't exist in source
   for (const includeDir of includes) {
     const targetDir = join(targetBase, includeDir);
-    
+
     if (!existsSync(targetDir)) {
       continue;
     }
-    
+
     const stats = await stat(targetDir);
     if (!stats.isDirectory()) {
       continue;
     }
-    
+
     for await (const targetFile of walkDir(targetDir)) {
       const relativePath = relative(targetBase, targetFile);
       const sourceFile = join(sourcePath, relativePath);
-      
+
       if (!existsSync(sourceFile)) {
         console.log(`❌ ${relativePath} (extra file in project)`);
         outdatedCount++;
       }
     }
   }
-  
+
   // Summary
   console.log("\n📋 Summary:");
   console.log(`  ✅ Up-to-date: ${upToDateCount}`);
   console.log(`  ❌ Outdated: ${outdatedCount}`);
   console.log(`  ❌ Missing: ${missingCount}`);
-  
+
   const totalIssues = outdatedCount + missingCount;
   if (totalIssues === 0) {
     console.log("\n✨ All files are up-to-date!");
   } else {
     console.log(`\n⚠️  ${totalIssues} file${totalIssues === 1 ? "" : "s"} need${totalIssues === 1 ? "s" : ""} attention`);
-    console.log("Run 'agentic pull' to update the project");
+            console.log("Run 'codeflow sync' to update the project");
   }
 }

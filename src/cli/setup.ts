@@ -77,16 +77,16 @@ async function detectProjectType(projectPath: string): Promise<ProjectType> {
 
 async function copyCommands(sourcePath: string, targetPath: string, projectType: ProjectType): Promise<number> {
   let fileCount = 0;
-  
+
   for (const setupDir of projectType.setupDirs) {
     const targetDir = join(targetPath, setupDir);
-    
+
     // Create target directory
     if (!existsSync(targetDir)) {
       await mkdir(targetDir, { recursive: true });
       console.log(`  ✓ Created directory: ${setupDir}`);
     }
-    
+
     // Determine source directory based on target
     let sourceDir: string;
     if (setupDir.includes(".claude")) {
@@ -94,16 +94,16 @@ async function copyCommands(sourcePath: string, targetPath: string, projectType:
     } else if (setupDir.includes("command")) {
       sourceDir = join(sourcePath, "command");
     } else if (setupDir.includes("agent")) {
-      sourceDir = join(sourcePath, "agent");
+      sourceDir = join(sourcePath, "codeflow-agents");
     } else {
       continue;
     }
-    
+
     if (!existsSync(sourceDir)) {
       console.log(`  ⚠️  Skipping ${setupDir} - source directory not found`);
       continue;
     }
-    
+
     // Copy files
     const files = await readdir(sourceDir, { withFileTypes: true });
     for (const file of files) {
@@ -116,14 +116,14 @@ async function copyCommands(sourcePath: string, targetPath: string, projectType:
       }
     }
   }
-  
+
   return fileCount;
 }
 
 async function createProjectReadme(projectPath: string, projectType: ProjectType): Promise<void> {
   const readmePath = join(projectPath, "README.md");
   let readmeContent = "";
-  
+
   if (existsSync(readmePath)) {
     // Check if codeflow section already exists
     const existingContent = await readFile(readmePath, "utf-8");
@@ -135,7 +135,7 @@ async function createProjectReadme(projectPath: string, projectType: ProjectType
   } else {
     readmeContent = `# ${basename(projectPath)}\n\n`;
   }
-  
+
   // Add appropriate section based on project type
   if (projectType.name === "claude-code") {
     readmeContent += `## Codeflow Workflow - Claude Code
@@ -212,7 +212,7 @@ Input: "Analyze the authentication system for potential OAuth integration"
 Use tool: plan
 Input: "Create implementation plan based on the research findings"
 
-Use tool: execute  
+Use tool: execute
 Input: "Implement the OAuth integration following the plan"
 \`\`\`
 
@@ -247,7 +247,7 @@ Commands are in \`.opencode/command/\`.
 1. **Research** → 2. **Plan** → 3. **Execute** → 4. **Test** → 5. **Document** → 6. **Commit** → 7. **Review**
 `;
   }
-  
+
   await writeFile(readmePath, readmeContent);
   console.log("  ✓ Updated README.md with usage instructions");
 }
@@ -261,21 +261,21 @@ export async function setup(projectPath: string | undefined, options: { force?: 
   // Resolve and validate project path
   const inputPath = projectPath ? projectPath : process.cwd();
   const pathValidation = await validatePath(inputPath);
-  
+
   if (!pathValidation.isValid) {
     console.error(`❌ Invalid project path: ${pathValidation.error}`);
     process.exit(1);
   }
-  
+
   const resolvedPath = pathValidation.sanitizedPath!;
-  
+
   if (!existsSync(resolvedPath)) {
     console.error(`❌ Directory does not exist: ${resolvedPath}`);
     process.exit(1);
   }
-  
+
   console.log(`🔍 Analyzing project: ${resolvedPath}`);
-  
+
   // Detect or use specified project type
   let projectType: ProjectType;
   if (options.type) {
@@ -285,7 +285,7 @@ export async function setup(projectPath: string | undefined, options: { force?: 
     projectType = await detectProjectType(resolvedPath);
     console.log(`📋 Detected type: ${projectType.description}`);
   }
-  
+
   // Check if already set up (unless force is specified)
   if (!options.force) {
     const hasExistingSetup = projectType.setupDirs.some(dir => existsSync(join(resolvedPath, dir)));
@@ -295,26 +295,26 @@ export async function setup(projectPath: string | undefined, options: { force?: 
       return;
     }
   }
-  
+
   // Get codeflow source directory
   const codeflowDir = join(import.meta.dir, "../..");
-  
+
   console.log(`📦 Setting up ${projectType.name} configuration...\n`);
-  
+
   try {
     // Copy commands and agents
     const fileCount = await copyCommands(codeflowDir, resolvedPath, projectType);
-    
+
     // Run additional setup if needed
     if (projectType.additionalSetup) {
       await projectType.additionalSetup(resolvedPath);
     }
-    
+
     // Create/update README
     await createProjectReadme(resolvedPath, projectType);
-    
+
     // Ensure .codeflow scaffold exists for developer workflows
-    const codeflowScaffoldDirs = [".codeflow", ".codeflow/agent", ".codeflow/command"]; 
+    const codeflowScaffoldDirs = [".codeflow", ".codeflow/agent", ".codeflow/command"];
     for (const d of codeflowScaffoldDirs) {
       const targetDir = join(resolvedPath, d);
       if (!existsSync(targetDir)) {
@@ -322,15 +322,15 @@ export async function setup(projectPath: string | undefined, options: { force?: 
         console.log(`  ✓ Created directory: ${d}`);
       }
     }
-    
+
     // Create appropriate .gitignore entries
     const gitignorePath = join(resolvedPath, ".gitignore");
     let gitignoreContent = "";
-    
+
     if (existsSync(gitignorePath)) {
       gitignoreContent = await readFile(gitignorePath, "utf-8");
     }
-    
+
     const neededEntries = [];
     if (projectType.setupDirs.some(dir => dir.includes(".claude")) && !gitignoreContent.includes("!.claude/")) {
       neededEntries.push("# Keep codeflow Claude Code commands", "!.claude/");
@@ -338,7 +338,7 @@ export async function setup(projectPath: string | undefined, options: { force?: 
     if (projectType.setupDirs.some(dir => dir.includes(".opencode")) && !gitignoreContent.includes("!.opencode/")) {
       neededEntries.push("# Keep codeflow OpenCode commands and agents", "!.opencode/");
     }
-    
+
     if (neededEntries.length > 0) {
       if (!gitignoreContent.endsWith('\n')) {
         gitignoreContent += '\n';
@@ -347,10 +347,10 @@ export async function setup(projectPath: string | undefined, options: { force?: 
       await writeFile(gitignorePath, gitignoreContent);
       console.log("  ✓ Updated .gitignore to preserve codeflow files");
     }
-    
+
     console.log(`\n✅ Successfully set up ${projectType.name} project!`);
     console.log(`📁 Installed ${fileCount} files`);
-    
+
     // Show next steps based on project type
     console.log("\n📋 Next steps:");
     if (projectType.name === "claude-code") {
@@ -368,9 +368,9 @@ export async function setup(projectPath: string | undefined, options: { force?: 
       console.log("    • Configure MCP client and start server");
       console.log("    • Use MCP tools: research, plan, execute, etc.");
     }
-    
+
     console.log("\n🔍 Verify setup: codeflow status .");
-    
+
   } catch (error: any) {
     console.error(`❌ Setup failed: ${error.message}`);
     process.exit(1);

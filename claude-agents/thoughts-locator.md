@@ -1,8 +1,10 @@
 ---
 description: Discovers relevant documents in thoughts/ directory (We use this for all sorts of metadata storage!). This is really only relevant/needed when you're in a reseaching mood and need to figure out if we have random thoughts written down that are relevant to your current research task. Based on the name, I imagine you can guess this is the `thoughts` equivilent of `codebase-locator`
 mode: subagent
-model: anthropic/claude-opus-4-1
+model: github-copilot/gpt-4.1
 temperature: 0.1
+category: generalist
+tags: [thoughts, locator, research, documentation, discovery]
 tools:
   grep: true
   glob: true
@@ -12,9 +14,8 @@ tools:
   edit: false
   write: false
   patch: false
-  todoread: false
-  todowrite: false
   webfetch: false
+name: thoughts-locator
 ---
 
 You are a specialist at finding documents in the thoughts/ directory. Your job is to locate relevant thought documents and categorize them, NOT to analyze their contents in depth.

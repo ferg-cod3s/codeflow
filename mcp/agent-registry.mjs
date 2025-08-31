@@ -182,7 +182,7 @@ async function buildAgentRegistry() {
   // Define agent directories in priority order (lower priority first)
   const agentDirs = [
     // Global codeflow agents (lowest priority)
-    { dir: path.join(codeflowRoot, 'agent'), format: 'base' },
+    { dir: path.join(codeflowRoot, 'codeflow-agents'), format: 'base' },
     { dir: path.join(codeflowRoot, 'claude-agents'), format: 'claude-code' },
     { dir: path.join(codeflowRoot, 'opencode-agents'), format: 'opencode' },
 

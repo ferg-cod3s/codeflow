@@ -434,36 +434,36 @@ describe("Agent Validation", () => {
     const codeflowRoot = path.join(import.meta.dir, "../..");
 
     // Test base agents
-    const baseResult = await parseAgentsFromDirectory(path.join(codeflowRoot, "agent"), "base");
-    
+    const baseResult = await parseAgentsFromDirectory(path.join(codeflowRoot, "codeflow-agents"), "base");
+
     if (baseResult.errors.length > 0) {
       console.warn("Base agent parsing errors:", baseResult.errors);
     }
-    
+
     expect(baseResult.agents.length).toBeGreaterThan(0);
 
     // Test Claude Code agents
     const claudeResult = await parseAgentsFromDirectory(path.join(codeflowRoot, "claude-agents"), "claude-code");
-    
+
     if (claudeResult.errors.length > 0) {
       console.warn("Claude Code agent parsing errors:", claudeResult.errors);
     }
-    
+
     // May not have Claude Code agents, so just check for no critical errors
     expect(claudeResult.errors.filter(e => e.message.includes("Failed to read directory")).length).toBe(0);
 
-    // Test OpenCode agents  
+    // Test OpenCode agents
     const opencodeResult = await parseAgentsFromDirectory(path.join(codeflowRoot, "opencode-agents"), "opencode");
-    
+
     if (opencodeResult.errors.length > 0) {
       console.warn("OpenCode agent parsing errors:", opencodeResult.errors);
     }
-    
+
     expect(opencodeResult.agents.length).toBeGreaterThan(0);
 
     // All agents should have required fields
     const allAgents = [...baseResult.agents, ...claudeResult.agents, ...opencodeResult.agents];
-    
+
     for (const agent of allAgents) {
       expect(agent.name).toBeDefined();
       expect(agent.frontmatter.description).toBeDefined();
@@ -474,7 +474,7 @@ describe("Agent Validation", () => {
 
   test("validates agent frontmatter schemas", async () => {
     const validationTempDir = await fs.mkdtemp(path.join(os.tmpdir(), "codeflow-validation-"));
-    
+
     try {
       const testAgents = [
         {

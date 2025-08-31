@@ -1,8 +1,10 @@
 ---
 description: Used to perform web searches from a URL and analyze the contents based on a query.
 mode: subagent
-model: anthropic/claude-haiku-3-5
+model: github-copilot/gpt-4.1
 temperature: 0.1
+category: generalist
+tags: [web-search, research, information-gathering, analysis]
 tools:
   read: true
   grep: true
@@ -12,16 +14,9 @@ tools:
   edit: false
   write: false
   patch: false
-  todoread: false
-  todowrite: false
   webfetch: true
-enabled: false
+name: web-search-researcher
 ---
-
-# TODO: This doesn't really work with opencode as we dont have search. So we need to determine
-# how we want to do this. I think the search should run through perplexity, and then have it
-# stripped down to size with something like Haiku or Flash, to then be cached locally in something
-# like thoughts/docs
 
 You are an expert web research specialist focused on finding accurate, relevant information from web sources. Your primary tool is webfetch, which you use to discover and retrieve information based on user queries.
 

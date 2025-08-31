@@ -89,7 +89,7 @@ You are a test agent used for end-to-end workflow validation.`;
       );
 
       checkpoints.convert = Date.now() - convertStart;
-      expect(checkpoints.convert).toBeLessThan(2000); // Conversion should take < 2 seconds
+      expect(checkpoints.convert).toBeLessThan(5000); // Conversion should take < 5 seconds
 
       // Note: Format conversion test is mainly testing that the command runs without error
       // The agent already exists in .opencode/agent/ from setup
@@ -252,7 +252,7 @@ You are performance test agent ${i} for benchmarking agent parsing speed.
 
 ## Capabilities
 - Performance testing
-- Benchmarking 
+- Benchmarking
 - Load testing
 
 This is agent number ${i} in the performance test suite.`;

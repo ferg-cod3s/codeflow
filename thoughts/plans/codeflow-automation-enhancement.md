@@ -8,7 +8,7 @@ Transform the agentic workflow system into "codeflow" with comprehensive automat
 
 ### What Exists Now
 - **CLI System**: "agentic" command with 173+ references across codebase
-- **Three Agent Formats**: Base (`/agent/`), Claude Code (`/claude-agents/`), OpenCode (`/opencode-agents/`) - maintained manually in parallel
+- **Three Agent Formats**: Base (`codeflow-agents/`), Claude Code (`/claude-agents/`), OpenCode (`/opencode-agents/`) - automatically synchronized
 - **Manual Synchronization**: Requires `agentic pull` commands for updates
 - **Commands-Only Distribution**: Global system focuses on commands, not agents
 - **Basic MCP Integration**: Exposes 7 core workflow commands, agents not internally available
@@ -205,7 +205,7 @@ export async function convert(options: {
 ```typescript
 export class AgentValidator {
   validateBase(agent: BaseAgent): ValidationResult
-  validateClaudeCode(agent: ClaudeCodeAgent): ValidationResult  
+  validateClaudeCode(agent: ClaudeCodeAgent): ValidationResult
   validateOpenCode(agent: OpenCodeAgent): ValidationResult
   validateRoundTrip(original: Agent, converted: Agent): ValidationResult
 }
@@ -242,7 +242,7 @@ Extend the global configuration system to distribute agents alongside commands.
 export async function setupGlobalAgents() {
   const globalAgentDir = join(os.homedir(), '.claude', 'agents');
   await ensureDir(globalAgentDir);
-  
+
   // Create format-specific subdirectories
   await ensureDir(join(globalAgentDir, 'claude-code'));
   await ensureDir(join(globalAgentDir, 'opencode'));
@@ -322,13 +322,13 @@ Implement file watching and automatic synchronization for real-time updates.
 ```typescript
 export class FileWatcher {
   constructor(private config: WatchConfig) {}
-  
+
   async start(): Promise<void> {
     // Watch /agent/, /command/, /claude-agents/, /opencode-agents/
     // Debounce changes to avoid rapid-fire updates
     // Handle file creation, modification, deletion
   }
-  
+
   onFileChange(event: FileChangeEvent): Promise<void> {
     // Trigger appropriate sync operations
     // Convert formats as needed
@@ -413,11 +413,11 @@ async function buildAgentRegistry() {
   const agents = new Map();
   const agentDirs = [
     path.join(cwd, ".opencode", "agent"),
-    path.join(cwd, ".claude", "agents"), 
+    path.join(cwd, ".claude", "agents"),
     path.join(codeflowRoot, "agent"),
     path.join(os.homedir(), ".claude", "agents")
   ];
-  
+
   for (const dir of agentDirs) {
     const agentFiles = await loadAgentFiles(dir);
     for (const file of agentFiles) {
@@ -425,7 +425,7 @@ async function buildAgentRegistry() {
       agents.set(agent.id, agent);
     }
   }
-  
+
   return agents;
 }
 ```
@@ -440,17 +440,17 @@ server.registerTool("research", {
   description: "Comprehensive codebase and documentation analysis with agent orchestration",
 }, async (args) => {
   const commandContent = await fs.readFile(researchFilePath, "utf8");
-  
+
   // Enhanced context with available agents
   const context = {
     availableAgents: Array.from(agentRegistry.keys()),
     spawnAgent: (agentId, task) => spawnAgentTask(agentId, task, agentRegistry),
     parallelAgents: (agents, tasks) => executeParallelAgents(agents, tasks, agentRegistry)
   };
-  
+
   return {
-    content: [{ 
-      type: "text", 
+    content: [{
+      type: "text",
       text: addAgentContext(commandContent, context)
     }]
   };
@@ -465,7 +465,7 @@ server.registerTool("research", {
 async function spawnAgentTask(agentId, taskDescription, registry) {
   const agent = registry.get(agentId);
   if (!agent) throw new Error(`Agent ${agentId} not found`);
-  
+
   // Execute with agent-specific model, tools, temperature
   return await executeWithConfig({
     model: agent.model,
@@ -521,7 +521,7 @@ describe("CLI Commands", () => {
   test("codeflow --help displays correct usage", () => {
     // Test help output format and content
   });
-  
+
   test("codeflow setup detects project types correctly", () => {
     // Test project type detection logic
   });
@@ -537,7 +537,7 @@ describe("MCP Server Integration", () => {
   test("exposes 7 core workflow commands", async () => {
     // Validate MCP tool registration
   });
-  
+
   test("agents are available internally but not exposed", async () => {
     // Test agent registry without tool exposure
   });
@@ -553,7 +553,7 @@ describe("Cross-Platform Compatibility", () => {
   test("resolves Claude Desktop config path correctly", () => {
     // Test platform-specific path resolution
   });
-  
+
   test("handles file permissions across platforms", () => {
     // Test file system operations
   });
@@ -569,7 +569,7 @@ describe("Agent Format Conversion", () => {
   test("round-trip conversion preserves data", () => {
     // Test Base → Claude Code → Base conversion
   });
-  
+
   test("validates all existing agent files", () => {
     // Ensure all agents in repo are valid
   });
@@ -761,5 +761,5 @@ describe("Complete Workflow", () => {
 - Original research: `thoughts/research/2025-08-26_automated-global-configs-mcp-integration.md`
 - User requirements discussion
 - Current CLI implementation: `src/cli/index.ts`
-- MCP server architecture: `mcp/agentic-server.mjs`
-- Agent format analysis across `/agent/`, `/claude-agents/`, `/opencode-agents/`
+- MCP server architecture: `mcp/codeflow-server.mjs`
+- Agent format analysis across `codeflow-agents/`, `/claude-agents/`, `/opencode-agents/`

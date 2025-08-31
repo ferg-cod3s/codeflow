@@ -30,15 +30,23 @@ export interface ValidationWarning {
  * Agent validation system
  */
 export class AgentValidator {
-  
+
   /**
-   * Validate base agent format
+   * Validate base agent format (single source of truth)
    */
   validateBase(agent: BaseAgent): ValidationResult {
     const errors: ValidationError[] = [];
     const warnings: ValidationWarning[] = [];
-    
+
     // Required fields
+    if (!agent.name || agent.name.trim() === '') {
+      errors.push({
+        field: 'name',
+        message: 'Name is required and cannot be empty',
+        severity: 'error'
+      });
+    }
+
     if (!agent.description || agent.description.trim() === '') {
       errors.push({
         field: 'description',
@@ -46,7 +54,15 @@ export class AgentValidator {
         severity: 'error'
       });
     }
-    
+
+    // Name format validation (should be lowercase with hyphens)
+    if (agent.name && !/^[a-z0-9-]+$/.test(agent.name)) {
+      warnings.push({
+        field: 'name',
+        message: 'Name should use lowercase letters, numbers, and hyphens only'
+      });
+    }
+
     // Description length validation
     if (agent.description && agent.description.length < 10) {
       warnings.push({
@@ -54,23 +70,23 @@ export class AgentValidator {
         message: 'Description is very short, consider adding more detail'
       });
     }
-    
+
     if (agent.description && agent.description.length > 500) {
       warnings.push({
         field: 'description',
         message: 'Description is very long, consider making it more concise'
       });
     }
-    
-    // Mode validation
-    if (agent.mode && !['subagent', 'primary'].includes(agent.mode)) {
+
+    // Mode validation - only validate if mode is present and not 'agent'
+    if (agent.mode && agent.mode !== 'agent' && !['subagent', 'primary'].includes(agent.mode)) {
       errors.push({
         field: 'mode',
-        message: 'Mode must be either "subagent" or "primary"',
+        message: 'Mode must be either "subagent", "primary", or "agent"',
         severity: 'error'
       });
     }
-    
+
     // Temperature validation
     if (agent.temperature !== undefined) {
       if (typeof agent.temperature !== 'number') {
@@ -87,7 +103,7 @@ export class AgentValidator {
         });
       }
     }
-    
+
     // Model validation (basic format check)
     if (agent.model) {
       if (typeof agent.model !== 'string') {
@@ -103,8 +119,8 @@ export class AgentValidator {
         });
       }
     }
-    
-    // Tools validation
+
+    // Tools validation (object format for base)
     if (agent.tools) {
       if (typeof agent.tools !== 'object' || Array.isArray(agent.tools)) {
         errors.push({
@@ -122,32 +138,32 @@ export class AgentValidator {
             });
           }
         }
-        
+
         // Check for common tools
         const commonTools = ['read', 'write', 'edit', 'bash', 'grep', 'glob', 'list'];
         const enabledTools = Object.entries(agent.tools)
           .filter(([_, enabled]) => enabled === true)
           .map(([name, _]) => name);
-          
+
         if (enabledTools.length === 0) {
           warnings.push({
             field: 'tools',
             message: 'No tools are enabled, agent may have limited functionality'
           });
         }
-        
+
         // Check if read/write tools are balanced
         const hasRead = agent.tools.read === true;
         const hasWrite = agent.tools.write === true;
         const hasEdit = agent.tools.edit === true;
-        
+
         if (hasWrite && !hasRead) {
           warnings.push({
             field: 'tools',
             message: 'Agent can write but not read files, which may cause issues'
           });
         }
-        
+
         if (hasEdit && !hasRead) {
           warnings.push({
             field: 'tools',
@@ -156,88 +172,32 @@ export class AgentValidator {
         }
       }
     }
-    
+
     return {
       valid: errors.length === 0,
       errors,
       warnings
     };
   }
-  
+
   /**
-   * Validate Claude Code agent format
-   * Currently identical to base validation but may diverge
+   * Validate Claude Code agent format (converted from base)
    */
   validateClaudeCode(agent: ClaudeCodeAgent): ValidationResult {
+    // For now, just validate as base since we're using single format
+    // In the future, this could validate Claude Code specific requirements
     return this.validateBase(agent);
   }
-  
+
   /**
-   * Validate OpenCode agent format
+   * Validate OpenCode agent format (converted from base)
    */
   validateOpenCode(agent: OpenCodeAgent): ValidationResult {
-    const result = this.validateBase(agent);
-    
-    // Additional OpenCode-specific validations
-    const errors = [...result.errors];
-    const warnings = [...result.warnings];
-    
-    // Validate OpenCode-specific fields if they exist
-    if (agent.usage && typeof agent.usage !== 'string') {
-      errors.push({
-        field: 'usage',
-        message: 'Usage must be a string',
-        severity: 'error'
-      });
-    }
-    
-    if (agent.do_not_use_when && typeof agent.do_not_use_when !== 'string') {
-      errors.push({
-        field: 'do_not_use_when',
-        message: 'do_not_use_when must be a string',
-        severity: 'error'
-      });
-    }
-    
-    if (agent.escalation && typeof agent.escalation !== 'string') {
-      errors.push({
-        field: 'escalation',
-        message: 'Escalation must be a string',
-        severity: 'error'
-      });
-    }
-    
-    if (agent.examples && typeof agent.examples !== 'string') {
-      errors.push({
-        field: 'examples',
-        message: 'Examples must be a string',
-        severity: 'error'
-      });
-    }
-    
-    if (agent.prompts && typeof agent.prompts !== 'string') {
-      errors.push({
-        field: 'prompts',
-        message: 'Prompts must be a string',
-        severity: 'error'
-      });
-    }
-    
-    if (agent.constraints && typeof agent.constraints !== 'string') {
-      errors.push({
-        field: 'constraints',
-        message: 'Constraints must be a string',
-        severity: 'error'
-      });
-    }
-    
-    return {
-      valid: errors.length === 0,
-      errors,
-      warnings
-    };
+    // For now, just validate as base since we're using single format
+    // In the future, this could validate OpenCode specific requirements
+    return this.validateBase(agent);
   }
-  
+
   /**
    * Validate agent of any format
    */
@@ -260,7 +220,7 @@ export class AgentValidator {
         };
     }
   }
-  
+
   /**
    * Validate multiple agents and return combined results
    */
@@ -269,23 +229,23 @@ export class AgentValidator {
       ...this.validateAgent(agent),
       agent
     }));
-    
+
     const summary = {
       valid: results.filter(r => r.valid).length,
       errors: results.reduce((sum, r) => sum + r.errors.length, 0),
       warnings: results.reduce((sum, r) => sum + r.warnings.length, 0)
     };
-    
+
     return { results, summary };
   }
-  
+
   /**
    * Validate round-trip conversion preserves data integrity
    */
   validateRoundTrip(original: Agent, converted: Agent): ValidationResult {
     const errors: ValidationError[] = [];
     const warnings: ValidationWarning[] = [];
-    
+
     // Check format consistency
     if (original.format !== converted.format) {
       errors.push({
@@ -293,7 +253,7 @@ export class AgentValidator {
         severity: 'error'
       });
     }
-    
+
     // Check name consistency
     if (original.name !== converted.name) {
       errors.push({
@@ -302,7 +262,7 @@ export class AgentValidator {
         severity: 'error'
       });
     }
-    
+
     // Check content consistency
     if (original.content.trim() !== converted.content.trim()) {
       errors.push({
@@ -311,11 +271,11 @@ export class AgentValidator {
         severity: 'error'
       });
     }
-    
+
     // Check frontmatter consistency
     const originalKeys = Object.keys(original.frontmatter).sort();
     const convertedKeys = Object.keys(converted.frontmatter).sort();
-    
+
     if (JSON.stringify(originalKeys) !== JSON.stringify(convertedKeys)) {
       errors.push({
         field: 'frontmatter',
@@ -323,12 +283,12 @@ export class AgentValidator {
         severity: 'error'
       });
     }
-    
+
     // Check individual field values
     for (const key of originalKeys) {
-      const originalValue = original.frontmatter[key];
-      const convertedValue = converted.frontmatter[key];
-      
+      const originalValue = (original.frontmatter as any)[key];
+      const convertedValue = (converted.frontmatter as any)[key];
+
       if (JSON.stringify(originalValue) !== JSON.stringify(convertedValue)) {
         errors.push({
           field: `frontmatter.${key}`,
@@ -337,43 +297,71 @@ export class AgentValidator {
         });
       }
     }
-    
+
     return {
       valid: errors.length === 0,
       errors,
       warnings
     };
   }
-  
+
   /**
    * Get validation recommendations for improving agent quality
    */
   getRecommendations(agent: Agent): string[] {
     const recommendations: string[] = [];
     const validation = this.validateAgent(agent);
-    
+
     // Add recommendations based on validation results
     for (const warning of validation.warnings) {
       recommendations.push(warning.message);
     }
-    
-    // Additional quality recommendations
-    if (!agent.frontmatter.mode) {
-      recommendations.push('Consider specifying a mode (subagent or primary) to clarify the agent\'s role');
+
+    // Additional quality recommendations based on format
+    if (agent.format === 'claude-code') {
+      // Claude Code specific recommendations
+      const claudeAgent = agent.frontmatter as ClaudeCodeAgent;
+      if (!claudeAgent.name) {
+        recommendations.push('Claude Code agents require a name field');
+      }
+      if (!claudeAgent.description) {
+        recommendations.push('Claude Code agents require a description field');
+      }
+      if (agent.content.length < 100) {
+        recommendations.push('Agent content is quite short, consider adding more detailed instructions');
+      }
+    } else if (agent.format === 'opencode') {
+      // OpenCode specific recommendations
+      const openCodeAgent = agent.frontmatter as OpenCodeAgent;
+      if (!openCodeAgent.mode) {
+        recommendations.push('Consider specifying a mode (subagent or primary) to clarify the agent\'s role');
+      }
+      if (!openCodeAgent.model) {
+        recommendations.push('Consider specifying a model to ensure consistent behavior');
+      }
+      if (openCodeAgent.temperature === undefined) {
+        recommendations.push('Consider setting a temperature value to control output randomness');
+      }
+      if (agent.content.length < 100) {
+        recommendations.push('Agent content is quite short, consider adding more detailed instructions');
+      }
+    } else {
+      // Base format recommendations
+      const baseAgent = agent.frontmatter as BaseAgent;
+      if (!baseAgent.mode) {
+        recommendations.push('Consider specifying a mode (subagent or primary) to clarify the agent\'s role');
+      }
+      if (!baseAgent.model) {
+        recommendations.push('Consider specifying a model to ensure consistent behavior');
+      }
+      if (baseAgent.temperature === undefined) {
+        recommendations.push('Consider setting a temperature value to control output randomness');
+      }
+      if (agent.content.length < 100) {
+        recommendations.push('Agent content is quite short, consider adding more detailed instructions');
+      }
     }
-    
-    if (!agent.frontmatter.model) {
-      recommendations.push('Consider specifying a model to ensure consistent behavior');
-    }
-    
-    if (agent.frontmatter.temperature === undefined) {
-      recommendations.push('Consider setting a temperature value to control output randomness');
-    }
-    
-    if (agent.content.length < 100) {
-      recommendations.push('Agent content is quite short, consider adding more detailed instructions');
-    }
-    
+
     return recommendations;
   }
 }

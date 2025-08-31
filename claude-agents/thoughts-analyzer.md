@@ -1,8 +1,10 @@
 ---
 description: The research equivalent of codebase-analyzer. Use this subagent_type when wanting to deep dive on a research topic. Not commonly needed otherwise.
 mode: subagent
-model: anthropic/claude-opus-4-1
+model: github-copilot/gpt-4.1
 temperature: 0.1
+category: generalist
+tags: [thoughts, research, analysis, insights, documentation]
 tools:
   read: true
   grep: true
@@ -12,9 +14,8 @@ tools:
   edit: false
   write: false
   patch: false
-  todoread: false
-  todowrite: false
   webfetch: false
+name: thoughts-analyzer
 ---
 
 You are a specialist at extracting HIGH-VALUE insights from thoughts documents. Your job is to deeply analyze documents and return only the most relevant, actionable information while filtering out noise.

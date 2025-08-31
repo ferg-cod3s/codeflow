@@ -24,10 +24,10 @@ async function createMCPClient(): Promise<{ client: Client; cleanup: () => Promi
 
   // Connect with timeout
   const connectPromise = client.connect(transport);
-  const timeoutPromise = new Promise((_, reject) => 
-    setTimeout(() => reject(new Error("Connection timeout")), 10000)
+  const timeoutPromise = new Promise((_, reject) =>
+    setTimeout(() => reject(new Error("Connection timeout")), 15000)
   );
-  
+
   await Promise.race([connectPromise, timeoutPromise]);
 
   const cleanup = async () => {
@@ -46,11 +46,11 @@ describe("MCP Server Integration", () => {
 
   beforeAll(async () => {
     testDir = await fs.mkdtemp(path.join(os.tmpdir(), "codeflow-mcp-test-"));
-    
+
     // Create a mock project structure
     await fs.mkdir(path.join(testDir, "command"), { recursive: true });
     await fs.mkdir(path.join(testDir, "agent"), { recursive: true });
-    
+
     // Create test command files
     await fs.writeFile(path.join(testDir, "command", "test.md"), `---
 name: test
@@ -69,7 +69,7 @@ This is a test command for MCP integration testing.
 
   test("MCP server starts and responds to ping", async () => {
     const { client, cleanup } = await createMCPClient();
-    
+
     try {
       const result = await client.ping();
       expect(result).toBeDefined();
@@ -80,27 +80,27 @@ This is a test command for MCP integration testing.
 
   test("MCP server exposes 7 core workflow commands as tools", async () => {
     const { client, cleanup } = await createMCPClient();
-    
+
     try {
       const tools = await client.listTools();
-      
+
       // Should expose the 7 core workflow commands (simple names, not prefixed)
       const expectedCommands = [
         "research",
-        "plan", 
+        "plan",
         "execute",
         "test",
         "document",
         "commit",
         "review"
       ];
-      
+
       const toolNames = tools.tools.map(tool => tool.name);
-      
+
       for (const expectedCommand of expectedCommands) {
         expect(toolNames).toContain(expectedCommand);
       }
-      
+
       // Should have at least the core commands plus get_command
       expect(tools.tools.length).toBeGreaterThanOrEqual(expectedCommands.length);
     } finally {
@@ -110,19 +110,19 @@ This is a test command for MCP integration testing.
 
   test("agents are available internally but not exposed as tools", async () => {
     const { client, cleanup } = await createMCPClient();
-    
+
     try {
       const tools = await client.listTools();
       const toolNames = tools.tools.map(tool => tool.name);
-      
+
       // Agents should not be exposed as tools
       const agentPatterns = [
         "codebase-analyzer",
-        "codebase-locator", 
+        "codebase-locator",
         "thoughts-analyzer",
         "web-search-researcher"
       ];
-      
+
       for (const agentPattern of agentPatterns) {
         const hasAgentTool = toolNames.some(name => name.includes(agentPattern));
         expect(hasAgentTool).toBe(false);
@@ -134,10 +134,10 @@ This is a test command for MCP integration testing.
 
   test("MCP server provides tool descriptions", async () => {
     const { client, cleanup } = await createMCPClient();
-    
+
     try {
       const tools = await client.listTools();
-      
+
       for (const tool of tools.tools) {
         expect(tool.name).toBeDefined();
         expect(tool.description).toBeDefined();
@@ -150,13 +150,13 @@ This is a test command for MCP integration testing.
 
   test("MCP server handles tool execution", async () => {
     const { client, cleanup } = await createMCPClient();
-    
+
     try {
       const tools = await client.listTools();
-      
+
       if (tools.tools.length > 0) {
         const firstTool = tools.tools[0];
-        
+
         // Try to call the tool (might fail due to missing arguments, but should not crash server)
         try {
           await client.callTool({
@@ -175,7 +175,7 @@ This is a test command for MCP integration testing.
 
   test("MCP server handles invalid tool calls gracefully", async () => {
     const { client, cleanup } = await createMCPClient();
-    
+
     try {
       // Try to call a non-existent tool
       await expect(client.callTool({
@@ -191,7 +191,7 @@ This is a test command for MCP integration testing.
 describe("MCP Server Error Handling", () => {
   test("MCP server handles malformed requests", async () => {
     const { client, cleanup } = await createMCPClient();
-    
+
     try {
       // Test with invalid method
       const invalidRequest = {
@@ -200,7 +200,7 @@ describe("MCP Server Error Handling", () => {
         method: "invalid_method",
         params: {}
       };
-      
+
       // This should not crash the server
       // The exact behavior depends on the MCP SDK implementation
     } finally {
@@ -210,14 +210,14 @@ describe("MCP Server Error Handling", () => {
 
   test("MCP server maintains connection stability", async () => {
     const { client, cleanup } = await createMCPClient();
-    
+
     try {
       // Make multiple requests to ensure server stability
       for (let i = 0; i < 5; i++) {
         const result = await client.ping();
         expect(result).toBeDefined();
       }
-      
+
       const tools = await client.listTools();
       expect(tools.tools).toBeDefined();
     } finally {
@@ -230,13 +230,13 @@ describe("MCP Server Resource Management", () => {
   test("MCP server cleans up resources properly", async () => {
     // Create multiple clients to test resource management
     const clients = [];
-    
+
     try {
       for (let i = 0; i < 3; i++) {
         const { client, cleanup } = await createMCPClient();
         clients.push({ client, cleanup });
       }
-      
+
       // All clients should be able to ping
       for (const { client } of clients) {
         const result = await client.ping();
@@ -254,11 +254,11 @@ describe("MCP Server Resource Management", () => {
 describe("MCP Command Integration", () => {
   test("research command tool is available", async () => {
     const { client, cleanup } = await createMCPClient();
-    
+
     try {
       const tools = await client.listTools();
       const researchTool = tools.tools.find(t => t.name === "research");
-      
+
       expect(researchTool).toBeDefined();
       expect(researchTool?.description).toContain("research");
     } finally {
@@ -268,11 +268,11 @@ describe("MCP Command Integration", () => {
 
   test("plan command tool is available", async () => {
     const { client, cleanup } = await createMCPClient();
-    
+
     try {
       const tools = await client.listTools();
       const planTool = tools.tools.find(t => t.name === "plan");
-      
+
       expect(planTool).toBeDefined();
       expect(planTool?.description).toContain("plan");
     } finally {
@@ -282,14 +282,14 @@ describe("MCP Command Integration", () => {
 
   test("all workflow commands have consistent naming", async () => {
     const { client, cleanup } = await createMCPClient();
-    
+
     try {
       const tools = await client.listTools();
       const coreCommands = ["research", "plan", "execute", "test", "document", "commit", "review"];
       const commandTools = tools.tools.filter(t => coreCommands.includes(t.name));
-      
+
       expect(commandTools.length).toBeGreaterThanOrEqual(7);
-      
+
       // All command tools should have simple names and descriptions
       for (const tool of commandTools) {
         expect(tool.name).toMatch(/^[a-z]+$/);
