@@ -354,6 +354,17 @@ export async function parseAgentsFromDirectory(
 }
 
 /**
+ * Check if a YAML value needs to be quoted
+ */
+function needsYamlQuoting(value: string): boolean {
+  // Quote if contains colons, special YAML chars, starts with numbers/quotes, or is a reserved word
+  return /[:\[\]{}|>@`#%&*!]/.test(value) ||
+         /^[0-9"']/.test(value) ||
+         /^(true|false|null|yes|no|on|off)$/i.test(value) ||
+         value.includes('\n');
+}
+
+/**
  * Serialize agent back to markdown format
  */
 export function serializeAgent(agent: Agent): string {
@@ -367,6 +378,10 @@ export function serializeAgent(agent: Agent): string {
       for (const [toolKey, toolValue] of Object.entries(value as Record<string, any>)) {
         lines.push(`  ${toolKey}: ${toolValue}`);
       }
+    } else if (typeof value === 'string' && needsYamlQuoting(value)) {
+      // Quote strings that need it for proper YAML syntax
+      const escapedValue = value.replace(/"/g, '\\"');
+      lines.push(`${key}: "${escapedValue}"`);
     } else {
       lines.push(`${key}: ${value}`);
     }
