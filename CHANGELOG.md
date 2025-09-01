@@ -1,39 +1,4 @@
-## [0.6.0](https://github.com/ferg-cod3s/codeflow/compare/v0.5.3...v0.6.0) (2025-09-01)
-
-### Features
-
-* **sync-global**: Add multi-source agent synchronization with auto-format detection ([implementation](https://github.com/ferg-cod3s/codeflow/commit/sync-global-multidir))
-  - Processes agents from both `codeflow-agents/` and `.opencode/agent/` directories
-  - Auto-detects agent formats (base, claude-code, opencode) for mixed directories
-  - Implements intelligent deduplication to prevent duplicate agents
-  - Supports 29 specialized agents across all platforms (MCP, Claude Code, OpenCode)
-
-* **opencode**: Full OpenCode format compliance and validation ([validation-fix](https://github.com/ferg-cod3s/codeflow/commit/opencode-compliance))
-  - Updated agent validation to support official OpenCode modes (`primary`, `subagent`, `all`)
-  - Enhanced YAML parser with array support for `tags: [item1, item2]` format
-  - Proper mode assignments: orchestrator=`primary`, all others=`subagent`
-  - Custom extensions preserved: `category`, `tags` fields supported
-
-* **orchestration**: Enhanced smart-subagent-orchestrator with comprehensive agent awareness ([orchestrator-update](https://github.com/ferg-cod3s/codeflow/commit/orchestrator-enhancement))
-  - Platform-agnostic agent routing (MCP, Claude Code, OpenCode)
-  - Complete catalog of 29+ specialized agents with capabilities and usage patterns
-  - Advanced orchestration patterns and best practices for complex multi-domain projects
-  - Cross-platform compatibility for seamless agent coordination
-
-### Bug Fixes
-
-* **validation**: Resolve OpenCode agent validation errors that prevented sync-global from working
-* **types**: Fix TypeScript compilation errors in agent parser and format converter
-* **modes**: Remove invalid `agent` mode and standardize on official OpenCode modes
-* **yaml**: Add proper array parsing for tags and other array fields in agent frontmatter
-
-### BREAKING CHANGES
-
-* Agent mode `agent` is no longer valid - use `subagent` for specialized agents and `primary` for orchestrators
-* OpenCode agents now require compliance with official OpenCode specification
-* sync-global now processes multiple source directories by default
-
-## [0.5.3](https://github.com/ferg-cod3s/codeflow/compare/v0.2.0...v0.5.3) (2025-08-31)
+# [0.6.0](https://github.com/ferg-cod3s/codeflow/compare/v0.2.0...v0.6.0) (2025-09-01)
 
 
 ### Bug Fixes
@@ -49,6 +14,7 @@
 ### Features
 
 * major v0.4.0 architecture refinement and platform integration clarification ([4922962](https://github.com/ferg-cod3s/codeflow/commit/49229621ffb2932108659cd63de525689f83e168))
+* major v0.6.0 - OpenCode compliance and multi-source sync-global ([3b89045](https://github.com/ferg-cod3s/codeflow/commit/3b890450e78967fd25a8514c55aff2d6ae154995))
 * setup Husky with automated changelog generation ([9b76509](https://github.com/ferg-cod3s/codeflow/commit/9b76509168955ccf1e84dbd74e5481718b3a2664))
 
 
