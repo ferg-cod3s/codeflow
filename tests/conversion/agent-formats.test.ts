@@ -455,7 +455,7 @@ describe("Agent Validation", () => {
     expect(claudeResult.errors.filter(e => e.message.includes("Failed to read directory")).length).toBe(0);
 
     // Test OpenCode agents
-    const opencodeResult = await parseAgentsFromDirectory(path.join(codeflowRoot, "opencode-agents"), "opencode");
+    const opencodeResult = await parseAgentsFromDirectory(path.join(codeflowRoot, ".opencode", "agent"), "opencode");
 
     if (opencodeResult.errors.length > 0) {
       console.warn("OpenCode agent parsing errors:", opencodeResult.errors);

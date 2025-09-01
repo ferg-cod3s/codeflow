@@ -77,15 +77,11 @@ export class AgentValidator {
       });
     }
 
-    // Mode validation - only validate if mode is present and not 'agent'
-    if (
-      agent.mode &&
-      agent.mode !== 'agent' &&
-      !(['subagent', 'primary'] as const).includes(agent.mode as any)
-    ) {
+    // Mode validation - validate official modes
+    if (agent.mode && !['subagent', 'primary', 'all'].includes(agent.mode)) {
       errors.push({
         field: 'mode',
-        message: 'Mode must be either "subagent", "primary", or "agent"',
+        message: 'Mode must be one of: subagent, primary, all',
         severity: 'error',
       });
     }
@@ -203,14 +199,21 @@ export class AgentValidator {
   }
 
   /**
-   * Validate OpenCode agent format (converted from base)
+   * Validate OpenCode agent format (custom codeflow format)
    */
   validateOpenCode(agent: OpenCodeAgent): ValidationResult {
-    // For OpenCode, name is optional but description and mode are required
     const errors: ValidationError[] = [];
     const warnings: ValidationWarning[] = [];
 
-    // Check required fields for OpenCode
+    // Check required fields for custom OpenCode format
+    if (!agent.name || agent.name.trim() === '') {
+      errors.push({
+        field: 'name',
+        message: 'Name is required and cannot be empty',
+        severity: 'error',
+      });
+    }
+
     if (!agent.description || agent.description.trim() === '') {
       errors.push({
         field: 'description',
@@ -219,19 +222,97 @@ export class AgentValidator {
       });
     }
 
-    if (!agent.mode) {
+    // Mode validation - support official OpenCode modes only
+    if (agent.mode && !['primary', 'subagent', 'all'].includes(agent.mode)) {
       errors.push({
         field: 'mode',
-        message: 'Mode is required for OpenCode agents',
+        message: 'Mode must be one of: primary, subagent, all',
         severity: 'error',
       });
     }
 
-    // If name is missing, that's an error for OpenCode validation
-    if (!agent.name || agent.name.trim() === '') {
+    // Name format validation (should be kebab-case for OpenCode)
+    if (agent.name && agent.name.includes(' ')) {
       errors.push({
         field: 'name',
-        message: 'Name is required for OpenCode agents',
+        message: 'Agent name should not contain spaces (use hyphens instead)',
+        severity: 'error',
+      });
+    }
+
+    // Model validation
+    if (agent.model && typeof agent.model !== 'string') {
+      errors.push({
+        field: 'model',
+        message: 'Model must be a string',
+        severity: 'error',
+      });
+    }
+
+    // Temperature validation
+    if (agent.temperature !== undefined) {
+      if (typeof agent.temperature !== 'number') {
+        errors.push({
+          field: 'temperature',
+          message: 'Temperature must be a number',
+          severity: 'error',
+        });
+      } else if (agent.temperature < 0 || agent.temperature > 2) {
+        errors.push({
+          field: 'temperature',
+          message: 'Temperature must be between 0 and 2',
+          severity: 'error',
+        });
+      }
+    }
+
+    // Tools validation (object format)
+    if (agent.tools) {
+      if (typeof agent.tools !== 'object' || Array.isArray(agent.tools)) {
+        errors.push({
+          field: 'tools',
+          message: 'Tools must be an object with tool names as keys and boolean values',
+          severity: 'error',
+        });
+      } else {
+        for (const [toolName, toolValue] of Object.entries(agent.tools)) {
+          if (typeof toolValue !== 'boolean') {
+            errors.push({
+              field: `tools.${toolName}`,
+              message: `Tool '${toolName}' must have a boolean value`,
+              severity: 'error',
+            });
+          }
+        }
+      }
+    }
+
+    // Tags validation (array format in custom format)
+    if (agent.tags) {
+      if (!Array.isArray(agent.tags)) {
+        errors.push({
+          field: 'tags',
+          message: 'Tags must be an array',
+          severity: 'error',
+        });
+      } else {
+        for (const tag of agent.tags) {
+          if (typeof tag !== 'string') {
+            errors.push({
+              field: 'tags',
+              message: 'All tags must be strings',
+              severity: 'error',
+            });
+          }
+        }
+      }
+    }
+
+    // Category validation (string format)
+    if (agent.category && typeof agent.category !== 'string') {
+      errors.push({
+        field: 'category',
+        message: 'Category must be a string',
         severity: 'error',
       });
     }
@@ -245,10 +326,14 @@ export class AgentValidator {
       };
     }
 
-    // Convert OpenCode agent to Base format for further validation
+    // Convert OpenCode agent to Base format for additional validation
     const baseAgent: BaseAgent = {
-      ...agent,
-      name: agent.name!, // We know name exists at this point
+      name: agent.name,
+      description: agent.description,
+      mode: agent.mode || 'subagent', // Default to 'subagent' if no mode specified
+      model: agent.model,
+      temperature: agent.temperature,
+      tools: agent.tools,
     };
 
     return this.validateBase(baseAgent);

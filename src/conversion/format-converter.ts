@@ -38,7 +38,7 @@ export class FormatConverter {
 
   /**
    * Convert Base format to OpenCode format
-   * OpenCode only supports specific fields: description, mode, model, temperature, tools, permission
+   * OpenCode supports extended custom fields: description, mode, model, temperature, tools, category, tags
    */
   baseToOpenCode(agent: Agent): Agent {
     if (agent.format !== 'base') {
@@ -47,15 +47,17 @@ export class FormatConverter {
 
     const baseAgent = agent.frontmatter as BaseAgent;
 
-    // OpenCode format - include name for compatibility, but OpenCode primarily uses filename
+    // OpenCode format - custom codeflow format with extensions
     const openCodeFrontmatter: OpenCodeAgent = {
-      name: baseAgent.name, // Include for compatibility, though OpenCode uses filename
+      name: baseAgent.name,
       description: baseAgent.description,
-      mode: 'subagent', // All our agents are subagents in OpenCode (not "agent")
+      mode: baseAgent.mode || 'all', // Default to 'all' for OpenCode (official default)
       model: baseAgent.model,
       temperature: baseAgent.temperature,
       tools: baseAgent.tools,
-      // Note: OpenCode doesn't support category, tags, or other extended fields
+      // Custom extensions for codeflow format
+      category: 'development', // Default category if not specified
+      tags: [], // Default empty tags array
     };
 
     // Convert model format for OpenCode if needed
@@ -144,15 +146,18 @@ export class FormatConverter {
       throw new Error(`Expected opencode format, got ${agent.format}`);
     }
 
-    // Extract only base properties from OpenCode agent
+    // Extract base properties from OpenCode agent (preserve custom fields as additional properties)
     const frontmatter = agent.frontmatter as OpenCodeAgent;
     const baseFrontmatter: BaseAgent = {
       name: frontmatter.name || agent.name, // Use agent name if frontmatter name is missing
       description: frontmatter.description,
-      mode: frontmatter.mode,
+      mode: frontmatter.mode || 'subagent', // Default to 'subagent' for base format
       model: frontmatter.model,
       temperature: frontmatter.temperature,
       tools: frontmatter.tools,
+      // Preserve custom OpenCode fields for future conversion back
+      ...(frontmatter.category && { category: frontmatter.category }),
+      ...(frontmatter.tags && { tags: frontmatter.tags }),
     };
 
     return {

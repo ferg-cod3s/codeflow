@@ -76,7 +76,7 @@ describe('Single Format Architecture', () => {
     it('should accept agent mode', () => {
       const agentModeAgent = {
         ...sampleBaseAgent,
-        mode: 'agent' as const,
+        mode: 'subagent' as const,
       };
       const result = validator.validateBase(agentModeAgent);
       expect(result.valid).toBe(true);

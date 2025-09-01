@@ -9,20 +9,22 @@ import { globalPerformanceMonitor, globalFileReader } from '../optimization/perf
 export interface BaseAgent {
   name: string;
   description: string;
-  mode?: 'subagent' | 'primary' | 'agent';
+  mode?: 'subagent' | 'primary' | 'all'; // Align with OpenCode modes (no 'agent')
   temperature?: number;
   model?: string;
   tools?: Record<string, boolean>;
 
-  // OpenCode-specific fields (optional in base format)
+  // Custom extensions that can be preserved across formats
+  category?: string;
+  tags?: string[];
+
+  // Legacy fields that may appear in test data
   usage?: string;
   do_not_use_when?: string;
   escalation?: string;
   examples?: string;
   prompts?: string;
   constraints?: string;
-
-  // Test-specific fields that may appear in legacy data
   max_tokens?: number;
   enabled?: boolean;
   disabled?: boolean;
@@ -36,14 +38,30 @@ export interface ClaudeCodeAgent extends Omit<BaseAgent, 'tools'> {
   tools?: string; // Claude Code uses comma-separated string
 }
 
-// OpenCode format - based on official OpenCode documentation
+// OpenCode format - custom codeflow format (extends official OpenCode spec)
 export interface OpenCodeAgent {
-  name?: string; // Optional - OpenCode gets name from filename
-  description: string; // Required
-  mode: 'primary' | 'subagent'; // Required
-  model?: string; // Optional
-  temperature?: number; // Optional
-  tools?: Record<string, boolean>; // Optional - object format
+  name: string; // Required in custom format
+  description: string; // Required - official OpenCode spec
+  mode?: 'primary' | 'subagent' | 'all'; // Official OpenCode modes (optional, defaults to 'all')
+  model?: string; // Optional - official OpenCode spec
+  temperature?: number; // Optional - official OpenCode spec  
+  category?: string; // Optional - custom extension
+  tags?: string[]; // Optional - custom extension (array format)
+  tools?: Record<string, boolean>; // Optional - official OpenCode spec
+  disable?: boolean; // Optional - official OpenCode spec
+  prompt?: string; // Optional - official OpenCode spec
+  permission?: Record<string, any>; // Optional - official OpenCode spec
+  
+  // Legacy fields for backwards compatibility with tests
+  usage?: string;
+  do_not_use_when?: string;
+  escalation?: string;
+  examples?: string;
+  prompts?: string;
+  constraints?: string;
+  max_tokens?: number;
+  enabled?: boolean;
+  disabled?: boolean;
 }
 
 /**
@@ -64,6 +82,42 @@ export interface ParseError {
   message: string;
   filePath: string;
   line?: number;
+}
+
+/**
+ * Detect agent format from content
+ */
+function detectFormatFromContent(content: string): 'base' | 'claude-code' | 'opencode' {
+  if (!content.startsWith('---')) {
+    return 'base'; // Default fallback
+  }
+
+  const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---/);
+  if (!frontmatterMatch) {
+    return 'base';
+  }
+
+  try {
+    const { frontmatter } = parseFrontmatter(content);
+    
+    // Custom OpenCode format detection (your format)
+    // - Has name, tags (array), and category fields
+    if (frontmatter.name && frontmatter.tags && Array.isArray(frontmatter.tags) && frontmatter.category) {
+      return 'opencode';
+    }
+    
+    // Claude Code format detection
+    // - Has role field but not tags array
+    if (frontmatter.role && !frontmatter.tags) {
+      return 'claude-code';
+    }
+    
+    // Default to base format
+    return 'base';
+    
+  } catch {
+    return 'base'; // Safe fallback
+  }
 }
 
 /**
@@ -139,6 +193,14 @@ function parseFrontmatter(content: string): { frontmatter: any; body: string } {
       } else if (value === 'undefined' || value === 'null') {
         // Handle undefined and null values properly
         frontmatter[key] = value === 'undefined' ? undefined : null;
+      } else if (value.startsWith('[') && value.endsWith(']')) {
+        // Handle arrays like [tag1, tag2, tag3]
+        const arrayContent = value.slice(1, -1).trim();
+        if (arrayContent === '') {
+          frontmatter[key] = [];
+        } else {
+          frontmatter[key] = arrayContent.split(',').map(item => item.trim().replace(/^["']|["']$/g, ''));
+        }
       } else if (!isNaN(Number(value)) && value !== '' && !value.includes('/')) {
         // Don't convert model names like "github-copilot/gpt-5" to numbers
         frontmatter[key] = Number(value);
@@ -229,7 +291,7 @@ export async function parseAgentFile(
  */
 export async function parseAgentsFromDirectory(
   directory: string,
-  format: 'base' | 'claude-code' | 'opencode'
+  format: 'base' | 'claude-code' | 'opencode' | 'auto'
 ): Promise<{ agents: Agent[]; errors: ParseError[] }> {
   const { readdir } = await import('node:fs/promises');
   const { join } = await import('node:path');
@@ -243,54 +305,40 @@ export async function parseAgentsFromDirectory(
   }
 
   try {
-    // For MCP and Claude agents, we need to handle subdirectories
-    if (format === 'base' || format === 'claude-code') {
-      // Handle subdirectory structure
-      const files = await readdir(directory);
+    // Handle both subdirectories and flat directory structures for all formats
+    const files = await readdir(directory);
 
-      for (const item of files) {
-        const itemPath = join(directory, item);
-        const stat = await import('node:fs/promises').then((fs) => fs.stat(itemPath));
+    for (const item of files) {
+      const itemPath = join(directory, item);
+      const stat = await import('node:fs/promises').then((fs) => fs.stat(itemPath));
 
-        if (stat.isDirectory()) {
-          // This is a subdirectory, parse agents from it
-          try {
-            const subdirAgents = await parseAgentsFromDirectory(itemPath, format);
-            agents.push(...subdirAgents.agents);
-            errors.push(...subdirAgents.errors);
-          } catch (error: any) {
-            errors.push({
-              message: `Failed to parse subdirectory ${item}: ${error.message}`,
-              filePath: itemPath,
-            });
-          }
-        } else if (item.endsWith('.md') && !item.startsWith('README')) {
-          // This is a markdown file in the root directory
-          try {
-            const agent = await parseAgentFile(itemPath, format);
-            agents.push(agent);
-          } catch (error: any) {
-            errors.push({
-              message: error.message,
-              filePath: itemPath,
-            });
-          }
-        }
-      }
-    } else {
-      // OpenCode agents are in flat directory structure
-      const files = await readdir(directory);
-      const mdFiles = files.filter((f) => f.endsWith('.md') && !f.startsWith('README'));
-
-      for (const file of mdFiles) {
-        const filePath = join(directory, file);
+      if (stat.isDirectory()) {
+        // This is a subdirectory, parse agents from it recursively
         try {
-          const agent = await parseAgentFile(filePath, format);
+          const subdirAgents = await parseAgentsFromDirectory(itemPath, format);
+          agents.push(...subdirAgents.agents);
+          errors.push(...subdirAgents.errors);
+        } catch (error: any) {
+          errors.push({
+            message: `Failed to parse subdirectory ${item}: ${error.message}`,
+            filePath: itemPath,
+          });
+        }
+      } else if (item.endsWith('.md') && !item.startsWith('README')) {
+        // This is a markdown file, parse it
+        try {
+          let actualFormat: 'base' | 'claude-code' | 'opencode' = format as 'base' | 'claude-code' | 'opencode';
+          if (format === 'auto') {
+            // Auto-detect format from file content
+            const content = await globalFileReader.readFile(itemPath);
+            actualFormat = detectFormatFromContent(content);
+          }
+          const agent = await parseAgentFile(itemPath, actualFormat);
           agents.push(agent);
         } catch (error: any) {
           errors.push({
             message: error.message,
-            filePath,
+            filePath: itemPath,
           });
         }
       }

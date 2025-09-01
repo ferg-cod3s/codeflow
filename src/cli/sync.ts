@@ -2,7 +2,7 @@ import { existsSync } from 'node:fs';
 import { writeFile, readdir, copyFile, mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { getGlobalPaths, setupGlobalAgents } from './global';
-import { parseAgentsFromDirectory, serializeAgent } from '../conversion/agent-parser';
+import { parseAgentsFromDirectory, serializeAgent, Agent } from '../conversion/agent-parser';
 import { FormatConverter } from '../conversion/format-converter';
 import { AgentValidator } from '../conversion/validator';
 
@@ -91,39 +91,73 @@ export async function syncGlobalAgents(options: SyncOptions = {}) {
   const codeflowDir = join(import.meta.dir, '../..');
   const globalPaths = getGlobalPaths();
 
-  // Use codeflow-agents as the single source of truth
-  const sourcePath = join(codeflowDir, 'codeflow-agents');
+  // Define source directories to check  
+  const sourcePaths = [
+    { path: join(codeflowDir, 'codeflow-agents'), label: 'codeflow-agents (base format)' },
+    { path: join(codeflowDir, '.opencode', 'agent'), label: '.opencode/agent (mixed formats)' },
+  ];
 
-  // Check if source directory exists
-  if (!existsSync(sourcePath)) {
-    console.log(`❌ Source directory not found: ${sourcePath}`);
-    console.log(`   Please ensure codeflow-agents/ directory exists`);
-    process.exit(1);
-  }
+  console.log(`📦 Using multiple source directories for comprehensive sync`);
 
-  console.log(`📦 Processing base agents from ${sourcePath}`);
+  let allAgents: Agent[] = [];
+  let totalParsingErrors = 0;
 
-  // Parse agents from source directory
-  const { agents, errors } = await parseAgentsFromDirectory(sourcePath, 'base');
+  // Process each source directory
+  for (const source of sourcePaths) {
+    if (!existsSync(source.path)) {
+      console.log(`⚠️  Source directory not found: ${source.path}`);
+      continue;
+    }
 
-  if (errors.length > 0) {
-    console.log(`⚠️  Found ${errors.length} parsing errors`);
-    for (const error of errors) {
-      console.log(`  • ${error.filePath}: ${error.message}`);
+    console.log(`📦 Processing agents from ${source.label}`);
+
+    try {
+      // Parse agents from directory (auto-detect format for mixed directories)
+      const format = source.label.includes('base format') ? 'base' : 'auto';
+      const { agents, errors } = await parseAgentsFromDirectory(source.path, format);
+
+      if (errors.length > 0) {
+        console.log(`⚠️  Found ${errors.length} parsing errors in ${source.label}`);
+        for (const error of errors) {
+          console.log(`  • ${error.filePath}: ${error.message}`);
+        }
+        totalParsingErrors += errors.length;
+      }
+
+      if (agents.length > 0) {
+        console.log(`  📋 Found ${agents.length} agents`);
+        allAgents.push(...agents);
+      } else {
+        console.log(`  ℹ️  No agents found in ${source.label}`);
+      }
+    } catch (error: any) {
+      console.log(`❌ Failed to parse ${source.label}: ${error.message}`);
     }
   }
 
-  if (agents.length === 0) {
-    console.log(`  ℹ️  No agents found in source directory`);
+  // Deduplicate agents by name (prefer agents from earlier sources)
+  const uniqueAgents = allAgents.reduce((acc, agent) => {
+    if (!acc.find(a => a.name === agent.name)) {
+      acc.push(agent);
+    }
+    return acc;
+  }, [] as Agent[]);
+
+  if (allAgents.length > uniqueAgents.length) {
+    console.log(`🔄 Deduplicated ${allAgents.length - uniqueAgents.length} duplicate agents`);
+  }
+
+  if (uniqueAgents.length === 0) {
+    console.log(`❌ No agents found in any source directory`);
     return;
   }
 
   // Filter agents based on options
-  let filteredAgents = agents;
+  let filteredAgents = uniqueAgents;
 
   if (!includeSpecialized) {
     // Filter out specialized domain agents (those with underscores in names)
-    filteredAgents = agents.filter((agent) => !agent.name.includes('_'));
+    filteredAgents = filteredAgents.filter((agent) => !agent.name.includes('_'));
   }
 
   if (!includeWorkflow) {
@@ -138,7 +172,7 @@ export async function syncGlobalAgents(options: SyncOptions = {}) {
     filteredAgents = filteredAgents.filter((agent) => !workflowAgents.includes(agent.name));
   }
 
-  console.log(`  📋 Selected ${filteredAgents.length}/${agents.length} agents for sync`);
+  console.log(`  📋 Selected ${filteredAgents.length}/${uniqueAgents.length} agents for sync`);
 
   // Determine target formats to sync
   const targetFormats: ('claude-code' | 'opencode')[] =
