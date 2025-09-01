@@ -5,6 +5,8 @@ model: anthropic/claude-sonnet-4-20250514
 temperature: 0.3
 category: development
 tags: [database, migrations, schema-changes, zero-downtime, backfills, safety]
+allowed_directories:
+  - /Users/johnferguson/Github
 tools:
   read: true
   write: true

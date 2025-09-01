@@ -3,6 +3,8 @@ description: Locates files, directories, and components relevant to a feature or
 mode: subagent
 model: github-copilot/gpt-4.1
 temperature: 0.1
+allowed_directories:
+  - /Users/johnferguson/Github
 tools:
   grep: true
   glob: true

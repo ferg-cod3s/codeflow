@@ -5,6 +5,8 @@ model: github-copilot/gpt-4.1
 temperature: 0.1
 category: generalist
 tags: [web-search, research, information-gathering, analysis]
+allowed_directories:
+  - /Users/johnferguson/Github
 tools:
   read: true
   grep: true

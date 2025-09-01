@@ -5,6 +5,8 @@ model: anthropic/claude-sonnet-4-20250514
 temperature: 0.3
 category: design-ux
 tags: [accessibility, wcag, a11y, inclusive-design, screen-reader, keyboard-navigation]
+allowed_directories:
+  - /Users/johnferguson/Github
 tools:
   write: true
   edit: true

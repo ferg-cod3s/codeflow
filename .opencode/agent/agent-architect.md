@@ -5,6 +5,8 @@ model: github-copilot/gpt-5
 temperature: 0.1
 category: generalist
 tags: [agent-design, meta-agent, customization, specialization, architecture]
+allowed_directories:
+  - /Users/johnferguson/Github
 tools:
   write: true
   edit: true

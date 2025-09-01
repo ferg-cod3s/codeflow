@@ -3,6 +3,8 @@ description: The research equivalent of codebase-analyzer. Use this subagent_typ
 mode: subagent
 model: github-copilot/gpt-4.1
 temperature: 0.1
+allowed_directories:
+  - /Users/johnferguson/Github
 tools:
   read: true
   grep: true

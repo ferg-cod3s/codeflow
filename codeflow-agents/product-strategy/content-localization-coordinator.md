@@ -5,6 +5,8 @@ model: github-copilot/gpt-5
 temperature: 0.3
 category: product-strategy
 tags: [localization, i18n, l10n, translation, cultural-adaptation, internationalization]
+allowed_directories:
+  - /Users/johnferguson/Github
 tools:
   write: true
   edit: true

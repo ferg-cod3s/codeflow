@@ -5,6 +5,8 @@ model: anthropic/claude-sonnet-4-20250514
 temperature: 0.2
 category: operations
 tags: [monitoring, observability, alerting, logging, metrics, tracing, incident-response]
+allowed_directories:
+  - /Users/johnferguson/Github
 tools:
   write: true
   edit: true

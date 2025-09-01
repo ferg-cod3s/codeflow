@@ -5,6 +5,8 @@ model: github-copilot/gpt-5
 temperature: 0.3
 category: operations
 tags: [devops, operations, strategy, coordination, planning, cross-functional]
+allowed_directories:
+  - /Users/johnferguson/Github
 tools:
   write: true
   edit: true

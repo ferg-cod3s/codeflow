@@ -3,6 +3,8 @@ description: Simplifies user flows, enhances user experience, and optimizes conv
 mode: subagent
 model: github-copilot/gpt-5
 temperature: 0.3
+allowed_directories:
+  - /Users/johnferguson/Github
 tools:
   write: true
   edit: true

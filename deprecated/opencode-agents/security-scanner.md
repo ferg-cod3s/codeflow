@@ -3,6 +3,8 @@ description: Identifies vulnerabilities and implements security best practices. 
 mode: subagent
 model: github-copilot/gpt-5
 temperature: 0.1
+allowed_directories:
+  - /Users/johnferguson/Github
 tools:
   write: true
   edit: true

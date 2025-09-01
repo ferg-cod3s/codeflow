@@ -3,6 +3,8 @@ description: Identifies user engagement opportunities and implements growth mech
 mode: subagent
 model: github-copilot/gpt-5
 temperature: 0.3
+allowed_directories:
+  - /Users/johnferguson/Github
 tools:
   write: true
   edit: true

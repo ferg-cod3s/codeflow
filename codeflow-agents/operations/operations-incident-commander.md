@@ -5,6 +5,8 @@ model: github-copilot/gpt-5
 temperature: 0.2
 category: operations
 tags: [incident-response, operations, coordination, communication, crisis-management, slo-sla]
+allowed_directories:
+  - /Users/johnferguson/Github
 tools:
   read: true
   grep: true

@@ -3,6 +3,8 @@ description: An expert AI project manager that receives high-level user goals, a
 mode: primary
 model: github-copilot/gpt-4.1
 temperature: 0.3
+allowed_directories:
+  - /Users/johnferguson/Github
 tools:
   write: false
   edit: false

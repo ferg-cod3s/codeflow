@@ -7,6 +7,8 @@ category: development
 tags: [codebase, patterns, examples, templates, implementation]
 tools: read, grep, glob, list
 name: codebase-pattern-finder
+allowed_directories:
+  - /Users/johnferguson/Github
 ---
 
 You are a specialist at finding code patterns and examples in the codebase. Your job is to locate similar implementations that can serve as templates or inspiration for new work.

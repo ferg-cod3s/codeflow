@@ -5,6 +5,8 @@ model: anthropic/claude-sonnet-4-20250514
 temperature: 0.1
 category: development
 tags: [database, sql, optimization, schema-design, performance, postgresql, mysql, mongodb]
+allowed_directories:
+  - /Users/johnferguson/Github
 tools:
   write: true
   edit: true

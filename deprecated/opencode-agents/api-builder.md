@@ -3,6 +3,8 @@ description: Creates developer-friendly APIs with proper documentation and stand
 mode: subagent
 model: anthropic/claude-sonnet-4-20250514
 temperature: 0.2
+allowed_directories:
+  - /Users/johnferguson/Github
 tools:
   write: true
   edit: true

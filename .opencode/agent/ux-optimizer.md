@@ -5,6 +5,8 @@ model: github-copilot/gpt-5
 temperature: 0.3
 category: design-ux
 tags: [ux, user-experience, conversion-optimization, interaction-design, usability, a-b-testing]
+allowed_directories:
+  - /Users/johnferguson/Github
 tools:
   write: true
   edit: true

@@ -3,6 +3,8 @@ description: codebase-pattern-finder is a useful subagent_type for finding simil
 mode: subagent
 model: github-copilot/gpt-4.1
 temperature: 0.1
+allowed_directories:
+  - /Users/johnferguson/Github
 tools:
   read: true
   grep: true

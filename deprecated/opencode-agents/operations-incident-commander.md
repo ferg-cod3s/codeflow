@@ -13,6 +13,8 @@ description: |
 mode: subagent
 model: github-copilot/gpt-5
 temperature: 0.2
+allowed_directories:
+  - /Users/johnferguson/Github
 tools:
   read: true
   grep: true

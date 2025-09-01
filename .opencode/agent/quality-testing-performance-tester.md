@@ -5,6 +5,8 @@ model: anthropic/claude-sonnet-4-20250514
 temperature: 0.3
 category: quality-testing
 tags: [performance-testing, load-testing, stress-testing, slo-sli, k6, jmeter, gatling]
+allowed_directories:
+  - /Users/johnferguson/Github
 tools:
   read: true
   write: true

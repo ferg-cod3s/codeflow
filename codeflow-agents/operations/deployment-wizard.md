@@ -5,6 +5,8 @@ model: anthropic/claude-sonnet-4-20250514
 temperature: 0.2
 category: operations
 tags: [deployment, ci-cd, devops, automation, pipelines, kubernetes, docker]
+allowed_directories:
+  - /Users/johnferguson/Github
 tools:
   write: true
   edit: true

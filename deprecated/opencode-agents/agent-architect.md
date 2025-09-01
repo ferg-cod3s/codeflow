@@ -3,6 +3,8 @@ description: Meta-level agent that creates and designs specialized AI agents on-
 mode: primary
 model: github-copilot/gpt-5
 temperature: 0.1
+allowed_directories:
+  - /Users/johnferguson/Github
 tools:
   write: true
   edit: true

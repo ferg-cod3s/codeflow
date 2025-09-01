@@ -3,6 +3,8 @@ description: Ensures app accessibility and compliance with WCAG guidelines. Spec
 mode: subagent
 model: anthropic/claude-sonnet-4-20250514
 temperature: 0.3
+allowed_directories:
+  - /Users/johnferguson/Github
 tools:
   write: true
   edit: true

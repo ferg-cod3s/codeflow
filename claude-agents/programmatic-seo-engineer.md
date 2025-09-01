@@ -1,6 +1,6 @@
 ---
 name: programmatic-seo-engineer
-description: Design and implement programmatic SEO systems at scale: data-driven page generation, internal linking, sitemaps, and content templates that align with search intent and technical SEO best practices.
+description: "Design and implement programmatic SEO systems at scale: data-driven page generation, internal linking, sitemaps, and content templates that align with search intent and technical SEO best practices."
 tools: read, write, edit, grep, bash
 ---
 

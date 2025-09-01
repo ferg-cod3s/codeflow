@@ -3,6 +3,8 @@ description: Used to perform web searches from a URL and analyze the contents ba
 mode: subagent
 model: github-copilot/gpt-4.1
 temperature: 0.1
+allowed_directories:
+  - /Users/johnferguson/Github
 tools:
   read: true
   grep: true

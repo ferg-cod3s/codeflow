@@ -5,6 +5,8 @@ model: anthropic/claude-sonnet-4-20250514
 temperature: 0.1
 category: development
 tags: [code-review, quality, refactoring, maintainability, best-practices]
+allowed_directories:
+  - /Users/johnferguson/Github
 tools:
   write: false
   edit: false

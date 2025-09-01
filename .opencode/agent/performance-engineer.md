@@ -5,6 +5,8 @@ model: anthropic/claude-sonnet-4-20250514
 temperature: 0.2
 category: development
 tags: [performance, optimization, profiling, load-testing, benchmarking, scalability]
+allowed_directories:
+  - /Users/johnferguson/Github
 tools:
   write: true
   edit: true

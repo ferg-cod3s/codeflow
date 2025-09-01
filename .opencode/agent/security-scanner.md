@@ -5,6 +5,8 @@ model: github-copilot/gpt-5
 temperature: 0.1
 category: quality-testing
 tags: [security, vulnerabilities, threat-detection, compliance, owasp, penetration-testing]
+allowed_directories:
+  - /Users/johnferguson/Github
 tools:
   write: true
   edit: true

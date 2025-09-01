@@ -5,6 +5,8 @@ model: github-copilot/gpt-4.1
 temperature: 0.3
 category: generalist
 tags: [orchestration, project-management, coordination, multi-domain, strategy]
+allowed_directories:
+  - /Users/johnferguson/Github
 tools:
   write: false
   edit: false

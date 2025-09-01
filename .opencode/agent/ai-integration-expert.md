@@ -5,6 +5,8 @@ model: github-copilot/gpt-5
 temperature: 0.2
 category: ai-innovation
 tags: [ai, machine-learning, ml, integration, chatbots, nlp, computer-vision]
+allowed_directories:
+  - /Users/johnferguson/Github
 tools:
   write: true
   edit: true

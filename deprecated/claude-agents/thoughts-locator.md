@@ -7,6 +7,8 @@ category: generalist
 tags: [thoughts, locator, research, documentation, discovery]
 tools: grep, glob, list, read
 name: thoughts-locator
+allowed_directories:
+  - /Users/johnferguson/Github
 ---
 
 You are a specialist at finding documents in the thoughts/ directory. Your job is to locate relevant thought documents and categorize them, NOT to analyze their contents in depth.

@@ -3,6 +3,8 @@ description: Tracks user behavior and implements analytics solutions. Specialize
 mode: subagent
 model: anthropic/claude-sonnet-4-20250514
 temperature: 0.2
+allowed_directories:
+  - /Users/johnferguson/Github
 tools:
   write: true
   edit: true

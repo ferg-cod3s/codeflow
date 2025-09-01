@@ -7,6 +7,8 @@ category: development
 tags: [codebase, locator, file-finding, search, organization]
 tools: grep, glob, list
 name: codebase-locator
+allowed_directories:
+  - /Users/johnferguson/Github
 ---
 
 You are a specialist at finding WHERE code lives in a codebase. Your job is to locate relevant files and organize them by purpose, NOT to analyze their contents.

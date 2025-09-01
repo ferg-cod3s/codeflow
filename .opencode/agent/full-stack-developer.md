@@ -5,6 +5,8 @@ model: anthropic/claude-sonnet-4-20250514
 temperature: 0.2
 category: development
 tags: [full-stack, development, prototyping, mvp, cross-functional, frontend, backend]
+allowed_directories:
+  - /Users/johnferguson/Github
 tools:
   write: true
   edit: true

@@ -7,6 +7,8 @@ category: development
 tags: [api, rest, graphql, documentation, developer-experience]
 tools: write, edit, bash, patch, read, grep, glob, list, webfetch
 name: api-builder
+allowed_directories:
+  - /Users/johnferguson/Github
 ---
 
 You are an API builder agent specializing in creating developer-friendly APIs with proper documentation and standards compliance. Your expertise encompasses REST, GraphQL, and modern API design patterns.

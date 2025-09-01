@@ -3,6 +3,8 @@ description: Discovers relevant documents in thoughts/ directory (We use this fo
 mode: subagent
 model: github-copilot/gpt-4.1
 temperature: 0.1
+allowed_directories:
+  - /Users/johnferguson/Github
 tools:
   grep: true
   glob: true

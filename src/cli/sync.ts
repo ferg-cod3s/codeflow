@@ -27,8 +27,26 @@ async function syncGlobalCommands(): Promise<void> {
   // Target command directory
   const targetCommandPath = globalPaths.commands;
 
+  console.log(`🔍 Command sync paths:`);
+  console.log(`   Source: ${sourceCommandPath}`);
+  console.log(`   Target: ${targetCommandPath}`);
+
   // Ensure target directory exists
-  await mkdir(targetCommandPath, { recursive: true });
+  try {
+    await mkdir(targetCommandPath, { recursive: true });
+    console.log(`📁 Ensured target directory exists: ${targetCommandPath}`);
+  } catch (error: any) {
+    console.log(`❌ Failed to create target directory ${targetCommandPath}: ${error.message}`);
+    return;
+  }
+
+  // Verify target directory was created
+  if (!existsSync(targetCommandPath)) {
+    console.log(
+      `❌ Target directory still doesn't exist after creation attempt: ${targetCommandPath}`
+    );
+    return;
+  }
 
   // Check if source directory exists
   if (!existsSync(sourceCommandPath)) {
@@ -37,30 +55,61 @@ async function syncGlobalCommands(): Promise<void> {
   }
 
   // Get all command files
-  const commandFiles = await readdir(sourceCommandPath);
+  let commandFiles: string[];
+  try {
+    commandFiles = await readdir(sourceCommandPath);
+  } catch (error: any) {
+    console.log(`❌ Failed to read source directory ${sourceCommandPath}: ${error.message}`);
+    return;
+  }
+
   const mdFiles = commandFiles.filter((file) => file.endsWith('.md'));
 
   if (mdFiles.length === 0) {
     console.log(`ℹ️  No command files found in ${sourceCommandPath}`);
+    console.log(`   Found files: ${commandFiles.join(', ')}`);
     return;
   }
 
   console.log(`📋 Syncing ${mdFiles.length} commands to global directory...`);
+  console.log(`   Files to sync: ${mdFiles.join(', ')}`);
 
   let syncedCount = 0;
+  let errorCount = 0;
+
   for (const file of mdFiles) {
     try {
       const sourceFile = join(sourceCommandPath, file);
       const targetFile = join(targetCommandPath, file);
 
+      // Verify source file exists before copying
+      if (!existsSync(sourceFile)) {
+        console.log(`⚠️  Source file not found: ${sourceFile}`);
+        errorCount++;
+        continue;
+      }
+
       await copyFile(sourceFile, targetFile);
-      syncedCount++;
+
+      // Verify target file was created
+      if (existsSync(targetFile)) {
+        console.log(`  ✓ Synced: ${file}`);
+        syncedCount++;
+      } else {
+        console.log(`❌ Target file not created: ${targetFile}`);
+        errorCount++;
+      }
     } catch (error: any) {
       console.log(`❌ Failed to sync command ${file}: ${error.message}`);
+      errorCount++;
     }
   }
 
-  console.log(`✅ Synced ${syncedCount} commands to global directory`);
+  console.log(`✅ Command sync complete: ${syncedCount} synced, ${errorCount} errors`);
+
+  if (syncedCount > 0) {
+    console.log(`📂 Commands available at: ${targetCommandPath}`);
+  }
 }
 
 /**
@@ -91,7 +140,7 @@ export async function syncGlobalAgents(options: SyncOptions = {}) {
   const codeflowDir = join(import.meta.dir, '../..');
   const globalPaths = getGlobalPaths();
 
-  // Define source directories to check  
+  // Define source directories to check
   const sourcePaths = [
     { path: join(codeflowDir, 'codeflow-agents'), label: 'codeflow-agents (base format)' },
     { path: join(codeflowDir, '.opencode', 'agent'), label: '.opencode/agent (mixed formats)' },
@@ -137,7 +186,7 @@ export async function syncGlobalAgents(options: SyncOptions = {}) {
 
   // Deduplicate agents by name (prefer agents from earlier sources)
   const uniqueAgents = allAgents.reduce((acc, agent) => {
-    if (!acc.find(a => a.name === agent.name)) {
+    if (!acc.find((a) => a.name === agent.name)) {
       acc.push(agent);
     }
     return acc;

@@ -5,6 +5,8 @@ model: github-copilot/gpt-4.1
 temperature: 0.1
 category: development
 tags: [codebase, locator, file-finding, search, organization]
+allowed_directories:
+  - /Users/johnferguson/Github
 tools:
   grep: true
   glob: true

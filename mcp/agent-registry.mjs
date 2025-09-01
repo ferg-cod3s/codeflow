@@ -44,6 +44,8 @@ function parseFrontmatter(content) {
   let currentValue = '';
   let inTools = false;
   let toolsIndentLevel = 0;
+  let inAllowedDirectories = false;
+  let allowedDirectoriesIndentLevel = 0;
 
   for (let i = 0; i < frontmatterLines.length; i++) {
     const line = frontmatterLines[i];
@@ -56,6 +58,14 @@ function parseFrontmatter(content) {
       inTools = true;
       frontmatter.tools = {};
       toolsIndentLevel = line.indexOf('tools:');
+      continue;
+    }
+
+    // Handle allowed_directories section specially
+    if (trimmedLine === 'allowed_directories:') {
+      inAllowedDirectories = true;
+      frontmatter.allowed_directories = [];
+      allowedDirectoriesIndentLevel = line.indexOf('allowed_directories:');
       continue;
     }
 
@@ -72,7 +82,23 @@ function parseFrontmatter(content) {
       }
     }
 
-    if (!inTools && trimmedLine.includes(':')) {
+    if (inAllowedDirectories) {
+      const indentLevel = line.length - line.trimLeft().length;
+
+      // Exit allowed_directories section if we're back to the same or lesser indentation
+      if (indentLevel <= allowedDirectoriesIndentLevel && trimmedLine !== '') {
+        inAllowedDirectories = false;
+      } else if (trimmedLine.startsWith('- ')) {
+        // Handle array items (e.g., "- /path/to/dir")
+        const directory = trimmedLine.substring(2).trim();
+        if (directory) {
+          frontmatter.allowed_directories.push(directory);
+        }
+        continue;
+      }
+    }
+
+    if (!inTools && !inAllowedDirectories && trimmedLine.includes(':')) {
       const colonIndex = trimmedLine.indexOf(':');
       const key = trimmedLine.substring(0, colonIndex).trim();
       let value = trimmedLine.substring(colonIndex + 1).trim();
@@ -124,6 +150,7 @@ async function parseAgentFile(filePath, format) {
       temperature: frontmatter.temperature || 0.3,
       tools: frontmatter.tools || {},
       mode: frontmatter.mode || 'subagent',
+      allowedDirectories: frontmatter.allowed_directories || [],
       context: body,
       filePath,
       frontmatter,
@@ -195,6 +222,7 @@ async function buildAgentRegistry() {
     // Project-specific agents (highest priority)
     { dir: path.join(cwd, '.claude', 'agents'), format: 'claude-code' },
     { dir: path.join(cwd, '.config', 'opencode', 'agent'), format: 'opencode' },
+    { dir: path.join(cwd, '.opencode', 'agent'), format: 'opencode' },
   ];
 
   let totalAgents = 0;

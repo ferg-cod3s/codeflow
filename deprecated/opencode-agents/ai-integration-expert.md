@@ -3,6 +3,8 @@ description: Adds AI features and integrates machine learning capabilities. Spec
 mode: subagent
 model: github-copilot/gpt-5
 temperature: 0.2
+allowed_directories:
+  - /Users/johnferguson/Github
 tools:
   write: true
   edit: true

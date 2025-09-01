@@ -5,6 +5,8 @@ model: anthropic/claude-sonnet-4-20250514
 temperature: 0.3
 category: business-analytics
 tags: [seo, programmatic, page-generation, internal-linking, sitemaps, technical-seo]
+allowed_directories:
+  - /Users/johnferguson/Github
 tools:
   read: true
   write: true
