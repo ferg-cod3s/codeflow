@@ -29,28 +29,19 @@ async function syncGlobalCommands(): Promise<void> {
   // Source command directory
   const sourceCommandPath = join(codeflowDir, 'command');
 
-  // Target command directory
-  const targetCommandPath = globalPaths.commands;
+  // Target command directories by format
+  const targetCommandPaths = globalPaths.commandsByFormat;
 
-  console.log(`🔍 Command sync paths:`);
-  console.log(`   Source: ${sourceCommandPath}`);
-  console.log(`   Target: ${targetCommandPath}`);
-
-  // Ensure target directory exists
-  try {
-    await mkdir(targetCommandPath, { recursive: true });
-    console.log(`📁 Ensured target directory exists: ${targetCommandPath}`);
-  } catch (error: any) {
-    console.log(`❌ Failed to create target directory ${targetCommandPath}: ${error.message}`);
+  if (!targetCommandPaths) {
+    console.log(`❌ Command format paths not configured`);
     return;
   }
 
-  // Verify target directory was created
-  if (!existsSync(targetCommandPath)) {
-    console.log(
-      `❌ Target directory still doesn't exist after creation attempt: ${targetCommandPath}`
-    );
-    return;
+  console.log(`🔍 Command sync paths:`);
+  console.log(`   Source: ${sourceCommandPath}`);
+  console.log(`   Targets:`);
+  for (const [format, path] of Object.entries(targetCommandPaths)) {
+    console.log(`     ${format}: ${path}`);
   }
 
   // Check if source directory exists
@@ -76,45 +67,81 @@ async function syncGlobalCommands(): Promise<void> {
     return;
   }
 
-  console.log(`📋 Syncing ${mdFiles.length} commands to global directory...`);
+  console.log(`📋 Syncing ${mdFiles.length} commands to global directories...`);
   console.log(`   Files to sync: ${mdFiles.join(', ')}`);
 
-  let syncedCount = 0;
-  let errorCount = 0;
+  let totalSyncedCount = 0;
+  let totalErrorCount = 0;
 
-  for (const file of mdFiles) {
+  // Sync to each target format directory
+  for (const [format, targetCommandPath] of Object.entries(targetCommandPaths) as [
+    string,
+    string,
+  ][]) {
+    console.log(`\n🔄 Syncing to ${format} format...`);
+
+    // Ensure target directory exists
     try {
-      const sourceFile = join(sourceCommandPath, file);
-      const targetFile = join(targetCommandPath, file);
-
-      // Verify source file exists before copying
-      if (!existsSync(sourceFile)) {
-        console.log(`⚠️  Source file not found: ${sourceFile}`);
-        errorCount++;
-        continue;
-      }
-
-      await copyFile(sourceFile, targetFile);
-
-      // Verify target file was created
-      if (existsSync(targetFile)) {
-        console.log(`  ✓ Synced: ${file}`);
-        syncedCount++;
-      } else {
-        console.log(`❌ Target file not created: ${targetFile}`);
-        errorCount++;
-      }
+      await mkdir(targetCommandPath, { recursive: true });
+      console.log(`📁 Ensured target directory exists: ${targetCommandPath}`);
     } catch (error: any) {
-      console.log(`❌ Failed to sync command ${file}: ${error.message}`);
-      errorCount++;
+      console.log(`❌ Failed to create target directory ${targetCommandPath}: ${error.message}`);
+      totalErrorCount++;
+      continue;
+    }
+
+    // Verify target directory was created
+    if (!existsSync(targetCommandPath)) {
+      console.log(
+        `❌ Target directory still doesn't exist after creation attempt: ${targetCommandPath}`
+      );
+      totalErrorCount++;
+      continue;
+    }
+
+    let syncedCount = 0;
+    let errorCount = 0;
+
+    for (const file of mdFiles) {
+      try {
+        const sourceFile = join(sourceCommandPath, file);
+        const targetFile = join(targetCommandPath, file);
+
+        // Verify source file exists before copying
+        if (!existsSync(sourceFile)) {
+          console.log(`⚠️  Source file not found: ${sourceFile}`);
+          errorCount++;
+          continue;
+        }
+
+        await copyFile(sourceFile, targetFile);
+
+        // Verify target file was created
+        if (existsSync(targetFile)) {
+          console.log(`  ✓ Synced: ${file}`);
+          syncedCount++;
+        } else {
+          console.log(`❌ Target file not created: ${targetFile}`);
+          errorCount++;
+        }
+      } catch (error: any) {
+        console.log(`❌ Failed to sync command ${file}: ${error.message}`);
+        errorCount++;
+      }
+    }
+
+    console.log(`✅ ${format} sync complete: ${syncedCount} synced, ${errorCount} errors`);
+    totalSyncedCount += syncedCount;
+    totalErrorCount += errorCount;
+
+    if (syncedCount > 0) {
+      console.log(`📂 ${format} commands available at: ${targetCommandPath}`);
     }
   }
 
-  console.log(`✅ Command sync complete: ${syncedCount} synced, ${errorCount} errors`);
-
-  if (syncedCount > 0) {
-    console.log(`📂 Commands available at: ${targetCommandPath}`);
-  }
+  console.log(
+    `\n✅ Global command sync complete: ${totalSyncedCount} total synced, ${totalErrorCount} total errors`
+  );
 }
 
 /**

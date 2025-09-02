@@ -29,6 +29,12 @@ export function getGlobalPaths() {
     // Command directories
     commands: join(home, '.claude', 'commands'),
 
+    // Command directories by format
+    commandsByFormat: {
+      claudeCode: join(home, '.claude', 'commands'), // Claude Code commands
+      opencode: join(home, '.config', 'opencode', 'command'), // OpenCode commands
+    },
+
     // Agent directories by format - each format gets its own dedicated directory
     agents: {
       base: join(home, '.codeflow', 'agents'), // Codeflow format agents
@@ -67,6 +73,13 @@ export async function setupGlobalAgents(baseDir?: string): Promise<void> {
       console.log(`  ✓ Created ${commandDir}`);
     }
 
+    // For test environment, also create OpenCode command directory
+    const opencodeCommandDir = join(base, 'opencode', 'command');
+    if (!existsSync(opencodeCommandDir)) {
+      await mkdir(opencodeCommandDir, { recursive: true });
+      console.log(`  ✓ Created ${opencodeCommandDir}`);
+    }
+
     console.log('✅ Global directories ready (env-based)');
     return;
   }
@@ -87,10 +100,17 @@ export async function setupGlobalAgents(baseDir?: string): Promise<void> {
     }
   }
 
-  // Ensure commands directory exists
+  // Ensure commands directories exist
   if (!existsSync(paths.commands)) {
     await mkdir(paths.commands, { recursive: true });
-    console.log(`  ✓ Created commands directory: ${paths.commands}`);
+    console.log(`  ✓ Created Claude Code commands directory: ${paths.commands}`);
+  }
+
+  // Ensure OpenCode commands directory exists
+  const opencodeCommandsDir = paths.commandsByFormat?.opencode;
+  if (opencodeCommandsDir && !existsSync(opencodeCommandsDir)) {
+    await mkdir(opencodeCommandsDir, { recursive: true });
+    console.log(`  ✓ Created OpenCode commands directory: ${opencodeCommandsDir}`);
   }
 
   // Create a README explaining the structure

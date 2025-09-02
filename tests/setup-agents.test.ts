@@ -2,6 +2,8 @@ import { describe, test, expect, beforeEach, afterEach, mock } from 'bun:test';
 import { join } from 'node:path';
 import { mkdir, rm, writeFile, readFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
+import * as fs from 'node:fs/promises';
+import * as os from 'node:os';
 import {
   CommandSetupStrategy,
   AgentSetupStrategyImpl,
@@ -10,6 +12,15 @@ import {
   type AgentSetupResult,
 } from '../src/cli/setup';
 
+// Mock ProjectType for testing
+type ProjectType = {
+  name: string;
+  detector: (projectPath: string) => Promise<boolean>;
+  setupDirs: string[];
+  description: string;
+  additionalSetup?: (projectPath: string) => Promise<void>;
+};
+
 // Note: For now, we'll test the strategy pattern and format mapping
 // without mocking the conversion functions to keep tests simpler
 
@@ -17,28 +28,30 @@ describe('Agent Setup Functionality', () => {
   let tempDir: string;
   let sourceDir: string;
   let targetDir: string;
+  let projectType: ProjectType;
 
   beforeEach(async () => {
-    // Create temp directories
-    tempDir = join(process.cwd(), 'test-temp-' + Date.now());
+    tempDir = await fs.mkdtemp(join(os.tmpdir(), 'codeflow-setup-test-'));
     sourceDir = join(tempDir, 'source');
     targetDir = join(tempDir, 'target');
 
-    await mkdir(sourceDir, { recursive: true });
-    await mkdir(targetDir, { recursive: true });
+    // Create mock project type
+    projectType = {
+      name: 'opencode',
+      detector: async () => true,
+      setupDirs: ['.opencode/command', '.opencode/agent'],
+      description: 'OpenCode project with MCP integration',
+    };
 
-    // Create command subdirectory (what CommandSetupStrategy expects)
-    const commandDir = join(sourceDir, 'command');
-    await mkdir(commandDir, { recursive: true });
-
-    // Create test command files
-    await writeFile(
-      join(commandDir, 'test-command.md'),
-      '# Test Command\n\nDescription: Test command'
+    // Create source directory with test files
+    await fs.mkdir(sourceDir, { recursive: true });
+    await fs.writeFile(
+      join(sourceDir, 'test-command.md'),
+      '# Test Command\n\nThis is a test command.'
     );
-    await writeFile(
-      join(commandDir, 'another-command.md'),
-      '# Another Command\n\nDescription: Another test command'
+    await fs.writeFile(
+      join(sourceDir, 'another-command.md'),
+      '# Another Command\n\nThis is another test command.'
     );
   });
 
@@ -59,7 +72,7 @@ describe('Agent Setup Functionality', () => {
 
     test('should copy command files successfully', async () => {
       const strategy = new CommandSetupStrategy();
-      const result = await strategy.setup(sourceDir, targetDir);
+      const result = await strategy.setup(sourceDir, targetDir, projectType, undefined);
 
       expect(result.success).toBe(true);
       expect(result.count).toBe(2);
@@ -74,7 +87,7 @@ describe('Agent Setup Functionality', () => {
     test('should handle missing source directory', async () => {
       const strategy = new CommandSetupStrategy();
       const missingSourceDir = join(tempDir, 'missing');
-      const result = await strategy.setup(missingSourceDir, targetDir);
+      const result = await strategy.setup(missingSourceDir, targetDir, projectType, undefined);
 
       expect(result.success).toBe(false);
       expect(result.count).toBe(0);
@@ -83,7 +96,7 @@ describe('Agent Setup Functionality', () => {
 
     test('should handle file copy errors gracefully', async () => {
       const strategy = new CommandSetupStrategy();
-      const result = await strategy.setup(sourceDir, targetDir);
+      const result = await strategy.setup(sourceDir, targetDir, projectType, undefined);
 
       // This should succeed with our test setup
       expect(result.success).toBe(true);
@@ -154,7 +167,7 @@ describe('Agent Setup Functionality', () => {
     test('should provide structured error results', async () => {
       const strategy = new CommandSetupStrategy();
       const missingSourceDir = join(tempDir, 'missing');
-      const result = await strategy.setup(missingSourceDir, targetDir);
+      const result = await strategy.setup(missingSourceDir, targetDir, projectType, undefined);
 
       expect(result).toHaveProperty('success', false);
       expect(result).toHaveProperty('count', 0);
