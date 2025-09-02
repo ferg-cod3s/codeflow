@@ -9,6 +9,7 @@
 ### Features
 
 * add proper YAML quoting in agent serialization ([b2dfb78](https://github.com/ferg-cod3s/codeflow/commit/b2dfb786ff58577d8d569988052b21834e070077))
+* implement comprehensive agent permissions audit and security framework ([d6c21dc](https://github.com/ferg-cod3s/codeflow/commit/d6c21dcace0d17a27fcd900c52b3c5014f005ab7))
 * v0.7.0 - Fix sync-global command and implement MCP security controls ([3a3befd](https://github.com/ferg-cod3s/codeflow/commit/3a3befd1dc72cd7e4ea2721b85d478b5c1e6f1cd))
 
 
