@@ -35,6 +35,10 @@ try {
       "agent-model": {
         type: "string",
       },
+      "ignore-frontmatter": {
+        type: "boolean",
+        default: false,
+      },
     },
     strict: true,
     allowPositionals: true,
@@ -78,11 +82,12 @@ Commands:
   help                   Show this help message
 
 Options:
-   -h, --help          Show this help message
-   -g, --global        Use ~/.config/opencode instead of .opencode directory
-   --version           Show the version of agentic
-   --thoughts-dir      Specify thoughts directory (for init command)
-   --agent-model       Specify model for subagents (for status and pull commands)
+  -h, --help             Show this help message
+  -g, --global           Use ~/.config/opencode instead of .opencode directory
+  --version              Show the version of agentic
+  --thoughts-dir         Specify thoughts directory (for init command)
+  --agent-model          Specify model for subagents (for status and pull commands)
+  --ignore-frontmatter   Ignore YAML frontmatter in Markdown when comparing and preserve target frontmatter during pull
 
 Examples:
   agentic init                       # Initialize in current directory
@@ -115,9 +120,9 @@ switch (command) {
     }
 
     if (command === "pull") {
-      await pull(projectPath, values.global, values["agent-model"]);
+      await pull(projectPath, values.global, values["agent-model"], values["ignore-frontmatter"]);
     } else if (command === "status") {
-      await status(projectPath, values.global, values["agent-model"]);
+      await status(projectPath, values.global, values["agent-model"], values["ignore-frontmatter"]);
     }
     break;
   case "config":

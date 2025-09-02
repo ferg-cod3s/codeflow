@@ -26,13 +26,20 @@ agentic pull
 
 # Pull to specific project
 agentic pull ~/projects/my-app
+
+# Pull ignoring YAML frontmatter changes
+agentic pull --ignore-frontmatter
 ```
+
+**Options:**
+- `--ignore-frontmatter`: Ignore YAML frontmatter in Markdown (.md) files when comparing and preserve target frontmatter during pull
 
 **What it does:**
 - Creates `.opencode` directory if it doesn't exist
 - Copies all files from `agent/` and `command/` directories
 - Preserves directory structure
 - Reports progress for each file copied
+- When `--ignore-frontmatter` is used: preserves existing frontmatter in target .md files
 
 **Output:**
 ```
@@ -59,12 +66,19 @@ agentic status
 
 # Check status of specific project
 agentic status ~/projects/my-app
+
+# Check status ignoring YAML frontmatter changes
+agentic status --ignore-frontmatter
 ```
+
+**Options:**
+- `--ignore-frontmatter`: Ignore YAML frontmatter in Markdown (.md) files when comparing
 
 **What it does:**
 - Compares files in `.opencode` with source repository
 - Identifies missing, outdated, or extra files
 - Uses SHA-256 hashing for content comparison
+- When `--ignore-frontmatter` is used: treats files with only frontmatter changes as up-to-date
 
 **Output:**
 ```
