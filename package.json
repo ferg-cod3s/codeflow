@@ -3,33 +3,32 @@
   "version": "0.1.9",
   "description": "Modular AI agent system with specialized subagents and commands for enhanced OpenCode capabilities",
   "type": "module",
+  "author": "Chris Covington",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Cluster444/agentic.git"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.9.2"
+  },
   "bin": {
     "agentic": "./bin/agentic"
   },
-  "scripts": {
-    "typecheck": "tsc --noEmit",
-    "build": "bun build ./src/cli/index.ts --compile --outfile ./bin/agentic",
-    "publish": "./scripts/publish.ts"
+  "bugs": {
+    "url": "https://github.com/Cluster444/agentic/issues"
   },
+  "homepage": "https://github.com/Cluster444/agentic#readme",
   "keywords": [
     "ai",
     "agent",
     "opencode",
     "assistant"
   ],
-  "author": "Chris Covington",
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Cluster444/agentic.git"
-  },
-  "bugs": {
-    "url": "https://github.com/Cluster444/agentic/issues"
-  },
-  "homepage": "https://github.com/Cluster444/agentic#readme",
-  "dependencies": {},
-  "devDependencies": {
-    "@types/bun": "latest",
-    "typescript": "^5.9.2"
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "bun build ./src/cli/index.ts --compile --outfile ./bin/agentic",
+    "publish": "./scripts/publish.ts"
   }
 }
