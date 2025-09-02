@@ -141,14 +141,14 @@ else
     
     # Search for the binary starting from real script location
     resolved=""
-    current_dir="\$script_dir"
-    while [ "\$current_dir" != "/" ]; do
-        candidate="\$current_dir/../\$name/bin/\$binary"
-        if [ -f "\$candidate" ]; then
-            resolved="\$candidate"
+    current_dir="$script_dir"
+    while [ "$current_dir" != "/" ]; do
+        candidate="$current_dir/../../$name/bin/$binary"
+        if [ -f "$candidate" ]; then
+            resolved="$candidate"
             break
         fi
-        current_dir="\$(dirname "\$current_dir")"
+        current_dir="$(dirname "$current_dir")"
     done
     
     if [ -z "\$resolved" ]; then
