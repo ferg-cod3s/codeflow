@@ -5,6 +5,11 @@ import { getGlobalPaths, setupGlobalAgents } from './global';
 import { parseAgentsFromDirectory, serializeAgent, Agent } from '../conversion/agent-parser';
 import { FormatConverter } from '../conversion/format-converter';
 import { AgentValidator } from '../conversion/validator';
+import { applyPermissionInheritance } from '../security/validation';
+import {
+  applyOpenCodePermissionsToDirectory,
+  DEFAULT_OPENCODE_PERMISSIONS,
+} from '../security/opencode-permissions';
 
 interface SyncOptions {
   includeSpecialized?: boolean;
@@ -282,6 +287,29 @@ export async function syncGlobalAgents(options: SyncOptions = {}) {
       } catch (error: any) {
         console.log(`    ❌ Failed to sync ${agent.name}: ${error.message}`);
         totalErrors++;
+      }
+    }
+
+    // Apply permissions after syncing to this format
+    if (!dryRun && targetFormat === 'opencode') {
+      try {
+        console.log(`    🔐 Applying OpenCode permissions to ${targetPath}...`);
+        await applyOpenCodePermissionsToDirectory(targetPath, DEFAULT_OPENCODE_PERMISSIONS);
+        console.log(`    ✅ Applied OpenCode permissions`);
+      } catch (error: any) {
+        console.log(`    ⚠️  Failed to apply OpenCode permissions: ${error.message}`);
+      }
+    } else if (!dryRun) {
+      try {
+        console.log(`    🔐 Applying standard permissions to ${targetPath}...`);
+        await applyPermissionInheritance(targetPath, 'subagent', {
+          directories: 0o755,
+          agentFiles: 0o644,
+          commandFiles: 0o644,
+        });
+        console.log(`    ✅ Applied standard permissions`);
+      } catch (error: any) {
+        console.log(`    ⚠️  Failed to apply standard permissions: ${error.message}`);
       }
     }
 

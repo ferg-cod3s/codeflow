@@ -1,6 +1,6 @@
-import { resolve, normalize, isAbsolute, join, sep } from "node:path";
-import { access, stat } from "node:fs/promises";
-import { constants as fsConstants } from "node:fs";
+import { resolve, normalize, isAbsolute, join, sep } from 'node:path';
+import { access, stat } from 'node:fs/promises';
+import { constants as fsConstants } from 'node:fs';
 
 /**
  * Security validation utilities for the codeflow system
@@ -24,14 +24,14 @@ interface PermissionCheckResult {
  * Path traversal attack patterns to detect and prevent
  */
 const DANGEROUS_PATH_PATTERNS = [
-  /\.\.[/\\]/,           // Parent directory traversal
-  /^[/\\](?:etc|root|sys|proc|dev|boot|usr\/bin|usr\/sbin)[/\\]/,  // System directories
-  /[/\\]\.{2,}[/\\]/,    // Multiple dots (more than ..)
-  /^[a-zA-Z]:[/\\](?:Windows|System|Program)/i,  // Windows system dirs
-  /\$\([^)]*\)/,         // Command substitution
-  /`[^`]*`/,             // Command substitution (backticks)
-  /[;&|`><]/,            // Shell metacharacters
-  /\0/,                  // Null byte injection
+  /\.\.[/\\]/, // Parent directory traversal
+  /^[/\\](?:etc|root|sys|proc|dev|boot|usr\/bin|usr\/sbin)[/\\]/, // System directories
+  /[/\\]\.{2,}[/\\]/, // Multiple dots (more than ..)
+  /^[a-zA-Z]:[/\\](?:Windows|System|Program)/i, // Windows system dirs
+  /\$\([^)]*\)/, // Command substitution
+  /`[^`]*`/, // Command substitution (backticks)
+  /[;&|`><]/, // Shell metacharacters
+  /\0/, // Null byte injection
 ];
 
 /**
@@ -51,7 +51,7 @@ const ALLOWED_DIRECTORIES = [
   '.claude',
   '.opencode',
   'commands',
-  'agents'
+  'agents',
 ];
 
 /**
@@ -73,7 +73,7 @@ export async function validatePath(inputPath: string): Promise<SecurityValidatio
     if (!inputPath || typeof inputPath !== 'string') {
       return {
         isValid: false,
-        error: 'Path must be a non-empty string'
+        error: 'Path must be a non-empty string',
       };
     }
 
@@ -81,7 +81,7 @@ export async function validatePath(inputPath: string): Promise<SecurityValidatio
     if (inputPath.length > MAX_PATH_LENGTH) {
       return {
         isValid: false,
-        error: `Path too long (max ${MAX_PATH_LENGTH} characters)`
+        error: `Path too long (max ${MAX_PATH_LENGTH} characters)`,
       };
     }
 
@@ -90,7 +90,7 @@ export async function validatePath(inputPath: string): Promise<SecurityValidatio
       if (pattern.test(inputPath)) {
         return {
           isValid: false,
-          error: 'Path contains potentially dangerous patterns'
+          error: 'Path contains potentially dangerous patterns',
         };
       }
     }
@@ -100,7 +100,7 @@ export async function validatePath(inputPath: string): Promise<SecurityValidatio
     try {
       // First normalize to handle . and .. safely
       sanitizedPath = normalize(inputPath);
-      
+
       // Then resolve to get absolute path if it's not already
       if (!isAbsolute(sanitizedPath)) {
         sanitizedPath = resolve(process.cwd(), sanitizedPath);
@@ -110,39 +110,39 @@ export async function validatePath(inputPath: string): Promise<SecurityValidatio
     } catch (error) {
       return {
         isValid: false,
-        error: 'Failed to normalize path'
+        error: 'Failed to normalize path',
       };
     }
 
     // Verify the path doesn't escape intended boundaries
     const cwd = process.cwd();
     const homeDir = process.env.HOME || process.env.USERPROFILE || '';
-    
+
     // Allow paths under current working directory or home directory
     const isUnderCwd = sanitizedPath.startsWith(cwd);
     const isUnderHome = homeDir && sanitizedPath.startsWith(homeDir);
-    
+
     if (!isUnderCwd && !isUnderHome) {
       // Also allow system temp directories for temporary operations
       const tempDir = process.env.TMPDIR || process.env.TEMP || '/tmp';
       const isUnderTemp = sanitizedPath.startsWith(normalize(tempDir));
-      
+
       if (!isUnderTemp) {
         return {
           isValid: false,
-          error: 'Path is outside allowed directories'
+          error: 'Path is outside allowed directories',
         };
       }
     }
 
     return {
       isValid: true,
-      sanitizedPath
+      sanitizedPath,
     };
   } catch (error) {
     return {
       isValid: false,
-      error: `Path validation failed: ${error}`
+      error: `Path validation failed: ${error}`,
     };
   }
 }
@@ -152,11 +152,11 @@ export async function validatePath(inputPath: string): Promise<SecurityValidatio
  */
 export function validateFileExtension(filePath: string): SecurityValidationResult {
   const extension = filePath.toLowerCase().substring(filePath.lastIndexOf('.'));
-  
+
   if (!ALLOWED_EXTENSIONS.includes(extension)) {
     return {
       isValid: false,
-      error: `File extension '${extension}' not allowed. Allowed extensions: ${ALLOWED_EXTENSIONS.join(', ')}`
+      error: `File extension '${extension}' not allowed. Allowed extensions: ${ALLOWED_EXTENSIONS.join(', ')}`,
     };
   }
 
@@ -180,7 +180,7 @@ export function validateDirectoryName(dirName: string): SecurityValidationResult
 
   return {
     isValid: false,
-    error: `Directory name '${dirName}' contains invalid characters or is too long`
+    error: `Directory name '${dirName}' contains invalid characters or is too long`,
   };
 }
 
@@ -192,7 +192,7 @@ export async function checkPermissions(filePath: string): Promise<PermissionChec
     readable: false,
     writable: false,
     executable: false,
-    exists: false
+    exists: false,
   };
 
   try {
@@ -214,7 +214,6 @@ export async function checkPermissions(filePath: string): Promise<PermissionChec
       await access(filePath, fsConstants.X_OK);
       result.executable = true;
     } catch {}
-
   } catch {}
 
   return result;
@@ -226,11 +225,11 @@ export async function checkPermissions(filePath: string): Promise<PermissionChec
 export async function validateFileSize(filePath: string): Promise<SecurityValidationResult> {
   try {
     const stats = await stat(filePath);
-    
+
     if (stats.size > MAX_FILE_SIZE) {
       return {
         isValid: false,
-        error: `File too large (${stats.size} bytes, max ${MAX_FILE_SIZE} bytes)`
+        error: `File too large (${stats.size} bytes, max ${MAX_FILE_SIZE} bytes)`,
       };
     }
 
@@ -238,7 +237,7 @@ export async function validateFileSize(filePath: string): Promise<SecurityValida
   } catch (error) {
     return {
       isValid: false,
-      error: `Failed to check file size: ${error}`
+      error: `Failed to check file size: ${error}`,
     };
   }
 }
@@ -269,40 +268,41 @@ export function validateContent(content: string): SecurityValidationResult {
   if (typeof content !== 'string') {
     return {
       isValid: false,
-      error: 'Content must be a string'
+      error: 'Content must be a string',
     };
   }
 
   // Check for potentially dangerous content
   const dangerousPatterns = [
-    /eval\s*\(/i,                    // JavaScript eval
-    /exec\s*\(/i,                    // Code execution functions
-    /system\s*\(/i,                  // System command execution
-    /\$\([^)]*\)/,                   // Command substitution
-    /`[^`]*`/,                       // Backtick command substitution
-    /<script[^>]*>/i,                // Script tags
-    /javascript:/i,                  // JavaScript URLs
-    /data:.*base64/i,                // Base64 data URLs
-    /vbscript:/i,                    // VBScript URLs
-    /<iframe[^>]*>/i,                // Iframe tags
-    /<object[^>]*>/i,                // Object tags
-    /<embed[^>]*>/i,                 // Embed tags
+    /eval\s*\(/i, // JavaScript eval
+    /exec\s*\(/i, // Code execution functions
+    /system\s*\(/i, // System command execution
+    /\$\([^)]*\)/, // Command substitution
+    /`[^`]*`/, // Backtick command substitution
+    /<script[^>]*>/i, // Script tags
+    /javascript:/i, // JavaScript URLs
+    /data:.*base64/i, // Base64 data URLs
+    /vbscript:/i, // VBScript URLs
+    /<iframe[^>]*>/i, // Iframe tags
+    /<object[^>]*>/i, // Object tags
+    /<embed[^>]*>/i, // Embed tags
   ];
 
   for (const pattern of dangerousPatterns) {
     if (pattern.test(content)) {
       return {
         isValid: false,
-        error: 'Content contains potentially dangerous code patterns'
+        error: 'Content contains potentially dangerous code patterns',
       };
     }
   }
 
   // Check content length
-  if (content.length > 1024 * 1024) { // 1MB limit
+  if (content.length > 1024 * 1024) {
+    // 1MB limit
     return {
       isValid: false,
-      error: 'Content too large (max 1MB)'
+      error: 'Content too large (max 1MB)',
     };
   }
 
@@ -333,31 +333,31 @@ export async function validateFileOperation(
 
   // Check permissions for the operation
   const permissions = await checkPermissions(sanitizedPath);
-  
+
   switch (operation) {
     case 'read':
       if (permissions.exists && !permissions.readable) {
         return {
           isValid: false,
-          error: 'No read permission for file'
+          error: 'No read permission for file',
         };
       }
       break;
-    
+
     case 'write':
       if (permissions.exists && !permissions.writable) {
         return {
           isValid: false,
-          error: 'No write permission for file'
+          error: 'No write permission for file',
         };
       }
       break;
-    
+
     case 'delete':
       if (permissions.exists && !permissions.writable) {
         return {
           isValid: false,
-          error: 'No delete permission for file'
+          error: 'No delete permission for file',
         };
       }
       break;
@@ -381,7 +381,7 @@ export async function validateFileOperation(
 
   return {
     isValid: true,
-    sanitizedPath
+    sanitizedPath,
   };
 }
 
@@ -407,11 +407,11 @@ class SecurityAuditLogger {
   log(entry: Omit<SecurityAuditEntry, 'timestamp'>) {
     const auditEntry: SecurityAuditEntry = {
       ...entry,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     this.logs.unshift(auditEntry);
-    
+
     // Keep only the most recent logs
     if (this.logs.length > this.maxLogs) {
       this.logs.splice(this.maxLogs);
@@ -423,7 +423,7 @@ class SecurityAuditLogger {
   }
 
   getFailures(limit: number = 50): SecurityAuditEntry[] {
-    return this.logs.filter(log => log.result === 'failure').slice(0, limit);
+    return this.logs.filter((log) => log.result === 'failure').slice(0, limit);
   }
 
   clear(): void {
@@ -437,6 +437,53 @@ class SecurityAuditLogger {
 export const securityAuditLogger = new SecurityAuditLogger();
 
 /**
+ * Set permissions on a file
+ */
+export async function setFilePermissions(filePath: string, mode: number): Promise<void> {
+  const { chmod } = await import('node:fs/promises');
+  await chmod(filePath, mode);
+}
+
+/**
+ * Set permissions on a directory
+ */
+export async function setDirectoryPermissions(dirPath: string, mode: number): Promise<void> {
+  const { chmod } = await import('node:fs/promises');
+  await chmod(dirPath, mode);
+}
+
+/**
+ * Apply permission inheritance for primary/subagent relationship
+ */
+export async function applyPermissionInheritance(
+  basePath: string,
+  agentType: 'primary' | 'subagent',
+  config: { directories: number; agentFiles: number; commandFiles: number }
+): Promise<void> {
+  const { readdir, stat } = await import('node:fs/promises');
+
+  // Set directory permissions
+  await setDirectoryPermissions(basePath, config.directories);
+
+  // Set permissions for all files in directory
+  const entries = await readdir(basePath, { withFileTypes: true });
+
+  for (const entry of entries) {
+    const fullPath = join(basePath, entry.name);
+    const stats = await stat(fullPath);
+
+    if (stats.isDirectory()) {
+      await setDirectoryPermissions(fullPath, config.directories);
+    } else if (entry.name.endsWith('.md')) {
+      // Determine if it's an agent or command file
+      const isCommand = entry.name.includes('command') || fullPath.includes('/command/');
+      const fileMode = isCommand ? config.commandFiles : config.agentFiles;
+      await setFilePermissions(fullPath, fileMode);
+    }
+  }
+}
+
+/**
  * Secure wrapper for file operations that includes validation and logging
  */
 export async function secureFileOperation<T>(
@@ -447,25 +494,25 @@ export async function secureFileOperation<T>(
   content?: string
 ): Promise<T> {
   const validation = await validateFileOperation(filePath, operationType, content);
-  
+
   if (!validation.isValid) {
     securityAuditLogger.log({
       operation,
       filePath,
       result: 'failure',
-      error: validation.error
+      error: validation.error,
     });
-    
+
     throw new Error(`Security validation failed: ${validation.error}`);
   }
 
   try {
     const result = await callback(validation.sanitizedPath!);
-    
+
     securityAuditLogger.log({
       operation,
       filePath: validation.sanitizedPath!,
-      result: 'success'
+      result: 'success',
     });
 
     return result;
@@ -474,15 +521,11 @@ export async function secureFileOperation<T>(
       operation,
       filePath: validation.sanitizedPath!,
       result: 'failure',
-      error: String(error)
+      error: String(error),
     });
 
     throw error;
   }
 }
 
-export type {
-  SecurityValidationResult,
-  PermissionCheckResult,
-  SecurityAuditEntry
-};
+export type { SecurityValidationResult, PermissionCheckResult, SecurityAuditEntry };

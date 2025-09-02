@@ -5,6 +5,11 @@ import { parseAgentsFromDirectory, serializeAgent } from '../conversion/agent-pa
 import { FormatConverter } from '../conversion/format-converter';
 import { AgentValidator } from '../conversion/validator';
 import { resolveProjectPath } from './utils';
+import {
+  applyOpenCodePermissionsToDirectory,
+  DEFAULT_OPENCODE_PERMISSIONS,
+} from '../security/opencode-permissions';
+import { applyPermissionInheritance } from '../security/validation';
 
 interface ConvertOptions {
   source: string;
@@ -171,6 +176,29 @@ export async function convert(options: ConvertOptions) {
       } catch (error: any) {
         writeErrors++;
         console.error(`❌ Failed to write ${agent.name}: ${error.message}`);
+      }
+    }
+
+    // Apply permissions to converted agents
+    if (writeCount > 0 && format === 'opencode') {
+      try {
+        console.log(`🔐 Applying OpenCode permissions to ${target}...`);
+        await applyOpenCodePermissionsToDirectory(target, DEFAULT_OPENCODE_PERMISSIONS);
+        console.log(`✅ Applied OpenCode permissions`);
+      } catch (error: any) {
+        console.log(`⚠️  Failed to apply OpenCode permissions: ${error.message}`);
+      }
+    } else if (writeCount > 0) {
+      try {
+        console.log(`🔐 Applying standard permissions to ${target}...`);
+        await applyPermissionInheritance(target, 'subagent', {
+          directories: 0o755,
+          agentFiles: 0o644,
+          commandFiles: 0o644,
+        });
+        console.log(`✅ Applied standard permissions`);
+      } catch (error: any) {
+        console.log(`⚠️  Failed to apply standard permissions: ${error.message}`);
       }
     }
 

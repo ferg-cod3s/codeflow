@@ -1,9 +1,14 @@
-import { join } from "node:path";
-import { existsSync } from "node:fs";
-import { writeFile, readdir, mkdir } from "node:fs/promises";
-import { parseAgentsFromDirectory, serializeAgent } from "../conversion/agent-parser";
-import { FormatConverter } from "../conversion/format-converter";
-import { AgentValidator } from "../conversion/validator";
+import { join } from 'node:path';
+import { existsSync } from 'node:fs';
+import { writeFile, readdir, mkdir } from 'node:fs/promises';
+import { parseAgentsFromDirectory, serializeAgent } from '../conversion/agent-parser';
+import { FormatConverter } from '../conversion/format-converter';
+import { AgentValidator } from '../conversion/validator';
+import {
+  applyOpenCodePermissionsToDirectory,
+  DEFAULT_OPENCODE_PERMISSIONS,
+} from '../security/opencode-permissions';
+import { applyPermissionInheritance } from '../security/validation';
 
 interface SyncFormatsOptions {
   validate?: boolean;
@@ -13,19 +18,38 @@ interface SyncFormatsOptions {
 
 // Define the category structure for MCP and Claude agents
 const AGENT_CATEGORIES = {
-  'development': ['analytics-engineer', 'api-builder', 'code-reviewer', 'codebase-analyzer',
-                 'codebase-locator', 'codebase-pattern-finder', 'database-expert',
-                 'development-migrations-specialist', 'full-stack-developer', 'performance-engineer',
-                 'system-architect'],
-  'generalist': ['agent-architect', 'smart-subagent-orchestrator', 'thoughts-analyzer',
-                 'thoughts-locator', 'web-search-researcher'],
+  development: [
+    'analytics-engineer',
+    'api-builder',
+    'code-reviewer',
+    'codebase-analyzer',
+    'codebase-locator',
+    'codebase-pattern-finder',
+    'database-expert',
+    'development-migrations-specialist',
+    'full-stack-developer',
+    'performance-engineer',
+    'system-architect',
+  ],
+  generalist: [
+    'agent-architect',
+    'smart-subagent-orchestrator',
+    'thoughts-analyzer',
+    'thoughts-locator',
+    'web-search-researcher',
+  ],
   'ai-innovation': ['ai-integration-expert'],
-  'operations': ['deployment-wizard', 'devops-operations-specialist', 'infrastructure-builder',
-                 'monitoring-expert', 'operations-incident-commander'],
+  operations: [
+    'deployment-wizard',
+    'devops-operations-specialist',
+    'infrastructure-builder',
+    'monitoring-expert',
+    'operations-incident-commander',
+  ],
   'quality-testing': ['security-scanner', 'quality-testing-performance-tester'],
   'business-analytics': ['growth-engineer', 'programmatic-seo-engineer'],
   'design-ux': ['accessibility-pro', 'ux-optimizer'],
-  'product-strategy': ['content-localization-coordinator']
+  'product-strategy': ['content-localization-coordinator'],
 };
 
 /**
@@ -38,37 +62,33 @@ function findAgentCategory(agentName: string): string {
     }
   }
   // Default to generalist if not found
-  return "generalist";
+  return 'generalist';
 }
 
 /**
  * Ensure all agent formats have the same agents
  */
 export async function syncAllFormats(options: SyncFormatsOptions = {}) {
-  const {
-    validate = true,
-    dryRun = false,
-    direction = 'from-opencode'
-  } = options;
+  const { validate = true, dryRun = false, direction = 'from-opencode' } = options;
 
-  console.log("🔄 Synchronizing agents across all formats...");
+  console.log('🔄 Synchronizing agents across all formats...');
   console.log(`📋 Direction: ${direction}`);
-  if (dryRun) console.log("🔍 Dry run mode - no files will be written");
-  console.log("");
+  if (dryRun) console.log('🔍 Dry run mode - no files will be written');
+  console.log('');
 
-  const codeflowDir = join(import.meta.dir, "../..");
+  const codeflowDir = join(import.meta.dir, '../..');
 
   const directories = {
-    base: join(codeflowDir, "codeflow-agents"), // Updated to use codeflow-agents directory
-    claudeCode: join(codeflowDir, "claude-agents"),
-    opencode: join(codeflowDir, "opencode-agents")
+    base: join(codeflowDir, 'codeflow-agents'), // Updated to use codeflow-agents directory
+    claudeCode: join(codeflowDir, 'claude-agents'),
+    opencode: join(codeflowDir, 'opencode-agents'),
   };
 
   // Parse agents from all directories
   const agentsByFormat: Record<string, any[]> = {};
   const allErrors: any[] = [];
 
-  console.log("📦 Loading agents from all formats...");
+  console.log('📦 Loading agents from all formats...');
 
   for (const [format, path] of Object.entries(directories)) {
     const formatKey = format === 'claudeCode' ? 'claude-code' : format;
@@ -108,7 +128,7 @@ export async function syncAllFormats(options: SyncFormatsOptions = {}) {
       const allAgents = [
         ...agentsByFormat.base,
         ...agentsByFormat.claudeCode,
-        ...agentsByFormat.opencode
+        ...agentsByFormat.opencode,
       ];
 
       // Remove duplicates by name
@@ -130,7 +150,7 @@ export async function syncAllFormats(options: SyncFormatsOptions = {}) {
       const counts = {
         base: agentsByFormat.base.length,
         claudeCode: agentsByFormat.claudeCode.length,
-        opencode: agentsByFormat.opencode.length
+        opencode: agentsByFormat.opencode.length,
       };
 
       const maxFormat = Object.entries(counts).reduce((a, b) =>
@@ -144,20 +164,24 @@ export async function syncAllFormats(options: SyncFormatsOptions = {}) {
   }
 
   // Show what's missing in each format
-  console.log("\n📊 Agent coverage analysis:");
-  const masterNames = new Set(masterAgents.map(a => a.name));
+  console.log('\n📊 Agent coverage analysis:');
+  const masterNames = new Set(masterAgents.map((a) => a.name));
 
   for (const [format, agents] of Object.entries(agentsByFormat)) {
     const currentNames = new Set(agents.map((a: any) => a.name));
-    const missing = Array.from(masterNames).filter(name => !currentNames.has(name));
-    const extra = Array.from(currentNames).filter(name => !masterNames.has(name));
+    const missing = Array.from(masterNames).filter((name) => !currentNames.has(name));
+    const extra = Array.from(currentNames).filter((name) => !masterNames.has(name));
 
     console.log(`  ${format}: ${agents.length}/${masterAgents.length} agents`);
     if (missing.length > 0) {
-      console.log(`    Missing: ${missing.length} (${missing.slice(0, 3).join(', ')}${missing.length > 3 ? '...' : ''})`);
+      console.log(
+        `    Missing: ${missing.length} (${missing.slice(0, 3).join(', ')}${missing.length > 3 ? '...' : ''})`
+      );
     }
     if (extra.length > 0 && direction !== 'bidirectional') {
-      console.log(`    Extra: ${extra.length} (${extra.slice(0, 3).join(', ')}${extra.length > 3 ? '...' : ''})`);
+      console.log(
+        `    Extra: ${extra.length} (${extra.slice(0, 3).join(', ')}${extra.length > 3 ? '...' : ''})`
+      );
     }
   }
 
@@ -168,7 +192,7 @@ export async function syncAllFormats(options: SyncFormatsOptions = {}) {
   let totalSynced = 0;
   let totalErrors = 0;
 
-  console.log("\n🔄 Synchronizing agents...");
+  console.log('\n🔄 Synchronizing agents...');
 
   for (const [targetFormat, targetPath] of Object.entries(directories)) {
     const targetFormatKey = targetFormat === 'claudeCode' ? 'claude-code' : targetFormat;
@@ -176,7 +200,7 @@ export async function syncAllFormats(options: SyncFormatsOptions = {}) {
     const currentNames = new Set(currentAgents.map((a: any) => a.name));
 
     // Find agents that need to be added
-    const missingAgents = masterAgents.filter(agent => !currentNames.has(agent.name));
+    const missingAgents = masterAgents.filter((agent) => !currentNames.has(agent.name));
 
     if (missingAgents.length === 0) {
       console.log(`  ${targetFormat}: Already up to date`);
@@ -197,7 +221,9 @@ export async function syncAllFormats(options: SyncFormatsOptions = {}) {
         if (validate) {
           const validation = validator.validateAgent(convertedAgent);
           if (!validation.valid) {
-            console.log(`    ⚠️  Validation failed for ${agent.name}: ${validation.errors[0]?.message}`);
+            console.log(
+              `    ⚠️  Validation failed for ${agent.name}: ${validation.errors[0]?.message}`
+            );
             totalErrors++;
             continue;
           }
@@ -231,10 +257,32 @@ export async function syncAllFormats(options: SyncFormatsOptions = {}) {
 
         totalSynced++;
         console.log(`    ✓ ${agent.name}`);
-
       } catch (error: any) {
         console.log(`    ❌ Failed to sync ${agent.name}: ${error.message}`);
         totalErrors++;
+      }
+    }
+  }
+
+  // Apply permissions to synced agents
+  if (!dryRun && totalSynced > 0) {
+    for (const [targetFormat, targetPath] of Object.entries(directories)) {
+      try {
+        if (targetFormat === 'opencode') {
+          console.log(`🔐 Applying OpenCode permissions to ${targetPath}...`);
+          await applyOpenCodePermissionsToDirectory(targetPath, DEFAULT_OPENCODE_PERMISSIONS);
+          console.log(`✅ Applied OpenCode permissions`);
+        } else {
+          console.log(`🔐 Applying standard permissions to ${targetPath}...`);
+          await applyPermissionInheritance(targetPath, 'subagent', {
+            directories: 0o755,
+            agentFiles: 0o644,
+            commandFiles: 0o644,
+          });
+          console.log(`✅ Applied standard permissions`);
+        }
+      } catch (error: any) {
+        console.log(`⚠️  Failed to apply permissions to ${targetPath}: ${error.message}`);
       }
     }
   }
@@ -243,18 +291,18 @@ export async function syncAllFormats(options: SyncFormatsOptions = {}) {
   console.log(`📊 Summary: ${totalSynced} agents synced, ${totalErrors} errors`);
 
   if (dryRun) {
-    console.log("🔍 Dry run complete - no files were written");
+    console.log('🔍 Dry run complete - no files were written');
   } else if (totalSynced > 0) {
-    console.log("");
-    console.log("💡 MCP Server Restart:");
+    console.log('');
+    console.log('💡 MCP Server Restart:');
     console.log("   If you're using MCP integration, restart the server to use updated agents:");
-    console.log("   codeflow mcp restart");
+    console.log('   codeflow mcp restart');
   }
 
   return {
     synced: totalSynced,
     errors: totalErrors,
-    master: masterAgents.length
+    master: masterAgents.length,
   };
 }
 
@@ -262,15 +310,15 @@ export async function syncAllFormats(options: SyncFormatsOptions = {}) {
  * Show detailed differences between formats
  */
 export async function showFormatDifferences() {
-  const codeflowDir = join(import.meta.dir, "../..");
+  const codeflowDir = join(import.meta.dir, '../..');
 
   const directories = {
-    base: join(codeflowDir, "codeflow-agents"), // Updated to use codeflow-agents directory
-    'claude-code': join(codeflowDir, "claude-agents"),
-    opencode: join(codeflowDir, "opencode-agents")
+    base: join(codeflowDir, 'codeflow-agents'), // Updated to use codeflow-agents directory
+    'claude-code': join(codeflowDir, 'claude-agents'),
+    opencode: join(codeflowDir, 'opencode-agents'),
   };
 
-  console.log("📊 Detailed format differences analysis...\n");
+  console.log('📊 Detailed format differences analysis...\n');
 
   // Parse agents from all directories
   const agentsByFormat: Record<string, any[]> = {};
@@ -292,23 +340,26 @@ export async function showFormatDifferences() {
     }
   }
 
-  console.log("📋 Agent presence by format:\n");
+  console.log('📋 Agent presence by format:\n');
 
   // Show presence matrix
   const sortedNames = Array.from(allNames).sort();
   const formats = Object.keys(agentsByFormat);
 
   // Header
-  console.log(`${'Agent Name'.padEnd(40)} | ${formats.map(f => f.padEnd(12)).join(' | ')}`);
+  console.log(`${'Agent Name'.padEnd(40)} | ${formats.map((f) => f.padEnd(12)).join(' | ')}`);
   console.log(`${'-'.repeat(40)} | ${formats.map(() => '-'.repeat(12)).join(' | ')}`);
 
   // Rows
-  for (const name of sortedNames.slice(0, 20)) { // Show first 20 for readability
+  for (const name of sortedNames.slice(0, 20)) {
+    // Show first 20 for readability
     const row = name.padEnd(40) + ' | ';
-    const presence = formats.map(format => {
-      const hasAgent = agentsByFormat[format].some((a: any) => a.name === name);
-      return (hasAgent ? '✓' : '✗').padEnd(12);
-    }).join(' | ');
+    const presence = formats
+      .map((format) => {
+        const hasAgent = agentsByFormat[format].some((a: any) => a.name === name);
+        return (hasAgent ? '✓' : '✗').padEnd(12);
+      })
+      .join(' | ');
 
     console.log(row + presence);
   }
@@ -349,6 +400,6 @@ export async function showFormatDifferences() {
     total: sortedNames.length,
     byFormat: Object.fromEntries(
       Object.entries(agentsByFormat).map(([format, agents]) => [format, agents.length])
-    )
+    ),
   };
 }

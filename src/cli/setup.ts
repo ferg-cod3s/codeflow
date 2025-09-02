@@ -1,14 +1,28 @@
 import { readdir, mkdir, copyFile, stat, writeFile, readFile } from 'node:fs/promises';
 import { join, basename } from 'node:path';
 import { existsSync } from 'node:fs';
-import { validatePath, secureFileOperation, sanitizeInput } from '../security/validation.js';
+import {
+  validatePath,
+  secureFileOperation,
+  sanitizeInput,
+  applyPermissionInheritance,
+} from '../security/validation.js';
 import { parseAgentsFromDirectory, serializeAgent } from '../conversion/agent-parser.js';
 import { FormatConverter } from '../conversion/format-converter.js';
+import {
+  applyOpenCodePermissionsToDirectory,
+  loadRepositoryOpenCodeConfig,
+} from '../security/opencode-permissions.js';
 
 // Strategy Pattern for Agent Setup
 export interface AgentSetupStrategy {
   shouldHandle(setupDir: string): boolean;
-  setup(sourcePath: string, targetDir: string, projectType: ProjectType): Promise<AgentSetupResult>;
+  setup(
+    sourcePath: string,
+    targetDir: string,
+    projectType: ProjectType,
+    permissionConfig?: any
+  ): Promise<AgentSetupResult>;
 }
 
 export interface AgentSetupResult {
@@ -47,7 +61,12 @@ export class CommandSetupStrategy implements AgentSetupStrategy {
     return setupDir.includes('command');
   }
 
-  async setup(sourcePath: string, targetDir: string): Promise<AgentSetupResult> {
+  async setup(
+    sourcePath: string,
+    targetDir: string,
+    projectType: ProjectType,
+    permissionConfig?: any
+  ): Promise<AgentSetupResult> {
     const result: AgentSetupResult = {
       success: false,
       count: 0,
@@ -93,7 +112,8 @@ export class AgentSetupStrategyImpl implements AgentSetupStrategy {
   async setup(
     sourcePath: string,
     targetDir: string,
-    projectType: ProjectType
+    projectType: ProjectType,
+    permissionConfig?: any
   ): Promise<AgentSetupResult> {
     const result: AgentSetupResult = {
       success: false,
@@ -115,7 +135,12 @@ export class AgentSetupStrategyImpl implements AgentSetupStrategy {
         return result;
       }
 
-      const count = await copyAgentsWithConversion(sourceDir, targetDir, targetFormat);
+      const count = await copyAgentsWithConversion(
+        sourceDir,
+        targetDir,
+        targetFormat,
+        permissionConfig
+      );
       result.success = true;
       result.count = count;
     } catch (error: any) {
@@ -192,7 +217,8 @@ async function detectProjectType(projectPath: string): Promise<ProjectType> {
 async function copyAgentsWithConversion(
   sourceDir: string,
   targetDir: string,
-  targetFormat: SupportedFormat
+  targetFormat: SupportedFormat,
+  permissionConfig?: any
 ): Promise<number> {
   // Parse base format agents
   const { agents, errors: parseErrors } = await parseAgentsFromDirectory(sourceDir, 'base');
@@ -244,6 +270,29 @@ async function copyAgentsWithConversion(
       writeCount++;
     } catch (error: any) {
       console.error(`❌ Failed to write ${agent.frontmatter.name}: ${error.message}`);
+    }
+  }
+
+  // Apply permissions after writing files
+  if (targetFormat === 'opencode' && permissionConfig) {
+    try {
+      console.log(`  🔐 Applying OpenCode permissions to ${targetDir}...`);
+      await applyOpenCodePermissionsToDirectory(targetDir, permissionConfig);
+      console.log(`  ✅ Applied OpenCode permissions`);
+    } catch (error: any) {
+      console.log(`  ⚠️  Failed to apply OpenCode permissions: ${error.message}`);
+    }
+  } else if (permissionConfig) {
+    try {
+      console.log(`  🔐 Applying standard permissions to ${targetDir}...`);
+      await applyPermissionInheritance(targetDir, 'subagent', {
+        directories: permissionConfig.osPermissions?.directories || 0o755,
+        agentFiles: permissionConfig.osPermissions?.agentFiles || 0o644,
+        commandFiles: permissionConfig.osPermissions?.commandFiles || 0o644,
+      });
+      console.log(`  ✅ Applied standard permissions`);
+    } catch (error: any) {
+      console.log(`  ⚠️  Failed to apply standard permissions: ${error.message}`);
     }
   }
 
@@ -314,7 +363,8 @@ async function streamAgentConversion(
 async function copyCommands(
   sourcePath: string,
   targetPath: string,
-  projectType: ProjectType
+  projectType: ProjectType,
+  permissionConfig?: any
 ): Promise<number> {
   let fileCount = 0;
   const strategies: AgentSetupStrategy[] = [
@@ -334,7 +384,7 @@ async function copyCommands(
     // Find appropriate strategy and execute
     const strategy = strategies.find((s) => s.shouldHandle(setupDir));
     if (strategy) {
-      const result = await strategy.setup(sourcePath, targetDir, projectType);
+      const result = await strategy.setup(sourcePath, targetDir, projectType, permissionConfig);
 
       if (result.success) {
         fileCount += result.count;
@@ -542,9 +592,25 @@ export async function setup(
 
   console.log(`📦 Setting up ${projectType.name} configuration...\n`);
 
+  // Load OpenCode permission configuration for this repository
+  let opencodePermissions;
+  if (projectType.name === 'opencode' || projectType.name === 'general') {
+    try {
+      opencodePermissions = await loadRepositoryOpenCodeConfig(resolvedPath);
+      console.log(`  📋 Loaded permission configuration`);
+    } catch (error: any) {
+      console.log(`  ⚠️  Using default permissions: ${error.message}`);
+    }
+  }
+
   try {
     // Copy commands and agents
-    const fileCount = await copyCommands(codeflowDir, resolvedPath, projectType);
+    const fileCount = await copyCommands(
+      codeflowDir,
+      resolvedPath,
+      projectType,
+      opencodePermissions
+    );
 
     // Run additional setup if needed
     if (projectType.additionalSetup) {
