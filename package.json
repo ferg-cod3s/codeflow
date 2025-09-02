@@ -1,6 +1,6 @@
 {
   "name": "agentic-cli",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "Modular AI agent system with specialized subagents and commands for enhanced OpenCode capabilities",
   "type": "module",
   "bin": {
