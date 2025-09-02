@@ -50,7 +50,7 @@ for (const platform of platforms) {
 console.log("\nCreating platform packages...");
 for (const platform of platforms) {
   const pkgDir = path.join(distDir, `agentic-${platform.name}`);
-  
+
   // Create package.json for platform package
   const platformPkg = {
     name: `agentic-${platform.name}`,
@@ -58,12 +58,22 @@ for (const platform of platforms) {
     os: [platform.os],
     cpu: [platform.cpu],
   };
-  
+
   await fs.writeFile(
     path.join(pkgDir, "package.json"),
     JSON.stringify(platformPkg, null, 2)
   );
-  
+
+  // Copy agent and command directories to platform package
+  const dirsToCopy = ["agent", "command", "docs"];
+  for (const dir of dirsToCopy) {
+    const srcDir = path.join(process.cwd(), dir);
+    const destDir = path.join(pkgDir, dir);
+    if (await fs.stat(srcDir).catch(() => null)) {
+      await $`cp -r ${srcDir} ${destDir}`;
+    }
+  }
+
   console.log(`  Created ${platform.name} package`);
 }
 
