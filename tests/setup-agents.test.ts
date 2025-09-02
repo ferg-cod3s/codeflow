@@ -43,14 +43,16 @@ describe('Agent Setup Functionality', () => {
       description: 'OpenCode project with MCP integration',
     };
 
-    // Create source directory with test files
-    await fs.mkdir(sourceDir, { recursive: true });
+    // Create source directory with command subdirectory (as expected by CommandSetupStrategy)
+    const commandDir = join(sourceDir, 'command');
+    await fs.mkdir(commandDir, { recursive: true });
+    await fs.mkdir(targetDir, { recursive: true });
     await fs.writeFile(
-      join(sourceDir, 'test-command.md'),
+      join(commandDir, 'test-command.md'),
       '# Test Command\n\nThis is a test command.'
     );
     await fs.writeFile(
-      join(sourceDir, 'another-command.md'),
+      join(commandDir, 'another-command.md'),
       '# Another Command\n\nThis is another test command.'
     );
   });
