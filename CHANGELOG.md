@@ -4,6 +4,7 @@
 ### Bug Fixes
 
 * quote YAML description in programmatic-seo-engineer to resolve OpenCode parsing error ([5464de1](https://github.com/ferg-cod3s/codeflow/commit/5464de126a17b8db3bb9fe67c18457d235c80fae))
+* update setup agent tests to handle command directory structure ([7e382c6](https://github.com/ferg-cod3s/codeflow/commit/7e382c6ca2bd882a78bc4f4d479920a47deec789))
 
 
 ### Features
