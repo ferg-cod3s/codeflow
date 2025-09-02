@@ -29,6 +29,7 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "build": "bun build ./src/cli/index.ts --compile --outfile ./bin/agentic",
-    "publish": "./scripts/publish.ts"
+    "publish": "./scripts/publish.ts",
+    "release": "./scripts/release.sh"
   }
 }

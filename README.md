@@ -7,12 +7,13 @@
 
 ## What It Does
 
+Agentic is a context engineering tool that assists [OpenCode](https://github.com/sst/opencode) in producing reliable software improvements.
 Agentic is a workflow management system for AI-assisted software development using OpenCode. It provides:
 
-1. **Modular AI Agents & Commands**: Pre-configured prompts and specialized subagents that enhance OpenCode's capabilities through task decomposition and context compression
-2. **Structured Development Workflow**: A phased approach (Research → Plan → Execute → Commit → Review) for handling tickets and features
-3. **Knowledge Management**: Organized "thoughts" directory structure for storing architecture docs, research, plans, and reviews
-4. **Distribution System**: A CLI tool to distribute agent/command configurations to projects via `.opencode` directories
+* **Context Management**: Organized "thoughts" directory structure for storing architecture docs, research, plans, and reviews
+* **Modular AI Agents & Commands**: Pre-configured prompts and specialized subagents that enhance [OpenCode](https://github.com/sst/opencode)'s capabilities through task decomposition and context compression
+* **Structured Development Workflow**: A phased approach (Research → Plan → Execute → Commit → Review) for handling tickets and features
+* **Distribution System**: A CLI tool to distribute agent/command configurations to projects via `.opencode` directories
 
 ## Purpose
 
@@ -26,7 +27,7 @@ The system aims to:
 
 ### Installation
 
-#### From npm (Recommended)
+#### From bun/npm (Recommended)
 
 ```bash
 npm install -g agentic-cli
@@ -39,22 +40,31 @@ bun add -g agentic-cli
 ```bash
 git clone https://github.com/Cluster444/agentic.git
 cd agentic
+bun run build
 bun install
 bun link  # Makes 'agentic' command available globally
 ```
 
+### Deploy globally
+
+This will pull all agents/commands into your global `~/.config/opencode/` directory.
+
+```bash
+agentic pull -g
+```
+
 ### Deploy to Your Project
+
+This will pull all agents/commands into a local `.opencode` directory.
 
 ```bash
 cd ~/projects/my-app
 agentic pull
 ```
 
-This creates a `.opencode` directory with all agents and commands.
-
 ### Development Workflow
 
-1. Create a ticket in `thoughts/tickets/`
+1. Use the **ticket** command to work with the agent to build out ticket details
 2. Use the **research** command to analyze the codebase from the ticket details
 3. Use the **plan** command to generate an implementation plan for the ticket using the research
 4. Use the **execute** command to implement the changes
@@ -63,13 +73,8 @@ This creates a `.opencode` directory with all agents and commands.
 
 Between each phase it is important to inspect the output from each phase and ensure that it is actually in alignment with what you want the project do be and the direction it is going. Errors in these files will cascade to the next phase and produce code that is not what you wanted.
 
-In OpenCode, these commands are invoked with a slash: `/research`, `/plan`, `/execute`, etc.
-In most cases you want to provide arguments that may simple by the filename of the ticket, reserach or plan to work with.
-
-## Important Notes
-
-**IMPORTANT**: Between each phase you MUST review the outputs for correctness. This is YOUR job, not the model's. The system may produce working results, but that doesn't mean they are correct for your project. Quality input and review leads to quality output - the more care you put into early research and planning, the smoother the implementation will be!
-
+In OpenCode, these commands are invoked with a slash: `/ticket`, `/research`, `/plan`, `/execute`, etc.
+Most of these commands want the ticket in question that you want to review, exceptions are ticket itself, and commit/review. Ticket you give an actual prompt that describes what you're trying to do, and commit/review are meant to work in the context window that you ran execute in so that it has all of the details of how the process itself went.
 
 ## Documentation
 
