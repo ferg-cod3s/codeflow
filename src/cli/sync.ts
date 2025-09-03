@@ -318,29 +318,18 @@ export async function syncGlobalAgents(options: SyncOptions = {}) {
     }
 
     // Apply permissions after syncing to this format
+    // Permissions are always set in agent file frontmatter; no external config is used
     if (!dryRun && targetFormat === 'opencode') {
       try {
-        console.log(`    🔐 Applying OpenCode permissions to ${targetPath}...`);
+        console.log(`    510 Applying OpenCode permissions to ${targetPath}...`);
         await applyOpenCodePermissionsToDirectory(targetPath, DEFAULT_OPENCODE_PERMISSIONS);
-        console.log(`    ✅ Applied OpenCode permissions`);
+        console.log(`    705 Applied OpenCode permissions`);
       } catch (error: any) {
-        console.log(`    ⚠️  Failed to apply OpenCode permissions: ${error.message}`);
-      }
-    } else if (!dryRun) {
-      try {
-        console.log(`    🔐 Applying standard permissions to ${targetPath}...`);
-        await applyPermissionInheritance(targetPath, 'subagent', {
-          directories: 0o755,
-          agentFiles: 0o644,
-          commandFiles: 0o644,
-        });
-        console.log(`    ✅ Applied standard permissions`);
-      } catch (error: any) {
-        console.log(`    ⚠️  Failed to apply standard permissions: ${error.message}`);
+        console.log(`    0  Failed to apply OpenCode permissions: ${error.message}`);
       }
     }
 
-    console.log(`    ✅ Synced ${syncCount} agents to ${targetFormat}`);
+    console.log(`    705 Synced ${syncCount} agents to ${targetFormat}`);
     totalSynced += syncCount;
   }
 

@@ -51,24 +51,11 @@ export const DEFAULT_OPENCODE_PERMISSIONS: OpenCodePermissionConfig = {
   ],
 };
 
+// Deprecated: No longer load .opencode/permissions.json. All permissions must be set in agent file frontmatter.
 export async function loadRepositoryOpenCodeConfig(
   repoPath: string
 ): Promise<OpenCodePermissionConfig> {
-  const configPath = join(repoPath, '.opencode', 'permissions.json');
-  try {
-    const configContent = await readFile(configPath, 'utf-8');
-    const repoConfig = JSON.parse(configContent);
-    return {
-      ...DEFAULT_OPENCODE_PERMISSIONS,
-      ...repoConfig,
-      repositories: {
-        ...DEFAULT_OPENCODE_PERMISSIONS.repositories,
-        [repoPath]: repoConfig,
-      },
-    };
-  } catch {
-    return DEFAULT_OPENCODE_PERMISSIONS;
-  }
+  return DEFAULT_OPENCODE_PERMISSIONS;
 }
 
 export async function applyOpenCodePermissionsToDirectory(

@@ -12,6 +12,7 @@ import { FormatConverter } from '../conversion/format-converter.js';
 import {
   applyOpenCodePermissionsToDirectory,
   loadRepositoryOpenCodeConfig,
+  DEFAULT_OPENCODE_PERMISSIONS,
 } from '../security/opencode-permissions.js';
 
 // Strategy Pattern for Agent Setup
@@ -592,16 +593,8 @@ export async function setup(
 
   console.log(`📦 Setting up ${projectType.name} configuration...\n`);
 
-  // Load OpenCode permission configuration for this repository
-  let opencodePermissions;
-  if (projectType.name === 'opencode' || projectType.name === 'general') {
-    try {
-      opencodePermissions = await loadRepositoryOpenCodeConfig(resolvedPath);
-      console.log(`  📋 Loaded permission configuration`);
-    } catch (error: any) {
-      console.log(`  ⚠️  Using default permissions: ${error.message}`);
-    }
-  }
+  // Use default OpenCode permission configuration (permissions must be set in agent file frontmatter)
+  let opencodePermissions = DEFAULT_OPENCODE_PERMISSIONS;
 
   try {
     // Copy commands and agents
