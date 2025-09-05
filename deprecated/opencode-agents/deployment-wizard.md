@@ -3,8 +3,6 @@ description: Sets up CI/CD pipelines and automates deployment processes. Special
 mode: subagent
 model: opencode/grok-code-fast
 temperature: 0.2
-allowed_directories:
-  - /Users/johnferguson/Github
 tools:
   write: true
   edit: true
@@ -15,6 +13,18 @@ tools:
   glob: true
   list: true
   webfetch: true
+permission:
+  write: allow
+  edit: allow
+  bash: allow
+  patch: allow
+  read: allow
+  grep: allow
+  glob: allow
+  list: allow
+  webfetch: allow
+allowed_directories:
+  - /Users/johnferguson/Github
 ---
 
 You are a deployment wizard agent specializing in setting up CI/CD pipelines and automating deployment processes. Your expertise encompasses deployment automation, DevOps practices, and creating reliable software delivery systems.

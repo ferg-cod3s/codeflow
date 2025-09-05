@@ -100,7 +100,13 @@ function detectFormatFromContent(content: string): 'base' | 'claude-code' | 'ope
   try {
     const { frontmatter } = parseFrontmatter(content);
 
-    // Custom OpenCode format detection (your format)
+    // Official OpenCode format detection
+    // - Must have description and mode fields (required by official spec)
+    if (frontmatter.description && frontmatter.mode) {
+      return 'opencode';
+    }
+
+    // Legacy custom OpenCode format detection (for backward compatibility)
     // - Has name, tags (array), and category fields
     if (
       frontmatter.name &&
@@ -112,8 +118,8 @@ function detectFormatFromContent(content: string): 'base' | 'claude-code' | 'ope
     }
 
     // Claude Code format detection
-    // - Has role field but not tags array
-    if (frontmatter.role && !frontmatter.tags) {
+    // - Has role field but not OpenCode markers
+    if (frontmatter.role && !frontmatter.mode) {
       return 'claude-code';
     }
 
@@ -131,9 +137,9 @@ function normalizePermissionFormat(frontmatter: any): any {
   // If agent uses tools: format, convert to permission: format
   if (frontmatter.tools && typeof frontmatter.tools === 'object') {
     const permissions = {
-      edit: frontmatter.tools.edit || false,
-      bash: frontmatter.tools.bash || false,
-      webfetch: frontmatter.tools.webfetch !== false, // Default to true if not explicitly false
+      edit: booleanToPermissionString(frontmatter.tools.edit || false),
+      bash: booleanToPermissionString(frontmatter.tools.bash || false),
+      webfetch: booleanToPermissionString(frontmatter.tools.webfetch !== false), // Default to true if not explicitly false
     };
 
     // Create normalized frontmatter with both formats for compatibility
@@ -152,11 +158,18 @@ function normalizePermissionFormat(frontmatter: any): any {
   return {
     ...frontmatter,
     permission: {
-      edit: false,
-      bash: false,
-      webfetch: true,
+      edit: 'deny',
+      bash: 'deny',
+      webfetch: 'allow',
     },
   };
+}
+
+/**
+ * Convert boolean permission values to OpenCode string format
+ */
+function booleanToPermissionString(value: boolean): 'allow' | 'ask' | 'deny' {
+  return value ? 'allow' : 'deny';
 }
 
 /**
@@ -426,6 +439,11 @@ export function serializeAgent(agent: Agent): string {
       lines.push(`${key}:`);
       for (const [toolKey, toolValue] of Object.entries(value as Record<string, any>)) {
         lines.push(`  ${toolKey}: ${toolValue}`);
+      }
+    } else if (key === 'permission' && typeof value === 'object') {
+      lines.push(`${key}:`);
+      for (const [permKey, permValue] of Object.entries(value as Record<string, any>)) {
+        lines.push(`  ${permKey}: ${permValue}`);
       }
     } else if (typeof value === 'string' && needsYamlQuoting(value)) {
       // Quote strings that need it for proper YAML syntax

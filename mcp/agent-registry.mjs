@@ -11,6 +11,25 @@ import { existsSync } from 'node:fs';
  */
 
 /**
+ * Normalize permissions for MCP internal use (convert strings to booleans)
+ */
+function normalizePermissionsForMCP(permissions) {
+  if (!permissions) return undefined;
+
+  const normalized = {};
+  for (const [key, value] of Object.entries(permissions)) {
+    if (typeof value === 'string') {
+      // Convert OpenCode string format to boolean for MCP use
+      normalized[key] = value === 'allow';
+    } else {
+      // Already boolean or other format
+      normalized[key] = Boolean(value);
+    }
+  }
+  return normalized;
+}
+
+/**
  * Parse YAML frontmatter from markdown content
  */
 function parseFrontmatter(content) {
@@ -76,8 +95,18 @@ function parseFrontmatter(content) {
       if (indentLevel <= toolsIndentLevel && trimmedLine !== '') {
         inTools = false;
       } else if (trimmedLine.includes(':')) {
+        // Handle object format: key: value
         const [key, value] = trimmedLine.split(':').map((s) => s.trim());
         frontmatter.tools[key] = value === 'true' ? true : value === 'false' ? false : value;
+        continue;
+      } else if (!trimmedLine.includes(':') && trimmedLine !== '') {
+        // Handle comma-separated string format: read, grep, glob, list
+        const toolsList = trimmedLine.split(',').map((tool) => tool.trim());
+        // Convert to object format for consistency
+        toolsList.forEach((tool) => {
+          frontmatter.tools[tool] = true;
+        });
+        inTools = false; // Single line format, so we're done
         continue;
       }
     }
@@ -141,6 +170,28 @@ async function parseAgentFile(filePath, format) {
 
     const name = path.basename(filePath, '.md');
 
+    // Normalize permissions for internal MCP use (convert strings to booleans)
+    // If no permission field exists but tools field exists, convert tools to permissions
+    let permissionToNormalize = frontmatter.permission;
+    if (!permissionToNormalize && frontmatter.tools) {
+      // Convert tools object to permission format
+      permissionToNormalize = {};
+      if (typeof frontmatter.tools === 'object') {
+        // Object format: { edit: true, bash: false, ... }
+        for (const [tool, enabled] of Object.entries(frontmatter.tools)) {
+          permissionToNormalize[tool] = enabled;
+        }
+      } else if (typeof frontmatter.tools === 'string') {
+        // Comma-separated string format: "read, grep, glob, list"
+        const toolsList = frontmatter.tools.split(',').map((t) => t.trim());
+        toolsList.forEach((tool) => {
+          permissionToNormalize[tool] = true;
+        });
+      }
+    }
+
+    const normalizedPermissions = normalizePermissionsForMCP(permissionToNormalize);
+
     const agent = {
       id: name,
       name,
@@ -151,6 +202,7 @@ async function parseAgentFile(filePath, format) {
       tools: frontmatter.tools || {},
       mode: frontmatter.mode || 'subagent',
       allowedDirectories: frontmatter.allowed_directories || [],
+      permission: normalizedPermissions,
       context: body,
       filePath,
       frontmatter,

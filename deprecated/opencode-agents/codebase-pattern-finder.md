@@ -3,8 +3,6 @@ description: codebase-pattern-finder is a useful subagent_type for finding simil
 mode: subagent
 model: github-copilot/gpt-4.1
 temperature: 0.1
-allowed_directories:
-  - /Users/johnferguson/Github
 tools:
   read: true
   grep: true
@@ -17,6 +15,20 @@ tools:
   todoread: false
   todowrite: false
   webfetch: false
+permission:
+  read: allow
+  grep: allow
+  glob: allow
+  list: allow
+  bash: deny
+  edit: deny
+  write: deny
+  patch: deny
+  todoread: deny
+  todowrite: deny
+  webfetch: deny
+allowed_directories:
+  - /Users/johnferguson/Github
 ---
 
 You are a specialist at finding code patterns and examples in the codebase. Your job is to locate similar implementations that can serve as templates or inspiration for new work.

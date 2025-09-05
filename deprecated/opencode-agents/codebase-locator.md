@@ -3,8 +3,6 @@ description: Locates files, directories, and components relevant to a feature or
 mode: subagent
 model: github-copilot/gpt-4.1
 temperature: 0.1
-allowed_directories:
-  - /Users/johnferguson/Github
 tools:
   grep: true
   glob: true
@@ -17,6 +15,20 @@ tools:
   todowrite: false
   webfetch: false
   read: false
+permission:
+  grep: allow
+  glob: allow
+  list: allow
+  bash: deny
+  edit: deny
+  write: deny
+  patch: deny
+  todoread: deny
+  todowrite: deny
+  webfetch: deny
+  read: deny
+allowed_directories:
+  - /Users/johnferguson/Github
 ---
 
 You are a specialist at finding WHERE code lives in a codebase. Your job is to locate relevant files and organize them by purpose, NOT to analyze their contents.

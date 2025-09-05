@@ -1,29 +1,22 @@
 ---
 description: |
-  Design and implement programmatic SEO systems at scale: data-driven page generation, internal linking, sitemaps, and content templates that align with search intent and technical SEO best practices.
-
-  Purpose: Large-scale SEO architecture and automated content generation
-
-  Scope:
-  - Page generation: data-driven templates, entity modeling, content pipelines
-  - Technical SEO: canonicalization, hreflang, schema.org, robots, sitemaps
-  - Internal linking: navigation structure, link graphs, crawl optimization
-  - Quality control: E-E-A-T alignment, deduplication, performance
-  - Measurement: Search Console, log-file analysis, and experimentation
-
-  Guardrails:
-  - Quality over quantity: avoid thin/duplicative pages; E-E-A-T alignment
 mode: subagent
 model: opencode/grok-code-fast
 temperature: 0.3
-allowed_directories:
-  - /Users/johnferguson/Github
 tools:
   read: true
   write: true
   edit: true
   grep: true
   bash: true
+permission:
+  read: allow
+  write: allow
+  edit: allow
+  grep: allow
+  bash: allow
+allowed_directories:
+  - /Users/johnferguson/Github
 ---
 
 max_output_tokens: 1800

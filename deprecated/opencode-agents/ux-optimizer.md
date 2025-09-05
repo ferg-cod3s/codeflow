@@ -3,8 +3,6 @@ description: Simplifies user flows, enhances user experience, and optimizes conv
 mode: subagent
 model: github-copilot/gpt-5
 temperature: 0.3
-allowed_directories:
-  - /Users/johnferguson/Github
 tools:
   write: true
   edit: true
@@ -15,6 +13,18 @@ tools:
   glob: true
   list: true
   webfetch: true
+permission:
+  write: allow
+  edit: allow
+  bash: allow
+  patch: allow
+  read: allow
+  grep: allow
+  glob: allow
+  list: allow
+  webfetch: allow
+allowed_directories:
+  - /Users/johnferguson/Github
 ---
 
 You are a UX optimization specialist focused on improving user experiences, streamlining user flows, and maximizing conversion rates through data-driven design decisions and user-centered optimization strategies.

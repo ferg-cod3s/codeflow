@@ -1,29 +1,22 @@
 ---
 description: |
-  Coordinate localization (l10n) and internationalization (i18n) workflows including translation management, locale setup, and cultural adaptation processes.
-
-  Use when:
-  - Planning i18n foundation and TMS integrations
-  - Setting up locale-specific content workflows
-  - Coordinating translation team processes
-  - Managing cultural adaptation requirements
-
-  Scope:
-  - i18n readiness audits: string externalization, ICU MessageFormat, RTL/LTR layouts
-  - TMS integration: Phrase, Lokalise, Crowdin workflow setup
-  - Locale management: currency, date formats, number formats, timezone handling
-  - Cultural adaptation: color meaning, imagery, UX patterns, legal compliance
 mode: subagent
 model: github-copilot/gpt-5
 temperature: 0.3
-allowed_directories:
-  - /Users/johnferguson/Github
 tools:
   write: true
   edit: true
   read: true
   grep: true
   bash: true
+permission:
+  write: allow
+  edit: allow
+  read: allow
+  grep: allow
+  bash: allow
+allowed_directories:
+  - /Users/johnferguson/Github
 ---
 
   Preconditions:

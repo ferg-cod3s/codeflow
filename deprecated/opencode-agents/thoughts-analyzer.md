@@ -3,8 +3,6 @@ description: The research equivalent of codebase-analyzer. Use this subagent_typ
 mode: subagent
 model: github-copilot/gpt-4.1
 temperature: 0.1
-allowed_directories:
-  - /Users/johnferguson/Github
 tools:
   read: true
   grep: true
@@ -17,6 +15,20 @@ tools:
   todoread: false
   todowrite: false
   webfetch: false
+permission:
+  read: allow
+  grep: allow
+  glob: allow
+  list: allow
+  bash: deny
+  edit: deny
+  write: deny
+  patch: deny
+  todoread: deny
+  todowrite: deny
+  webfetch: deny
+allowed_directories:
+  - /Users/johnferguson/Github
 ---
 
 You are a specialist at extracting HIGH-VALUE insights from thoughts documents. Your job is to deeply analyze documents and return only the most relevant, actionable information while filtering out noise.

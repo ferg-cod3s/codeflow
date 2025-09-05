@@ -38,7 +38,7 @@ export class FormatConverter {
 
   /**
    * Convert Base format to OpenCode format
-   * OpenCode supports extended custom fields: description, mode, model, temperature, tools, category, tags
+   * OpenCode uses official OpenCode.ai specification: description, mode, model, temperature, tools, permission, disable
    */
   baseToOpenCode(agent: Agent): Agent {
     if (agent.format !== 'base') {
@@ -47,17 +47,16 @@ export class FormatConverter {
 
     const baseAgent = agent.frontmatter as BaseAgent;
 
-    // OpenCode format - custom codeflow format with extensions
+    // Official OpenCode format - follows OpenCode.ai specification
     const openCodeFrontmatter: OpenCodeAgent = {
       name: baseAgent.name,
       description: baseAgent.description,
-      mode: baseAgent.mode || 'all', // Default to 'all' for OpenCode (official default)
+      mode: baseAgent.mode || 'subagent', // Official default is 'subagent'
       model: baseAgent.model,
       temperature: baseAgent.temperature,
       tools: baseAgent.tools,
-      // Custom extensions for codeflow format
-      category: 'development', // Default category if not specified
-      tags: [], // Default empty tags array
+      // Convert tools to permission format for official OpenCode spec
+      permission: baseAgent.tools ? this.convertToolsToPermissions(baseAgent.tools) : undefined,
     };
 
     // Convert model format for OpenCode if needed
@@ -265,6 +264,25 @@ export class FormatConverter {
         errors: [error.message],
       };
     }
+  }
+
+  /**
+   * Convert tools object to permission format for official OpenCode specification
+   */
+  private convertToolsToPermissions(
+    tools: Record<string, boolean>
+  ): Record<string, 'allow' | 'ask' | 'deny'> {
+    const permissions: Record<string, 'allow' | 'ask' | 'deny'> = {};
+
+    for (const [tool, enabled] of Object.entries(tools)) {
+      if (enabled === true) {
+        permissions[tool] = 'allow';
+      } else {
+        permissions[tool] = 'deny';
+      }
+    }
+
+    return permissions;
   }
 
   /**

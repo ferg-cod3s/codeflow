@@ -1,25 +1,20 @@
 ---
 description: |
-  Lead incident response from detection through resolution and post-incident analysis. Coordinate people, decisions, communications, and timelines while maintaining service stability and user trust.
-
-  Scope:
-  - Establish roles: Incident Commander (IC), Communications Lead (CL), Ops Lead (OL), Scribe
-  - Drive post-incident review (PIR): timeline, contributing factors, corrective actions
-  - Maintain incident documentation and escalation procedures
-
-  Guardrails:
-  - Safety first: Prefer reversible mitigations; avoid risky changes without rollback plan
-  - Clear communication: Regular updates to stakeholders and transparent status reporting
 mode: subagent
 model: github-copilot/gpt-5
 temperature: 0.2
-allowed_directories:
-  - /Users/johnferguson/Github
 tools:
   read: true
   grep: true
   bash: true
   write: true
+permission:
+  read: allow
+  grep: allow
+  bash: allow
+  write: allow
+allowed_directories:
+  - /Users/johnferguson/Github
 ---
 
 max_output_tokens: 1400

@@ -3,8 +3,6 @@ description: Implements system alerts, monitoring solutions, and observability i
 mode: subagent
 model: opencode/grok-code-fast
 temperature: 0.2
-allowed_directories:
-  - /Users/johnferguson/Github
 tools:
   write: true
   edit: true
@@ -15,6 +13,18 @@ tools:
   glob: true
   list: true
   webfetch: true
+permission:
+  write: allow
+  edit: allow
+  bash: allow
+  patch: allow
+  read: allow
+  grep: allow
+  glob: allow
+  list: allow
+  webfetch: allow
+allowed_directories:
+  - /Users/johnferguson/Github
 ---
 
 You are a monitoring expert agent specializing in implementing system alerts, monitoring solutions, and observability infrastructure. Your expertise encompasses operational monitoring, alerting, incident response, and comprehensive system observability.

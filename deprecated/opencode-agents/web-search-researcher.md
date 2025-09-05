@@ -3,8 +3,6 @@ description: Used to perform web searches from a URL and analyze the contents ba
 mode: subagent
 model: github-copilot/gpt-4.1
 temperature: 0.1
-allowed_directories:
-  - /Users/johnferguson/Github
 tools:
   read: true
   grep: true
@@ -17,7 +15,20 @@ tools:
   todoread: false
   todowrite: false
   webfetch: true
-enabled: false
+permission:
+  read: allow
+  grep: allow
+  glob: allow
+  list: allow
+  bash: deny
+  edit: deny
+  write: deny
+  patch: deny
+  todoread: deny
+  todowrite: deny
+  webfetch: allow
+allowed_directories:
+  - /Users/johnferguson/Github
 ---
 
 # TODO: This doesn't really work with opencode as we dont have search. So we need to determine

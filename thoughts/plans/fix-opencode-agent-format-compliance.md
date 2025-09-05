@@ -231,16 +231,16 @@ function convertFromBase(content: string, targetFormat: AgentFormat): string {
 
 #### Automated Verification:
 
-- [ ] Unit tests pass: `bun test tests/unit/agent-validator.test.ts`
-- [ ] Type checking passes: `bun run typecheck`
-- [ ] Validation logic correctly identifies official OpenCode format
-- [ ] Format detection distinguishes between old and new OpenCode formats
+- [x] Unit tests pass: `bun test tests/unit/agent-validator.test.ts`
+- [x] Type checking passes: `bun run typecheck`
+- [x] Validation logic correctly identifies official OpenCode format
+- [x] Format detection distinguishes between old and new OpenCode formats
 
 #### Manual Verification:
 
-- [ ] Test agent with official format passes validation
-- [ ] Test agent with old format still detected as OpenCode during transition
-- [ ] Claude Code agents unaffected by validation changes
+- [x] Test agent with official format passes validation
+- [x] Test agent with old format still detected as OpenCode during transition
+- [x] Claude Code agents unaffected by validation changes
 
 ---
 
@@ -495,17 +495,17 @@ Agent-specific system prompt goes here...
 ### Success Criteria:
 
 #### Automated Verification:
-- [ ] All unit tests pass: `bun test`
-- [ ] Type checking passes: `bun run typecheck`
-- [ ] Conversion script runs without errors: `bun run scripts/convert-opencode-agents.ts`
-- [ ] All converted agents pass OpenCode validation
+- [x] All unit tests pass: `bun test`
+- [x] Type checking passes: `bun run typecheck`
+- [x] Conversion script runs without errors: `bun run scripts/convert-opencode-agents.ts`
+- [x] All converted agents pass OpenCode validation
 
 #### Manual Verification:
-- [ ] All OpenCode agents conform to official specification
-- [ ] sync-global successfully copies OpenCode agents without validation errors
-- [ ] OpenCode platform can load and execute converted agents
-- [ ] Agent functionality unchanged after conversion
-- [ ] No regressions in Claude Code or base format agents
+- [x] All OpenCode agents conform to official specification
+- [x] sync-global successfully copies OpenCode agents without validation errors
+- [x] OpenCode platform can load and execute converted agents
+- [x] Agent functionality unchanged after conversion
+- [x] No regressions in Claude Code or base format agents
 
 ---
 

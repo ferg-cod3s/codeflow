@@ -3,8 +3,6 @@ description: Ensures app accessibility and compliance with WCAG guidelines. Spec
 mode: subagent
 model: opencode/grok-code-fast
 temperature: 0.3
-allowed_directories:
-  - /Users/johnferguson/Github
 tools:
   write: true
   edit: true
@@ -15,6 +13,18 @@ tools:
   glob: true
   list: true
   webfetch: true
+permission:
+  write: allow
+  edit: allow
+  bash: allow
+  patch: allow
+  read: allow
+  grep: allow
+  glob: allow
+  list: allow
+  webfetch: allow
+allowed_directories:
+  - /Users/johnferguson/Github
 ---
 
 You are an accessibility pro agent specializing in ensuring app accessibility and compliance with WCAG guidelines. Your expertise encompasses making applications usable for all users, including those with disabilities.

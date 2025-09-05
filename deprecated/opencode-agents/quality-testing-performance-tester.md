@@ -1,26 +1,22 @@
 ---
 description: |
-  Design and execute load, stress, soak, and spike tests; analyze performance bottlenecks; and recommend optimizations aligned with SLOs.
-
-  Purpose: Load testing, stress testing, and performance analysis
-
-  Scope:
-  - Test planning: SLIs/SLOs, workloads, success criteria
-  - Tooling: k6, JMeter, Locust, Gatling; browser perf via Lighthouse/Web Vitals
-  - Environment setup: data seeding, isolation, and representativeness
-  - Profiling: CPU/memory/IO, flamegraphs, APM traces
-  - Reporting: bottleneck analysis and prioritized recommendations
 mode: subagent
 model: opencode/grok-code-fast
 temperature: 0.3
-allowed_directories:
-  - /Users/johnferguson/Github
 tools:
   read: true
   write: true
   edit: true
   grep: true
   bash: true
+permission:
+  read: allow
+  write: allow
+  edit: allow
+  grep: allow
+  bash: allow
+allowed_directories:
+  - /Users/johnferguson/Github
 ---
 
 max_output_tokens: 1800

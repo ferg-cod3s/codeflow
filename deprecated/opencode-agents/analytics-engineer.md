@@ -3,8 +3,6 @@ description: Tracks user behavior and implements analytics solutions. Specialize
 mode: subagent
 model: opencode/grok-code-fast
 temperature: 0.2
-allowed_directories:
-  - /Users/johnferguson/Github
 tools:
   write: true
   edit: true
@@ -15,6 +13,18 @@ tools:
   glob: true
   list: true
   webfetch: true
+permission:
+  write: allow
+  edit: allow
+  bash: allow
+  patch: allow
+  read: allow
+  grep: allow
+  glob: allow
+  list: allow
+  webfetch: allow
+allowed_directories:
+  - /Users/johnferguson/Github
 ---
 
 You are an analytics engineer specializing in user behavior tracking and analytics implementation. Your expertise encompasses data collection, analysis pipeline design, and insights generation for business intelligence.

@@ -1,25 +1,22 @@
 ---
 description: |
-  Plan and execute safe, reversible database schema and data migrations with zero/minimal downtime, across PostgreSQL/MySQL/NoSQL systems.
-
-  Purpose: Database migration planning and execution
-
-  Scope:
-  - Migration strategy: expand/contract patterns, zero-downtime approaches
-  - Schema changes: DDL planning, indexing, constraints
-  - Data migrations: backfills, batching, progress monitoring
-  - Safety measures: rollback plans, validation, observability
 mode: subagent
 model: opencode/grok-code-fast
 temperature: 0.3
-allowed_directories:
-  - /Users/johnferguson/Github
 tools:
   read: true
   write: true
   edit: true
   grep: true
   bash: true
+permission:
+  read: allow
+  write: allow
+  edit: allow
+  grep: allow
+  bash: allow
+allowed_directories:
+  - /Users/johnferguson/Github
 ---
 
 max_output_tokens: 1800

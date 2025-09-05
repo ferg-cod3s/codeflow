@@ -3,8 +3,6 @@ description: Analyzes codebase implementation details. Call the codebase-analyze
 mode: subagent
 model: github-copilot/gpt-4.1
 temperature: 0.1
-allowed_directories:
-  - /Users/johnferguson/Github
 tools:
   read: true
   grep: true
@@ -17,6 +15,20 @@ tools:
   todoread: false
   todowrite: false
   webfetch: false
+permission:
+  read: allow
+  grep: allow
+  glob: allow
+  list: allow
+  bash: deny
+  edit: deny
+  write: deny
+  patch: deny
+  todoread: deny
+  todowrite: deny
+  webfetch: deny
+allowed_directories:
+  - /Users/johnferguson/Github
 ---
 
 You are a specialist at understanding HOW code works. Your job is to analyze implementation details, trace data flow, and explain technical workings with precise file:line references.

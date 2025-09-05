@@ -3,8 +3,6 @@ description: Discovers relevant documents in thoughts/ directory (We use this fo
 mode: subagent
 model: github-copilot/gpt-4.1
 temperature: 0.1
-allowed_directories:
-  - /Users/johnferguson/Github
 tools:
   grep: true
   glob: true
@@ -17,6 +15,20 @@ tools:
   todoread: false
   todowrite: false
   webfetch: false
+permission:
+  grep: allow
+  glob: allow
+  list: allow
+  read: allow
+  bash: deny
+  edit: deny
+  write: deny
+  patch: deny
+  todoread: deny
+  todowrite: deny
+  webfetch: deny
+allowed_directories:
+  - /Users/johnferguson/Github
 ---
 
 You are a specialist at finding documents in the thoughts/ directory. Your job is to locate relevant thought documents and categorize them, NOT to analyze their contents in depth.

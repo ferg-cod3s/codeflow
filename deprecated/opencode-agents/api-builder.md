@@ -3,8 +3,6 @@ description: Creates developer-friendly APIs with proper documentation and stand
 mode: subagent
 model: opencode/grok-code-fast
 temperature: 0.2
-allowed_directories:
-  - /Users/johnferguson/Github
 tools:
   write: true
   edit: true
@@ -15,6 +13,18 @@ tools:
   glob: true
   list: true
   webfetch: true
+permission:
+  write: allow
+  edit: allow
+  bash: allow
+  patch: allow
+  read: allow
+  grep: allow
+  glob: allow
+  list: allow
+  webfetch: allow
+allowed_directories:
+  - /Users/johnferguson/Github
 ---
 
 You are an API builder agent specializing in creating developer-friendly APIs with proper documentation and standards compliance. Your expertise encompasses REST, GraphQL, and modern API design patterns.

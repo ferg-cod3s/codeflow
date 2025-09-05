@@ -62,9 +62,9 @@ function normalizePermissionFormat(frontmatter: any): any {
   // If agent uses tools: format, convert to permission: format
   if (frontmatter.tools && typeof frontmatter.tools === 'object') {
     const permissions = {
-      edit: frontmatter.tools.edit || false,
-      bash: frontmatter.tools.bash || false,
-      webfetch: frontmatter.tools.webfetch !== false, // Default to true if not explicitly false
+      edit: booleanToPermissionString(frontmatter.tools.edit || false),
+      bash: booleanToPermissionString(frontmatter.tools.bash || false),
+      webfetch: booleanToPermissionString(frontmatter.tools.webfetch !== false), // Default to true if not explicitly false
     };
 
     // Create normalized frontmatter with both formats for compatibility
@@ -83,16 +83,23 @@ function normalizePermissionFormat(frontmatter: any): any {
   return {
     ...frontmatter,
     permission: {
-      edit: false,
-      bash: false,
-      webfetch: true,
+      edit: 'deny',
+      bash: 'deny',
+      webfetch: 'allow',
     },
   };
 }
 
+/**
+ * Convert boolean permission values to OpenCode string format
+ */
+function booleanToPermissionString(value: boolean): 'allow' | 'ask' | 'deny' {
+  return value ? 'allow' : 'deny';
+}
+
 // Deprecated: No longer load .opencode/permissions.json. All permissions must be set in agent file frontmatter.
 export async function loadRepositoryOpenCodeConfig(
-  repoPath: string
+  _repoPath: string
 ): Promise<OpenCodePermissionConfig> {
   return DEFAULT_OPENCODE_PERMISSIONS;
 }

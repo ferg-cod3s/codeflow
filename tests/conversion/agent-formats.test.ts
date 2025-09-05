@@ -1,7 +1,7 @@
-import { test, expect, describe, beforeAll, afterAll } from "bun:test";
-import path from "path";
-import fs from "fs/promises";
-import os from "os";
+import { test, expect, describe, beforeAll, afterAll } from 'bun:test';
+import path from 'path';
+import fs from 'fs/promises';
+import os from 'os';
 import {
   parseAgentFile,
   parseAgentsFromDirectory,
@@ -9,21 +9,21 @@ import {
   Agent,
   BaseAgent,
   ClaudeCodeAgent,
-  OpenCodeAgent
-} from "../../src/conversion/agent-parser";
+  OpenCodeAgent,
+} from '../../src/conversion/agent-parser';
 
-describe("Agent Format Parsing", () => {
+describe('Agent Format Parsing', () => {
   let tempDir: string;
 
   beforeAll(async () => {
-    tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "codeflow-agent-test-"));
+    tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'codeflow-agent-test-'));
   });
 
   afterAll(async () => {
     await fs.rm(tempDir, { recursive: true, force: true });
   });
 
-  test("parses basic agent format correctly", async () => {
+  test('parses basic agent format correctly', async () => {
     const testAgent = `---
 description: Test agent for parsing
 mode: subagent
@@ -43,26 +43,26 @@ This is a test agent for parsing validation.
 Follow these steps to test the agent.
 `;
 
-    const agentPath = path.join(tempDir, "test-agent.md");
+    const agentPath = path.join(tempDir, 'test-agent.md');
     await fs.writeFile(agentPath, testAgent);
 
-    const agent = await parseAgentFile(agentPath, "base");
+    const agent = await parseAgentFile(agentPath, 'base');
 
-    expect(agent.name).toBe("test-agent");
-    expect(agent.format).toBe("base");
-    expect(agent.frontmatter.description).toBe("Test agent for parsing");
-    expect(agent.frontmatter.mode).toBe("subagent");
-    expect(agent.frontmatter.model).toBe("gpt-4");
+    expect(agent.name).toBe('test-agent');
+    expect(agent.format).toBe('base');
+    expect(agent.frontmatter.description).toBe('Test agent for parsing');
+    expect(agent.frontmatter.mode).toBe('subagent');
+    expect(agent.frontmatter.model).toBe('gpt-4');
     expect(agent.frontmatter.temperature).toBe(0.7);
     expect(agent.frontmatter.tools).toEqual({
       read_file: true,
-      write_file: false
+      write_file: false,
     });
-    expect(agent.content).toContain("# Test Agent");
+    expect(agent.content).toContain('# Test Agent');
     expect(agent.filePath).toBe(agentPath);
   });
 
-  test("parses Claude Code agent format", async () => {
+  test('parses Claude Code agent format', async () => {
     const claudeAgent = `---
 description: Claude Code specific agent
 mode: primary
@@ -75,17 +75,17 @@ temperature: 0.3
 This agent is specific to Claude Code format.
 `;
 
-    const agentPath = path.join(tempDir, "claude-agent.md");
+    const agentPath = path.join(tempDir, 'claude-agent.md');
     await fs.writeFile(agentPath, claudeAgent);
 
-    const agent = await parseAgentFile(agentPath, "claude-code");
+    const agent = await parseAgentFile(agentPath, 'claude-code');
 
-    expect(agent.format).toBe("claude-code");
-    expect(agent.frontmatter.model).toBe("claude-3-5-sonnet");
+    expect(agent.format).toBe('claude-code');
+    expect(agent.frontmatter.model).toBe('claude-3-5-sonnet');
     expect(agent.frontmatter.temperature).toBe(0.3);
   });
 
-  test("parses OpenCode agent format with additional fields", async () => {
+  test('parses OpenCode agent format with additional fields', async () => {
     const openCodeAgent = `---
 description: OpenCode specific agent
 mode: subagent
@@ -103,30 +103,34 @@ constraints: Limited to read-only operations
 This agent has OpenCode-specific properties.
 `;
 
-    const agentPath = path.join(tempDir, "opencode-agent.md");
+    const agentPath = path.join(tempDir, 'opencode-agent.md');
     await fs.writeFile(agentPath, openCodeAgent);
 
-    const agent = await parseAgentFile(agentPath, "opencode");
+    const agent = await parseAgentFile(agentPath, 'opencode');
 
-    expect(agent.format).toBe("opencode");
-    expect((agent.frontmatter as OpenCodeAgent).usage).toBe("Use this agent for testing");
-    expect((agent.frontmatter as OpenCodeAgent).do_not_use_when).toBe("Never use this agent when testing is not needed");
-    expect((agent.frontmatter as OpenCodeAgent).escalation).toBe("escalate to senior-agent if issues arise");
+    expect(agent.format).toBe('opencode');
+    expect((agent.frontmatter as OpenCodeAgent).usage).toBe('Use this agent for testing');
+    expect((agent.frontmatter as OpenCodeAgent).do_not_use_when).toBe(
+      'Never use this agent when testing is not needed'
+    );
+    expect((agent.frontmatter as OpenCodeAgent).escalation).toBe(
+      'escalate to senior-agent if issues arise'
+    );
   });
 
-  test("handles missing frontmatter gracefully", async () => {
+  test('handles missing frontmatter gracefully', async () => {
     const invalidAgent = `# Agent Without Frontmatter
 
 This agent has no YAML frontmatter.
 `;
 
-    const agentPath = path.join(tempDir, "invalid-agent.md");
+    const agentPath = path.join(tempDir, 'invalid-agent.md');
     await fs.writeFile(agentPath, invalidAgent);
 
-    await expect(parseAgentFile(agentPath, "base")).rejects.toThrow();
+    await expect(parseAgentFile(agentPath, 'base')).rejects.toThrow();
   });
 
-  test("handles malformed frontmatter gracefully", async () => {
+  test('handles malformed frontmatter gracefully', async () => {
     const malformedAgent = `---
 description: Test agent
 invalid yaml: [unclosed array
@@ -135,15 +139,15 @@ invalid yaml: [unclosed array
 # Malformed Agent
 `;
 
-    const agentPath = path.join(tempDir, "malformed-agent.md");
+    const agentPath = path.join(tempDir, 'malformed-agent.md');
     await fs.writeFile(agentPath, malformedAgent);
 
     // Should still parse but might have issues with the malformed YAML
-    const agent = await parseAgentFile(agentPath, "base");
-    expect(agent.frontmatter.description).toBe("Test agent");
+    const agent = await parseAgentFile(agentPath, 'base');
+    expect(agent.frontmatter.description).toBe('Test agent');
   });
 
-  test("requires description field", async () => {
+  test('requires description field', async () => {
     const agentWithoutDescription = `---
 mode: subagent
 model: gpt-4
@@ -152,13 +156,15 @@ model: gpt-4
 # Agent Without Description
 `;
 
-    const agentPath = path.join(tempDir, "no-description.md");
+    const agentPath = path.join(tempDir, 'no-description.md');
     await fs.writeFile(agentPath, agentWithoutDescription);
 
-    await expect(parseAgentFile(agentPath, "base")).rejects.toThrow("Agent must have a description field");
+    await expect(parseAgentFile(agentPath, 'base')).rejects.toThrow(
+      'Agent must have a description field'
+    );
   });
 
-  test("parses complex tools configuration", async () => {
+  test('parses complex tools configuration', async () => {
     const complexToolsAgent = `---
 description: Agent with complex tools
 tools:
@@ -171,20 +177,20 @@ tools:
 # Complex Tools Agent
 `;
 
-    const agentPath = path.join(tempDir, "complex-tools.md");
+    const agentPath = path.join(tempDir, 'complex-tools.md');
     await fs.writeFile(agentPath, complexToolsAgent);
 
-    const agent = await parseAgentFile(agentPath, "base");
+    const agent = await parseAgentFile(agentPath, 'base');
 
     expect(agent.frontmatter.tools).toEqual({
       web_search: true,
       file_operations: false,
       database_query: true,
-      api_calls: false
+      api_calls: false,
     });
   });
 
-  test("handles different data types in frontmatter", async () => {
+  test('handles different data types in frontmatter', async () => {
     const typesAgent = `---
 description: "Quoted string"
 temperature: 0.5
@@ -197,58 +203,58 @@ model: unquoted-string
 # Data Types Agent
 `;
 
-    const agentPath = path.join(tempDir, "types-agent.md");
+    const agentPath = path.join(tempDir, 'types-agent.md');
     await fs.writeFile(agentPath, typesAgent);
 
-    const agent = await parseAgentFile(agentPath, "base");
+    const agent = await parseAgentFile(agentPath, 'base');
 
-    expect(agent.frontmatter.description).toBe("Quoted string");
+    expect(agent.frontmatter.description).toBe('Quoted string');
     expect(agent.frontmatter.temperature).toBe(0.5);
     expect(agent.frontmatter.max_tokens).toBe(1000);
     expect(agent.frontmatter.enabled).toBe(true);
     expect(agent.frontmatter.disabled).toBe(false);
-    expect(agent.frontmatter.model).toBe("unquoted-string");
+    expect(agent.frontmatter.model).toBe('unquoted-string');
   });
 });
 
-describe("Agent Directory Parsing", () => {
+describe('Agent Directory Parsing', () => {
   let testDir: string;
 
   beforeAll(async () => {
-    testDir = await fs.mkdtemp(path.join(os.tmpdir(), "codeflow-dir-test-"));
+    testDir = await fs.mkdtemp(path.join(os.tmpdir(), 'codeflow-dir-test-'));
 
     // Create test agents
     const agents = [
       {
-        name: "valid-agent-1.md",
+        name: 'valid-agent-1.md',
         content: `---
 description: First valid agent
 mode: subagent
 ---
 # Agent 1
-`
+`,
       },
       {
-        name: "valid-agent-2.md",
+        name: 'valid-agent-2.md',
         content: `---
 description: Second valid agent
 mode: primary
 ---
 # Agent 2
-`
+`,
       },
       {
-        name: "invalid-agent.md",
-        content: `# Agent without frontmatter`
+        name: 'invalid-agent.md',
+        content: `# Agent without frontmatter`,
       },
       {
-        name: "README.md",
-        content: `# README - should be ignored`
+        name: 'README.md',
+        content: `# README - should be ignored`,
       },
       {
-        name: "not-markdown.txt",
-        content: `This is not markdown`
-      }
+        name: 'not-markdown.txt',
+        content: `This is not markdown`,
+      },
     ];
 
     for (const agent of agents) {
@@ -260,37 +266,37 @@ mode: primary
     await fs.rm(testDir, { recursive: true, force: true });
   });
 
-  test("parses all valid agents from directory", async () => {
-    const result = await parseAgentsFromDirectory(testDir, "base");
+  test('parses all valid agents from directory', async () => {
+    const result = await parseAgentsFromDirectory(testDir, 'base');
 
     expect(result.agents).toHaveLength(2);
     expect(result.errors).toHaveLength(1); // invalid-agent.md should error
 
-    const agentNames = result.agents.map(a => a.name).sort();
-    expect(agentNames).toEqual(["valid-agent-1", "valid-agent-2"]);
+    const agentNames = result.agents.map((a) => a.name).sort();
+    expect(agentNames).toEqual(['valid-agent-1', 'valid-agent-2']);
 
     // Should ignore README.md and .txt files
-    expect(result.agents.find(a => a.name === "README")).toBeUndefined();
-    expect(result.agents.find(a => a.name === "not-markdown")).toBeUndefined();
+    expect(result.agents.find((a) => a.name === 'README')).toBeUndefined();
+    expect(result.agents.find((a) => a.name === 'not-markdown')).toBeUndefined();
   });
 
-  test("handles non-existent directory", async () => {
-    const nonExistentDir = path.join(testDir, "does-not-exist");
-    const result = await parseAgentsFromDirectory(nonExistentDir, "base");
+  test('handles non-existent directory', async () => {
+    const nonExistentDir = path.join(testDir, 'does-not-exist');
+    const result = await parseAgentsFromDirectory(nonExistentDir, 'base');
 
     expect(result.agents).toHaveLength(0);
     expect(result.errors).toHaveLength(0);
   });
 
-  test("handles directory read errors", async () => {
+  test('handles directory read errors', async () => {
     // Create a directory and then remove read permissions (Unix only)
-    const restrictedDir = path.join(testDir, "restricted");
+    const restrictedDir = path.join(testDir, 'restricted');
     await fs.mkdir(restrictedDir);
 
-    if (process.platform !== "win32") {
+    if (process.platform !== 'win32') {
       await fs.chmod(restrictedDir, 0o000); // No permissions
 
-      const result = await parseAgentsFromDirectory(restrictedDir, "base");
+      const result = await parseAgentsFromDirectory(restrictedDir, 'base');
 
       expect(result.agents).toHaveLength(0);
       expect(result.errors.length).toBeGreaterThan(0);
@@ -301,73 +307,73 @@ mode: primary
   });
 });
 
-describe("Agent Serialization", () => {
-  test("serializes agent back to markdown format", () => {
+describe('Agent Serialization', () => {
+  test('serializes agent back to markdown format', () => {
     const agent: Agent = {
-      name: "test-agent",
-      format: "base",
+      name: 'test-agent',
+      format: 'base',
       frontmatter: {
-        name: "test-agent",
-        description: "Test agent for serialization",
-        mode: "subagent",
-        model: "gpt-4",
+        name: 'test-agent',
+        description: 'Test agent for serialization',
+        mode: 'subagent',
+        model: 'gpt-4',
         temperature: 0.7,
         tools: {
           read_file: true,
-          write_file: false
-        }
+          write_file: false,
+        },
       },
-      content: "# Test Agent\n\nThis is the content.",
-      filePath: "/path/to/test-agent.md"
+      content: '# Test Agent\n\nThis is the content.',
+      filePath: '/path/to/test-agent.md',
     };
 
     const serialized = serializeAgent(agent);
 
-    expect(serialized).toContain("---");
-    expect(serialized).toContain("description: Test agent for serialization");
-    expect(serialized).toContain("mode: subagent");
-    expect(serialized).toContain("model: gpt-4");
-    expect(serialized).toContain("temperature: 0.7");
-    expect(serialized).toContain("tools:");
-    expect(serialized).toContain("  read_file: true");
-    expect(serialized).toContain("  write_file: false");
-    expect(serialized).toContain("# Test Agent");
-    expect(serialized).toContain("This is the content.");
+    expect(serialized).toContain('---');
+    expect(serialized).toContain('description: Test agent for serialization');
+    expect(serialized).toContain('mode: subagent');
+    expect(serialized).toContain('model: gpt-4');
+    expect(serialized).toContain('temperature: 0.7');
+    expect(serialized).toContain('tools:');
+    expect(serialized).toContain('  read_file: true');
+    expect(serialized).toContain('  write_file: false');
+    expect(serialized).toContain('# Test Agent');
+    expect(serialized).toContain('This is the content.');
   });
 
-  test("handles simple frontmatter without tools", () => {
+  test('handles simple frontmatter without tools', () => {
     const simpleAgent: Agent = {
-      name: "simple-agent",
-      format: "base",
+      name: 'simple-agent',
+      format: 'base',
       frontmatter: {
-        name: "simple-agent",
-        description: "Simple test agent",
-        mode: "primary"
+        name: 'simple-agent',
+        description: 'Simple test agent',
+        mode: 'primary',
       },
-      content: "Simple content",
-      filePath: "/path/to/simple-agent.md"
+      content: 'Simple content',
+      filePath: '/path/to/simple-agent.md',
     };
 
     const serialized = serializeAgent(simpleAgent);
 
-    expect(serialized).toContain("description: Simple test agent");
-    expect(serialized).toContain("mode: primary");
-    expect(serialized).not.toContain("tools:");
+    expect(serialized).toContain('description: Simple test agent');
+    expect(serialized).toContain('mode: primary');
+    expect(serialized).not.toContain('tools:');
   });
 });
 
-describe("Round-trip Conversion", () => {
+describe('Round-trip Conversion', () => {
   let tempDir: string;
 
   beforeAll(async () => {
-    tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "codeflow-roundtrip-"));
+    tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'codeflow-roundtrip-'));
   });
 
   afterAll(async () => {
     await fs.rm(tempDir, { recursive: true, force: true });
   });
 
-  test("round-trip conversion preserves data integrity", async () => {
+  test('round-trip conversion preserves data integrity', async () => {
     const originalAgent = `---
 description: Original agent for round-trip test
 mode: subagent
@@ -397,19 +403,19 @@ Content with lists:
 More content here.
 `;
 
-    const agentPath = path.join(tempDir, "roundtrip-agent.md");
+    const agentPath = path.join(tempDir, 'roundtrip-agent.md');
     await fs.writeFile(agentPath, originalAgent);
 
     // Parse the agent
-    const parsedAgent = await parseAgentFile(agentPath, "base");
+    const parsedAgent = await parseAgentFile(agentPath, 'base');
 
     // Serialize it back
     const serializedAgent = serializeAgent(parsedAgent);
 
     // Parse the serialized version
-    const roundtripPath = path.join(tempDir, "roundtrip-serialized.md");
+    const roundtripPath = path.join(tempDir, 'roundtrip-serialized.md');
     await fs.writeFile(roundtripPath, serializedAgent);
-    const reparsedAgent = await parseAgentFile(roundtripPath, "base");
+    const reparsedAgent = await parseAgentFile(roundtripPath, 'base');
 
     // Compare key fields
     expect(reparsedAgent.frontmatter.description).toBe(parsedAgent.frontmatter.description);
@@ -431,34 +437,45 @@ More content here.
   });
 });
 
-describe("Agent Validation", () => {
-  test("validates all existing agents in the repository", async () => {
-    const codeflowRoot = path.join(import.meta.dir, "../..");
+describe('Agent Validation', () => {
+  test('validates all existing agents in the repository', async () => {
+    const codeflowRoot = path.join(import.meta.dir, '../..');
 
     // Test base agents
-    const baseResult = await parseAgentsFromDirectory(path.join(codeflowRoot, "codeflow-agents"), "base");
+    const baseResult = await parseAgentsFromDirectory(
+      path.join(codeflowRoot, 'codeflow-agents'),
+      'base'
+    );
 
     if (baseResult.errors.length > 0) {
-      console.warn("Base agent parsing errors:", baseResult.errors);
+      console.warn('Base agent parsing errors:', baseResult.errors);
     }
 
     expect(baseResult.agents.length).toBeGreaterThan(0);
 
     // Test Claude Code agents
-    const claudeResult = await parseAgentsFromDirectory(path.join(codeflowRoot, "claude-agents"), "claude-code");
+    const claudeResult = await parseAgentsFromDirectory(
+      path.join(codeflowRoot, 'claude-agents'),
+      'claude-code'
+    );
 
     if (claudeResult.errors.length > 0) {
-      console.warn("Claude Code agent parsing errors:", claudeResult.errors);
+      console.warn('Claude Code agent parsing errors:', claudeResult.errors);
     }
 
     // May not have Claude Code agents, so just check for no critical errors
-    expect(claudeResult.errors.filter(e => e.message.includes("Failed to read directory")).length).toBe(0);
+    expect(
+      claudeResult.errors.filter((e) => e.message.includes('Failed to read directory')).length
+    ).toBe(0);
 
     // Test OpenCode agents
-    const opencodeResult = await parseAgentsFromDirectory(path.join(codeflowRoot, ".opencode", "agent"), "opencode");
+    const opencodeResult = await parseAgentsFromDirectory(
+      path.join(codeflowRoot, 'deprecated', 'opencode-agents'),
+      'opencode'
+    );
 
     if (opencodeResult.errors.length > 0) {
-      console.warn("OpenCode agent parsing errors:", opencodeResult.errors);
+      console.warn('OpenCode agent parsing errors:', opencodeResult.errors);
     }
 
     expect(opencodeResult.agents.length).toBeGreaterThan(0);
@@ -469,42 +486,42 @@ describe("Agent Validation", () => {
     for (const agent of allAgents) {
       expect(agent.name).toBeDefined();
       expect(agent.frontmatter.description).toBeDefined();
-      expect(typeof agent.frontmatter.description).toBe("string");
+      expect(typeof agent.frontmatter.description).toBe('string');
       expect(agent.frontmatter.description.length).toBeGreaterThan(0);
     }
   });
 
-  test("validates agent frontmatter schemas", async () => {
-    const validationTempDir = await fs.mkdtemp(path.join(os.tmpdir(), "codeflow-validation-"));
+  test('validates agent frontmatter schemas', async () => {
+    const validationTempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'codeflow-validation-'));
 
     try {
       const testAgents = [
         {
-          format: "base" as const,
+          format: 'base' as const,
           content: `---
 description: Base agent
 mode: subagent
 ---
-# Base Agent`
+# Base Agent`,
         },
         {
-          format: "claude-code" as const,
+          format: 'claude-code' as const,
           content: `---
 description: Claude Code agent
 mode: primary
 ---
-# Claude Code Agent`
+# Claude Code Agent`,
         },
         {
-          format: "opencode" as const,
+          format: 'opencode' as const,
           content: `---
 description: OpenCode agent
 mode: subagent
 usage: For testing
 escalation: senior-agent
 ---
-# OpenCode Agent`
-        }
+# OpenCode Agent`,
+        },
       ];
 
       for (const testAgent of testAgents) {
@@ -515,10 +532,10 @@ escalation: senior-agent
 
         // All formats should have basic fields
         expect(agent.frontmatter.description).toBeDefined();
-        expect(typeof agent.frontmatter.description).toBe("string");
+        expect(typeof agent.frontmatter.description).toBe('string');
 
         // OpenCode should have additional fields
-        if (testAgent.format === "opencode") {
+        if (testAgent.format === 'opencode') {
           const openCodeAgent = agent.frontmatter as OpenCodeAgent;
           expect(openCodeAgent.usage).toBeDefined();
           expect(openCodeAgent.escalation).toBeDefined();

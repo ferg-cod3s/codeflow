@@ -3,8 +3,6 @@ description: Adds AI features and integrates machine learning capabilities. Spec
 mode: subagent
 model: github-copilot/gpt-5
 temperature: 0.2
-allowed_directories:
-  - /Users/johnferguson/Github
 tools:
   write: true
   edit: true
@@ -15,6 +13,18 @@ tools:
   glob: true
   list: true
   webfetch: true
+permission:
+  write: allow
+  edit: allow
+  bash: allow
+  patch: allow
+  read: allow
+  grep: allow
+  glob: allow
+  list: allow
+  webfetch: allow
+allowed_directories:
+  - /Users/johnferguson/Github
 ---
 
 You are an AI integration expert specializing in implementing machine learning capabilities and AI-powered features across various applications and platforms. Your expertise spans from conversational AI to computer vision and predictive analytics.

@@ -21,6 +21,7 @@ This is a **Codeflow Automation Enhancement CLI** built with **Bun** and **TypeS
 ### Key Components
 
 **CLI Commands**:
+
 - `codeflow setup [project-path]` - Sets up codeflow directory structure and copies agents/commands
 - `codeflow status [project-path]` - Checks which files are up-to-date or outdated
 - `codeflow sync [project-path]` - Synchronizes agents and commands with global configuration
@@ -29,27 +30,38 @@ This is a **Codeflow Automation Enhancement CLI** built with **Bun** and **TypeS
 - `codeflow mcp configure` - Configures MCP server integration
 
 **Core Workflow Agent Types**:
+
 - `codebase-locator` - Finds WHERE files and components exist
-- `codebase-analyzer` - Understands HOW specific code works  
+- `codebase-analyzer` - Understands HOW specific code works
 - `codebase-pattern-finder` - Discovers similar implementation patterns
 - `thoughts-locator` - Discovers existing documentation about topics
 - `thoughts-analyzer` - Extracts insights from specific documents
 - `web-search-researcher` - Performs targeted web research
 
 **Specialized Domain Agents** (Claude Code format):
+
 - `operations_incident_commander` - Incident response leadership and coordination
 - `development_migrations_specialist` - Database schema migrations and data backfills
 - `quality-testing_performance_tester` - Performance testing and bottleneck analysis
 - `programmatic_seo_engineer` - Large-scale SEO architecture and content generation
 - `content_localization_coordinator` - i18n/l10n workflow coordination
 
-**Additional OpenCode Format Agents** (in `/agent/opencode/`):
+**Base Agent Architecture**:
+
+- **Source of Truth**: `codeflow-agents/` - Base agents in hierarchical structure by domain
+- **Platform Conversion**: Agents are converted to platform-specific formats on setup
+- **OpenCode Format**: Converted to `.opencode/agent/` with proper permissions and configuration
+- **MCP Integration**: Uses base agents directly for MCP server queries
+
+**Agent Categories** (Base Format):
+
 - `agent-architect` - Meta-agent for creating specialized AI agents
 - `smart-subagent-orchestrator` - Complex multi-domain project coordination
 - `ai-integration-expert`, `api-builder`, `database-expert`, `full-stack-developer`
 - `growth-engineer`, `security-scanner`, `ux-optimizer` and others
 
 **Command Workflows**:
+
 - `/research` - Comprehensive codebase and documentation analysis
 - `/plan` - Creates detailed implementation plans from tickets and research
 - `/execute` - Implements plans with proper verification
@@ -59,6 +71,7 @@ This is a **Codeflow Automation Enhancement CLI** built with **Bun** and **TypeS
 - `/review` - Validates implementations against original plans
 
 **Slash Commands Available**:
+
 - **Claude Code**: Commands in `.claude/commands/` (YAML frontmatter format)
 - **OpenCode**: Commands in `.opencode/command/` (YAML frontmatter with agent/model specs)
 - Use `codeflow commands` to list all available slash commands and their descriptions
@@ -68,7 +81,8 @@ This is a **Codeflow Automation Enhancement CLI** built with **Bun** and **TypeS
 
 The system emphasizes **context compression** and **fresh analysis** over caching. Each phase uses specialized agents to gather only the essential information needed for the next phase, enabling complex workflows within context limits.
 
-**Critical Patterns**: 
+**Critical Patterns**:
+
 - Always run locator agents first in parallel, then run analyzer agents only after locators complete. This prevents premature analysis without proper context.
 - Use specialized domain agents selectively based on the research or implementation domain (operations, database migrations, performance, SEO, localization)
 - Agents have defined handoff targets for complex scenarios - follow escalation paths when needed

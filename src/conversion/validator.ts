@@ -199,25 +199,25 @@ export class AgentValidator {
   }
 
   /**
-   * Validate OpenCode agent format (custom codeflow format)
+   * Validate OpenCode agent format (official OpenCode.ai specification)
    */
   validateOpenCode(agent: OpenCodeAgent): ValidationResult {
     const errors: ValidationError[] = [];
     const warnings: ValidationWarning[] = [];
 
-    // Check required fields for custom OpenCode format
-    if (!agent.name || agent.name.trim() === '') {
-      errors.push({
-        field: 'name',
-        message: 'Name is required and cannot be empty',
-        severity: 'error',
-      });
-    }
-
+    // Required fields for official OpenCode format
     if (!agent.description || agent.description.trim() === '') {
       errors.push({
         field: 'description',
         message: 'Description is required and cannot be empty',
+        severity: 'error',
+      });
+    }
+
+    if (!agent.mode) {
+      errors.push({
+        field: 'mode',
+        message: 'Mode is required and must be one of: primary, subagent, all',
         severity: 'error',
       });
     }
@@ -227,15 +227,6 @@ export class AgentValidator {
       errors.push({
         field: 'mode',
         message: 'Mode must be one of: primary, subagent, all',
-        severity: 'error',
-      });
-    }
-
-    // Name format validation (should be kebab-case for OpenCode)
-    if (agent.name && agent.name.includes(' ')) {
-      errors.push({
-        field: 'name',
-        message: 'Agent name should not contain spaces (use hyphens instead)',
         severity: 'error',
       });
     }
@@ -257,16 +248,16 @@ export class AgentValidator {
           message: 'Temperature must be a number',
           severity: 'error',
         });
-      } else if (agent.temperature < 0 || agent.temperature > 2) {
+      } else if (agent.temperature < 0.0 || agent.temperature > 1.0) {
         errors.push({
           field: 'temperature',
-          message: 'Temperature must be between 0 and 2',
+          message: 'Temperature must be between 0.0 and 1.0',
           severity: 'error',
         });
       }
     }
 
-    // Tools validation (object format)
+    // Tools validation (object format with boolean values)
     if (agent.tools) {
       if (typeof agent.tools !== 'object' || Array.isArray(agent.tools)) {
         errors.push({
@@ -285,6 +276,45 @@ export class AgentValidator {
           }
         }
       }
+    }
+
+    // Permission validation (official OpenCode format)
+    if (agent.permission) {
+      if (typeof agent.permission !== 'object' || Array.isArray(agent.permission)) {
+        errors.push({
+          field: 'permission',
+          message: 'Permission must be an object with action names as keys and permission values',
+          severity: 'error',
+        });
+      } else {
+        for (const [action, permission] of Object.entries(agent.permission)) {
+          if (!['allow', 'ask', 'deny'].includes(permission as string)) {
+            errors.push({
+              field: `permission.${action}`,
+              message: `Permission for '${action}' must be one of: allow, ask, deny`,
+              severity: 'error',
+            });
+          }
+        }
+      }
+    }
+
+    // Disable validation (if provided)
+    if (agent.disable !== undefined && typeof agent.disable !== 'boolean') {
+      errors.push({
+        field: 'disable',
+        message: 'Disable field must be boolean (true/false)',
+        severity: 'error',
+      });
+    }
+
+    // Legacy field validations for backward compatibility
+    if (agent.name && agent.name.includes(' ')) {
+      errors.push({
+        field: 'name',
+        message: 'Agent name should not contain spaces (use hyphens instead)',
+        severity: 'error',
+      });
     }
 
     // Tags validation (array format in custom format)
@@ -328,9 +358,9 @@ export class AgentValidator {
 
     // Convert OpenCode agent to Base format for additional validation
     const baseAgent: BaseAgent = {
-      name: agent.name,
+      name: agent.name || 'unnamed-agent', // Provide default name for base validation
       description: agent.description,
-      mode: agent.mode || 'subagent', // Default to 'subagent' if no mode specified
+      mode: agent.mode || 'subagent',
       model: agent.model,
       temperature: agent.temperature,
       tools: agent.tools,

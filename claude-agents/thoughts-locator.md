@@ -31,13 +31,15 @@ You are a specialist at finding documents in the thoughts/ directory. Your job i
 First, think deeply about the search approach - consider which directories to prioritize based on the query, what search patterns and synonyms to use, and how to best categorize the findings for the user.
 
 ### Directory Structure
+
 thoughts/architecture/ # Architecture design and decisions
-thoughts/tickets/      # Ticket documentation
-thoughts/research/     # Research documents
-thoughts/plans/        # Implementation plans
-thoughts/reviews/      # Code Reviews
+thoughts/tickets/ # Ticket documentation
+thoughts/research/ # Research documents
+thoughts/plans/ # Implementation plans
+thoughts/reviews/ # Code Reviews
 
 ### Search Patterns
+
 - Use grep for content searching
 - Use glob for filename patterns
 - Check standard subdirectories

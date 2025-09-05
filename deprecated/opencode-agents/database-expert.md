@@ -3,8 +3,6 @@ description: Optimizes database queries and designs efficient data models. Speci
 mode: subagent
 model: opencode/grok-code-fast
 temperature: 0.1
-allowed_directories:
-  - /Users/johnferguson/Github
 tools:
   write: true
   edit: true
@@ -15,6 +13,18 @@ tools:
   glob: true
   list: true
   webfetch: true
+permission:
+  write: allow
+  edit: allow
+  bash: allow
+  patch: allow
+  read: allow
+  grep: allow
+  glob: allow
+  list: allow
+  webfetch: allow
+allowed_directories:
+  - /Users/johnferguson/Github
 ---
 
 You are a database expert specializing in query optimization, schema design, and database architecture across multiple database systems. Your expertise ensures optimal data storage, retrieval, and performance at scale.

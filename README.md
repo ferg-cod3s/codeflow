@@ -1,10 +1,15 @@
-# CodeFlow CLI -  Intelligent AI Workflow Management
+# CodeFlow CLI - Intelligent AI Workflow Management
 
 A powerful command-line interface for managing AI agents across different platforms and formats.
 
-## 🎯 **Single Format Architecture**
+## 🎯 **Base Agent Architecture**
 
-CodeFlow uses a **single source of truth** approach for agent definitions. All agents are stored in the `codeflow-agents/` directory using a unified `BaseAgent` format, which gets automatically converted to platform-specific formats as needed.
+CodeFlow uses a **base agent architecture** where `codeflow-agents/` contains the canonical agent definitions. These base agents are:
+
+- ✅ **Source of Truth** for all agent definitions
+- ✅ **Used by MCP server** for LLM queries and tool execution
+- ✅ **Converted on-demand** to platform-specific formats (OpenCode, Claude Code, etc.)
+- ✅ **Hierarchically organized** by domain (development/, operations/, etc.)
 
 ### **Benefits of Single Format**
 
@@ -20,10 +25,10 @@ CodeFlow uses a **single source of truth** approach for agent definitions. All a
 ---
 name: your-agent-name
 description: Description of when this agent should be invoked
-mode: subagent  # Optional: subagent or primary
-temperature: 0.7  # Optional: 0-2 range
-model: claude-3-5-sonnet  # Optional: model identifier
-tools:  # Optional: object with boolean values
+mode: subagent # Optional: subagent or primary
+temperature: 0.7 # Optional: 0-2 range
+model: claude-3-5-sonnet # Optional: model identifier
+tools: # Optional: object with boolean values
   read: true
   write: true
   edit: true
@@ -39,7 +44,6 @@ escalation: How to escalate if needed
 examples: Example usage scenarios
 prompts: Suggested prompts
 constraints: Usage constraints
-
 ---
 
 Your agent's system prompt and instructions go here...
@@ -91,43 +95,42 @@ codeflow sync-formats
 
 ```
 codeflow/
-├── codeflow-agents/          # Single source of truth (BaseAgent format)
-│   ├── full-stack-developer.md
-│   ├── code-reviewer.md
-│   └── debugger.md
-├── claude-agents/            # Auto-generated Claude Code format
-├── opencode-agents/          # Auto-generated OpenCode format
+├── codeflow-agents/          # Base agents (source of truth)
+│   ├── development/          # Development-focused agents
+│   ├── operations/           # Operations & DevOps agents
+│   ├── generalist/           # General-purpose agents
+│   └── ...                   # Other domain categories
 ├── src/
 │   ├── cli/                  # CLI implementation
 │   ├── conversion/           # Format conversion engine
 │   └── validation/           # Agent validation
 └── tests/                    # Test suite
+
+# Generated on setup:
+project/
+├── .opencode/agent/         # OpenCode format (converted from base)
+└── .opencode/command/       # Workflow commands
 ```
 
 ## 🔄 **Format Conversion**
 
-### **Supported Formats**
+### **Conversion Workflow**
 
-1. **Base Format** (`codeflow-agents/`) - Single source of truth
-2. **Claude Code Format** (`claude-agents/`) - For Claude Code subagents
-3. **OpenCode Format** (`opencode-agents/`) - For OpenCode platform
+1. **Base Agents** (`codeflow-agents/`) - Source of truth with hierarchical organization
+2. **Platform Setup** - Agents converted automatically during `codeflow setup`
+3. **MCP Integration** - Base agents used directly by MCP server
 
-### **Conversion Commands**
+### **Setup Commands**
 
 ```bash
-# Convert all agents to a specific format
-codeflow convert-all --format claude-code
-codeflow convert-all --format opencode
-codeflow convert-all --format base
+# Setup for OpenCode (converts base agents automatically)
+codeflow setup . --type opencode
 
-# Convert individual agents
-codeflow convert agent-name --format claude-code
+# Setup for Claude Code (converts base agents automatically)
+codeflow setup . --type claude-code
 
-# Sync formats between directories
-codeflow sync-formats
-
-# Sync with global agents
-codeflow sync-global
+# Check conversion status
+codeflow status .
 ```
 
 ### **Conversion Rules**
@@ -141,30 +144,30 @@ codeflow sync-global
 
 ### **Core Commands**
 
-| Command | Description |
-|---------|-------------|
-| `setup` | Initialize a new CodeFlow project |
-| `pull` | Pull global agents to current project |
-| `status` | Show project status and agent counts |
-| `commands` | List available slash commands |
-| `mcp` | Manage MCP server connections |
+| Command    | Description                           |
+| ---------- | ------------------------------------- |
+| `setup`    | Initialize a new CodeFlow project     |
+| `pull`     | Pull global agents to current project |
+| `status`   | Show project status and agent counts  |
+| `commands` | List available slash commands         |
+| `mcp`      | Manage MCP server connections         |
 
 ### **Conversion Commands**
 
-| Command | Description |
-|---------|-------------|
-| `convert` | Convert individual agent to target format |
-| `convert-all` | Convert all agents in directory to target format |
-| `sync-formats` | Synchronize agent formats across directories |
-| `sync-global` | Sync with global CodeFlow agents |
+| Command        | Description                                      |
+| -------------- | ------------------------------------------------ |
+| `convert`      | Convert individual agent to target format        |
+| `convert-all`  | Convert all agents in directory to target format |
+| `sync-formats` | Synchronize agent formats across directories     |
+| `sync-global`  | Sync with global CodeFlow agents                 |
 
 ### **Utility Commands**
 
-| Command | Description |
-|---------|-------------|
-| `watch` | Watch for file changes and auto-sync |
-| `version` | Show CLI version |
-| `help` | Show help information |
+| Command   | Description                          |
+| --------- | ------------------------------------ |
+| `watch`   | Watch for file changes and auto-sync |
+| `version` | Show CLI version                     |
+| `help`    | Show help information                |
 
 ## 🔧 **Configuration**
 
@@ -207,18 +210,21 @@ Global settings are stored in `~/.codeflow/config.json`:
 CodeFlow supports three different integration methods depending on your coding environment:
 
 ### **Claude Code (.ai)**
+
 - **Agents**: Global directory `~/.claude/agents/` (accessible via Task tool)
 - **Commands**: Project-specific `.claude/commands/` (slash commands like `/research`)
 - **Setup**: `codeflow setup --type claude-code`
 - **Usage**: Type `/research`, `/plan`, `/execute` directly in Claude Code interface
 
 ### **OpenCode**
+
 - **Agents**: Global directory `~/.config/opencode/agent/` (native agent selection)
 - **Commands**: Global `~/.config/opencode/command/` + project `.opencode/command/`
 - **Setup**: `codeflow setup --type opencode`
 - **Usage**: Use slash commands in OpenCode terminal interface
 
 ### **MCP (Model Context Protocol)**
+
 - **Purpose**: For coding assistants like **Cursor, VS Code extensions, etc.** that lack native agent systems
 - **Provides**: Agents as MCP tools for clients supporting MCP protocol
 - **Setup**: `codeflow mcp start` then configure your MCP client
@@ -228,7 +234,7 @@ CodeFlow supports three different integration methods depending on your coding e
 # Set up for Claude Code
 codeflow setup . --type claude-code
 
-# Set up for OpenCode  
+# Set up for OpenCode
 codeflow setup . --type opencode
 
 # Start MCP server for Cursor/VS Code
@@ -310,7 +316,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Compatible with [OpenCode](https://opencode.dev/) platform
 - Uses [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) for tool integration
 
-
 ## Codeflow Workflow - MCP Integration
 
 This project is set up for MCP integration with OpenCode and other compatible AI clients.
@@ -328,6 +333,7 @@ This project is set up for MCP integration with OpenCode and other compatible AI
 ### MCP Server Setup
 
 1. **Start MCP Server**:
+
    ```bash
    # From this project directory
    bun run /path/to/codeflow/mcp/codeflow-server.mjs

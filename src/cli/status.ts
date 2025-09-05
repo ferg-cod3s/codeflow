@@ -1,7 +1,7 @@
-import { readdir, stat } from "node:fs/promises";
-import { join, relative } from "node:path";
-import { existsSync } from "node:fs";
-import { resolveProjectPath } from "./utils";
+import { readdir, stat } from 'node:fs/promises';
+import { join, relative, basename } from 'node:path';
+import { existsSync } from 'node:fs';
+import { resolveProjectPath } from './utils';
 
 async function* walkDir(dir: string): AsyncGenerator<string> {
   const files = await readdir(dir, { withFileTypes: true });
@@ -17,9 +17,9 @@ async function* walkDir(dir: string): AsyncGenerator<string> {
 
 async function getFileHash(path: string): Promise<string> {
   const file = Bun.file(path);
-  const hasher = new Bun.CryptoHasher("sha256");
+  const hasher = new Bun.CryptoHasher('sha256');
   hasher.update(await file.arrayBuffer());
-  return hasher.digest("hex");
+  return hasher.digest('hex');
 }
 
 export async function status(projectPath: string | undefined) {
@@ -28,19 +28,21 @@ export async function status(projectPath: string | undefined) {
 
   // Load config - find the codeflow installation directory
   // import.meta.dir gives us the src/cli directory
-  const codeflowDir = join(import.meta.dir, "../..");
-  const configPath = join(codeflowDir, "config.json");
+  const codeflowDir = join(import.meta.dir, '../..');
+  const configPath = join(codeflowDir, 'config.json');
   const config = await Bun.file(configPath).json();
-  const includes = config.pull?.include || ["agent", "command"];
+  const includes = config.pull?.include || ['agent', 'command'];
 
   // Resolve paths
   const sourcePath = codeflowDir;
-  const targetBase = join(resolvedProjectPath, ".opencode");
+  const targetBase = join(resolvedProjectPath, '.opencode');
 
   console.log(`📊 Status for: ${targetBase}`);
   // Include pluralized labels to satisfy tests expecting 'agents'
-  const pluralized = includes.map((d: string) => d === 'agent' ? 'agents' : (d === 'command' ? 'commands' : d));
-  console.log(`📁 Checking: ${pluralized.join(", ")}\n`);
+  const pluralized = includes.map((d: string) =>
+    d === 'agent' ? 'agents' : d === 'command' ? 'commands' : d
+  );
+  console.log(`📁 Checking: ${pluralized.join(', ')}\n`);
 
   let upToDateCount = 0;
   let outdatedCount = 0;
@@ -60,10 +62,23 @@ export async function status(projectPath: string | undefined) {
       continue;
     }
 
+    // For OpenCode format, map claude-agents source to agent target
+    const targetDirName = includeDir === 'claude-agents' ? 'agent' : includeDir;
+
     // Walk through all files in the source directory
     for await (const sourceFile of walkDir(sourceDir)) {
       const relativePath = relative(sourcePath, sourceFile);
-      const targetFile = join(targetBase, relativePath);
+      // Handle hierarchical to flat conversion for codeflow-agents
+      let targetFile: string;
+      if (includeDir === 'codeflow-agents') {
+        // Extract just the filename for flat target structure
+        const fileName = basename(sourceFile);
+        targetFile = join(targetBase, targetDirName, fileName);
+      } else {
+        // Replace the source directory name with target directory name
+        const targetRelativePath = relativePath.replace(includeDir, targetDirName);
+        targetFile = join(targetBase, targetRelativePath);
+      }
 
       if (!existsSync(targetFile)) {
         console.log(`❌ ${relativePath} (missing in project)`);
@@ -77,8 +92,20 @@ export async function status(projectPath: string | undefined) {
           console.log(`✅ ${relativePath}`);
           upToDateCount++;
         } else {
-          console.log(`❌ ${relativePath} (outdated)`);
-          outdatedCount++;
+          // Check if this is a converted/enhanced file
+          const targetContent = await Bun.file(targetFile).text();
+          const isConverted =
+            targetContent.includes('mode:') ||
+            targetContent.includes('permission:') ||
+            targetContent.includes('allowed_directories:');
+
+          if (isConverted) {
+            console.log(`🔄 ${relativePath} (converted)`);
+            upToDateCount++; // Count as up-to-date since conversion is successful
+          } else {
+            console.log(`❌ ${relativePath} (outdated)`);
+            outdatedCount++;
+          }
         }
       }
     }
@@ -86,7 +113,9 @@ export async function status(projectPath: string | undefined) {
 
   // Check for extra files in target that don't exist in source
   for (const includeDir of includes) {
-    const targetDir = join(targetBase, includeDir);
+    // For OpenCode format, map claude-agents source to agent target
+    const targetDirName = includeDir === 'claude-agents' ? 'agent' : includeDir;
+    const targetDir = join(targetBase, targetDirName);
 
     if (!existsSync(targetDir)) {
       continue;
@@ -99,7 +128,9 @@ export async function status(projectPath: string | undefined) {
 
     for await (const targetFile of walkDir(targetDir)) {
       const relativePath = relative(targetBase, targetFile);
-      const sourceFile = join(sourcePath, relativePath);
+      // Replace the target directory name with source directory name for comparison
+      const sourceRelativePath = relativePath.replace(targetDirName, includeDir);
+      const sourceFile = join(sourcePath, sourceRelativePath);
 
       if (!existsSync(sourceFile)) {
         console.log(`❌ ${relativePath} (extra file in project)`);
@@ -109,16 +140,18 @@ export async function status(projectPath: string | undefined) {
   }
 
   // Summary
-  console.log("\n📋 Summary:");
+  console.log('\n📋 Summary:');
   console.log(`  ✅ Up-to-date: ${upToDateCount}`);
   console.log(`  ❌ Outdated: ${outdatedCount}`);
   console.log(`  ❌ Missing: ${missingCount}`);
 
   const totalIssues = outdatedCount + missingCount;
   if (totalIssues === 0) {
-    console.log("\n✨ All files are up-to-date!");
+    console.log('\n✨ All files are up-to-date!');
   } else {
-    console.log(`\n⚠️  ${totalIssues} file${totalIssues === 1 ? "" : "s"} need${totalIssues === 1 ? "s" : ""} attention`);
-            console.log("Run 'codeflow sync' to update the project");
+    console.log(
+      `\n⚠️  ${totalIssues} file${totalIssues === 1 ? '' : 's'} need${totalIssues === 1 ? 's' : ''} attention`
+    );
+    console.log("Run 'codeflow sync' to update the project");
   }
 }
