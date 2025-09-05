@@ -77,7 +77,7 @@ These agents provide expert capabilities in specific domains:
 
 #### **development-migrations-specialist**
 
-- **Model**: anthropic/claude-sonnet-4-20250514
+- **Model**: opencode/grok-code-fast
 - **Purpose**: Plan and execute safe database schema and data migrations
 - **Capabilities**:
   - Expand/contract migration patterns
@@ -92,7 +92,7 @@ These agents provide expert capabilities in specific domains:
 
 #### **quality-testing-performance-tester**
 
-- **Model**: anthropic/claude-sonnet-4-20250514
+- **Model**: opencode/grok-code-fast
 - **Purpose**: Design and execute comprehensive performance testing
 - **Capabilities**:
   - Load/stress/soak/spike test planning
@@ -107,7 +107,7 @@ These agents provide expert capabilities in specific domains:
 
 #### **programmatic-seo-engineer**
 
-- **Model**: anthropic/claude-sonnet-4-20250514
+- **Model**: opencode/grok-code-fast
 - **Purpose**: Design and implement programmatic SEO systems at scale
 - **Capabilities**:
   - Data-driven page generation architecture
@@ -174,7 +174,7 @@ Additional agents available in the unified format:
 ## 🎛️ **Model Tiers & Routing**
 
 - **Strategic/Ops**: github-copilot/gpt-5 (incident commander, localization coordinator)
-- **Deep Technical**: anthropic/claude-sonnet-4-20250514 (migrations, performance, SEO)
+- **Deep Technical**: opencode/grok-code-fast (migrations, performance, SEO)
 - **General Research**: Built-in model routing based on task complexity
 
 ## 🔄 **Format Conversion & Usage**

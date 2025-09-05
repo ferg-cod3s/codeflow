@@ -41,6 +41,26 @@ async function spawnAgentTask(agentId, taskDescription, registry, options = {}) 
     throw new Error(`Agent ${agentId} not found in registry`);
   }
 
+  // Validate agent permissions before spawning
+  if (agent.permission) {
+    // Check if task requires permissions that agent doesn't have
+    if (taskDescription.toLowerCase().includes('edit') && !agent.permission.edit) {
+      throw new Error(`Agent ${agentId} does not have file edit permissions`);
+    }
+    if (
+      taskDescription.toLowerCase().includes('bash') ||
+      (taskDescription.toLowerCase().includes('shell') && !agent.permission.bash)
+    ) {
+      throw new Error(`Agent ${agentId} does not have bash permissions`);
+    }
+    if (
+      taskDescription.toLowerCase().includes('fetch') ||
+      (taskDescription.toLowerCase().includes('web') && !agent.permission.webfetch)
+    ) {
+      throw new Error(`Agent ${agentId} does not have web fetch permissions`);
+    }
+  }
+
   // Get allowed directories from agent configuration (now extracted in registry)
   const allowedDirectories = agent.allowedDirectories || [];
 

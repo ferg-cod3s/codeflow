@@ -141,7 +141,7 @@ async function parseAgentFile(filePath, format) {
 
     const name = path.basename(filePath, '.md');
 
-    return {
+    const agent = {
       id: name,
       name,
       format,
@@ -155,6 +155,18 @@ async function parseAgentFile(filePath, format) {
       filePath,
       frontmatter,
     };
+
+    // Log permission configuration for debugging
+    if (frontmatter.permission) {
+      console.log(
+        `🔐 Agent '${name}' permissions: edit=${frontmatter.permission.edit}, bash=${frontmatter.permission.bash}, webfetch=${frontmatter.permission.webfetch}`
+      );
+    }
+    if (agent.allowedDirectories.length > 0) {
+      console.log(`📁 Agent '${name}' allowed directories: ${agent.allowedDirectories.join(', ')}`);
+    }
+
+    return agent;
   } catch (error) {
     console.warn(`Failed to parse agent file ${filePath}: ${error.message}`);
     return null;

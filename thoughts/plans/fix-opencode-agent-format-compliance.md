@@ -9,6 +9,7 @@ Convert the custom OpenCode agent format to official OpenCode.ai specification c
 The codebase currently uses a **custom OpenCode format** that differs significantly from the **official OpenCode.ai specification**, causing sync-global validation failures and OpenCode platform incompatibility.
 
 ### Key Discoveries:
+
 - **Working validation logic exists**: `src/core/agent-validator.ts:102-165` fully implements OpenCode validation
 - **Custom format in use**: 9+ agents in `/agent/opencode/` use non-standard YAML schema
 - **Official format documented**: OpenCode.ai uses `description`, `mode`, `model`, `temperature`, `tools`, `permission`, `disable`
@@ -17,11 +18,13 @@ The codebase currently uses a **custom OpenCode format** that differs significan
 ## Desired End State
 
 All OpenCode agents conform to the official OpenCode.ai YAML frontmatter specification, enabling:
+
 - Successful sync-global operations without validation errors
 - Full compatibility with OpenCode platform and tooling
 - Proper agent loading and execution in OpenCode environments
 
 ### Verification Criteria:
+
 - All OpenCode agents pass validation with official schema
 - sync-global copies OpenCode agents successfully
 - OpenCode platform can load and execute all agents
@@ -41,11 +44,13 @@ All OpenCode agents conform to the official OpenCode.ai YAML frontmatter specifi
 ## Phase 1: Update OpenCode Validation Schema
 
 ### Overview
+
 Update validation logic to match official OpenCode.ai specification and ensure proper format detection.
 
 ### Changes Required:
 
 #### 1. OpenCode Validation Logic
+
 **File**: `src/core/agent-validator.ts`
 **Changes**: Replace custom validation with official OpenCode schema validation
 
@@ -57,7 +62,7 @@ function validateOpenCodeFormat(content: string): ValidationResult {
   if (!content.startsWith('---')) {
     errors.push({
       field: 'frontmatter',
-      message: 'OpenCode format must start with YAML frontmatter'
+      message: 'OpenCode format must start with YAML frontmatter',
     });
     return { isValid: false, errors };
   }
@@ -66,21 +71,21 @@ function validateOpenCodeFormat(content: string): ValidationResult {
   if (!frontmatterMatch) {
     errors.push({
       field: 'frontmatter',
-      message: 'Invalid YAML frontmatter structure'
+      message: 'Invalid YAML frontmatter structure',
     });
     return { isValid: false, errors };
   }
 
   try {
     const frontmatter = parseYaml(frontmatterMatch[1]);
-    
+
     // Required fields for official OpenCode format
     const requiredFields = ['description', 'mode'];
     for (const field of requiredFields) {
       if (!frontmatter.hasOwnProperty(field)) {
         errors.push({
           field,
-          message: `Missing required field: ${field}`
+          message: `Missing required field: ${field}`,
         });
       }
     }
@@ -89,25 +94,32 @@ function validateOpenCodeFormat(content: string): ValidationResult {
     if (frontmatter.mode && !['primary', 'subagent', 'all'].includes(frontmatter.mode)) {
       errors.push({
         field: 'mode',
-        message: 'Mode must be one of: primary, subagent, all'
+        message: 'Mode must be one of: primary, subagent, all',
       });
     }
 
     // Validate temperature range (if provided)
-    if (frontmatter.temperature !== undefined && (frontmatter.temperature < 0.0 || frontmatter.temperature > 1.0)) {
+    if (
+      frontmatter.temperature !== undefined &&
+      (frontmatter.temperature < 0.0 || frontmatter.temperature > 1.0)
+    ) {
       errors.push({
         field: 'temperature',
-        message: 'Temperature must be between 0.0 and 1.0'
+        message: 'Temperature must be between 0.0 and 1.0',
       });
     }
 
     // Validate tools object structure (if provided)
-    if (frontmatter.tools && typeof frontmatter.tools === 'object' && !Array.isArray(frontmatter.tools)) {
+    if (
+      frontmatter.tools &&
+      typeof frontmatter.tools === 'object' &&
+      !Array.isArray(frontmatter.tools)
+    ) {
       for (const [tool, enabled] of Object.entries(frontmatter.tools)) {
         if (typeof enabled !== 'boolean') {
           errors.push({
             field: 'tools',
-            message: `Tool '${tool}' must have boolean value (true/false)`
+            message: `Tool '${tool}' must have boolean value (true/false)`,
           });
         }
       }
@@ -119,7 +131,7 @@ function validateOpenCodeFormat(content: string): ValidationResult {
         if (!['allow', 'ask', 'deny'].includes(permission as string)) {
           errors.push({
             field: 'permission',
-            message: `Permission for '${action}' must be one of: allow, ask, deny`
+            message: `Permission for '${action}' must be one of: allow, ask, deny`,
           });
         }
       }
@@ -129,14 +141,13 @@ function validateOpenCodeFormat(content: string): ValidationResult {
     if (frontmatter.disable !== undefined && typeof frontmatter.disable !== 'boolean') {
       errors.push({
         field: 'disable',
-        message: 'Disable field must be boolean (true/false)'
+        message: 'Disable field must be boolean (true/false)',
       });
     }
-
   } catch (error) {
     errors.push({
       field: 'frontmatter',
-      message: 'Invalid YAML syntax in frontmatter'
+      message: 'Invalid YAML syntax in frontmatter',
     });
   }
 
@@ -145,6 +156,7 @@ function validateOpenCodeFormat(content: string): ValidationResult {
 ```
 
 #### 2. Format Detection Logic
+
 **File**: `src/core/agent-converter.ts`
 **Changes**: Update format detection to handle official OpenCode format
 
@@ -161,17 +173,17 @@ function detectAgentFormat(content: string): AgentFormat {
 
   try {
     const frontmatter = parseYaml(frontmatterMatch[1]);
-    
+
     // Official OpenCode format detection
     if (frontmatter.description && frontmatter.mode) {
       return 'opencode';
     }
-    
+
     // Legacy custom OpenCode format detection (temporary during transition)
     if (frontmatter.name && frontmatter.tags) {
       return 'opencode';
     }
-    
+
     // Claude Code format (has role but not OpenCode markers)
     return 'claude-code';
   } catch {
@@ -181,6 +193,7 @@ function detectAgentFormat(content: string): AgentFormat {
 ```
 
 #### 3. Conversion Logic Update
+
 **File**: `src/core/agent-converter.ts`
 **Changes**: Update base-to-OpenCode conversion to use official format
 
@@ -190,7 +203,7 @@ function convertFromBase(content: string, targetFormat: AgentFormat): string {
     const frontmatter: ClaudeCodeMetadata = {
       role: 'system',
       model: 'claude-3.5-sonnet-20241022',
-      temperature: 0.1
+      temperature: 0.1,
     };
 
     return `---\n${stringifyYaml(frontmatter).trim()}\n---\n\n${content}`;
@@ -198,13 +211,13 @@ function convertFromBase(content: string, targetFormat: AgentFormat): string {
     const frontmatter = {
       description: 'Converted agent from base format',
       mode: 'subagent',
-      model: 'anthropic/claude-sonnet-4-20250514',
+      model: 'opencode/grok-code-fast',
       temperature: 0.1,
       tools: {
         write: true,
         edit: true,
-        bash: true
-      }
+        bash: true,
+      },
     };
 
     return `---\n${stringifyYaml(frontmatter).trim()}\n---\n\n${content}`;
@@ -217,12 +230,14 @@ function convertFromBase(content: string, targetFormat: AgentFormat): string {
 ### Success Criteria:
 
 #### Automated Verification:
+
 - [ ] Unit tests pass: `bun test tests/unit/agent-validator.test.ts`
 - [ ] Type checking passes: `bun run typecheck`
 - [ ] Validation logic correctly identifies official OpenCode format
 - [ ] Format detection distinguishes between old and new OpenCode formats
 
 #### Manual Verification:
+
 - [ ] Test agent with official format passes validation
 - [ ] Test agent with old format still detected as OpenCode during transition
 - [ ] Claude Code agents unaffected by validation changes
@@ -232,11 +247,13 @@ function convertFromBase(content: string, targetFormat: AgentFormat): string {
 ## Phase 2: Convert Existing OpenCode Agents
 
 ### Overview
+
 Convert all existing OpenCode agents from custom format to official OpenCode.ai specification.
 
 ### Changes Required:
 
 #### 1. Agent Conversion Script
+
 **File**: `scripts/convert-opencode-agents.ts`
 **Changes**: Create conversion script for bulk agent updates
 
@@ -268,7 +285,7 @@ interface OfficialOpenCodeMetadata {
 
 async function convertOpenCodeAgent(filePath: string): Promise<void> {
   const content = await fs.readFile(filePath, 'utf-8');
-  
+
   // Extract frontmatter and content
   const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---\n\n([\s\S]*)$/);
   if (!frontmatterMatch) {
@@ -286,16 +303,15 @@ async function convertOpenCodeAgent(filePath: string): Promise<void> {
       mode: 'subagent', // Most agents are subagents
       model: convertModelName(oldFrontmatter.model),
       temperature: oldFrontmatter.temperature,
-      tools: convertToolsArray(oldFrontmatter.tools)
+      tools: convertToolsArray(oldFrontmatter.tools),
     };
 
     // Generate new agent file content
     const newContent = `---\n${stringifyYaml(newFrontmatter).trim()}\n---\n\n${agentContent}`;
-    
+
     // Write converted agent
     await fs.writeFile(filePath, newContent, 'utf-8');
     console.log(`✅ Converted: ${basename(filePath)}`);
-    
   } catch (error) {
     console.error(`❌ Failed to convert ${filePath}:`, error);
   }
@@ -304,35 +320,35 @@ async function convertOpenCodeAgent(filePath: string): Promise<void> {
 function convertModelName(oldModel: string): string {
   // Convert internal model names to OpenCode format
   const modelMap: Record<string, string> = {
-    'claude-3.5-sonnet-20241022': 'anthropic/claude-sonnet-4-20250514',
-    'claude-3-5-sonnet-latest': 'anthropic/claude-sonnet-4-20250514'
+    'claude-3.5-sonnet-20241022': 'opencode/grok-code-fast',
+    'claude-3-5-sonnet-latest': 'opencode/grok-code-fast',
   };
-  
+
   return modelMap[oldModel] || oldModel;
 }
 
 function convertToolsArray(tools: string[]): Record<string, boolean> {
   const toolsObj: Record<string, boolean> = {};
-  
+
   // Convert from array to boolean object
   const defaultTools = ['write', 'edit', 'bash', 'read', 'grep', 'glob', 'list'];
   for (const tool of defaultTools) {
     toolsObj[tool] = tools.length === 0 ? true : tools.includes(tool);
   }
-  
+
   return toolsObj;
 }
 
 // Main conversion function
 async function main() {
   const agentFiles = await glob('agent/opencode/*.md');
-  
+
   console.log(`Found ${agentFiles.length} OpenCode agents to convert`);
-  
+
   for (const file of agentFiles) {
     await convertOpenCodeAgent(file);
   }
-  
+
   console.log('🎉 OpenCode agent conversion complete!');
 }
 
@@ -342,10 +358,12 @@ if (import.meta.main) {
 ```
 
 #### 2. Individual Agent Conversions
+
 **Files**: All agents in `agent/opencode/` directory
 **Changes**: Convert each agent from custom to official format
 
 **Example Conversion - agent-architect.md**:
+
 ```yaml
 # FROM (Custom Format):
 ---
@@ -355,14 +373,13 @@ model: claude-3.5-sonnet-20241022
 temperature: 0.1
 tools: []
 description: Meta-agent for creating specialized AI agents and defining their capabilities, prompts, and interaction patterns
-tags: ["meta", "agent-design", "prompts", "system-architecture"]
+tags: ['meta', 'agent-design', 'prompts', 'system-architecture']
 ---
-
 # TO (Official Format):
 ---
 description: Meta-agent for creating specialized AI agents and defining their capabilities, prompts, and interaction patterns
 mode: subagent
-model: anthropic/claude-sonnet-4-20250514
+model: opencode/grok-code-fast
 temperature: 0.1
 tools:
   write: true
@@ -380,6 +397,7 @@ permission:
 ```
 
 #### 3. Update Test Files
+
 **File**: `tests/unit/agent-validator.test.ts`
 **Changes**: Update test cases for official OpenCode format
 
@@ -389,7 +407,7 @@ describe('OpenCode Format', () => {
     const content = `---
 description: A test agent for validation
 mode: subagent
-model: anthropic/claude-sonnet-4-20250514
+model: opencode/grok-code-fast
 temperature: 0.1
 tools:
   write: true
@@ -400,9 +418,9 @@ permission:
 ---
 
 You are a helpful assistant.`;
-    
+
     const result = validateAgent(content, 'opencode');
-    
+
     expect(result.isValid).toBe(true);
     expect(result.errors).toHaveLength(0);
   });
@@ -414,13 +432,13 @@ mode: invalid-mode
 ---
 
 You are a helpful assistant.`;
-    
+
     const result = validateAgent(content, 'opencode');
-    
+
     expect(result.isValid).toBe(false);
     expect(result.errors).toContainEqual({
       field: 'mode',
-      message: 'Mode must be one of: primary, subagent, all'
+      message: 'Mode must be one of: primary, subagent, all',
     });
   });
 
@@ -433,42 +451,45 @@ permission:
 ---
 
 You are a helpful assistant.`;
-    
+
     const result = validateAgent(content, 'opencode');
-    
+
     expect(result.isValid).toBe(false);
     expect(result.errors).toContainEqual({
       field: 'permission',
-      message: "Permission for 'write' must be one of: allow, ask, deny"
+      message: "Permission for 'write' must be one of: allow, ask, deny",
     });
   });
 });
 ```
 
 #### 4. Update Documentation
+
 **File**: `README.md`
 **Changes**: Document official OpenCode format support
 
-```markdown
+````markdown
 ### OpenCode Format (Official OpenCode.ai Specification)
+
 ```yaml
 ---
 description: Brief explanation of the agent's purpose
-mode: subagent  # primary, subagent, or all
-model: anthropic/claude-sonnet-4-20250514  # Optional
-temperature: 0.1  # Optional, 0.0-1.0 range
-tools:  # Optional tool access configuration
+mode: subagent # primary, subagent, or all
+model: opencode/grok-code-fast # Optional
+temperature: 0.1 # Optional, 0.0-1.0 range
+tools: # Optional tool access configuration
   write: true
   edit: false
   bash: ask
-permission:  # Optional action permissions
+permission: # Optional action permissions
   edit: deny
   bash: ask
-disable: false  # Optional, set to true to disable agent
+disable: false # Optional, set to true to disable agent
 ---
-
 Agent-specific system prompt goes here...
 ```
+````
+
 ```
 
 ### Success Criteria:
@@ -537,3 +558,4 @@ Agent-specific system prompt goes here...
 - Validation implementation: `src/core/agent-validator.ts:102-165`
 - Format detection: `src/core/agent-converter.ts:44-58`
 - Agent examples: `agent/opencode/*.md`
+```

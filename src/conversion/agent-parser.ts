@@ -1,6 +1,6 @@
 import { readFile } from 'node:fs/promises';
 import { basename } from 'node:path';
-import { globalPerformanceMonitor, globalFileReader } from '../optimization/performance.js';
+import { globalPerformanceMonitor, globalFileReader } from '../optimization/performance';
 
 /**
  * Base agent format - the single source of truth for all agents
@@ -44,14 +44,14 @@ export interface OpenCodeAgent {
   description: string; // Required - official OpenCode spec
   mode?: 'primary' | 'subagent' | 'all'; // Official OpenCode modes (optional, defaults to 'all')
   model?: string; // Optional - official OpenCode spec
-  temperature?: number; // Optional - official OpenCode spec  
+  temperature?: number; // Optional - official OpenCode spec
   category?: string; // Optional - custom extension
   tags?: string[]; // Optional - custom extension (array format)
   tools?: Record<string, boolean>; // Optional - official OpenCode spec
   disable?: boolean; // Optional - official OpenCode spec
   prompt?: string; // Optional - official OpenCode spec
   permission?: Record<string, any>; // Optional - official OpenCode spec
-  
+
   // Legacy fields for backwards compatibility with tests
   usage?: string;
   do_not_use_when?: string;
@@ -99,25 +99,64 @@ function detectFormatFromContent(content: string): 'base' | 'claude-code' | 'ope
 
   try {
     const { frontmatter } = parseFrontmatter(content);
-    
+
     // Custom OpenCode format detection (your format)
     // - Has name, tags (array), and category fields
-    if (frontmatter.name && frontmatter.tags && Array.isArray(frontmatter.tags) && frontmatter.category) {
+    if (
+      frontmatter.name &&
+      frontmatter.tags &&
+      Array.isArray(frontmatter.tags) &&
+      frontmatter.category
+    ) {
       return 'opencode';
     }
-    
+
     // Claude Code format detection
     // - Has role field but not tags array
     if (frontmatter.role && !frontmatter.tags) {
       return 'claude-code';
     }
-    
+
     // Default to base format
     return 'base';
-    
   } catch {
     return 'base'; // Safe fallback
   }
+}
+
+/**
+ * Normalize permission format between tools: and permission: formats
+ */
+function normalizePermissionFormat(frontmatter: any): any {
+  // If agent uses tools: format, convert to permission: format
+  if (frontmatter.tools && typeof frontmatter.tools === 'object') {
+    const permissions = {
+      edit: frontmatter.tools.edit || false,
+      bash: frontmatter.tools.bash || false,
+      webfetch: frontmatter.tools.webfetch !== false, // Default to true if not explicitly false
+    };
+
+    // Create normalized frontmatter with both formats for compatibility
+    return {
+      ...frontmatter,
+      permission: permissions,
+    };
+  }
+
+  // If agent already uses permission: format, ensure it's properly structured
+  if (frontmatter.permission && typeof frontmatter.permission === 'object') {
+    return frontmatter;
+  }
+
+  // If no permission format found, add default permissions
+  return {
+    ...frontmatter,
+    permission: {
+      edit: false,
+      bash: false,
+      webfetch: true,
+    },
+  };
 }
 
 /**
@@ -170,7 +209,7 @@ function parseFrontmatter(content: string): { frontmatter: any; body: string } {
     }
 
     if (inTools) {
-      const indentLevel = line.length - line.trimLeft().length;
+      const indentLevel = line.length - line.trimStart().length;
 
       // Exit tools section if we're back to the same or lesser indentation
       if (indentLevel <= toolsIndentLevel && trimmedLine !== '') {
@@ -199,7 +238,9 @@ function parseFrontmatter(content: string): { frontmatter: any; body: string } {
         if (arrayContent === '') {
           frontmatter[key] = [];
         } else {
-          frontmatter[key] = arrayContent.split(',').map(item => item.trim().replace(/^["']|["']$/g, ''));
+          frontmatter[key] = arrayContent
+            .split(',')
+            .map((item) => item.trim().replace(/^["']|["']$/g, ''));
         }
       } else if (!isNaN(Number(value)) && value !== '' && !value.includes('/')) {
         // Don't convert model names like "github-copilot/gpt-5" to numbers
@@ -215,8 +256,11 @@ function parseFrontmatter(content: string): { frontmatter: any; body: string } {
     }
   }
 
+  // Normalize permission format for compatibility
+  const normalizedFrontmatter = normalizePermissionFormat(frontmatter);
+
   return {
-    frontmatter,
+    frontmatter: normalizedFrontmatter,
     body: bodyLines.join('\n').trim(),
   };
 }
@@ -327,7 +371,10 @@ export async function parseAgentsFromDirectory(
       } else if (item.endsWith('.md') && !item.startsWith('README')) {
         // This is a markdown file, parse it
         try {
-          let actualFormat: 'base' | 'claude-code' | 'opencode' = format as 'base' | 'claude-code' | 'opencode';
+          let actualFormat: 'base' | 'claude-code' | 'opencode' = format as
+            | 'base'
+            | 'claude-code'
+            | 'opencode';
           if (format === 'auto') {
             // Auto-detect format from file content
             const content = await globalFileReader.readFile(itemPath);
@@ -358,10 +405,12 @@ export async function parseAgentsFromDirectory(
  */
 function needsYamlQuoting(value: string): boolean {
   // Quote if contains colons, special YAML chars, starts with numbers/quotes, or is a reserved word
-  return /[:\[\]{}|>@`#%&*!]/.test(value) ||
-         /^[0-9"']/.test(value) ||
-         /^(true|false|null|yes|no|on|off)$/i.test(value) ||
-         value.includes('\n');
+  return (
+    /[:\[\]{}|>@`#%&*!]/.test(value) ||
+    /^[0-9"']/.test(value) ||
+    /^(true|false|null|yes|no|on|off)$/i.test(value) ||
+    value.includes('\n')
+  );
 }
 
 /**

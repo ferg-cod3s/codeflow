@@ -55,6 +55,51 @@ function toUniqueId(prefix, filePath) {
   return `${prefix}.${slug}__${hash}`;
 }
 
+/**
+ * Check if an agent has access to a requested file path
+ */
+async function checkAgentFileAccess(agentName, requestedPath) {
+  if (!globalAgentRegistry) {
+    throw new Error('Agent registry not initialized');
+  }
+
+  const agent = globalAgentRegistry.get(agentName);
+  if (!agent) {
+    throw new Error(
+      `Agent '${agentName}' not found in registry. Available agents: ${Array.from(globalAgentRegistry.keys()).join(', ')}`
+    );
+  }
+
+  const allowedDirs = agent.allowedDirectories || [];
+  if (allowedDirs.length === 0) {
+    // If no allowed directories specified, deny access
+    throw new Error(
+      `PERMISSION_DENIED: Agent '${agentName}' has no allowed directories configured. Please check agent configuration.`
+    );
+  }
+
+  // Check if requested path is within allowed directories
+  const isAllowed = allowedDirs.some((dir) => {
+    try {
+      const resolvedDir = path.resolve(dir);
+      const resolvedPath = path.resolve(requestedPath);
+      return resolvedPath.startsWith(resolvedDir);
+    } catch {
+      // If path resolution fails, deny access
+      return false;
+    }
+  });
+
+  if (!isAllowed) {
+    const allowedDirsList = allowedDirs.map((dir) => `  - ${dir}`).join('\n');
+    throw new Error(
+      `PERMISSION_DENIED: Access denied for agent '${agentName}' to path '${requestedPath}'.\n\nAllowed directories:\n${allowedDirsList}\n\nThe requested path is not within any of the agent's allowed directories.`
+    );
+  }
+
+  return true;
+}
+
 async function loadMarkdownFiles(dir) {
   try {
     const entries = await fs.readdir(dir, { withFileTypes: true });
@@ -168,6 +213,37 @@ async function run() {
 
   const toolEntries = await buildTools();
   const commandSlugToPath = new Map();
+
+  // Register agent file access validation tool
+  server.registerTool(
+    'validate_agent_file_access',
+    {
+      title: 'validate_agent_file_access',
+      description:
+        'Validate if an agent has access to a specific file path based on its allowed directories',
+    },
+    async (args = {}) => {
+      const agentName = (args.agentName || '').toString().trim();
+      const filePath = (args.filePath || '').toString().trim();
+
+      if (!agentName || !filePath) {
+        return {
+          content: [{ type: 'text', text: "Error: 'agentName' and 'filePath' are required" }],
+        };
+      }
+
+      try {
+        await checkAgentFileAccess(agentName, filePath);
+        return {
+          content: [{ type: 'text', text: `✅ Agent '${agentName}' has access to '${filePath}'` }],
+        };
+      } catch (error) {
+        return {
+          content: [{ type: 'text', text: `❌ ${error.message}` }],
+        };
+      }
+    }
+  );
 
   // Register each core workflow command with agent context
   for (const entry of toolEntries) {
