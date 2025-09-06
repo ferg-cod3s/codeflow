@@ -1,5 +1,5 @@
 ---
-description: Commits the local changes in multiple atomic commits
+description: Create git commits for changes made during the session
 ---
 
 # Commit Changes

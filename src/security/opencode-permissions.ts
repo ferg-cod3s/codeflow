@@ -1,6 +1,7 @@
 import { join } from 'node:path';
 import { readFile, readdir, writeFile } from 'node:fs/promises';
 import { setFilePermissions, setDirectoryPermissions } from './validation';
+import { normalizePermissionFormat } from '../conversion/agent-parser';
 
 export interface OpenCodePermissionConfig {
   osPermissions: {
@@ -54,48 +55,6 @@ export const DEFAULT_OPENCODE_PERMISSIONS: OpenCodePermissionConfig = {
     join(process.cwd(), 'packages', '*', 'tests'),
   ],
 };
-
-/**
- * Normalize permission format between tools: and permission: formats
- */
-function normalizePermissionFormat(frontmatter: any): any {
-  // If agent uses tools: format, convert to permission: format
-  if (frontmatter.tools && typeof frontmatter.tools === 'object') {
-    const permissions = {
-      edit: booleanToPermissionString(frontmatter.tools.edit || false),
-      bash: booleanToPermissionString(frontmatter.tools.bash || false),
-      webfetch: booleanToPermissionString(frontmatter.tools.webfetch !== false), // Default to true if not explicitly false
-    };
-
-    // Create normalized frontmatter with both formats for compatibility
-    return {
-      ...frontmatter,
-      permission: permissions,
-    };
-  }
-
-  // If agent already uses permission: format, ensure it's properly structured
-  if (frontmatter.permission && typeof frontmatter.permission === 'object') {
-    return frontmatter;
-  }
-
-  // If no permission format found, add default permissions
-  return {
-    ...frontmatter,
-    permission: {
-      edit: 'deny',
-      bash: 'deny',
-      webfetch: 'allow',
-    },
-  };
-}
-
-/**
- * Convert boolean permission values to OpenCode string format
- */
-function booleanToPermissionString(value: boolean): 'allow' | 'ask' | 'deny' {
-  return value ? 'allow' : 'deny';
-}
 
 // Deprecated: No longer load .opencode/permissions.json. All permissions must be set in agent file frontmatter.
 export async function loadRepositoryOpenCodeConfig(
@@ -218,7 +177,7 @@ function parseFrontmatterFromContent(content: string): { frontmatter: any; body:
         inSection = true;
         sectionName = key;
         sectionIndent = line.indexOf(key);
-        frontmatter[key] = key === 'allowed_directories' ? [] : {};
+        frontmatter[key] = key === 'allowed_directories' || key === 'tags' ? [] : {};
       } else {
         // Simple key-value
         frontmatter[key] = parseValue(value);
@@ -235,6 +194,8 @@ function parseFrontmatterFromContent(content: string): { frontmatter: any; body:
         frontmatter.permission[key] = parseValue(value);
       } else if (sectionName === 'allowed_directories' && trimmed.startsWith('- ')) {
         frontmatter.allowed_directories.push(trimmed.substring(2).trim());
+      } else if (sectionName === 'tags' && trimmed.startsWith('- ')) {
+        frontmatter.tags.push(trimmed.substring(2).trim());
       }
     }
   }
@@ -278,6 +239,12 @@ function serializeFrontmatter(originalContent: string, frontmatter: any): string
       lines.push(`${key}:`);
       for (const dir of value) {
         lines.push(`  - ${dir}`);
+      }
+    } else if (Array.isArray(value)) {
+      // Handle general arrays (like tags)
+      lines.push(`${key}:`);
+      for (const item of value) {
+        lines.push(`  - ${item}`);
       }
     } else if (typeof value === 'string' && value.includes('\n')) {
       lines.push(`${key}: "${value.replace(/"/g, '\\"')}"`);

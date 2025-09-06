@@ -93,7 +93,7 @@ describe('Agent Setup Functionality', () => {
 
       expect(result.success).toBe(false);
       expect(result.count).toBe(0);
-      expect(result.errors[0]).toContain('Source directory not found');
+      expect(result.errors[0]).toContain('No command source found');
     });
 
     test('should handle file copy errors gracefully', async () => {

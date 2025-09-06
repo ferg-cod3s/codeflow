@@ -1,5 +1,5 @@
 ---
-description: Generate and run a comprehensive testing workflow
+description: Design, generate, and execute tests for implemented features
 ---
 
 # Test Implementation

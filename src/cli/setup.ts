@@ -76,12 +76,28 @@ export class CommandSetupStrategy implements AgentSetupStrategy {
     };
 
     try {
-      // For commands, always use the command source directory
-      const sourceDir = join(sourcePath, 'command');
+      // Determine source directory based on target format
+      let sourceDir: string;
+      
+      if (targetDir.includes('.claude/commands')) {
+        sourceDir = join(sourcePath, '.claude', 'commands');
+      } else if (targetDir.includes('.opencode/command')) {
+        sourceDir = join(sourcePath, '.opencode', 'command');
+      } else {
+        // Fallback to base format
+        sourceDir = join(sourcePath, 'command');
+      }
 
       if (!existsSync(sourceDir)) {
-        result.errors.push(`Source directory not found: ${sourceDir}`);
-        return result;
+        // Try fallback to base format if specific format not found
+        const fallbackDir = join(sourcePath, 'command');
+        if (existsSync(fallbackDir)) {
+          sourceDir = fallbackDir;
+          result.warnings.push(`Using fallback command source: ${fallbackDir}`);
+        } else {
+          result.errors.push(`No command source found. Tried: ${sourceDir}, ${fallbackDir}`);
+          return result;
+        }
       }
 
       // Direct copy for commands

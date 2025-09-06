@@ -1,5 +1,5 @@
 ---
-description: Create an implementation plan from a ticket and research
+description: Create detailed implementation plans through interactive process
 ---
 
 # Implementation Plan

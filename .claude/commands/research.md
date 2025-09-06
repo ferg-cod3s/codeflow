@@ -1,5 +1,5 @@
 ---
-description: Research a ticket or provider a prompt for ad-hoc research
+description: Conduct comprehensive codebase research to answer user questions
 ---
 
 # Research Codebase

@@ -1,4 +1,3 @@
-import { readFile } from 'node:fs/promises';
 import { basename } from 'node:path';
 import { globalPerformanceMonitor, globalFileReader } from '../optimization/performance';
 
@@ -17,6 +16,7 @@ export interface BaseAgent {
   // Custom extensions that can be preserved across formats
   category?: string;
   tags?: string[];
+  allowed_directories?: string[];
 
   // Legacy fields that may appear in test data
   usage?: string;
@@ -47,6 +47,7 @@ export interface OpenCodeAgent {
   temperature?: number; // Optional - official OpenCode spec
   category?: string; // Optional - custom extension
   tags?: string[]; // Optional - custom extension (array format)
+  allowed_directories?: string[]; // Optional - custom extension
   tools?: Record<string, boolean>; // Optional - official OpenCode spec
   disable?: boolean; // Optional - official OpenCode spec
   prompt?: string; // Optional - official OpenCode spec
@@ -133,7 +134,7 @@ function detectFormatFromContent(content: string): 'base' | 'claude-code' | 'ope
 /**
  * Normalize permission format between tools: and permission: formats
  */
-function normalizePermissionFormat(frontmatter: any): any {
+export function normalizePermissionFormat(frontmatter: any): any {
   // If agent uses tools: format, convert to permission: format
   if (frontmatter.tools && typeof frontmatter.tools === 'object') {
     const permissions = {
@@ -142,16 +143,23 @@ function normalizePermissionFormat(frontmatter: any): any {
       webfetch: booleanToPermissionString(frontmatter.tools.webfetch !== false), // Default to true if not explicitly false
     };
 
-    // Create normalized frontmatter with both formats for compatibility
+    // Remove individual permission fields to avoid duplication
+    const { edit, bash, patch, read, grep, glob, list, webfetch, write, ...cleanFrontmatter } =
+      frontmatter;
+
+    // Create normalized frontmatter with permission block
     return {
-      ...frontmatter,
+      ...cleanFrontmatter,
       permission: permissions,
     };
   }
 
-  // If agent already uses permission: format, ensure it's properly structured
+  // If agent already uses permission: format, remove individual permission fields to avoid duplication
   if (frontmatter.permission && typeof frontmatter.permission === 'object') {
-    return frontmatter;
+    // Remove individual permission fields that might exist alongside the permission block
+    const { edit, bash, patch, read, grep, glob, list, webfetch, write, ...cleanFrontmatter } =
+      frontmatter;
+    return cleanFrontmatter;
   }
 
   // If no permission format found, add default permissions
@@ -202,10 +210,11 @@ function parseFrontmatter(content: string): { frontmatter: any; body: string } {
 
   // Parse YAML frontmatter manually (simple key-value pairs)
   const frontmatter: any = {};
-  let currentKey = '';
-  let currentValue: any = '';
   let inTools = false;
   let toolsIndentLevel = 0;
+  let inArray = false;
+  let arrayKey = '';
+  let arrayIndentLevel = 0;
 
   for (let i = 0; i < frontmatterLines.length; i++) {
     const line = frontmatterLines[i];
@@ -234,10 +243,38 @@ function parseFrontmatter(content: string): { frontmatter: any; body: string } {
       }
     }
 
-    if (!inTools && trimmedLine.includes(':')) {
+    // Handle array parsing (YAML list syntax)
+    if (inArray) {
+      const indentLevel = line.length - line.trimStart().length;
+
+      // Exit array section if we're back to the same or lesser indentation
+      if (indentLevel <= arrayIndentLevel && trimmedLine !== '') {
+        inArray = false;
+        arrayKey = '';
+      } else if (trimmedLine.startsWith('- ')) {
+        // Add item to array
+        const item = trimmedLine.substring(2).trim();
+        if (!Array.isArray(frontmatter[arrayKey])) {
+          frontmatter[arrayKey] = [];
+        }
+        frontmatter[arrayKey].push(item);
+        continue;
+      }
+    }
+
+    if (!inTools && !inArray && trimmedLine.includes(':')) {
       const colonIndex = trimmedLine.indexOf(':');
       const key = trimmedLine.substring(0, colonIndex).trim();
       let value = trimmedLine.substring(colonIndex + 1).trim();
+
+      // Check if this starts an array (no value after colon)
+      if (value === '') {
+        inArray = true;
+        arrayKey = key;
+        arrayIndentLevel = line.indexOf(key + ':');
+        frontmatter[key] = [];
+        continue;
+      }
 
       // Handle different value types
       if (value === 'true' || value === 'false') {
@@ -253,7 +290,8 @@ function parseFrontmatter(content: string): { frontmatter: any; body: string } {
         } else {
           frontmatter[key] = arrayContent
             .split(',')
-            .map((item) => item.trim().replace(/^["']|["']$/g, ''));
+            .map((item) => item.trim().replace(/^["']|["']$/g, ''))
+            .filter((item) => item.length > 0); // Remove empty items
         }
       } else if (!isNaN(Number(value)) && value !== '' && !value.includes('/')) {
         // Don't convert model names like "github-copilot/gpt-5" to numbers
@@ -419,7 +457,7 @@ export async function parseAgentsFromDirectory(
 function needsYamlQuoting(value: string): boolean {
   // Quote if contains colons, special YAML chars, starts with numbers/quotes, or is a reserved word
   return (
-    /[:\[\]{}|>@`#%&*!]/.test(value) ||
+    /[:[\]{}|>@`#%&*!]/.test(value) ||
     /^[0-9"']/.test(value) ||
     /^(true|false|null|yes|no|on|off)$/i.test(value) ||
     value.includes('\n')
@@ -444,6 +482,12 @@ export function serializeAgent(agent: Agent): string {
       lines.push(`${key}:`);
       for (const [permKey, permValue] of Object.entries(value as Record<string, any>)) {
         lines.push(`  ${permKey}: ${permValue}`);
+      }
+    } else if (Array.isArray(value)) {
+      // Handle arrays with YAML list syntax
+      lines.push(`${key}:`);
+      for (const item of value) {
+        lines.push(`  - ${item}`);
       }
     } else if (typeof value === 'string' && needsYamlQuoting(value)) {
       // Quote strings that need it for proper YAML syntax

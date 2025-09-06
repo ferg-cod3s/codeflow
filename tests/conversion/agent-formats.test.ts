@@ -215,6 +215,109 @@ model: unquoted-string
     expect(agent.frontmatter.disabled).toBe(false);
     expect(agent.frontmatter.model).toBe('unquoted-string');
   });
+
+  test('parses and serializes arrays correctly', async () => {
+    const arrayAgent = `---
+description: Agent with arrays
+tags:
+  - tag1
+  - tag2
+  - tag3
+allowed_directories:
+  - /path/to/dir1
+  - /path/to/dir2
+category: test
+---
+
+# Array Agent
+`;
+
+    const agentPath = path.join(tempDir, 'array-agent.md');
+    await fs.writeFile(agentPath, arrayAgent);
+
+    const agent = await parseAgentFile(agentPath, 'base');
+
+    expect(agent.frontmatter.tags).toEqual(['tag1', 'tag2', 'tag3']);
+    expect(agent.frontmatter.allowed_directories).toEqual(['/path/to/dir1', '/path/to/dir2']);
+    expect(agent.frontmatter.category).toBe('test');
+
+    // Test round-trip serialization
+    const serialized = serializeAgent(agent);
+    const roundtripPath = path.join(tempDir, 'roundtrip-array.md');
+    await fs.writeFile(roundtripPath, serialized);
+    const reparsedAgent = await parseAgentFile(roundtripPath, 'base');
+
+    expect(reparsedAgent.frontmatter.tags).toEqual(['tag1', 'tag2', 'tag3']);
+    expect(reparsedAgent.frontmatter.allowed_directories).toEqual([
+      '/path/to/dir1',
+      '/path/to/dir2',
+    ]);
+    expect(reparsedAgent.frontmatter.category).toBe('test');
+  });
+
+  test('handles inline array format correctly', async () => {
+    const inlineArrayAgent = `---
+description: Agent with inline arrays
+tags: [tag1, tag2, tag3]
+category: test
+---
+
+# Inline Array Agent
+`;
+
+    const agentPath = path.join(tempDir, 'inline-array-agent.md');
+    await fs.writeFile(agentPath, inlineArrayAgent);
+
+    const agent = await parseAgentFile(agentPath, 'base');
+
+    expect(agent.frontmatter.tags).toEqual(['tag1', 'tag2', 'tag3']);
+    expect(agent.frontmatter.category).toBe('test');
+
+    // Test round-trip serialization (should convert to YAML list format)
+    const serialized = serializeAgent(agent);
+    const roundtripPath = path.join(tempDir, 'roundtrip-inline-array.md');
+    await fs.writeFile(roundtripPath, serialized);
+    const reparsedAgent = await parseAgentFile(roundtripPath, 'base');
+
+    expect(reparsedAgent.frontmatter.tags).toEqual(['tag1', 'tag2', 'tag3']);
+    expect(reparsedAgent.frontmatter.category).toBe('test');
+  });
+
+  test('handles mixed array formats and empty arrays', async () => {
+    const mixedArrayAgent = `---
+description: Agent with mixed array formats
+tags: [tag1, tag2]
+allowed_directories:
+  - /path/to/dir1
+  - /path/to/dir2
+category: test
+---
+
+# Mixed Array Agent
+`;
+
+    const agentPath = path.join(tempDir, 'mixed-array-agent.md');
+    await fs.writeFile(agentPath, mixedArrayAgent);
+
+    const agent = await parseAgentFile(agentPath, 'base');
+
+    expect(agent.frontmatter.tags).toEqual(['tag1', 'tag2']);
+    expect(agent.frontmatter.allowed_directories).toEqual(['/path/to/dir1', '/path/to/dir2']);
+    expect(agent.frontmatter.category).toBe('test');
+
+    // Test round-trip serialization
+    const serialized = serializeAgent(agent);
+    const roundtripPath = path.join(tempDir, 'roundtrip-mixed-array.md');
+    await fs.writeFile(roundtripPath, serialized);
+    const reparsedAgent = await parseAgentFile(roundtripPath, 'base');
+
+    expect(reparsedAgent.frontmatter.tags).toEqual(['tag1', 'tag2']);
+    expect(reparsedAgent.frontmatter.allowed_directories).toEqual([
+      '/path/to/dir1',
+      '/path/to/dir2',
+    ]);
+    expect(reparsedAgent.frontmatter.category).toBe('test');
+  });
 });
 
 describe('Agent Directory Parsing', () => {

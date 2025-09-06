@@ -1,6 +1,6 @@
 import { describe, test, expect, beforeEach, afterEach } from 'bun:test';
 import { join } from 'node:path';
-import { mkdir, rm, writeFile, readFile } from 'node:fs/promises';
+import { mkdir, rm, writeFile, readFile, readdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { setup } from '../../src/cli/setup';
 
@@ -39,6 +39,14 @@ describe('Setup Integration', () => {
     // Verify commands directory was created
     expect(existsSync(join(projectDir, '.claude', 'commands'))).toBe(true);
 
+    // Verify command files were copied (the main bug fix)
+    const commandFiles = await readdir(join(projectDir, '.claude', 'commands'));
+    const mdFiles = commandFiles.filter(f => f.endsWith('.md'));
+    expect(mdFiles).toHaveLength(7);
+    expect(mdFiles).toContain('research.md');
+    expect(mdFiles).toContain('plan.md');
+    expect(mdFiles).toContain('execute.md');
+    
     // Verify agents directory was created (our fix)
     expect(existsSync(join(projectDir, '.claude', 'agents'))).toBe(true);
   });
@@ -54,6 +62,14 @@ describe('Setup Integration', () => {
     // Verify directories were created
     expect(existsSync(join(projectDir, '.opencode', 'command'))).toBe(true);
     expect(existsSync(join(projectDir, '.opencode', 'agent'))).toBe(true);
+
+    // Verify command files were copied (the main bug fix)
+    const commandFiles = await readdir(join(projectDir, '.opencode', 'command'));
+    const mdFiles = commandFiles.filter(f => f.endsWith('.md'));
+    expect(mdFiles).toHaveLength(7);
+    expect(mdFiles).toContain('research.md');
+    expect(mdFiles).toContain('plan.md');
+    expect(mdFiles).toContain('execute.md');
   });
 
   test('should setup general project with both formats', async () => {

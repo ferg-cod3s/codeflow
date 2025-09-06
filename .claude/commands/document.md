@@ -1,5 +1,5 @@
 ---
-description: Create user, API, and technical documentation from code and plans
+description: Produce high-quality documentation for implemented features
 ---
 
 # Document Feature

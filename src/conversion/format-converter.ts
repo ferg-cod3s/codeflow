@@ -57,6 +57,10 @@ export class FormatConverter {
       tools: baseAgent.tools,
       // Convert tools to permission format for official OpenCode spec
       permission: baseAgent.tools ? this.convertToolsToPermissions(baseAgent.tools) : undefined,
+      // Preserve custom fields for compatibility
+      ...(baseAgent.category && { category: baseAgent.category }),
+      ...(baseAgent.tags && { tags: baseAgent.tags }),
+      ...(baseAgent.allowed_directories && { allowed_directories: baseAgent.allowed_directories }),
     };
 
     // Convert model format for OpenCode if needed

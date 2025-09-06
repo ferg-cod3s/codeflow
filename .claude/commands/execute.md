@@ -1,5 +1,5 @@
 ---
-description: Execute a specific implementation plan.
+description: Implement an approved technical plan from thoughts/plans/
 ---
 
 # Implement Plan
