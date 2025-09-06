@@ -1,5 +1,5 @@
 ---
-description: Commits the local changes in multiple atomic commits
+description: Create git commits for changes made during the session
 ---
 
 # Commit Changes
@@ -31,6 +31,7 @@ You are tasked with creating git commits for the changes made during this sessio
    - Show the result with `git log --oneline -n [number]`
 
 ## Remember:
+
 - You have the full context of what was done in this session
 - Group related changes together
 - Keep commits focused and atomic when possible

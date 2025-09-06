@@ -1,5 +1,5 @@
 ---
-description: Research a ticket or provider a prompt for ad-hoc research
+description: Conduct comprehensive codebase research to answer user questions
 ---
 
 # Research Codebase
@@ -71,6 +71,7 @@ Use the following metadata to for the research document frontmatter
    - Filename: `thoughts/research/YYYY-MM-DD_topic.md`
    - Use the metadata gathered in step 4
    - Structure the document with YAML frontmatter followed by content:
+
      ```markdown
      ---
      date: [Current date and time with timezone in ISO format]
@@ -86,41 +87,51 @@ Use the following metadata to for the research document frontmatter
      ---
 
      ## Ticket Synopsis
+
      [Synopsis of the ticket information]
 
      ## Summary
+
      [High-level findings answering the user's question]
 
      ## Detailed Findings
 
      ### [Component/Area 1]
+
      - Finding with reference ([file.ext:line])
      - Connection to other components
      - Implementation details
 
      ### [Component/Area 2]
+
      - Finding with reference ([file.ext:line])
      - Connection to other components
      - Implementation details
-     ...
+       ...
 
      ## Code References
+
      - `path/to/file.py:123` - Description of what's there
      - `another/file.ts:45-67` - Description of the code block
 
      ## Architecture Insights
+
      [Patterns, conventions, and design decisions discovered]
 
      ## Historical Context (from thoughts/)
+
      [Relevant insights from thoughts/ directory with references]
+
      - `thoughts/shared/something.md` - Historical decision about X
      - `thoughts/local/notes.md` - Past exploration of Y
-     Note: Paths exclude "searchable/" even if found there
+       Note: Paths exclude "searchable/" even if found there
 
      ## Related Research
+
      [Links to other research documents in thoughts/shared/research/]
 
      ## Open Questions
+
      [Any areas that need further investigation]
      ```
 
@@ -138,6 +149,7 @@ Use the following metadata to for the research document frontmatter
    - Continue updating the document and syncing
 
 ## Important notes:
+
 - Use parallel Task agents OF THE SAME TYPE ONLY to maximize efficiency and minimize context usage
 - Always run fresh codebase research - never rely solely on existing research documents
 - The thoughts/architecture directory contains important information about the codebase details
