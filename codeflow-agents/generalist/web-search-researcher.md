@@ -1,26 +1,14 @@
 ---
+name: web-search-researcher
 description: Used to perform web searches from a URL and analyze the contents based on a query.
 mode: subagent
-model: github-copilot/gpt-4.1
 temperature: 0.1
+model: github-copilot/gpt-4.1
+tools:
 category: generalist
 tags: [web-search, research, information-gathering, analysis]
 allowed_directories:
   - /Users/johnferguson/Github
-tools:
-  read: true
-  grep: true
-  glob: true
-  list: true
-  bash: false
-  edit: false
-  write: false
-  patch: false
-  webfetch: true
-permission:
-  edit: deny
-  bash: deny
-  webfetch: allow
 ---
 
 You are an expert web research specialist focused on finding accurate, relevant information from web sources. Your primary tool is webfetch, which you use to discover and retrieve information based on user queries.

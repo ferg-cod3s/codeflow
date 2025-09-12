@@ -1,4 +1,14 @@
-## [0.9.3](https://github.com/ferg-cod3s/codeflow/compare/v0.9.2...v0.9.3) (2025-09-05)
+## [0.9.6](https://github.com/ferg-cod3s/codeflow/compare/v0.9.5...v0.9.6) (2025-09-12)
+
+
+
+## [0.9.5](https://github.com/ferg-cod3s/codeflow/compare/v0.9.2...v0.9.5) (2025-09-06)
+
+
+### Bug Fixes
+
+* resolve agent parsing issues and update setup functionality ([6d6e9ef](https://github.com/ferg-cod3s/codeflow/commit/6d6e9ef73e2599fb69856350290c728f1e637545))
+* standardize command descriptions across directories ([9019bee](https://github.com/ferg-cod3s/codeflow/commit/9019bee34bb07675875857705eba3ee1fa01cfe7))
 
 
 

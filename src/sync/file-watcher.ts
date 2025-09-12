@@ -1,11 +1,11 @@
-import { watch, FSWatcher } from "node:fs";
-import { join, relative, basename, dirname } from "node:path";
-import { existsSync } from "node:fs";
-import { readFile } from "node:fs/promises";
-import { syncGlobalAgents } from "../cli/sync";
-import { parseAgentFile } from "../conversion/agent-parser";
-import { FormatConverter } from "../conversion/format-converter";
-import { globalPerformanceMonitor } from "../optimization/performance.js";
+import { watch, FSWatcher } from 'node:fs';
+import { join, relative, basename, dirname } from 'node:path';
+import { existsSync } from 'node:fs';
+import { readFile } from 'node:fs/promises';
+import { syncGlobalAgents } from '../cli/sync';
+import { parseAgentFile } from '../conversion/agent-parser';
+import { FormatConverter } from '../conversion/format-converter';
+import { globalPerformanceMonitor } from '../optimization/performance.js';
 
 export interface WatchConfig {
   /** Root directory containing the codeflow installation */
@@ -44,48 +44,48 @@ export class FileWatcher {
       projectDirs: [],
       autoConvert: true,
       onChange: async () => {},
-      ...config
+      ...config,
     };
   }
 
   async start(): Promise<void> {
-    console.log("🔍 Starting file system watcher...");
-    
+    console.log('🔍 Starting file system watcher...');
+
     // Watch core codeflow directories
     await this.watchCodeflowDirectories();
-    
+
     // Watch project directories if specified
     for (const projectDir of this.config.projectDirs) {
       await this.watchProjectDirectories(projectDir);
     }
-    
+
     console.log(`📡 Watching ${this.watchers.length} directories for changes`);
   }
 
   async stop(): Promise<void> {
-    console.log("🛑 Stopping file system watcher...");
-    
+    console.log('🛑 Stopping file system watcher...');
+
     // Clear all debounce timers
     for (const timer of this.debounceTimers.values()) {
       clearTimeout(timer);
     }
     this.debounceTimers.clear();
-    
+
     // Close all watchers
     for (const watcher of this.watchers) {
       watcher.close();
     }
     this.watchers = [];
-    
-    console.log("✅ File watcher stopped");
+
+    console.log('✅ File watcher stopped');
   }
 
   private async watchCodeflowDirectories(): Promise<void> {
     const watchDirs = [
-      { path: join(this.config.codeflowRoot, "agent"), name: "agent" },
-      { path: join(this.config.codeflowRoot, "command"), name: "command" },
-      { path: join(this.config.codeflowRoot, "claude-agents"), name: "claude-agents" },
-      { path: join(this.config.codeflowRoot, "opencode-agents"), name: "opencode-agents" }
+      { path: join(this.config.codeflowRoot, 'agent'), name: 'agent' },
+      { path: join(this.config.codeflowRoot, 'command'), name: 'command' },
+      { path: join(this.config.codeflowRoot, 'claude-agents'), name: 'claude-agents' },
+      { path: join(this.config.codeflowRoot, 'opencode-agents'), name: 'opencode-agents' },
     ] as const;
 
     for (const dir of watchDirs) {
@@ -97,10 +97,10 @@ export class FileWatcher {
 
   private async watchProjectDirectories(projectDir: string): Promise<void> {
     const projectWatchDirs = [
-      { path: join(projectDir, ".opencode", "agent"), name: "opencode-agents" },
-      { path: join(projectDir, ".opencode", "command"), name: "command" },
-      { path: join(projectDir, ".claude", "commands"), name: "command" },
-      { path: join(projectDir, ".claude", "agents"), name: "claude-agents" }
+      { path: join(projectDir, '.opencode', 'agent'), name: 'opencode-agents' },
+      { path: join(projectDir, '.opencode', 'command'), name: 'command' },
+      { path: join(projectDir, '.claude', 'commands'), name: 'command' },
+      { path: join(projectDir, '.claude', 'agents'), name: 'claude-agents' },
     ] as const;
 
     for (const dir of projectWatchDirs) {
@@ -124,19 +124,18 @@ export class FileWatcher {
 
       this.watchers.push(watcher);
       console.log(`  📂 Watching ${relative(this.config.codeflowRoot, dirPath)}`);
-      
     } catch (error: any) {
       console.error(`❌ Failed to watch ${dirPath}:`, error.message);
     }
   }
 
   private handleFileChange(
-    eventType: string, 
-    filePath: string, 
+    eventType: string,
+    filePath: string,
     directory: FileChangeEvent['directory']
   ): void {
     const changeStart = performance.now();
-    
+
     // Only watch .md files
     if (!filePath.endsWith('.md')) {
       return;
@@ -153,14 +152,19 @@ export class FileWatcher {
     const isCommand = directory === 'command';
 
     const event: FileChangeEvent = {
-      type: eventType === 'change' ? 
-        (existsSync(filePath) ? 'modify' : 'delete') : 
-        (existsSync(filePath) ? 'create' : 'delete'),
+      type:
+        eventType === 'change'
+          ? existsSync(filePath)
+            ? 'modify'
+            : 'delete'
+          : existsSync(filePath)
+            ? 'create'
+            : 'delete',
       filePath,
       relativePath,
       directory,
       isAgent,
-      isCommand
+      isCommand,
     };
 
     // Track file watch latency
@@ -177,18 +181,35 @@ export class FileWatcher {
 
   private debounceFileChange(event: FileChangeEvent): void {
     const key = event.filePath;
-    
+
     // Clear existing timer
     if (this.debounceTimers.has(key)) {
       clearTimeout(this.debounceTimers.get(key)!);
     }
 
-    // Set new timer
-    const timer = setTimeout(() => {
+    // Set new timer with enhanced error handling
+    const timer = setTimeout(async () => {
       this.debounceTimers.delete(key);
-      this.onFileChange(event).catch(error => {
-        console.error(`❌ Error handling file change for ${event.relativePath}:`, error);
-      });
+      try {
+        await this.onFileChange(event);
+      } catch (error) {
+        console.error(
+          `❌ Error in debounced file change handler for ${event.relativePath}:`,
+          error
+        );
+        // Retry once after a delay for transient errors
+        setTimeout(async () => {
+          try {
+            console.log(`🔄 Retrying file change processing for ${event.relativePath}`);
+            await this.onFileChange(event);
+            console.log(`✅ Retry successful for ${event.relativePath}`);
+          } catch (retryError) {
+            console.error(`❌ Retry also failed for ${event.relativePath}:`, retryError);
+            // Could add more sophisticated error recovery here
+            // For example, exponential backoff or circuit breaker pattern
+          }
+        }, 2000); // Wait 2 seconds before retry
+      }
     }, this.config.debounceMs);
 
     this.debounceTimers.set(key, timer);
@@ -206,11 +227,10 @@ export class FileWatcher {
         await this.handleAgentChange(event);
       }
 
-      // Handle command changes  
+      // Handle command changes
       if (event.isCommand) {
         await this.handleCommandChange(event);
       }
-
     } catch (error: any) {
       console.error(`❌ Failed to process ${event.type} for ${event.relativePath}:`, error.message);
     }
@@ -234,7 +254,7 @@ export class FileWatcher {
 
       // Parse the agent file
       const agent = await parseAgentFile(event.filePath, format);
-      
+
       if (!agent) {
         console.log(`  ⚠️  Could not parse agent: ${event.relativePath}`);
         return;
@@ -244,7 +264,6 @@ export class FileWatcher {
 
       // Trigger global sync for this agent type
       await this.syncAgentFormats(event.directory);
-
     } catch (error: any) {
       console.error(`  ❌ Failed to process agent change: ${error.message}`);
     }
@@ -265,7 +284,7 @@ export class FileWatcher {
     try {
       // Determine which format to sync based on source
       let targetFormat: 'all' | 'base' | 'claude-code' | 'opencode';
-      
+
       switch (sourceDirectory) {
         case 'agent':
           targetFormat = 'all'; // Base format syncs to all
@@ -277,21 +296,49 @@ export class FileWatcher {
           targetFormat = 'opencode';
           break;
         default:
+          console.log(`  ⚠️  Unknown source directory: ${sourceDirectory}, skipping sync`);
           return;
       }
 
       console.log(`  🔄 Syncing ${targetFormat} agents to global directories...`);
-      
-      await syncGlobalAgents({
-        format: targetFormat,
-        validate: true,
-        dryRun: false
-      });
 
-      console.log(`  ✅ Sync complete for ${targetFormat} format`);
+      try {
+        await syncGlobalAgents({
+          format: targetFormat,
+          validate: true,
+          dryRun: false,
+        });
 
+        console.log(`  ✅ Sync completed for ${targetFormat} format`);
+      } catch (error) {
+        console.error(`  ❌ Sync failed for ${targetFormat} format: ${(error as Error).message}`);
+
+        // Add more context for debugging
+        if ((error as Error).message?.includes('AGENT_MANIFEST.json')) {
+          console.error(`    💡 Suggestion: Run 'codeflow setup' to initialize the project`);
+        } else if (
+          (error as Error).message?.includes('permission') ||
+          (error as Error).message?.includes('access')
+        ) {
+          console.error(`    💡 Suggestion: Check file permissions and directory access`);
+        } else if (
+          (error as Error).message?.includes('YAML') ||
+          (error as Error).message?.includes('parse')
+        ) {
+          console.error(`    💡 Suggestion: Validate agent YAML syntax before syncing`);
+        }
+      }
     } catch (error: any) {
       console.error(`  ❌ Failed to sync agent formats: ${error.message}`);
+
+      // Add more context for debugging
+      if (error.message?.includes('AGENT_MANIFEST.json')) {
+        console.error(`    💡 Suggestion: Run 'codeflow setup' to initialize the project`);
+      } else if (error.message?.includes('permission') || error.message?.includes('access')) {
+        console.error(`    💡 Suggestion: Check file permissions and directory access`);
+      } else if (error.message?.includes('YAML') || error.message?.includes('parse')) {
+        console.error(`    💡 Suggestion: Validate agent YAML syntax before syncing`);
+      }
     }
   }
 
@@ -306,7 +353,7 @@ export class FileWatcher {
     return {
       isRunning: this.watchers.length > 0,
       watchedDirectories: this.watchers.length,
-      pendingChanges: this.debounceTimers.size
+      pendingChanges: this.debounceTimers.size,
     };
   }
 
@@ -314,15 +361,15 @@ export class FileWatcher {
    * Manually trigger sync for all watched directories
    */
   async triggerFullSync(): Promise<void> {
-    console.log("🔄 Triggering full sync of all agents...");
-    
+    console.log('🔄 Triggering full sync of all agents...');
+
     await syncGlobalAgents({
       format: 'all',
       includeSpecialized: true,
       includeWorkflow: true,
-      validate: true
+      validate: true,
     });
 
-    console.log("✅ Full sync complete");
+    console.log('✅ Full sync complete');
   }
 }

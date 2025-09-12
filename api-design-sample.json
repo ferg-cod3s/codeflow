@@ -1,0 +1,946 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "TaskFlow API",
+    "description": "A comprehensive task management API with real-time collaboration features",
+    "version": "1.0.0",
+    "contact": {
+      "name": "API Support",
+      "email": "api@taskflow.com"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.taskflow.com/v1",
+      "description": "Production server"
+    },
+    {
+      "url": "https://staging-api.taskflow.com/v1",
+      "description": "Staging server"
+    },
+    {
+      "url": "https://sandbox-api.taskflow.com/v1",
+      "description": "Sandbox environment"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      },
+      "apiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    },
+    "schemas": {
+      "Task": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique identifier for the task"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "Task title"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 5000,
+            "description": "Detailed task description"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["todo", "in_progress", "review", "done", "cancelled"],
+            "default": "todo",
+            "description": "Current task status"
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["low", "medium", "high", "urgent"],
+            "default": "medium",
+            "description": "Task priority level"
+          },
+          "assignee_id": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "ID of assigned user"
+          },
+          "project_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "ID of parent project"
+          },
+          "due_date": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Task due date"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 50
+            },
+            "maxItems": 10,
+            "description": "Task tags for categorization"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "created_by": {
+            "type": "string",
+            "format": "uuid",
+            "readOnly": true
+          }
+        },
+        "required": ["title", "project_id"]
+      },
+      "TaskList": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Task"
+            }
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/PaginationMeta"
+          },
+          "filters": {
+            "$ref": "#/components/schemas/TaskFilters"
+          }
+        }
+      },
+      "PaginationMeta": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 20
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "total_pages": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "has_next": {
+            "type": "boolean"
+          },
+          "has_prev": {
+            "type": "boolean"
+          }
+        }
+      },
+      "TaskFilters": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["todo", "in_progress", "review", "done", "cancelled"]
+            }
+          },
+          "priority": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["low", "medium", "high", "urgent"]
+            }
+          },
+          "assignee_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "project_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "due_before": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "due_after": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "search": {
+            "type": "string",
+            "description": "Search in title and description"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "description": "Error code for programmatic handling"
+              },
+              "message": {
+                "type": "string",
+                "description": "Human-readable error message"
+              },
+              "details": {
+                "type": "object",
+                "description": "Additional error context"
+              },
+              "timestamp": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "request_id": {
+                "type": "string",
+                "description": "Unique request identifier for debugging"
+              }
+            },
+            "required": ["code", "message", "timestamp"]
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "name": {
+            "type": "string"
+          },
+          "avatar_url": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true
+          },
+          "role": {
+            "type": "string",
+            "enum": ["admin", "manager", "member", "viewer"]
+          },
+          "preferences": {
+            "type": "object",
+            "properties": {
+              "theme": {
+                "type": "string",
+                "enum": ["light", "dark", "auto"],
+                "default": "auto"
+              },
+              "notifications": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "boolean",
+                    "default": true
+                  },
+                  "push": {
+                    "type": "boolean",
+                    "default": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "parameters": {
+      "TaskId": {
+        "name": "taskId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "description": "Unique identifier of the task"
+      },
+      "Page": {
+        "name": "page",
+        "in": "query",
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1
+        },
+        "description": "Page number for pagination"
+      },
+      "Limit": {
+        "name": "limit",
+        "in": "query",
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 20
+        },
+        "description": "Number of items per page"
+      },
+      "SortBy": {
+        "name": "sort_by",
+        "in": "query",
+        "schema": {
+          "type": "string",
+          "enum": ["created_at", "updated_at", "due_date", "priority", "title"],
+          "default": "created_at"
+        },
+        "description": "Field to sort by"
+      },
+      "SortOrder": {
+        "name": "sort_order",
+        "in": "query",
+        "schema": {
+          "type": "string",
+          "enum": ["asc", "desc"],
+          "default": "desc"
+        },
+        "description": "Sort order"
+      }
+    },
+    "responses": {
+      "TaskResponse": {
+        "description": "Task response",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Task"
+            }
+          }
+        }
+      },
+      "TaskListResponse": {
+        "description": "List of tasks with pagination",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/TaskList"
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "description": "Error response",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/tasks": {
+      "get": {
+        "summary": "List tasks",
+        "description": "Retrieve a paginated list of tasks with optional filtering and sorting",
+        "tags": ["Tasks"],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Page"
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "$ref": "#/components/parameters/SortBy"
+          },
+          {
+            "$ref": "#/components/parameters/SortOrder"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["todo", "in_progress", "review", "done", "cancelled"]
+              }
+            },
+            "style": "form",
+            "explode": false,
+            "description": "Filter by task status"
+          },
+          {
+            "name": "priority",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["low", "medium", "high", "urgent"]
+              }
+            },
+            "style": "form",
+            "explode": false,
+            "description": "Filter by priority"
+          },
+          {
+            "name": "assignee_id",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Filter by assignee"
+          },
+          {
+            "name": "project_id",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Filter by project"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Search in title and description"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/TaskListResponse"
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "403": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create task",
+        "description": "Create a new task",
+        "tags": ["Tasks"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Task"
+              },
+              "examples": {
+                "create_task": {
+                  "summary": "Create a new task",
+                  "value": {
+                    "title": "Implement user authentication",
+                    "description": "Add JWT-based authentication system with refresh tokens",
+                    "status": "todo",
+                    "priority": "high",
+                    "project_id": "550e8400-e29b-41d4-a716-446655440000",
+                    "due_date": "2024-02-15T10:00:00Z",
+                    "tags": ["authentication", "security", "backend"]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/TaskResponse"
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "403": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      }
+    },
+    "/tasks/{taskId}": {
+      "get": {
+        "summary": "Get task",
+        "description": "Retrieve a specific task by ID",
+        "tags": ["Tasks"],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/TaskId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/TaskResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update task",
+        "description": "Update an existing task",
+        "tags": ["Tasks"],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/TaskId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Task"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/TaskResponse"
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Partial update task",
+        "description": "Partially update an existing task",
+        "tags": ["Tasks"],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/TaskId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": ["todo", "in_progress", "review", "done", "cancelled"]
+                  },
+                  "priority": {
+                    "type": "string",
+                    "enum": ["low", "medium", "high", "urgent"]
+                  },
+                  "assignee_id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "nullable": true
+                  },
+                  "due_date": {
+                    "type": "string",
+                    "format": "date-time",
+                    "nullable": true
+                  },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "maxLength": 50
+                    },
+                    "maxItems": 10
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/TaskResponse"
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete task",
+        "description": "Delete a task",
+        "tags": ["Tasks"],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/TaskId"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Task deleted successfully"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      }
+    },
+    "/tasks/{taskId}/comments": {
+      "get": {
+        "summary": "Get task comments",
+        "description": "Retrieve comments for a specific task",
+        "tags": ["Tasks", "Comments"],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/TaskId"
+          },
+          {
+            "$ref": "#/components/parameters/Page"
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of comments",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "content": {
+                            "type": "string",
+                            "maxLength": 2000
+                          },
+                          "author_id": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "created_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "updated_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
+                        }
+                      }
+                    },
+                    "pagination": {
+                      "$ref": "#/components/schemas/PaginationMeta"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Add comment to task",
+        "description": "Add a new comment to a task",
+        "tags": ["Tasks", "Comments"],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/TaskId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["content"],
+                "properties": {
+                  "content": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 2000,
+                    "description": "Comment content"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Comment created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "content": {
+                      "type": "string"
+                    },
+                    "author_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "created_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "User login",
+        "description": "Authenticate user and return JWT tokens",
+        "tags": ["Authentication"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "password"],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 8
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "access_token": {
+                      "type": "string",
+                      "description": "JWT access token"
+                    },
+                    "refresh_token": {
+                      "type": "string",
+                      "description": "JWT refresh token"
+                    },
+                    "expires_in": {
+                      "type": "integer",
+                      "description": "Token expiration time in seconds"
+                    },
+                    "token_type": {
+                      "type": "string",
+                      "enum": ["Bearer"],
+                      "default": "Bearer"
+                    },
+                    "user": {
+                      "$ref": "#/components/schemas/User"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      }
+    },
+    "/auth/refresh": {
+      "post": {
+        "summary": "Refresh access token",
+        "description": "Refresh JWT access token using refresh token",
+        "tags": ["Authentication"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["refresh_token"],
+                "properties": {
+                  "refresh_token": {
+                    "type": "string",
+                    "description": "JWT refresh token"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Token refreshed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "access_token": {
+                      "type": "string"
+                    },
+                    "expires_in": {
+                      "type": "integer"
+                    },
+                    "token_type": {
+                      "type": "string",
+                      "enum": ["Bearer"]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      }
+    },
+    "/webhooks/tasks": {
+      "post": {
+        "summary": "Task webhook",
+        "description": "Receive webhook notifications for task events",
+        "tags": ["Webhooks"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "event": {
+                    "type": "string",
+                    "enum": ["task.created", "task.updated", "task.deleted", "task.assigned"]
+                  },
+                  "task": {
+                    "$ref": "#/components/schemas/Task"
+                  },
+                  "timestamp": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "webhook_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Webhook processed successfully"
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Tasks",
+      "description": "Task management operations"
+    },
+    {
+      "name": "Authentication",
+      "description": "User authentication and authorization"
+    },
+    {
+      "name": "Webhooks",
+      "description": "Event-driven webhook notifications"
+    },
+    {
+      "name": "Comments",
+      "description": "Task comment management"
+    }
+  ]
+}

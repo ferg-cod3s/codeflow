@@ -1,5 +1,24 @@
 # CodeFlow Agent Registry
 
+---
+
+## Canonical Agent Directory Policy
+
+- `/codeflow-agents/` is the ONLY agent directory that should exist in the repository and is the single source of truth for all agent definitions.
+- All agent configuration, schema, and updates must be made exclusively in this directory.
+- Platform-specific agent directories such as `.claude/agents/`, `opencode-agents/`, etc. are NOT maintained in the repository. They are automatically generated as build artifacts during the `codeflow sync` CLI process and should not be manually edited or committed.
+- Only `/codeflow-agents/` should be tracked in version control. Platform-specific agent directories should be listed in `.gitignore` to prevent accidental commits.
+
+**Example `.gitignore` Entries:**
+
+```
+# Ignore generated agent directories (do not commit these)
+.claude/agents/
+opencode-agents/
+```
+
+---
+
 This file catalogs all available agents in the CodeFlow system, organized by category and capability. All agents are stored in the `codeflow-agents/` directory using the unified `BaseAgent` format and are automatically converted to platform-specific formats as needed.
 
 ## 🎯 **Single Format Architecture**
@@ -8,6 +27,43 @@ All agents are defined once in the `BaseAgent` format and automatically converte
 
 - **Claude Code Format** (`.claude/agents/`) - For Claude Code subagents (minimal format: name, description, optional tools)
 - **OpenCode Format** (`.opencode/agent/`) - For OpenCode platform
+
+## 🔧 **Registry Management & QA**
+
+### **Canonical Scan Order**
+
+Agents are loaded in priority order to ensure deterministic behavior:
+
+1. **Canonical Sources** (highest priority):
+   - `codeflow-agents/` - Base agent definitions (source of truth)
+   - `opencode-agents/` - OpenCode-specific agents
+
+2. **Legacy Sources** (when `CODEFLOW_INCLUDE_LEGACY=1`):
+   - `deprecated/claude-agents/` - Legacy Claude Code agents
+   - `deprecated/opencode-agents/` - Legacy OpenCode agents
+
+3. **User/Project Sources** (lowest priority):
+   - `~/.codeflow/agents/`, `~/.claude/agents/`, `~/.config/opencode/agent/`
+   - Project-specific: `.claude/agents/`, `.opencode/agent/`
+
+### **Duplicate Resolution Policy**
+
+- **Canonical Conflicts**: Same agent ID in multiple canonical directories with different content → **Fail with error**
+- **Legacy Duplicates**: Agent exists in both canonical and legacy directories → **Warn and prefer canonical**
+- **Hash-based Detection**: Uses SHA256 of normalized core fields (`model`, `tools`, `allowed_directories`, `inputs`, `outputs`)
+
+### **QA & Validation**
+
+Registry QA is available via:
+
+- **MCP Tool**: `codeflow.registry.qa` - Structured JSON report with issues and remediation
+- **CLI**: `codeflow validate` - Fails on critical issues, warns on legacy duplicates
+
+### **Environment Flags**
+
+- `CODEFLOW_INCLUDE_LEGACY=1` - Include deprecated directories in scan
+- `CODEFLOW_FS_READ_DEFAULT_ALLOW_REPO_ROOT=0` - Default filesystem read scope
+- `CODEFLOW_VALIDATE_STRICT=1` - Treat warnings as errors
 
 ## 🔍 **Core Research Agents**
 
@@ -143,12 +199,29 @@ Additional agents available in the unified format:
 - **growth-engineer**: User acquisition and retention optimization
 - **security-scanner**: Vulnerability assessment and security best practices
 - **smart-subagent-orchestrator**: Complex multi-domain project coordination
-- **ux-optimizer**: User experience and conversion optimization
+- **ux-optimizer**: User experience and conversion optimization (consolidated from mobile-optimizer and integration-master)
 - **system-architect**: System design and architecture planning
 - **monitoring-expert**: Observability and monitoring systems
 - **devops-operations-specialist**: DevOps and infrastructure automation
 - **infrastructure-builder**: Infrastructure as code and cloud architecture
 - **deployment-wizard**: Deployment strategies and CI/CD optimization
+
+### **ux-optimizer**
+
+**Consolidated Agent Notice**: This agent consolidates all capabilities previously covered by the deprecated `mobile-optimizer` and `integration-master` agents. These legacy agents have been deprecated in favor of this unified UX optimization approach.
+
+- **Model**: github-copilot/gpt-5
+- **Purpose**: Comprehensive user experience optimization covering mobile UX, integration flows, conversion optimization, accessibility, analytics, and behavioral design
+- **Capabilities**:
+  - **Mobile UX**: Touch-friendly interactions, responsive design, mobile-first optimization, gesture navigation, and cross-platform consistency
+  - **Integration Flows**: Seamless user onboarding, API integration UX, third-party service connections, and complex workflow optimization
+  - **Conversion Optimization**: A/B testing, landing page optimization, funnel analysis, persuasive design, and conversion rate improvement
+  - **Accessibility**: WCAG compliance, inclusive design, keyboard navigation, screen reader optimization, and multi-modal interfaces
+  - **Analytics & Data**: User behavior analysis, heatmaps, session recordings, cohort analysis, and UX-focused metrics tracking
+  - **Behavioral Design**: User psychology, persuasive patterns, gamification, trust signals, and behavioral economics
+- **When to use**: UX improvements, conversion optimization, mobile experience enhancement, accessibility compliance, user research integration
+- **Do not use**: Deep content writing (use content-writer agent instead), technical implementation without UX context
+- **Format**: BaseAgent (auto-converted to all platforms)
 
 ## 📋 **Agent Selection Guidelines**
 

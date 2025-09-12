@@ -1,7 +1,7 @@
-import fs from "node:fs/promises";
-import path from "node:path";
-import os from "node:os";
-import { existsSync } from "node:fs";
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import os from 'node:os';
+import { existsSync } from 'node:fs';
 
 /**
  * MCP-Specific Agent Registry
@@ -66,7 +66,7 @@ function parseMcpFrontmatter(content) {
       if (currentIndent <= toolsIndentLevel && line.includes(':')) {
         inTools = false;
       } else if (line.includes(':')) {
-        const [key, value] = line.split(':').map(s => s.trim());
+        const [key, value] = line.split(':').map((s) => s.trim());
         if (key && value) {
           frontmatter.tools[key] = value === 'true';
         }
@@ -100,7 +100,7 @@ function parseMcpFrontmatter(content) {
 
   return {
     frontmatter,
-    body: bodyLines.join('\n').trim()
+    body: bodyLines.join('\n').trim(),
   };
 }
 
@@ -124,7 +124,7 @@ async function parseMcpAgentFile(filePath) {
       name,
       format: 'mcp',
       description: frontmatter.description,
-      model: frontmatter.model || 'anthropic/claude-3-5-sonnet-20241022',
+      model: frontmatter.model,
       temperature: frontmatter.temperature || 0.3,
       tools: frontmatter.tools || {},
       mode: frontmatter.mode || 'subagent',
@@ -132,7 +132,7 @@ async function parseMcpAgentFile(filePath) {
       tags: frontmatter.tags || [],
       context: body,
       filePath,
-      frontmatter
+      frontmatter,
     };
   } catch (error) {
     console.warn(`Failed to parse MCP agent file ${filePath}: ${error.message}`);
@@ -162,7 +162,11 @@ async function loadMcpAgentFiles(directory) {
           const subCategory = categoryPrefix ? `${categoryPrefix}/${entry.name}` : entry.name;
           const subAgents = await loadFromDir(fullPath, subCategory);
           agents.push(...subAgents);
-        } else if (entry.isFile() && entry.name.toLowerCase().endsWith('.md') && !entry.name.startsWith('README')) {
+        } else if (
+          entry.isFile() &&
+          entry.name.toLowerCase().endsWith('.md') &&
+          !entry.name.startsWith('README')
+        ) {
           const agent = await parseMcpAgentFile(fullPath);
           if (agent) {
             // Add category based on directory structure
@@ -193,18 +197,18 @@ async function loadMcpAgentFiles(directory) {
 async function buildMcpAgentRegistry() {
   const agents = new Map();
   const cwd = process.cwd();
-  const codeflowRoot = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
+  const codeflowRoot = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 
   // Define MCP agent directories in priority order (lower priority first)
   const mcpAgentDirs = [
     // Codeflow MCP agents (lowest priority)
-    { dir: path.join(codeflowRoot, "codeflow-agents"), label: "Codeflow Agents" },
+    { dir: path.join(codeflowRoot, 'codeflow-agents'), label: 'Codeflow Agents' },
 
     // Global user MCP agents (medium priority)
-    { dir: path.join(os.homedir(), ".codeflow", "agents"), label: "Global User MCP Agents" },
+    { dir: path.join(os.homedir(), '.codeflow', 'agents'), label: 'Global User MCP Agents' },
 
     // Project-specific MCP agents (highest priority)
-    { dir: path.join(cwd, ".codeflow", "agents"), label: "Project MCP Agents" }
+    { dir: path.join(cwd, '.codeflow', 'agents'), label: 'Project MCP Agents' },
   ];
 
   let totalAgents = 0;
@@ -285,7 +289,7 @@ function suggestMcpAgents(agents, taskDescription, maxSuggestions = 5) {
   return suggestions
     .sort((a, b) => b.score - a.score)
     .slice(0, maxSuggestions)
-    .map(s => s.agent);
+    .map((s) => s.agent);
 }
 
 export {
@@ -293,5 +297,5 @@ export {
   categorizeMcpAgents,
   suggestMcpAgents,
   parseMcpAgentFile,
-  loadMcpAgentFiles
+  loadMcpAgentFiles,
 };

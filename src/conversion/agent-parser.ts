@@ -1,5 +1,6 @@
 import { basename } from 'node:path';
 import { globalPerformanceMonitor, globalFileReader } from '../optimization/performance';
+import { YamlProcessor } from '../yaml/yaml-processor';
 
 /**
  * Base agent format - the single source of truth for all agents
@@ -17,6 +18,10 @@ export interface BaseAgent {
   category?: string;
   tags?: string[];
   allowed_directories?: string[];
+  permissions?: {
+    opencode?: Record<string, any>;
+    claude?: Record<string, any>;
+  };
 
   // Legacy fields that may appear in test data
   usage?: string;
@@ -86,49 +91,43 @@ export interface ParseError {
 }
 
 /**
- * Detect agent format from content
+ * Detect agent format from content using YamlProcessor
  */
 function detectFormatFromContent(content: string): 'base' | 'claude-code' | 'opencode' {
-  if (!content.startsWith('---')) {
-    return 'base'; // Default fallback
-  }
+  const processor = new YamlProcessor();
+  const result = processor.parse(content);
 
-  const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---/);
-  if (!frontmatterMatch) {
-    return 'base';
-  }
-
-  try {
-    const { frontmatter } = parseFrontmatter(content);
-
-    // Official OpenCode format detection
-    // - Must have description and mode fields (required by official spec)
-    if (frontmatter.description && frontmatter.mode) {
-      return 'opencode';
-    }
-
-    // Legacy custom OpenCode format detection (for backward compatibility)
-    // - Has name, tags (array), and category fields
-    if (
-      frontmatter.name &&
-      frontmatter.tags &&
-      Array.isArray(frontmatter.tags) &&
-      frontmatter.category
-    ) {
-      return 'opencode';
-    }
-
-    // Claude Code format detection
-    // - Has role field but not OpenCode markers
-    if (frontmatter.role && !frontmatter.mode) {
-      return 'claude-code';
-    }
-
-    // Default to base format
-    return 'base';
-  } catch {
+  if (!result.success) {
     return 'base'; // Safe fallback
   }
+
+  const frontmatter = result.data.frontmatter;
+
+  // Official OpenCode format detection
+  // - Must have description and mode fields (required by official spec)
+  if (frontmatter.description && frontmatter.mode) {
+    return 'opencode';
+  }
+
+  // Legacy custom OpenCode format detection (for backward compatibility)
+  // - Has name, tags (array), and category fields
+  if (
+    frontmatter.name &&
+    frontmatter.tags &&
+    Array.isArray(frontmatter.tags) &&
+    frontmatter.category
+  ) {
+    return 'opencode';
+  }
+
+  // Claude Code format detection
+  // - Has role field but not OpenCode markers
+  if (frontmatter.role && !frontmatter.mode) {
+    return 'claude-code';
+  }
+
+  // Default to base format
+  return 'base';
 }
 
 /**
@@ -181,138 +180,22 @@ function booleanToPermissionString(value: boolean): 'allow' | 'ask' | 'deny' {
 }
 
 /**
- * Parse YAML frontmatter from markdown content
+ * Parse YAML frontmatter from markdown content using YamlProcessor
  */
 function parseFrontmatter(content: string): { frontmatter: any; body: string } {
-  const lines = content.split('\n');
+  const processor = new YamlProcessor();
+  const result = processor.parse(content);
 
-  // Check if file starts with frontmatter delimiter
-  if (lines[0] !== '---') {
-    throw new Error('File does not start with YAML frontmatter');
-  }
-
-  // Find end of frontmatter
-  let frontmatterEndIndex = -1;
-  for (let i = 1; i < lines.length; i++) {
-    if (lines[i] === '---') {
-      frontmatterEndIndex = i;
-      break;
-    }
-  }
-
-  if (frontmatterEndIndex === -1) {
-    throw new Error('Could not find end of YAML frontmatter');
-  }
-
-  // Extract frontmatter and body
-  const frontmatterLines = lines.slice(1, frontmatterEndIndex);
-  const bodyLines = lines.slice(frontmatterEndIndex + 1);
-
-  // Parse YAML frontmatter manually (simple key-value pairs)
-  const frontmatter: any = {};
-  let inTools = false;
-  let toolsIndentLevel = 0;
-  let inArray = false;
-  let arrayKey = '';
-  let arrayIndentLevel = 0;
-
-  for (let i = 0; i < frontmatterLines.length; i++) {
-    const line = frontmatterLines[i];
-    const trimmedLine = line.trim();
-
-    if (trimmedLine === '') continue;
-
-    // Handle tools section specially
-    if (trimmedLine === 'tools:') {
-      inTools = true;
-      frontmatter.tools = {};
-      toolsIndentLevel = line.indexOf('tools:');
-      continue;
-    }
-
-    if (inTools) {
-      const indentLevel = line.length - line.trimStart().length;
-
-      // Exit tools section if we're back to the same or lesser indentation
-      if (indentLevel <= toolsIndentLevel && trimmedLine !== '') {
-        inTools = false;
-      } else if (trimmedLine.includes(':')) {
-        const [key, value] = trimmedLine.split(':').map((s) => s.trim());
-        frontmatter.tools[key] = value === 'true' ? true : value === 'false' ? false : value;
-        continue;
-      }
-    }
-
-    // Handle array parsing (YAML list syntax)
-    if (inArray) {
-      const indentLevel = line.length - line.trimStart().length;
-
-      // Exit array section if we're back to the same or lesser indentation
-      if (indentLevel <= arrayIndentLevel && trimmedLine !== '') {
-        inArray = false;
-        arrayKey = '';
-      } else if (trimmedLine.startsWith('- ')) {
-        // Add item to array
-        const item = trimmedLine.substring(2).trim();
-        if (!Array.isArray(frontmatter[arrayKey])) {
-          frontmatter[arrayKey] = [];
-        }
-        frontmatter[arrayKey].push(item);
-        continue;
-      }
-    }
-
-    if (!inTools && !inArray && trimmedLine.includes(':')) {
-      const colonIndex = trimmedLine.indexOf(':');
-      const key = trimmedLine.substring(0, colonIndex).trim();
-      let value = trimmedLine.substring(colonIndex + 1).trim();
-
-      // Check if this starts an array (no value after colon)
-      if (value === '') {
-        inArray = true;
-        arrayKey = key;
-        arrayIndentLevel = line.indexOf(key + ':');
-        frontmatter[key] = [];
-        continue;
-      }
-
-      // Handle different value types
-      if (value === 'true' || value === 'false') {
-        frontmatter[key] = value === 'true';
-      } else if (value === 'undefined' || value === 'null') {
-        // Handle undefined and null values properly
-        frontmatter[key] = value === 'undefined' ? undefined : null;
-      } else if (value.startsWith('[') && value.endsWith(']')) {
-        // Handle arrays like [tag1, tag2, tag3]
-        const arrayContent = value.slice(1, -1).trim();
-        if (arrayContent === '') {
-          frontmatter[key] = [];
-        } else {
-          frontmatter[key] = arrayContent
-            .split(',')
-            .map((item) => item.trim().replace(/^["']|["']$/g, ''))
-            .filter((item) => item.length > 0); // Remove empty items
-        }
-      } else if (!isNaN(Number(value)) && value !== '' && !value.includes('/')) {
-        // Don't convert model names like "github-copilot/gpt-5" to numbers
-        frontmatter[key] = Number(value);
-      } else if (value.startsWith('"') && value.endsWith('"')) {
-        frontmatter[key] = value.slice(1, -1);
-      } else if (key === 'temperature' && !isNaN(Number(value)) && value !== '') {
-        // Explicitly handle temperature as number
-        frontmatter[key] = Number(value);
-      } else {
-        frontmatter[key] = value;
-      }
-    }
+  if (!result.success) {
+    throw new Error(result.error.message);
   }
 
   // Normalize permission format for compatibility
-  const normalizedFrontmatter = normalizePermissionFormat(frontmatter);
+  const normalizedFrontmatter = normalizePermissionFormat(result.data.frontmatter);
 
   return {
     frontmatter: normalizedFrontmatter,
-    body: bodyLines.join('\n').trim(),
+    body: result.data.body,
   };
 }
 
@@ -338,9 +221,9 @@ export async function parseAgentFile(
   }
 
   const parseStart = performance.now();
+  const content = await globalFileReader.readFile(filePath);
 
   try {
-    const content = await globalFileReader.readFile(filePath);
     const { frontmatter, body } = parseFrontmatter(content);
 
     // Validate required fields
@@ -369,15 +252,93 @@ export async function parseAgentFile(
 
     return agent;
   } catch (error: any) {
+    // For malformed YAML, try to parse what we can using fallback parsing
+    try {
+      const fallbackResult = parseWithFallback(content);
+      if (fallbackResult.success) {
+        const frontmatter = fallbackResult.data!.frontmatter;
+
+        // Validate required fields even in fallback parsing
+        if (!frontmatter.description) {
+          throw new Error('Agent must have a description field');
+        }
+
+        const agent: Agent = {
+          name: frontmatter.name || basename(filePath, '.md'),
+          format,
+          frontmatter: frontmatter as any,
+          content: fallbackResult.data!.body,
+          filePath,
+        };
+
+        return agent;
+      }
+    } catch (fallbackError) {
+      // Fallback also failed, cache the error
+      const parseError: ParseError = {
+        message: `Failed to parse agent file ${filePath}: ${error.message}`,
+        filePath,
+      };
+      await parseCache.setError(filePath, parseError);
+      throw new Error(parseError.message);
+    }
+
+    // If we get here, both YAML parsing and fallback failed
     const parseError: ParseError = {
       message: `Failed to parse agent file ${filePath}: ${error.message}`,
       filePath,
     };
-
-    // Cache the error
     await parseCache.setError(filePath, parseError);
-
     throw new Error(parseError.message);
+  }
+}
+
+/**
+ * Fallback parser for malformed YAML - tries to extract what it can
+ */
+function parseWithFallback(content: string): {
+  success: boolean;
+  data?: { frontmatter: any; body: string };
+} {
+  try {
+    // Try to extract basic frontmatter using regex
+    const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
+    if (!frontmatterMatch) {
+      return { success: false };
+    }
+
+    const frontmatterText = frontmatterMatch[1];
+    const body = frontmatterMatch[2] || '';
+
+    // Parse frontmatter line by line, ignoring malformed lines
+    const frontmatter: any = {};
+    const lines = frontmatterText.split('\n');
+
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith('#')) continue;
+
+      // Try to parse key-value pairs
+      const colonIndex = trimmed.indexOf(':');
+      if (colonIndex > 0) {
+        const key = trimmed.slice(0, colonIndex).trim();
+        const value = trimmed.slice(colonIndex + 1).trim();
+
+        // Only set if key is valid and we can parse the value
+        if (key && value) {
+          try {
+            // Try to parse as JSON, fallback to string
+            frontmatter[key] = JSON.parse(value);
+          } catch {
+            frontmatter[key] = value;
+          }
+        }
+      }
+    }
+
+    return { success: true, data: { frontmatter, body } };
+  } catch (error) {
+    return { success: false };
   }
 }
 
@@ -452,55 +413,15 @@ export async function parseAgentsFromDirectory(
 }
 
 /**
- * Check if a YAML value needs to be quoted
- */
-function needsYamlQuoting(value: string): boolean {
-  // Quote if contains colons, special YAML chars, starts with numbers/quotes, or is a reserved word
-  return (
-    /[:[\]{}|>@`#%&*!]/.test(value) ||
-    /^[0-9"']/.test(value) ||
-    /^(true|false|null|yes|no|on|off)$/i.test(value) ||
-    value.includes('\n')
-  );
-}
-
-/**
- * Serialize agent back to markdown format
+ * Serialize agent back to markdown format using YamlProcessor
  */
 export function serializeAgent(agent: Agent): string {
-  const lines = ['---'];
+  const processor = new YamlProcessor();
+  const result = processor.serialize(agent);
 
-  // Serialize frontmatter
-  const frontmatter = agent.frontmatter;
-  for (const [key, value] of Object.entries(frontmatter)) {
-    if (key === 'tools' && typeof value === 'object') {
-      lines.push(`${key}:`);
-      for (const [toolKey, toolValue] of Object.entries(value as Record<string, any>)) {
-        lines.push(`  ${toolKey}: ${toolValue}`);
-      }
-    } else if (key === 'permission' && typeof value === 'object') {
-      lines.push(`${key}:`);
-      for (const [permKey, permValue] of Object.entries(value as Record<string, any>)) {
-        lines.push(`  ${permKey}: ${permValue}`);
-      }
-    } else if (Array.isArray(value)) {
-      // Handle arrays with YAML list syntax
-      lines.push(`${key}:`);
-      for (const item of value) {
-        lines.push(`  - ${item}`);
-      }
-    } else if (typeof value === 'string' && needsYamlQuoting(value)) {
-      // Quote strings that need it for proper YAML syntax
-      const escapedValue = value.replace(/"/g, '\\"');
-      lines.push(`${key}: "${escapedValue}"`);
-    } else {
-      lines.push(`${key}: ${value}`);
-    }
+  if (!result.success) {
+    throw new Error(result.error.message);
   }
 
-  lines.push('---');
-  lines.push('');
-  lines.push(agent.content);
-
-  return lines.join('\n');
+  return result.data;
 }

@@ -1,5 +1,24 @@
 # CodeFlow Architecture Overview
 
+---
+
+## Canonical Agent Directory Policy
+
+- `/codeflow-agents/` is the ONLY agent directory that should exist in the repository and is the single source of truth for all agent definitions.
+- All agent configuration, schema, and updates must be made exclusively in this directory.
+- Platform-specific agent directories such as `.claude/agents/`, `opencode-agents/`, etc. are NOT maintained in the repository. They are automatically generated as build artifacts during the `codeflow sync` CLI process and should not be manually edited or committed.
+- Only `/codeflow-agents/` should be tracked in version control. Platform-specific agent directories should be listed in `.gitignore` to prevent accidental commits.
+
+**Example `.gitignore` Entries:**
+
+```
+# Ignore generated agent directories (do not commit these)
+.claude/agents/
+opencode-agents/
+```
+
+---
+
 ## 🎯 **Single Format Architecture**
 
 CodeFlow uses a **single source of truth** approach for agent definitions. All agents are stored in the `codeflow-agents/` directory using a unified `BaseAgent` format, which gets automatically converted to platform-specific formats as needed.

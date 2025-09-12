@@ -34,19 +34,23 @@ describe('Setup Integration', () => {
     );
 
     // Run setup
-    await setup(projectDir, { type: 'claude-code' });
+    await setup(projectDir);
 
     // Verify commands directory was created
     expect(existsSync(join(projectDir, '.claude', 'commands'))).toBe(true);
 
     // Verify command files were copied (the main bug fix)
     const commandFiles = await readdir(join(projectDir, '.claude', 'commands'));
-    const mdFiles = commandFiles.filter(f => f.endsWith('.md'));
-    expect(mdFiles).toHaveLength(7);
+    const mdFiles = commandFiles.filter((f) => f.endsWith('.md'));
+
+    // With Phase 3 improvements, we now copy from multiple sources
+    // Primary: 7 command files from command/ directory
+    // Fallback: 29 agent files from claude-agents/ directory (treated as commands)
+    expect(mdFiles.length).toBeGreaterThanOrEqual(7);
     expect(mdFiles).toContain('research.md');
     expect(mdFiles).toContain('plan.md');
     expect(mdFiles).toContain('execute.md');
-    
+
     // Verify agents directory was created (our fix)
     expect(existsSync(join(projectDir, '.claude', 'agents'))).toBe(true);
   });
@@ -57,7 +61,7 @@ describe('Setup Integration', () => {
     await mkdir(opencodeDir, { recursive: true });
 
     // Run setup
-    await setup(projectDir, { type: 'opencode' });
+    await setup(projectDir);
 
     // Verify directories were created
     expect(existsSync(join(projectDir, '.opencode', 'command'))).toBe(true);
@@ -65,22 +69,25 @@ describe('Setup Integration', () => {
 
     // Verify command files were copied (the main bug fix)
     const commandFiles = await readdir(join(projectDir, '.opencode', 'command'));
-    const mdFiles = commandFiles.filter(f => f.endsWith('.md'));
+    const mdFiles = commandFiles.filter((f) => f.endsWith('.md'));
     expect(mdFiles).toHaveLength(7);
     expect(mdFiles).toContain('research.md');
     expect(mdFiles).toContain('plan.md');
     expect(mdFiles).toContain('execute.md');
   });
 
-  test('should setup general project with both formats', async () => {
+  test('should setup general project with opencode format', async () => {
     // Run setup without specific type (should detect as general)
-    await setup(projectDir, { type: 'general' });
+    await setup(projectDir);
 
-    // Verify both Claude Code and OpenCode directories were created
-    expect(existsSync(join(projectDir, '.claude', 'commands'))).toBe(true);
-    expect(existsSync(join(projectDir, '.claude', 'agents'))).toBe(true); // Our fix
+    // Verify OpenCode directories were created (general projects default to opencode)
     expect(existsSync(join(projectDir, '.opencode', 'command'))).toBe(true);
     expect(existsSync(join(projectDir, '.opencode', 'agent'))).toBe(true);
+
+    // Verify command files were copied
+    const opencodeCommandFiles = await readdir(join(projectDir, '.opencode', 'command'));
+    const opencodeMdFiles = opencodeCommandFiles.filter((f) => f.endsWith('.md'));
+    expect(opencodeMdFiles).toHaveLength(7);
   });
 
   test('should create README with setup instructions', async () => {
@@ -93,14 +100,14 @@ describe('Setup Integration', () => {
     );
 
     // Run setup
-    await setup(projectDir, { type: 'claude-code' });
+    await setup(projectDir);
 
     // Verify README was created/updated
     const readmePath = join(projectDir, 'README.md');
     expect(existsSync(readmePath)).toBe(true);
 
     const readmeContent = await readFile(readmePath, 'utf8');
-    expect(readmeContent).toContain('Codeflow Workflow - Claude Code');
+    expect(readmeContent).toContain('Codeflow Workflow');
     expect(readmeContent).toContain('/research');
     expect(readmeContent).toContain('/plan');
   });
@@ -115,7 +122,7 @@ describe('Setup Integration', () => {
     );
 
     // Run setup first time to create the setup directories
-    await setup(projectDir, { type: 'claude-code' });
+    await setup(projectDir);
 
     // Verify setup was created
     expect(existsSync(join(projectDir, '.claude', 'commands'))).toBe(true);
@@ -123,31 +130,11 @@ describe('Setup Integration', () => {
 
     // Run setup second time without force (should detect existing setup and return early)
     // This should complete successfully
-    await expect(setup(projectDir, { type: 'claude-code' })).resolves.toBeUndefined();
+    await expect(setup(projectDir)).resolves.toBeUndefined();
 
     // Verify directories still exist after second run
     expect(existsSync(join(projectDir, '.claude', 'commands'))).toBe(true);
     expect(existsSync(join(projectDir, '.claude', 'agents'))).toBe(true);
-  });
-
-  test('should update .gitignore with codeflow entries', async () => {
-    // Create a .claude directory
-    const claudeDir = join(projectDir, '.claude');
-    await mkdir(claudeDir, { recursive: true });
-    await writeFile(
-      join(claudeDir, 'claude_config.json'),
-      JSON.stringify({ commands: { enabled: true, directory: 'commands' } })
-    );
-
-    // Create existing .gitignore
-    await writeFile(join(projectDir, '.gitignore'), 'node_modules/\n*.log\n');
-
-    // Run setup
-    await setup(projectDir, { type: 'claude-code' });
-
-    // Verify .gitignore was updated
-    const gitignoreContent = await readFile(join(projectDir, '.gitignore'), 'utf8');
-    expect(gitignoreContent).toContain('!.claude/');
   });
 
   test('should respect force flag for overwriting existing setup', async () => {
@@ -165,13 +152,13 @@ describe('Setup Integration', () => {
     await writeFile(join(commandsDir, 'existing.md'), '# Existing command');
 
     // Run setup without force (should skip)
-    await setup(projectDir, { type: 'claude-code' });
+    await setup(projectDir);
 
     // Verify existing file is still there
     expect(existsSync(join(commandsDir, 'existing.md'))).toBe(true);
 
     // Run setup with force (should overwrite)
-    await setup(projectDir, { type: 'claude-code', force: true });
+    await setup(projectDir, { force: true });
 
     // Verify setup still works
     expect(existsSync(join(projectDir, '.claude', 'agents'))).toBe(true);

@@ -2,6 +2,7 @@ import { join } from 'node:path';
 import { readFile, readdir, writeFile } from 'node:fs/promises';
 import { setFilePermissions, setDirectoryPermissions } from './validation';
 import { normalizePermissionFormat } from '../conversion/agent-parser';
+import { YamlProcessor } from '../yaml/yaml-processor';
 
 export interface OpenCodePermissionConfig {
   osPermissions: {
@@ -134,133 +135,45 @@ async function updateOpenCodeAgentPermissions(
 }
 
 /**
- * Parse frontmatter from content (simplified version for permissions)
+ * Parse frontmatter from content using YamlProcessor
  */
 function parseFrontmatterFromContent(content: string): { frontmatter: any; body: string } {
-  const lines = content.split('\n');
+  const processor = new YamlProcessor();
+  const result = processor.parse(content);
 
-  // Find frontmatter boundaries
-  if (lines[0] !== '---') {
-    throw new Error('File does not start with YAML frontmatter');
-  }
-
-  let frontmatterEndIndex = -1;
-  for (let i = 1; i < lines.length; i++) {
-    if (lines[i] === '---') {
-      frontmatterEndIndex = i;
-      break;
-    }
-  }
-
-  if (frontmatterEndIndex === -1) {
-    throw new Error('Could not find end of YAML frontmatter');
-  }
-
-  // Extract frontmatter and body
-  const frontmatterLines = lines.slice(1, frontmatterEndIndex);
-  const bodyLines = lines.slice(frontmatterEndIndex + 1);
-
-  // Simple frontmatter parsing
-  const frontmatter: any = {};
-  let inSection = false;
-  let sectionName = '';
-  let sectionIndent = 0;
-
-  for (const line of frontmatterLines) {
-    const trimmed = line.trim();
-    if (!trimmed) continue;
-
-    if (trimmed.includes(':') && !inSection) {
-      const [key, value] = trimmed.split(':').map((s) => s.trim());
-      if (value === '') {
-        // Start of section
-        inSection = true;
-        sectionName = key;
-        sectionIndent = line.indexOf(key);
-        frontmatter[key] = key === 'allowed_directories' || key === 'tags' ? [] : {};
-      } else {
-        // Simple key-value
-        frontmatter[key] = parseValue(value);
-      }
-    } else if (inSection) {
-      const indent = line.length - line.trimStart().length;
-      if (indent <= sectionIndent && trimmed !== '') {
-        inSection = false;
-      } else if (sectionName === 'tools' && trimmed.includes(':')) {
-        const [key, value] = trimmed.split(':').map((s) => s.trim());
-        frontmatter.tools[key] = parseValue(value);
-      } else if (sectionName === 'permission' && trimmed.includes(':')) {
-        const [key, value] = trimmed.split(':').map((s) => s.trim());
-        frontmatter.permission[key] = parseValue(value);
-      } else if (sectionName === 'allowed_directories' && trimmed.startsWith('- ')) {
-        frontmatter.allowed_directories.push(trimmed.substring(2).trim());
-      } else if (sectionName === 'tags' && trimmed.startsWith('- ')) {
-        frontmatter.tags.push(trimmed.substring(2).trim());
-      }
-    }
+  if (!result.success) {
+    throw new Error(result.error.message);
   }
 
   return {
-    frontmatter,
-    body: bodyLines.join('\n').trim(),
+    frontmatter: result.data.frontmatter,
+    body: result.data.body,
   };
 }
 
 /**
- * Parse YAML value
- */
-function parseValue(value: string): any {
-  if (value === 'true') return true;
-  if (value === 'false') return false;
-  if (!isNaN(Number(value)) && value !== '') return Number(value);
-  if (value.startsWith('"') && value.endsWith('"')) return value.slice(1, -1);
-  return value;
-}
-
-/**
- * Serialize frontmatter back to content
+ * Serialize frontmatter back to content using YamlProcessor
  */
 function serializeFrontmatter(originalContent: string, frontmatter: any): string {
-  const lines = ['---'];
+  const processor = new YamlProcessor();
 
-  // Serialize frontmatter
-  for (const [key, value] of Object.entries(frontmatter)) {
-    if (key === 'tools' && typeof value === 'object') {
-      lines.push(`${key}:`);
-      for (const [toolKey, toolValue] of Object.entries(value as Record<string, any>)) {
-        lines.push(`  ${toolKey}: ${toolValue}`);
-      }
-    } else if (key === 'permission' && typeof value === 'object') {
-      lines.push(`${key}:`);
-      for (const [permKey, permValue] of Object.entries(value as Record<string, any>)) {
-        lines.push(`  ${permKey}: ${permValue}`);
-      }
-    } else if (key === 'allowed_directories' && Array.isArray(value)) {
-      lines.push(`${key}:`);
-      for (const dir of value) {
-        lines.push(`  - ${dir}`);
-      }
-    } else if (Array.isArray(value)) {
-      // Handle general arrays (like tags)
-      lines.push(`${key}:`);
-      for (const item of value) {
-        lines.push(`  - ${item}`);
-      }
-    } else if (typeof value === 'string' && value.includes('\n')) {
-      lines.push(`${key}: "${value.replace(/"/g, '\\"')}"`);
-    } else {
-      lines.push(`${key}: ${value}`);
-    }
-  }
-
-  lines.push('---');
-  lines.push('');
-
-  // Find original body
+  // Extract the body from the original content
   const bodyMatch = originalContent.match(/\n---\n([\s\S]*)$/);
-  if (bodyMatch) {
-    lines.push(bodyMatch[1].trim());
+  const body = bodyMatch ? bodyMatch[1].trim() : '';
+
+  // Create a mock agent object for serialization
+  const mockAgent = {
+    name: frontmatter.name || 'temp-agent',
+    format: 'opencode' as const,
+    frontmatter,
+    content: body,
+    filePath: '/tmp/temp.md',
+  };
+
+  const result = processor.serialize(mockAgent);
+  if (!result.success) {
+    throw new Error(result.error.message);
   }
 
-  return lines.join('\n');
+  return result.data;
 }

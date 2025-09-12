@@ -128,7 +128,11 @@ describe('Single Format Architecture', () => {
       const converted = converter.baseToOpenCode(agent);
       expect(converted.format).toBe('opencode');
       expect(converted.frontmatter.name).toBe(baseAgent.name);
-      expect(converted.frontmatter.tools).toEqual(baseAgent.tools);
+      // OpenCode format uses permission instead of tools
+      const openCodeFrontmatter = converted.frontmatter as OpenCodeAgent;
+      expect(openCodeFrontmatter.permission).toBeDefined();
+      expect(openCodeFrontmatter.permission?.read).toBe('allow');
+      expect(openCodeFrontmatter.permission?.write).toBe('deny');
     });
 
     it('should convert claude-code to base format', () => {

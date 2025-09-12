@@ -194,9 +194,12 @@ async function run() {
   console.log('Initializing codeflow MCP server...');
 
   // Initialize agent registry on startup
+  let qaIssues = [];
   try {
     console.log('Building agent registry...');
-    globalAgentRegistry = await buildAgentRegistry();
+    const registryResult = await buildAgentRegistry();
+    globalAgentRegistry = registryResult.agents;
+    qaIssues = registryResult.qaIssues;
     agentCategories = categorizeAgents(globalAgentRegistry);
     workflowOrchestrator = createWorkflowOrchestrator(globalAgentRegistry);
     console.log(`Agent registry initialized with ${globalAgentRegistry.size} agents`);
@@ -205,6 +208,16 @@ async function run() {
     // Continue without agents rather than failing completely
     globalAgentRegistry = new Map();
     agentCategories = {};
+    qaIssues = [
+      {
+        severity: 'error',
+        type: 'registry_failure',
+        agentId: null,
+        file: null,
+        message: `Registry initialization failed: ${error.message}`,
+        remediation: 'Check agent files and registry configuration',
+      },
+    ];
   }
 
   const server = new McpServer({ name: 'codeflow-tools', version: '0.2.1' });
@@ -242,6 +255,66 @@ async function run() {
           content: [{ type: 'text', text: `❌ ${error.message}` }],
         };
       }
+    }
+  );
+
+  // Register registry QA tool
+  server.registerTool(
+    'codeflow.registry.qa',
+    {
+      title: 'codeflow.registry.qa',
+      description:
+        'Get comprehensive QA report for the agent registry including validation issues, duplicates, and conflicts',
+    },
+    async (args = {}) => {
+      const includeDetails = args.includeDetails === true;
+
+      const counts = {
+        total: qaIssues.length,
+        errors: qaIssues.filter((i) => i.severity === 'error').length,
+        warnings: qaIssues.filter((i) => i.severity === 'warning').length,
+      };
+
+      const summary = `Registry QA Report: ${counts.total} issues (${counts.errors} errors, ${counts.warnings} warnings)`;
+
+      if (!includeDetails) {
+        return {
+          content: [
+            { type: 'text', text: `${summary}\n\nUse includeDetails=true for full report.` },
+          ],
+        };
+      }
+
+      const issuesByType = {};
+      qaIssues.forEach((issue) => {
+        if (!issuesByType[issue.type]) {
+          issuesByType[issue.type] = [];
+        }
+        issuesByType[issue.type].push(issue);
+      });
+
+      let details = `${summary}\n\nIssues by type:\n`;
+      for (const [type, issues] of Object.entries(issuesByType)) {
+        details += `- ${type}: ${issues.length} issues\n`;
+      }
+
+      if (qaIssues.length > 0) {
+        details += `\nTop issues:\n`;
+        qaIssues.slice(0, 10).forEach((issue, index) => {
+          details += `${index + 1}. [${issue.severity.toUpperCase()}] ${issue.type}: ${issue.message}\n`;
+          if (issue.agentId) details += `   Agent: ${issue.agentId}\n`;
+          if (issue.file) details += `   File: ${issue.file}\n`;
+          if (issue.remediation) details += `   Fix: ${issue.remediation}\n`;
+          details += '\n';
+        });
+      }
+
+      return {
+        content: [
+          { type: 'text', text: details },
+          { type: 'json', value: { summary, counts, issues: qaIssues } },
+        ],
+      };
     }
   );
 

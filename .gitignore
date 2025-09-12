@@ -2,8 +2,13 @@ node_modules/
 bun.lockb
 .DS_Store
 
-# Keep codeflow OpenCode commands and agents
+# Platform-specific agent directories - these are generated from source agents
+# and should not be committed to version control
+.claude/agents/
+opencode-agents/
+
+# Keep codeflow OpenCode commands (but ignore platform-specific agents)
 !.opencode/
 
-# Keep codeflow Claude Code commands
+# Keep codeflow Claude Code commands (but ignore platform-specific agents)
 !.claude/

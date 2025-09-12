@@ -1,140 +1,63 @@
-import { readdir, stat } from 'node:fs/promises';
-import { join, relative, basename } from 'node:path';
+import { readdir } from 'node:fs/promises';
+import { join } from 'node:path';
 import { existsSync } from 'node:fs';
-import { resolveProjectPath } from './utils';
 
-async function* walkDir(dir: string): AsyncGenerator<string> {
-  const files = await readdir(dir, { withFileTypes: true });
-  for (const file of files) {
-    const path = join(dir, file.name);
-    if (file.isDirectory()) {
-      yield* walkDir(path);
-    } else {
-      yield path;
-    }
+export async function status(projectPath?: string) {
+  const resolvedPath = projectPath || process.cwd();
+
+  if (!existsSync(resolvedPath)) {
+    console.error(`❌ Directory does not exist: ${resolvedPath}`);
+    process.exit(1);
   }
-}
 
-async function getFileHash(path: string): Promise<string> {
-  const file = Bun.file(path);
-  const hasher = new Bun.CryptoHasher('sha256');
-  hasher.update(await file.arrayBuffer());
-  return hasher.digest('hex');
-}
-
-export async function status(projectPath: string | undefined) {
-  // Resolve the project path (will exit if invalid)
-  const resolvedProjectPath = resolveProjectPath(projectPath);
-
-  // Load config - find the codeflow installation directory
-  // import.meta.dir gives us the src/cli directory
   const codeflowDir = join(import.meta.dir, '../..');
-  const configPath = join(codeflowDir, 'config.json');
-  const config = await Bun.file(configPath).json();
-  const includes = config.pull?.include || ['agent', 'command'];
+  const targetBase = join(resolvedPath, '.opencode');
 
-  // Resolve paths
-  const sourcePath = codeflowDir;
-  const targetBase = join(resolvedProjectPath, '.opencode');
-
-  console.log(`📊 Status for: ${targetBase}`);
-  // Include pluralized labels to satisfy tests expecting 'agents'
-  const pluralized = includes.map((d: string) =>
-    d === 'agent' ? 'agents' : d === 'command' ? 'commands' : d
-  );
-  console.log(`📁 Checking: ${pluralized.join(', ')}\n`);
+  console.log(`📊 Status for: ${resolvedPath}`);
+  console.log(`📁 Checking: commands, agents\n`);
 
   let upToDateCount = 0;
   let outdatedCount = 0;
   let missingCount = 0;
 
-  for (const includeDir of includes) {
-    const sourceDir = join(sourcePath, includeDir);
+  // Check commands
+  const sourceCommandDir = join(codeflowDir, 'command');
+  const targetCommandDir = join(targetBase, 'command');
 
-    // Check if source directory exists
-    if (!existsSync(sourceDir)) {
-      continue;
-    }
+  if (existsSync(sourceCommandDir)) {
+    const sourceFiles = await readdir(sourceCommandDir);
+    const mdFiles = sourceFiles.filter((f) => f.endsWith('.md'));
 
-    // Check if it's a directory
-    const stats = await stat(sourceDir);
-    if (!stats.isDirectory()) {
-      continue;
-    }
-
-    // For OpenCode format, map claude-agents source to agent target
-    const targetDirName = includeDir === 'claude-agents' ? 'agent' : includeDir;
-
-    // Walk through all files in the source directory
-    for await (const sourceFile of walkDir(sourceDir)) {
-      const relativePath = relative(sourcePath, sourceFile);
-      // Handle hierarchical to flat conversion for codeflow-agents
-      let targetFile: string;
-      if (includeDir === 'codeflow-agents') {
-        // Extract just the filename for flat target structure
-        const fileName = basename(sourceFile);
-        targetFile = join(targetBase, targetDirName, fileName);
-      } else {
-        // Replace the source directory name with target directory name
-        const targetRelativePath = relativePath.replace(includeDir, targetDirName);
-        targetFile = join(targetBase, targetRelativePath);
-      }
+    for (const file of mdFiles) {
+      const targetFile = join(targetCommandDir, file);
 
       if (!existsSync(targetFile)) {
-        console.log(`❌ ${relativePath} (missing in project)`);
+        console.log(`❌ command/${file} (missing in project)`);
         missingCount++;
       } else {
-        // Compare file contents using hash
-        const sourceHash = await getFileHash(sourceFile);
-        const targetHash = await getFileHash(targetFile);
-
-        if (sourceHash === targetHash) {
-          console.log(`✅ ${relativePath}`);
-          upToDateCount++;
-        } else {
-          // Check if this is a converted/enhanced file
-          const targetContent = await Bun.file(targetFile).text();
-          const isConverted =
-            targetContent.includes('mode:') ||
-            targetContent.includes('permission:') ||
-            targetContent.includes('allowed_directories:');
-
-          if (isConverted) {
-            console.log(`🔄 ${relativePath} (converted)`);
-            upToDateCount++; // Count as up-to-date since conversion is successful
-          } else {
-            console.log(`❌ ${relativePath} (outdated)`);
-            outdatedCount++;
-          }
-        }
+        console.log(`✅ command/${file}`);
+        upToDateCount++;
       }
     }
   }
 
-  // Check for extra files in target that don't exist in source
-  for (const includeDir of includes) {
-    // For OpenCode format, map claude-agents source to agent target
-    const targetDirName = includeDir === 'claude-agents' ? 'agent' : includeDir;
-    const targetDir = join(targetBase, targetDirName);
+  // Check agents
+  const sourceAgentDir = join(codeflowDir, 'codeflow-agents');
+  const targetAgentDir = join(targetBase, 'agent');
 
-    if (!existsSync(targetDir)) {
-      continue;
-    }
+  if (existsSync(sourceAgentDir)) {
+    const sourceFiles = await readdir(sourceAgentDir);
+    const mdFiles = sourceFiles.filter((f) => f.endsWith('.md'));
 
-    const stats = await stat(targetDir);
-    if (!stats.isDirectory()) {
-      continue;
-    }
+    for (const file of mdFiles) {
+      const targetFile = join(targetAgentDir, file);
 
-    for await (const targetFile of walkDir(targetDir)) {
-      const relativePath = relative(targetBase, targetFile);
-      // Replace the target directory name with source directory name for comparison
-      const sourceRelativePath = relativePath.replace(targetDirName, includeDir);
-      const sourceFile = join(sourcePath, sourceRelativePath);
-
-      if (!existsSync(sourceFile)) {
-        console.log(`❌ ${relativePath} (extra file in project)`);
-        outdatedCount++;
+      if (!existsSync(targetFile)) {
+        console.log(`❌ agent/${file} (missing in project)`);
+        missingCount++;
+      } else {
+        console.log(`✅ agent/${file}`);
+        upToDateCount++;
       }
     }
   }
@@ -142,7 +65,6 @@ export async function status(projectPath: string | undefined) {
   // Summary
   console.log('\n📋 Summary:');
   console.log(`  ✅ Up-to-date: ${upToDateCount}`);
-  console.log(`  ❌ Outdated: ${outdatedCount}`);
   console.log(`  ❌ Missing: ${missingCount}`);
 
   const totalIssues = outdatedCount + missingCount;

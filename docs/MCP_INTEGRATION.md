@@ -9,7 +9,7 @@ The Codeflow CLI includes **Model Context Protocol (MCP)** integration specifica
 MCP serves as a **bridge** for development environments that don't have built-in agent customization:
 
 - **Claude Code (.ai)**: Has native agent system - **MCP not needed**
-- **OpenCode**: Has native agent system - **MCP not needed**  
+- **OpenCode**: Has native agent system - **MCP not needed**
 - **Cursor, VS Code, etc.**: Lack native agent systems - **MCP provides access**
 
 The MCP server exposes Codeflow agents as tools that can be invoked by MCP-compatible clients, enabling sophisticated AI workflows in environments that would otherwise be limited to basic completions.
@@ -29,7 +29,7 @@ The MCP server is implemented in `mcp/codeflow-server.mjs` and provides:
 
 ```javascript
 // Core server setup
-const server = new McpServer({ name: "codeflow-tools", version: "0.1.0" });
+const server = new McpServer({ name: 'codeflow-tools', version: '0.1.0' });
 const transport = new StdioServerTransport();
 
 // Dynamic tool registration from filesystem
@@ -39,6 +39,7 @@ const toolEntries = await buildTools();
 ### Tool Categories
 
 **Core Workflow Commands** (`/command/*.md`):
+
 - The 7 essential codeflow workflow commands
 - Registered with stable names like `codeflow.command.research`
 - Works from any repository that has been set up with `codeflow setup`
@@ -68,7 +69,7 @@ const toolEntries = await buildTools();
 ```javascript
 function toUniqueId(prefix, filePath) {
   const slug = toSlug(filePath);
-  const hash = crypto.createHash("sha1").update(filePath).digest("hex").slice(0, 8);
+  const hash = crypto.createHash('sha1').update(filePath).digest('hex').slice(0, 8);
   return `${prefix}.${slug}__${hash}`;
 }
 ```
@@ -96,13 +97,20 @@ This stable naming ensures tools remain accessible even if file paths change.
 - `commit` - Creates structured git commits
 - `review` - Validates implementations against plans
 
+### Registry QA Tool
+
+- `codeflow.registry.qa` - Get comprehensive QA report for agent registry
+  - Returns structured JSON with issue counts, types, and remediation steps
+  - Use `includeDetails=true` for full issue breakdown
+  - Issue types: `duplicate_conflict`, `duplicate_legacy`, `parse_error`, etc.
+
 ### Parameterized Access Tool
 
 ```javascript
 // Direct command retrieval by name
-get_command({ name: "research" })
-get_command({ name: "plan" })
-get_command({ name: "execute" })
+get_command({ name: 'research' });
+get_command({ name: 'plan' });
+get_command({ name: 'execute' });
 ```
 
 **Note**: Agents (codebase-locator, codebase-analyzer, etc.) are internal components used by the commands and are not exposed as separate MCP tools. Each command automatically orchestrates the appropriate agents based on the task requirements.
@@ -113,15 +121,15 @@ get_command({ name: "execute" })
 
 ```javascript
 // Access research command
-const researchCommand = await client.callTool("research");
+const researchCommand = await client.callTool('research');
 
 // Get specific command by name
-const planCommand = await client.callTool("get_command", {
-  name: "plan"
+const planCommand = await client.callTool('get_command', {
+  name: 'plan',
 });
 
 // Execute workflow command
-const executeCommand = await client.callTool("execute");
+const executeCommand = await client.callTool('execute');
 ```
 
 ### Claude Desktop Configuration
@@ -157,6 +165,7 @@ codeflow mcp configure warp
 This creates a config file at `~/.warp/mcp_config.json` (macOS/Linux) or `%APPDATA%/Warp/mcp_config.json` (Windows).
 
 Alternatively, add manually in Warp:
+
 1. Open Warp Settings → AI → Tools (MCP)
 2. Add a new MCP server:
    - **Name**: codeflow-tools
@@ -186,6 +195,7 @@ codeflow mcp configure cursor
 ```
 
 This creates a config file at:
+
 - macOS: `~/Library/Application Support/Cursor/mcp_config.json`
 - Windows: `%APPDATA%\Cursor\mcp_config.json`
 - Linux: `~/.config/Cursor/mcp_config.json`
@@ -235,13 +245,13 @@ The MCP server works from any project directory by searching in priority order:
 ```javascript
 function findCodeflowPaths() {
   const cwd = process.cwd();
-  const cwdOpenCodeDir = path.join(cwd, ".opencode", "command");
-  const cwdClaudeCommandDir = path.join(cwd, ".claude", "commands");
-  const codeflowCommandDir = path.join(codeflowRoot, "command");
+  const cwdOpenCodeDir = path.join(cwd, '.opencode', 'command');
+  const cwdClaudeCommandDir = path.join(cwd, '.claude', 'commands');
+  const codeflowCommandDir = path.join(codeflowRoot, 'command');
 
   return {
     // Priority: .opencode/command → .claude/commands → codeflow/command
-    commandDirs: [cwdOpenCodeDir, cwdClaudeCommandDir, codeflowCommandDir]
+    commandDirs: [cwdOpenCodeDir, cwdClaudeCommandDir, codeflowCommandDir],
   };
 }
 ```
@@ -266,6 +276,7 @@ Only the essential 7 workflow commands are exposed as MCP tools, keeping the int
 ### Error Handling
 
 The server includes comprehensive error handling for:
+
 - Missing files or directories
 - Invalid markdown content
 - Tool registration collisions
@@ -277,9 +288,9 @@ The server includes comprehensive error handling for:
 // Keep process alive for MCP communication
 await new Promise((resolve) => {
   process.stdin.resume();
-  process.stdin.on("end", resolve);
-  process.on("SIGINT", resolve);
-  process.on("SIGTERM", resolve);
+  process.stdin.on('end', resolve);
+  process.on('SIGINT', resolve);
+  process.on('SIGTERM', resolve);
 });
 ```
 
@@ -323,16 +334,19 @@ The server maintains a persistent connection for real-time tool access.
 ### Common Issues
 
 **Server Won't Start**:
+
 - Check Node.js/Bun installation
 - Verify file permissions in `/mcp` directory
 - Ensure dependencies are installed (`bun install`)
 
 **Tools Not Appearing**:
+
 - Verify markdown files exist in `/command` and `/agent` directories
 - Check file extensions are `.md`
 - Review server logs for registration errors
 
 **Connection Issues**:
+
 - Validate MCP client configuration
 - Check stdio transport setup
 - Verify server process is running
@@ -352,6 +366,7 @@ This provides detailed information about tool registration and client interactio
 ### File System Access
 
 The MCP server has read access to:
+
 - `/command` directory for workflow commands
 - `/agent` directory for workflow agents
 - No write access or external system access

@@ -1,5 +1,5 @@
 ---
-description: Conduct comprehensive codebase research to answer user questions
+description: Research a ticket or provider a prompt for ad-hoc research
 ---
 
 # Research Codebase
@@ -39,10 +39,10 @@ The user will provide a <ticket> for you to read and begin researching.
    - **CRITICAL** Only run thoughts-analyzer AFTER the thoughts-locator
 
    **For specialized domain research (use selectively when relevant):**
-   - **operations_incident_commander** - For incident response, SLO analysis, or operational issues
-   - **development_migrations_specialist** - For database schema changes, data migrations, or expand/contract patterns
-   - **programmatic_seo_engineer** - For SEO architecture, content generation, or site structure
-   - **content_localization_coordinator** - For i18n/l10n workflows, translation processes, or multi-locale features
+   - **operations-incident-commander** - For incident response, SLO analysis, or operational issues
+   - **development-migrations-specialist** - For database schema changes, data migrations, or expand/contract patterns
+   - **programmatic-seo-engineer** - For SEO architecture, content generation, or site structure
+   - **content-localization-coordinator** - For i18n/l10n workflows, translation processes, or multi-locale features
    - **quality-testing_performance_tester** - For performance analysis, load testing, or SLO validation
 
    The key is to use these agents intelligently:

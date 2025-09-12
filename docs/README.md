@@ -18,9 +18,6 @@ This directory contains comprehensive documentation for the Codeflow project. Th
 
 ## Platform Integration
 
-- **MCP Quickstart**: `./MCP_QUICKSTART.md` - Get running in 5 minutes
-- **MCP Integration**: `./MCP_INTEGRATION.md` - Full technical documentation
-- **MCP Usage Examples**: `./MCP_USAGE_EXAMPLES.md` - Practical workflow examples
 - **Cross-Repository Setup**: `./CROSS_REPO_SETUP.md` - Use codeflow from any project
 
 ## Development & Operations
@@ -53,6 +50,7 @@ This directory contains comprehensive documentation for the Codeflow project. Th
 ## AI-Specific Documentation (Root Directory)
 
 The following AI-specific documentation remains in the root directory:
+
 - `../CLAUDE.md` - Claude integration guide
 - `../codeflow-agents/README.md` - Codeflow agents documentation
 - `../WARP.md` - Warp integration guide
@@ -60,6 +58,7 @@ The following AI-specific documentation remains in the root directory:
 ## Internal Planning & Research
 
 For internal planning and deeper technical docs, see `thoughts/`:
+
 - `../thoughts/architecture/` - Architectural decisions and designs
 - `../thoughts/research/` - Research findings and analysis
 - `../thoughts/plans/` - Implementation plans
@@ -68,17 +67,15 @@ For internal planning and deeper technical docs, see `thoughts/`:
 
 ## Quick Navigation
 
-| Need | Document |
-|------|----------|
-| Install & Setup | User Guide |
-| CLI Commands | API Reference |
-| MCP Integration | MCP Integration Guide |
-| Architecture | Developer Guide |
-| Troubleshooting | Troubleshooting Guide |
-| Migration | Migration Guide |
-| Contributing | Contributing Guidelines |
-| Agent Development | Agent Template + Registry |
-| Product Strategy | Product Strategy & Roadmap |
-| Development Standards | Global Development Rules |
-| Product Requirements | Product Requirements Document |
-
+| Need                  | Document                      |
+| --------------------- | ----------------------------- |
+| Install & Setup       | User Guide                    |
+| CLI Commands          | API Reference                 |
+| Architecture          | Developer Guide               |
+| Troubleshooting       | Troubleshooting Guide         |
+| Migration             | Migration Guide               |
+| Contributing          | Contributing Guidelines       |
+| Agent Development     | Agent Template + Registry     |
+| Product Strategy      | Product Strategy & Roadmap    |
+| Development Standards | Global Development Rules      |
+| Product Requirements  | Product Requirements Document |

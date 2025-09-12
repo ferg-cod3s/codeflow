@@ -1,6 +1,32 @@
-# Migration Guide: Single Format Architecture
+# Migration Guide: CodeFlow MVP Update
 
-This guide explains how to migrate from the old multi-format approach to the new single-format architecture in CodeFlow.
+This guide explains how to migrate from previous versions of CodeFlow to the streamlined MVP version that focuses on core functionality.
+
+## ⚠️ **Important Changes in MVP Release**
+
+### **Removed Features**
+
+- **MCP Server Integration**: The Model Context Protocol server has been removed
+- **REST API Server**: Built-in REST API endpoints have been removed
+- **Advanced Commands**: Commands like `mcp`, `server`, `pull`, `commands`, etc. have been removed
+- **Diagnostic Tools**: Advanced diagnostic and validation commands have been simplified
+
+### **Retained MVP Commands**
+
+- `codeflow setup` - Initialize projects
+- `codeflow status` - Check project status
+- `codeflow sync` - Sync agents to projects
+- `codeflow convert` - Convert agent formats
+- `codeflow watch start` - Watch for changes
+
+### **Supported Flags**
+
+- `--force` - Force overwrite existing files
+- `--project` - Specify project path
+- `--global` - Use global agent directory
+- `--type` - Target platform type (claude-code/opencode)
+- `--validate` - Validate agents before conversion
+- `--dry-run` - Preview changes without applying them
 
 ## 🚨 **Breaking Changes**
 
@@ -37,10 +63,10 @@ Move all your agents to the `codeflow-agents/` directory and ensure they follow 
 ---
 name: your-agent-name
 description: Description of when this agent should be invoked
-mode: subagent  # Optional: subagent or primary
-temperature: 0.7  # Optional: 0-2 range
-model: claude-3-5-sonnet  # Optional: model identifier
-tools:  # Optional: object with boolean values
+mode: subagent # Optional: subagent or primary
+temperature: 0.7 # Optional: 0-2 range
+model: claude-3-5-sonnet # Optional: model identifier
+tools: # Optional: object with boolean values
   read: true
   write: true
   edit: true
@@ -56,7 +82,6 @@ escalation: How to escalate if needed
 examples: Example usage scenarios
 prompts: Suggested prompts
 constraints: Usage constraints
-
 ---
 
 Your agent's system prompt and instructions go here...
@@ -67,6 +92,7 @@ Your agent's system prompt and instructions go here...
 #### **For Claude Code Agents**
 
 **Before (Old Format):**
+
 ```markdown
 ---
 name: your-agent-name
@@ -76,6 +102,7 @@ tools: tool1, tool2, tool3
 ```
 
 **After (New Format):**
+
 ```markdown
 ---
 name: your-agent-name
@@ -90,6 +117,7 @@ tools:
 ```
 
 ##### **Tools Available for Claude Code**
+
 [https://docs.anthropic.com/en/docs/claude-code/settings#tools-available-to-claude](Claude Code Tools)
 
 **Tools Available as of 08-31-2025**
@@ -113,6 +141,7 @@ tools:
 #### **For OpenCode Agents**
 
 **Before (Old Format):**
+
 ```markdown
 ---
 description: Your agent description
@@ -126,6 +155,7 @@ tools:
 ```
 
 **After (New Format):**
+
 ```markdown
 ---
 name: your-agent-name
@@ -155,6 +185,7 @@ codeflow status
 ### **Step 5: Update Your Workflow**
 
 **Before:**
+
 ```bash
 # Had to manually sync between formats
 codeflow sync-formats
@@ -162,6 +193,7 @@ codeflow sync-global
 ```
 
 **After:**
+
 ```bash
 # Single source of truth automatically converts
 codeflow convert-all --format claude-code

@@ -1,0 +1,51 @@
+# AWS Configuration
+aws_region = "us-east-1"
+
+# Project Configuration
+project_name = "mywebapp"
+environment  = "dev"
+
+# VPC Configuration
+vpc_cidr         = "10.0.0.0/16"
+public_subnets   = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
+private_subnets  = ["10.0.10.0/24", "10.0.11.0/24", "10.0.12.0/24"]
+database_subnets = ["10.0.20.0/24", "10.0.21.0/24", "10.0.22.0/24"]
+availability_zones = ["us-east-1a", "us-east-1b", "us-east-1c"]
+
+# ECS Configuration
+container_image = "nginx:latest"
+container_port  = 80
+desired_count   = 2
+cpu            = "256"
+memory         = "512"
+
+# Database Configuration
+db_instance_class      = "db.t3.micro"
+db_engine             = "postgres"
+db_engine_version     = "15.4"
+db_name               = "webapp"
+db_username           = "webapp_user"
+db_password           = "CHANGE_THIS_SECURE_PASSWORD"
+backup_retention_period = 7
+
+# SSL/TLS Configuration
+certificate_arn = "arn:aws:acm:us-east-1:123456789012:certificate/12345678-1234-1234-1234-123456789012"
+
+# Route 53 Configuration (optional)
+create_route53_records = false
+domain_name            = "mywebapp.com"
+
+# Monitoring Configuration
+sns_topic_arn = "arn:aws:sns:us-east-1:123456789012:my-alerts"
+
+# Environment Variables for Application
+environment_variables = [
+  {
+    name  = "NODE_ENV"
+    value = "production"
+  },
+  {
+    name  = "DATABASE_URL"
+    value = "postgresql://webapp_user:password@db-host:5432/webapp"
+  }
+]

@@ -13,21 +13,20 @@ This is a **Codeflow Automation Enhancement CLI** built with **Bun** and **TypeS
 
 ### Core Structure
 
-- **CLI Entry Point**: `src/cli/index.ts` - Main CLI with `pull`, `status`, and `version` commands
+- **CLI Entry Point**: `src/cli/index.ts` - Main CLI with core MVP commands
 - **Agent Definitions**: `/agent/` - Specialized subagents for codebase analysis and research
 - **Command Prompts**: `/command/` - Complex workflow commands that orchestrate multiple agents
 - **Workflow Documentation**: `/README.md` - Contains the full codeflow automation process
 
 ### Key Components
 
-**CLI Commands**:
+**CLI Commands** (MVP):
 
 - `codeflow setup [project-path]` - Sets up codeflow directory structure and copies agents/commands
 - `codeflow status [project-path]` - Checks which files are up-to-date or outdated
 - `codeflow sync [project-path]` - Synchronizes agents and commands with global configuration
-- `codeflow watch start` - Starts file watching for automatic synchronization
 - `codeflow convert` - Converts agents between different formats
-- `codeflow mcp configure` - Configures MCP server integration
+- `codeflow watch start` - Starts file watching for automatic synchronization
 
 **Core Workflow Agent Types**:
 
@@ -51,7 +50,6 @@ This is a **Codeflow Automation Enhancement CLI** built with **Bun** and **TypeS
 - **Source of Truth**: `codeflow-agents/` - Base agents in hierarchical structure by domain
 - **Platform Conversion**: Agents are converted to platform-specific formats on setup
 - **OpenCode Format**: Converted to `.opencode/agent/` with proper permissions and configuration
-- **MCP Integration**: Uses base agents directly for MCP server queries
 
 **Agent Categories** (Base Format):
 
@@ -87,21 +85,10 @@ The system emphasizes **context compression** and **fresh analysis** over cachin
 - Use specialized domain agents selectively based on the research or implementation domain (operations, database migrations, performance, SEO, localization)
 - Agents have defined handoff targets for complex scenarios - follow escalation paths when needed
 
-### MCP Integration
-
-The system now includes **Model Context Protocol (MCP)** support:
-
-- **MCP Server**: `mcp/codeflow-server.mjs` - Provides dynamic access to all workflow components
-- **Tool Discovery**: Auto-registers commands and agents as MCP tools
-- **Stable Naming**: Semantic tool names for predictable access (e.g., `codeflow.command.research`)
-- **Client Support**: Compatible with Claude Desktop, OpenCode, and other MCP clients
-
 ### Development Notes
 
 - Uses **Bun runtime** for fast TypeScript execution
 - CLI binary linked via `bun link` for global access
 - TypeScript configured for ES modules with Bun-specific types
-- **MCP Dependencies**: `@modelcontextprotocol/sdk`, `zod` for server implementation
 - Comprehensive test framework with unit, integration, and E2E tests
 - See `AGENT_REGISTRY.md` for complete agent capabilities and usage guidelines
-- See `MCP_INTEGRATION.md` for MCP server setup and tool reference

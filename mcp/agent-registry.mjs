@@ -2,6 +2,8 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import os from 'node:os';
 import { existsSync } from 'node:fs';
+import crypto from 'node:crypto';
+import YAML from 'yaml';
 
 /**
  * Internal Agent Registry for MCP Server
@@ -34,125 +36,39 @@ function normalizePermissionsForMCP(permissions) {
  */
 function parseFrontmatter(content) {
   const lines = content.split('\n');
+  const yamlStart = lines.findIndex((line) => line.trim() === '---');
+  const yamlEnd = lines.findIndex((line, index) => index > yamlStart && line.trim() === '---');
 
-  // Check if file starts with frontmatter delimiter
-  if (lines[0] !== '---') {
-    throw new Error('File does not start with YAML frontmatter');
+  if (yamlStart === -1 || yamlEnd === -1) {
+    throw new Error('Invalid frontmatter: Missing --- delimiters');
   }
 
-  // Find end of frontmatter
-  let frontmatterEndIndex = -1;
-  for (let i = 1; i < lines.length; i++) {
-    if (lines[i] === '---') {
-      frontmatterEndIndex = i;
-      break;
+  const yamlContent = lines.slice(yamlStart + 1, yamlEnd).join('\n');
+  const bodyContent = lines
+    .slice(yamlEnd + 1)
+    .join('\n')
+    .trim();
+
+  try {
+    const frontmatter = YAML.parse(yamlContent);
+
+    // Validate required fields
+    if (!frontmatter.description && !frontmatter.name) {
+      throw new Error('Missing required field: description or name');
     }
-  }
 
-  if (frontmatterEndIndex === -1) {
-    throw new Error('Could not find end of YAML frontmatter');
-  }
-
-  // Extract frontmatter and body
-  const frontmatterLines = lines.slice(1, frontmatterEndIndex);
-  const bodyLines = lines.slice(frontmatterEndIndex + 1);
-
-  // Parse YAML frontmatter manually (simple key-value pairs)
-  const frontmatter = {};
-  let currentKey = '';
-  let currentValue = '';
-  let inTools = false;
-  let toolsIndentLevel = 0;
-  let inAllowedDirectories = false;
-  let allowedDirectoriesIndentLevel = 0;
-
-  for (let i = 0; i < frontmatterLines.length; i++) {
-    const line = frontmatterLines[i];
-    const trimmedLine = line.trim();
-
-    if (trimmedLine === '') continue;
-
-    // Handle tools section specially
-    if (trimmedLine === 'tools:') {
-      inTools = true;
+    // Handle tools: undefined case
+    if (frontmatter.tools === 'undefined' || frontmatter.tools === undefined) {
       frontmatter.tools = {};
-      toolsIndentLevel = line.indexOf('tools:');
-      continue;
     }
 
-    // Handle allowed_directories section specially
-    if (trimmedLine === 'allowed_directories:') {
-      inAllowedDirectories = true;
-      frontmatter.allowed_directories = [];
-      allowedDirectoriesIndentLevel = line.indexOf('allowed_directories:');
-      continue;
-    }
-
-    if (inTools) {
-      const indentLevel = line.length - line.trimLeft().length;
-
-      // Exit tools section if we're back to the same or lesser indentation
-      if (indentLevel <= toolsIndentLevel && trimmedLine !== '') {
-        inTools = false;
-      } else if (trimmedLine.includes(':')) {
-        // Handle object format: key: value
-        const [key, value] = trimmedLine.split(':').map((s) => s.trim());
-        frontmatter.tools[key] = value === 'true' ? true : value === 'false' ? false : value;
-        continue;
-      } else if (!trimmedLine.includes(':') && trimmedLine !== '') {
-        // Handle comma-separated string format: read, grep, glob, list
-        const toolsList = trimmedLine.split(',').map((tool) => tool.trim());
-        // Convert to object format for consistency
-        toolsList.forEach((tool) => {
-          frontmatter.tools[tool] = true;
-        });
-        inTools = false; // Single line format, so we're done
-        continue;
-      }
-    }
-
-    if (inAllowedDirectories) {
-      const indentLevel = line.length - line.trimLeft().length;
-
-      // Exit allowed_directories section if we're back to the same or lesser indentation
-      if (indentLevel <= allowedDirectoriesIndentLevel && trimmedLine !== '') {
-        inAllowedDirectories = false;
-      } else if (trimmedLine.startsWith('- ')) {
-        // Handle array items (e.g., "- /path/to/dir")
-        const directory = trimmedLine.substring(2).trim();
-        if (directory) {
-          frontmatter.allowed_directories.push(directory);
-        }
-        continue;
-      }
-    }
-
-    if (!inTools && !inAllowedDirectories && trimmedLine.includes(':')) {
-      const colonIndex = trimmedLine.indexOf(':');
-      const key = trimmedLine.substring(0, colonIndex).trim();
-      let value = trimmedLine.substring(colonIndex + 1).trim();
-
-      // Handle different value types
-      if (value === 'true' || value === 'false') {
-        frontmatter[key] = value === 'true';
-      } else if (!isNaN(Number(value)) && value !== '' && !value.includes('/')) {
-        // Don't convert model names like "github-copilot/gpt-5" to numbers
-        frontmatter[key] = Number(value);
-      } else if (value.startsWith('"') && value.endsWith('"')) {
-        frontmatter[key] = value.slice(1, -1);
-      } else if (key === 'temperature' && !isNaN(Number(value)) && value !== '') {
-        // Explicitly handle temperature as number
-        frontmatter[key] = Number(value);
-      } else {
-        frontmatter[key] = value;
-      }
-    }
+    return {
+      frontmatter,
+      content: bodyContent,
+    };
+  } catch (error) {
+    throw new Error(`YAML parsing error: ${error.message}`);
   }
-
-  return {
-    frontmatter,
-    body: bodyLines.join('\n').trim(),
-  };
 }
 
 /**
@@ -161,14 +77,156 @@ function parseFrontmatter(content) {
 async function parseAgentFile(filePath, format) {
   try {
     const content = await fs.readFile(filePath, 'utf-8');
-    const { frontmatter, body } = parseFrontmatter(content);
+    const { frontmatter, content: body } = parseFrontmatter(content);
 
-    // Validate required fields
-    if (!frontmatter.description) {
-      throw new Error('Agent must have a description field');
+    // Enhanced validation with detailed error messages
+    const errors = [];
+    const warnings = [];
+
+    // Required fields validation
+    if (!frontmatter.description && !frontmatter.name) {
+      errors.push(`Missing required field 'description' or 'name' in ${path.basename(filePath)}`);
+    }
+
+    // Only warn about missing model for OpenCode format - Claude Code agents don't need models
+    if (!frontmatter.model && format === 'opencode') {
+      warnings.push(`Missing 'model' field in ${path.basename(filePath)}, model will be undefined`);
+    }
+
+    // Tools validation - tools is now authoritative
+    if (frontmatter.tools === undefined || frontmatter.tools === null) {
+      frontmatter.tools = {};
+      warnings.push(
+        `Missing 'tools' field in ${path.basename(filePath)}, defaulting to empty object`
+      );
+    }
+
+    // Validate tools format based on agent format
+    if (frontmatter.tools) {
+      if (format === 'claude-code') {
+        // Claude Code format: tools should be a string
+        if (typeof frontmatter.tools !== 'string') {
+          errors.push(
+            `Invalid tools configuration in ${path.basename(filePath)}: Claude Code format expects string, got ${typeof frontmatter.tools}`
+          );
+        }
+      } else {
+        // Base and OpenCode formats: tools should be an object
+        if (typeof frontmatter.tools !== 'object' || Array.isArray(frontmatter.tools)) {
+          errors.push(
+            `Invalid tools configuration in ${path.basename(filePath)}: expected object, got ${typeof frontmatter.tools}`
+          );
+        } else {
+          // Validate filesystem tools configuration
+          if (frontmatter.tools.filesystem) {
+            const fsTools = frontmatter.tools.filesystem;
+            if (typeof fsTools !== 'object') {
+              errors.push(
+                `Invalid filesystem tools in ${path.basename(filePath)}: expected object`
+              );
+            } else {
+              // If write is enabled, allowed_directories must be present
+              if (fsTools.write === true) {
+                if (
+                  !frontmatter.allowed_directories ||
+                  frontmatter.allowed_directories.length === 0
+                ) {
+                  errors.push(
+                    `Filesystem write enabled but no allowed_directories specified in ${path.basename(filePath)}`
+                  );
+                }
+              }
+              // Validate allowed_directories format
+              if (frontmatter.allowed_directories) {
+                if (!Array.isArray(frontmatter.allowed_directories)) {
+                  errors.push(
+                    `Invalid allowed_directories in ${path.basename(filePath)}: expected array, got ${typeof frontmatter.allowed_directories}`
+                  );
+                } else {
+                  // Check for relative paths within repo
+                  frontmatter.allowed_directories.forEach((dir, index) => {
+                    if (typeof dir !== 'string') {
+                      errors.push(
+                        `Invalid allowed_directories[${index}] in ${path.basename(filePath)}: expected string, got ${typeof dir}`
+                      );
+                    }
+                  });
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    // Mode validation
+    if (frontmatter.mode && !['subagent', 'primary', 'all'].includes(frontmatter.mode)) {
+      errors.push(
+        `Invalid mode '${frontmatter.mode}' in ${path.basename(filePath)}: expected 'subagent', 'primary', or 'all'`
+      );
+    }
+
+    // Temperature validation
+    if (frontmatter.temperature !== undefined) {
+      if (
+        typeof frontmatter.temperature !== 'number' ||
+        frontmatter.temperature < 0 ||
+        frontmatter.temperature > 2
+      ) {
+        errors.push(
+          `Invalid temperature '${frontmatter.temperature}' in ${path.basename(filePath)}: expected number between 0-2`
+        );
+      }
+    }
+
+    if (errors.length > 0) {
+      console.error(
+        `❌ Validation errors in ${filePath}:\n${errors.map((e) => `  - ${e}`).join('\n')}`
+      );
+      throw new Error(`Validation failed for ${filePath}: ${errors.length} errors`);
+    }
+
+    if (warnings.length > 0) {
+      console.warn(
+        `⚠️ Validation warnings in ${filePath}:\n${warnings.map((w) => `  - ${w}`).join('\n')}`
+      );
     }
 
     const name = path.basename(filePath, '.md');
+
+    // Derive permission summary from tools (tools is authoritative)
+    let permissionSummary = 'none';
+    if (frontmatter.tools) {
+      const scopes = [];
+      if (typeof frontmatter.tools === 'object') {
+        if (frontmatter.tools.filesystem) {
+          const fs = frontmatter.tools.filesystem;
+          if (fs.read) scopes.push('fs:read');
+          if (fs.write) scopes.push('fs:write');
+        }
+        if (frontmatter.tools.http && frontmatter.tools.http.enabled) {
+          scopes.push('http');
+        }
+        if (frontmatter.tools.bash) scopes.push('bash');
+        if (frontmatter.tools.edit) scopes.push('edit');
+        if (frontmatter.tools.webfetch) scopes.push('webfetch');
+      } else if (typeof frontmatter.tools === 'string') {
+        // Claude Code format
+        const toolsList = frontmatter.tools.split(',').map((t) => t.trim());
+        if (
+          toolsList.includes('read') ||
+          toolsList.includes('grep') ||
+          toolsList.includes('glob') ||
+          toolsList.includes('list')
+        ) {
+          scopes.push('fs:read');
+        }
+        if (toolsList.includes('edit')) scopes.push('fs:write');
+        if (toolsList.includes('bash')) scopes.push('bash');
+        if (toolsList.includes('webfetch')) scopes.push('webfetch');
+      }
+      permissionSummary = scopes.length > 0 ? scopes.join('; ') : 'none';
+    }
 
     // Normalize permissions for internal MCP use (convert strings to booleans)
     // If no permission field exists but tools field exists, convert tools to permissions
@@ -177,16 +235,25 @@ async function parseAgentFile(filePath, format) {
       // Convert tools object to permission format
       permissionToNormalize = {};
       if (typeof frontmatter.tools === 'object') {
-        // Object format: { edit: true, bash: false, ... }
-        for (const [tool, enabled] of Object.entries(frontmatter.tools)) {
-          permissionToNormalize[tool] = enabled;
+        // Object format: { filesystem: { read: true }, bash: true, ... }
+        if (frontmatter.tools.filesystem) {
+          permissionToNormalize.read = frontmatter.tools.filesystem.read;
+          permissionToNormalize.edit = frontmatter.tools.filesystem.write;
+        }
+        permissionToNormalize.bash = frontmatter.tools.bash;
+        permissionToNormalize.webfetch = frontmatter.tools.webfetch;
+        if (frontmatter.tools.http) {
+          permissionToNormalize.webfetch = frontmatter.tools.http.enabled;
         }
       } else if (typeof frontmatter.tools === 'string') {
         // Comma-separated string format: "read, grep, glob, list"
         const toolsList = frontmatter.tools.split(',').map((t) => t.trim());
-        toolsList.forEach((tool) => {
-          permissionToNormalize[tool] = true;
-        });
+        permissionToNormalize.read = toolsList.some((t) =>
+          ['read', 'grep', 'glob', 'list'].includes(t)
+        );
+        permissionToNormalize.edit = toolsList.includes('edit');
+        permissionToNormalize.bash = toolsList.includes('bash');
+        permissionToNormalize.webfetch = toolsList.includes('webfetch');
       }
     }
 
@@ -196,13 +263,14 @@ async function parseAgentFile(filePath, format) {
       id: name,
       name,
       format,
-      description: frontmatter.description,
-      model: frontmatter.model || 'claude-3-5-sonnet-20241022',
+      description: frontmatter.description || frontmatter.name || '',
+      model: frontmatter.model,
       temperature: frontmatter.temperature || 0.3,
       tools: frontmatter.tools || {},
       mode: frontmatter.mode || 'subagent',
       allowedDirectories: frontmatter.allowed_directories || [],
       permission: normalizedPermissions,
+      permissionSummary,
       context: body,
       filePath,
       frontmatter,
@@ -220,8 +288,8 @@ async function parseAgentFile(filePath, format) {
 
     return agent;
   } catch (error) {
-    console.warn(`Failed to parse agent file ${filePath}: ${error.message}`);
-    return null;
+    console.error(`❌ Failed to parse agent file ${filePath}: ${error.message}`);
+    throw error;
   }
 }
 
@@ -257,60 +325,174 @@ async function loadAgentFiles(directory, format = 'base') {
 }
 
 /**
+ * Normalize agent core fields for duplicate detection and hashing
+ */
+function normalizeAgentForHashing(agent) {
+  return {
+    model: agent.model,
+    tools: agent.tools || {},
+    allowed_directories: agent.allowedDirectories || [],
+    inputs: agent.inputs || {},
+    outputs: agent.outputs || {},
+  };
+}
+
+/**
+ * Generate hash for normalized agent data
+ */
+function hashAgentData(normalizedData) {
+  const dataString = JSON.stringify(normalizedData, Object.keys(normalizedData).sort());
+  return crypto.createHash('sha256').update(dataString).digest('hex');
+}
+
+/**
  * Build the complete agent registry from all priority directories
  *
  * Priority order (later directories override earlier ones):
- * 1. Global codeflow agents
- * 2. Global user agents
- * 3. Project-specific Claude agents
- * 4. Project-specific OpenCode agents
+ * 1. Canonical global codeflow agents (codeflow-agents/**)
+ * 2. Canonical global opencode agents (opencode-agents/**)
+ * 3. Legacy agents (deprecated/**) - only if CODEFLOW_INCLUDE_LEGACY=1
+ * 4. Global user agents
+ * 5. Project-specific agents
  */
 async function buildAgentRegistry() {
   const agents = new Map();
   const cwd = process.cwd();
   const codeflowRoot = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
+  const includeLegacy = process.env.CODEFLOW_INCLUDE_LEGACY === '1';
 
   // Define agent directories in priority order (lower priority first)
   const agentDirs = [
-    // Global codeflow agents (lowest priority)
-    { dir: path.join(codeflowRoot, 'codeflow-agents'), format: 'base' },
-    // Deprecated directories (for backward compatibility)
-    { dir: path.join(codeflowRoot, 'deprecated', 'claude-agents'), format: 'claude-code' },
-    { dir: path.join(codeflowRoot, 'deprecated', 'opencode-agents'), format: 'opencode' },
+    // Canonical global codeflow agents (lowest priority)
+    { dir: path.join(codeflowRoot, 'codeflow-agents'), format: 'base', category: 'canonical' },
+    { dir: path.join(codeflowRoot, 'opencode-agents'), format: 'opencode', category: 'canonical' },
+
+    // Legacy agents (conditionally included)
+    ...(includeLegacy
+      ? [
+          {
+            dir: path.join(codeflowRoot, 'deprecated', 'claude-agents'),
+            format: 'claude-code',
+            category: 'legacy',
+          },
+          {
+            dir: path.join(codeflowRoot, 'deprecated', 'opencode-agents'),
+            format: 'opencode',
+            category: 'legacy',
+          },
+        ]
+      : []),
 
     // Global user agents (medium priority)
-    { dir: path.join(os.homedir(), '.codeflow', 'agents'), format: 'base' },
-    { dir: path.join(os.homedir(), '.claude', 'agents'), format: 'claude-code' },
-    { dir: path.join(os.homedir(), '.config', 'opencode', 'agent'), format: 'opencode' },
+    { dir: path.join(os.homedir(), '.codeflow', 'agents'), format: 'base', category: 'user' },
+    { dir: path.join(os.homedir(), '.claude', 'agents'), format: 'claude-code', category: 'user' },
+    {
+      dir: path.join(os.homedir(), '.config', 'opencode', 'agent'),
+      format: 'opencode',
+      category: 'user',
+    },
 
     // Project-specific agents (highest priority)
-    { dir: path.join(cwd, '.claude', 'agents'), format: 'claude-code' },
-    { dir: path.join(cwd, '.config', 'opencode', 'agent'), format: 'opencode' },
-    { dir: path.join(cwd, '.opencode', 'agent'), format: 'opencode' },
+    { dir: path.join(cwd, '.claude', 'agents'), format: 'claude-code', category: 'project' },
+    {
+      dir: path.join(cwd, '.config', 'opencode', 'agent'),
+      format: 'opencode',
+      category: 'project',
+    },
+    { dir: path.join(cwd, '.opencode', 'agent'), format: 'opencode', category: 'project' },
   ];
 
   let totalAgents = 0;
   let failedAgents = 0;
+  let duplicateWarnings = 0;
+  let canonicalConflicts = 0;
 
-  for (const { dir, format } of agentDirs) {
+  // Track agent hashes for duplicate detection
+  const agentHashes = new Map(); // agentId -> { hash, filePath, category }
+  const qaIssues = [];
+
+  for (const { dir, format, category } of agentDirs) {
     const agentFiles = await loadAgentFiles(dir, format);
 
-    for (const agent of agentFiles) {
+    for (const agentFile of agentFiles) {
       try {
-        agents.set(agent.id, agent);
+        const normalizedData = normalizeAgentForHashing(agentFile);
+        const hash = hashAgentData(normalizedData);
+        const existing = agentHashes.get(agentFile.id);
+
+        if (existing) {
+          // Duplicate found - handle per policy
+          if (category === 'canonical' && existing.category === 'canonical') {
+            // Canonical conflict - fail
+            if (existing.hash !== hash) {
+              console.error(`❌ Canonical conflict for agent '${agentFile.id}':`);
+              console.error(
+                `   Existing: ${existing.filePath} (hash: ${existing.hash.slice(0, 8)}...)`
+              );
+              console.error(`   New: ${agentFile.filePath} (hash: ${hash.slice(0, 8)}...)`);
+              qaIssues.push({
+                severity: 'error',
+                type: 'duplicate_conflict',
+                agentId: agentFile.id,
+                file: agentFile.filePath,
+                message: `Canonical agent conflict: different definitions found`,
+                remediation: 'Resolve conflicting agent definitions in canonical directories',
+              });
+              canonicalConflicts++;
+              failedAgents++;
+              continue;
+            }
+          } else if (category === 'legacy' || existing.category === 'legacy') {
+            // Legacy duplicate - warn and prefer canonical
+            console.warn(`⚠️ Legacy duplicate for agent '${agentFile.id}':`);
+            console.warn(`   Canonical: ${existing.filePath}`);
+            console.warn(`   Legacy: ${agentFile.filePath}`);
+            qaIssues.push({
+              severity: 'warning',
+              type: 'duplicate_legacy',
+              agentId: agentFile.id,
+              file: agentFile.filePath,
+              message: `Legacy duplicate found, using canonical version`,
+              remediation: 'Remove or migrate legacy agent definition',
+            });
+            duplicateWarnings++;
+            // Skip legacy version, keep canonical
+            continue;
+          }
+        } else {
+          // First occurrence
+          agentHashes.set(agentFile.id, { hash, filePath: agentFile.filePath, category });
+        }
+
+        agents.set(agentFile.id, agentFile);
         totalAgents++;
       } catch (error) {
-        console.warn(`Failed to register agent ${agent.id}: ${error.message}`);
+        console.warn(`Failed to register agent ${agentFile.id}: ${error.message}`);
+        qaIssues.push({
+          severity: 'error',
+          type: 'parse_error',
+          agentId: agentFile.id,
+          file: agentFile.filePath,
+          message: `Failed to parse agent: ${error.message}`,
+          remediation: 'Fix agent file format and frontmatter',
+        });
         failedAgents++;
       }
     }
   }
 
   console.log(
-    `Agent registry built: ${totalAgents} agents loaded${failedAgents > 0 ? `, ${failedAgents} failed` : ''}`
+    `Agent registry built: ${totalAgents} agents loaded${failedAgents > 0 ? `, ${failedAgents} failed` : ''}${duplicateWarnings > 0 ? `, ${duplicateWarnings} legacy duplicates` : ''}${canonicalConflicts > 0 ? `, ${canonicalConflicts} canonical conflicts` : ''}`
   );
 
-  return agents;
+  if (canonicalConflicts > 0) {
+    throw new Error(
+      `Registry build failed: ${canonicalConflicts} canonical agent conflicts detected`
+    );
+  }
+
+  // Return both agents and QA data
+  return { agents, qaIssues };
 }
 
 /**
@@ -329,24 +511,24 @@ function categorizeAgents(registry) {
     specialized: [],
   };
 
-  for (const [id, agent] of registry) {
+  for (const [id] of registry) {
     if (id.includes('codebase-')) {
       categories.codebase.push(id);
     } else if (id.includes('thoughts-') || id.includes('web-search-')) {
       categories.research.push(id);
-    } else if (id.includes('operations_')) {
+    } else if (id.includes('operations-')) {
       categories.operations.push(id);
-    } else if (id.includes('development_')) {
+    } else if (id.includes('development-')) {
       categories.development.push(id);
-    } else if (id.includes('quality-testing_')) {
+    } else if (id.includes('quality-testing-')) {
       categories.testing.push(id);
-    } else if (id.includes('business-analytics_')) {
+    } else if (id.includes('business-analytics-')) {
       categories.business.push(id);
-    } else if (id.includes('design-ux_')) {
+    } else if (id.includes('design-ux-')) {
       categories.design.push(id);
-    } else if (id.includes('product-strategy_')) {
+    } else if (id.includes('product-strategy-')) {
       categories.business.push(id);
-    } else if (id.includes('ai-integration') || id.includes('programmatic_seo')) {
+    } else if (id.includes('ai-integration') || id.includes('programmatic-seo')) {
       categories.specialized.push(id);
     } else {
       categories.development.push(id);
@@ -377,16 +559,16 @@ function suggestAgents(registry, taskDescription) {
     { keywords: ['research', 'investigate', 'web'], agents: ['web-search-researcher'] },
     {
       keywords: ['database', 'migration', 'schema'],
-      agents: ['development_migrations_specialist', 'database-expert'],
+      agents: ['development-migrations-specialist', 'database-expert'],
     },
     {
       keywords: ['performance', 'slow', 'optimize'],
-      agents: ['quality-testing_performance_tester'],
+      agents: ['quality-testing-performance-tester'],
     },
     { keywords: ['security', 'vulnerability', 'audit'], agents: ['security-scanner'] },
-    { keywords: ['incident', 'outage', 'emergency'], agents: ['operations_incident_commander'] },
-    { keywords: ['seo', 'content', 'programmatic'], agents: ['programmatic_seo_engineer'] },
-    { keywords: ['localization', 'i18n', 'l10n'], agents: ['content_localization_coordinator'] },
+    { keywords: ['incident', 'outage', 'emergency'], agents: ['operations-incident-commander'] },
+    { keywords: ['seo', 'content', 'programmatic'], agents: ['programmatic-seo-engineer'] },
+    { keywords: ['localization', 'i18n', 'l10n'], agents: ['content-localization-coordinator'] },
   ];
 
   for (const { keywords, agents } of patterns) {

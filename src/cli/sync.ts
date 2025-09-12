@@ -1,412 +1,193 @@
 import { existsSync } from 'node:fs';
-import { writeFile, readdir, copyFile, mkdir } from 'node:fs/promises';
+import { readdir, copyFile, mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
-import { getGlobalPaths, setupGlobalAgents } from './global';
-import { parseAgentsFromDirectory, serializeAgent, Agent } from '../conversion/agent-parser';
+import { parseAgentsFromDirectory, serializeAgent } from '../conversion/agent-parser';
 import { FormatConverter } from '../conversion/format-converter';
-import { AgentValidator } from '../conversion/validator';
-import { applyPermissionInheritance } from '../security/validation';
-import {
-  applyOpenCodePermissionsToDirectory,
-  DEFAULT_OPENCODE_PERMISSIONS,
-} from '../security/opencode-permissions';
+import { CanonicalSyncer } from '../sync/canonical-syncer';
+import { homedir } from 'node:os';
 
-interface SyncOptions {
+export interface SyncOptions {
+  projectPath?: string;
+  force?: boolean;
+  verbose?: boolean;
+  format?: string;
+  validate?: boolean;
   includeSpecialized?: boolean;
   includeWorkflow?: boolean;
-  format?: 'all' | 'claude-code' | 'opencode';
-  validate?: boolean;
   dryRun?: boolean;
+  global?: boolean;
+  target?: 'project' | 'global' | 'all';
 }
 
-/**
- * Sync commands to global directories
- */
-async function syncGlobalCommands(): Promise<void> {
-  const codeflowDir = join(import.meta.dir, '../..');
-  const globalPaths = getGlobalPaths();
+export async function sync(projectPath?: string, options: SyncOptions = {}) {
+  // Determine sync target
+  const target = options.target || (options.global ? 'global' : 'project');
+  
+  // For global sync, we don't need a specific project path
+  const resolvedPath = target === 'global' ? homedir() : (projectPath || process.cwd());
 
-  // Source command directory
-  const sourceCommandPath = join(codeflowDir, 'command');
+  // Check if we should use the new canonical syncer or legacy sync
+  const manifestPath = join(process.cwd(), 'AGENT_MANIFEST.json');
+  const hasManifest = existsSync(manifestPath);
 
-  // Target command directories by format
-  const targetCommandPaths = globalPaths.commandsByFormat;
-
-  if (!targetCommandPaths) {
-    console.log(`❌ Command format paths not configured`);
-    return;
-  }
-
-  console.log(`🔍 Command sync paths:`);
-  console.log(`   Source: ${sourceCommandPath}`);
-  console.log(`   Targets:`);
-  for (const [format, path] of Object.entries(targetCommandPaths)) {
-    console.log(`     ${format}: ${path}`);
-  }
-
-  // Check if source directory exists
-  if (!existsSync(sourceCommandPath)) {
-    console.log(`⚠️  Source command directory not found: ${sourceCommandPath}`);
-    return;
-  }
-
-  // Get all command files
-  let commandFiles: string[];
-  try {
-    commandFiles = await readdir(sourceCommandPath);
-  } catch (error: any) {
-    console.log(`❌ Failed to read source directory ${sourceCommandPath}: ${error.message}`);
-    return;
-  }
-
-  const mdFiles = commandFiles.filter((file) => file.endsWith('.md'));
-
-  if (mdFiles.length === 0) {
-    console.log(`ℹ️  No command files found in ${sourceCommandPath}`);
-    console.log(`   Found files: ${commandFiles.join(', ')}`);
-    return;
-  }
-
-  console.log(`📋 Syncing ${mdFiles.length} commands to global directories...`);
-  console.log(`   Files to sync: ${mdFiles.join(', ')}`);
-
-  let totalSyncedCount = 0;
-  let totalErrorCount = 0;
-
-  // Sync to each target format directory
-  for (const [format, targetCommandPath] of Object.entries(targetCommandPaths) as [
-    string,
-    string,
-  ][]) {
-    console.log(`\n🔄 Syncing to ${format} format...`);
-
-    // Ensure target directory exists
+  if (hasManifest) {
+    // Use new canonical syncer
+    const syncer = new CanonicalSyncer();
+    
     try {
-      await mkdir(targetCommandPath, { recursive: true });
-      console.log(`📁 Ensured target directory exists: ${targetCommandPath}`);
-    } catch (error: any) {
-      console.log(`❌ Failed to create target directory ${targetCommandPath}: ${error.message}`);
-      totalErrorCount++;
-      continue;
-    }
+      const result = await syncer.syncFromCanonical({
+        target,
+        sourceFormat: 'base',
+        dryRun: options.dryRun || false,
+        force: options.force || false,
+      });
 
-    // Verify target directory was created
-    if (!existsSync(targetCommandPath)) {
-      console.log(
-        `❌ Target directory still doesn't exist after creation attempt: ${targetCommandPath}`
-      );
-      totalErrorCount++;
-      continue;
-    }
-
-    let syncedCount = 0;
-    let errorCount = 0;
-
-    for (const file of mdFiles) {
-      try {
-        const sourceFile = join(sourceCommandPath, file);
-        const targetFile = join(targetCommandPath, file);
-
-        // Verify source file exists before copying
-        if (!existsSync(sourceFile)) {
-          console.log(`⚠️  Source file not found: ${sourceFile}`);
-          errorCount++;
-          continue;
-        }
-
-        await copyFile(sourceFile, targetFile);
-
-        // Verify target file was created
-        if (existsSync(targetFile)) {
-          console.log(`  ✓ Synced: ${file}`);
-          syncedCount++;
-        } else {
-          console.log(`❌ Target file not created: ${targetFile}`);
-          errorCount++;
-        }
-      } catch (error: any) {
-        console.log(`❌ Failed to sync command ${file}: ${error.message}`);
-        errorCount++;
+      // Report results
+      console.log(`🔄 Syncing to ${target} directories...`);
+      
+      if (result.synced.length > 0) {
+        console.log(`\n✅ Synced ${result.synced.length} files:`);
+        result.synced.forEach(sync => {
+          console.log(`  ✓ ${sync.agent}: ${sync.from} → ${sync.to}`);
+        });
       }
-    }
 
-    console.log(`✅ ${format} sync complete: ${syncedCount} synced, ${errorCount} errors`);
-    totalSyncedCount += syncedCount;
-    totalErrorCount += errorCount;
+      if (result.skipped.length > 0 && options.verbose) {
+        console.log(`\n⏭️ Skipped ${result.skipped.length} files:`);
+        result.skipped.forEach(skip => {
+          console.log(`  ⏭️ ${skip.agent}: ${skip.reason}`);
+        });
+      }
 
-    if (syncedCount > 0) {
-      console.log(`📂 ${format} commands available at: ${targetCommandPath}`);
+      if (result.errors.length > 0) {
+        console.log(`\n❌ Errors (${result.errors.length}):`);
+        result.errors.forEach(error => {
+          console.log(`  ❌ ${error.agent}: ${error.message}`);
+        });
+      }
+
+      const totalProcessed = result.synced.length + result.skipped.length + result.errors.length;
+      console.log(`\n📊 Summary: ${result.synced.length}/${totalProcessed} files synced successfully`);
+      
+    } catch (error: any) {
+      console.error(`❌ Canonical sync failed: ${error.message}`);
+      process.exit(1);
     }
+    
+    return;
   }
 
-  console.log(
-    `\n✅ Global command sync complete: ${totalSyncedCount} total synced, ${totalErrorCount} total errors`
-  );
-}
+  // Legacy sync behavior (when no manifest exists)
+  if (target === 'global') {
+    console.error('❌ Global sync requires AGENT_MANIFEST.json. Run setup first.');
+    process.exit(1);
+  }
 
-/**
- * Sync agents to global directories with format conversion
- * Now uses single source of truth (codeflow-agents/) approach
- */
-export async function syncGlobalAgents(options: SyncOptions = {}) {
-  const {
-    includeSpecialized = true,
-    includeWorkflow = true,
-    format = 'all',
-    validate = true,
-    dryRun = false,
-  } = options;
-
-  console.log('🌐 Synchronizing agents to global directories...');
-  console.log('🎯 Using single source of truth: codeflow-agents/');
-  console.log('⚠️  Deprecated: claude-agents/ and opencode-agents/ moved to /deprecated/');
-
-  if (dryRun) console.log('🔍 Dry run mode - no files will be written');
-  console.log('');
-
-  // Ensure global directories exist
-  if (!existsSync(getGlobalPaths().global)) {
-    await setupGlobalAgents();
+  if (!existsSync(resolvedPath)) {
+    console.error(`❌ Directory does not exist: ${resolvedPath}`);
+    process.exit(1);
   }
 
   const codeflowDir = join(import.meta.dir, '../..');
-  const globalPaths = getGlobalPaths();
-
-  // Define source directories to check
-  const sourcePaths = [
-    { path: join(codeflowDir, 'codeflow-agents'), label: 'codeflow-agents (base format)' },
-    { path: join(codeflowDir, '.opencode', 'agent'), label: '.opencode/agent (mixed formats)' },
-  ];
-
-  console.log(`📦 Using multiple source directories for comprehensive sync`);
-
-  let allAgents: Agent[] = [];
-  let totalParsingErrors = 0;
-
-  // Process each source directory
-  for (const source of sourcePaths) {
-    if (!existsSync(source.path)) {
-      console.log(`⚠️  Source directory not found: ${source.path}`);
-      continue;
-    }
-
-    console.log(`📦 Processing agents from ${source.label}`);
-
-    try {
-      // Parse agents from directory (auto-detect format for mixed directories)
-      const format = source.label.includes('base format') ? 'base' : 'auto';
-      const { agents, errors } = await parseAgentsFromDirectory(source.path, format);
-
-      if (errors.length > 0) {
-        console.log(`⚠️  Found ${errors.length} parsing errors in ${source.label}`);
-        for (const error of errors) {
-          console.log(`  • ${error.filePath}: ${error.message}`);
-        }
-        totalParsingErrors += errors.length;
-      }
-
-      if (agents.length > 0) {
-        console.log(`  📋 Found ${agents.length} agents`);
-        allAgents.push(...agents);
-      } else {
-        console.log(`  ℹ️  No agents found in ${source.label}`);
-      }
-    } catch (error: any) {
-      console.log(`❌ Failed to parse ${source.label}: ${error.message}`);
-    }
-  }
-
-  // Deduplicate agents by name (prefer agents from earlier sources)
-  const uniqueAgents = allAgents.reduce((acc, agent) => {
-    if (!acc.find((a) => a.name === agent.name)) {
-      acc.push(agent);
-    }
-    return acc;
-  }, [] as Agent[]);
-
-  if (allAgents.length > uniqueAgents.length) {
-    console.log(`🔄 Deduplicated ${allAgents.length - uniqueAgents.length} duplicate agents`);
-  }
-
-  if (uniqueAgents.length === 0) {
-    console.log(`❌ No agents found in any source directory`);
-    return;
-  }
-
-  // Filter agents based on options
-  let filteredAgents = uniqueAgents;
-
-  if (!includeSpecialized) {
-    // Filter out specialized domain agents (those with underscores in names)
-    filteredAgents = filteredAgents.filter((agent) => !agent.name.includes('_'));
-  }
-
-  if (!includeWorkflow) {
-    // Filter out workflow agents (basic codebase analysis agents)
-    const workflowAgents = [
-      'codebase-analyzer',
-      'codebase-locator',
-      'codebase-pattern-finder',
-      'thoughts-analyzer',
-      'thoughts-locator',
-    ];
-    filteredAgents = filteredAgents.filter((agent) => !workflowAgents.includes(agent.name));
-  }
-
-  console.log(`  📋 Selected ${filteredAgents.length}/${uniqueAgents.length} agents for sync`);
-
-  // Determine target formats to sync
-  const targetFormats: ('claude-code' | 'opencode')[] =
-    format === 'all'
-      ? ['claude-code', 'opencode']
-      : format === 'claude-code'
-        ? ['claude-code']
-        : format === 'opencode'
-          ? ['opencode']
-          : ['claude-code', 'opencode'];
+  console.log(`🔄 Syncing from: ${codeflowDir}`);
+  console.log(`📦 Syncing to: ${resolvedPath}\n`);
 
   let totalSynced = 0;
-  let totalErrors = 0;
 
-  // Initialize converter and validator
-  const converter = new FormatConverter();
-  const validator = new AgentValidator();
+  try {
+    // Sync commands
+    const sourceCommandDir = join(codeflowDir, 'command');
+    const targetCommandDir = join(resolvedPath, '.opencode/command');
 
-  // Sync to target formats
-  for (const targetFormat of targetFormats) {
-    const targetPath =
-      globalPaths.agents[targetFormat === 'claude-code' ? 'claudeCode' : targetFormat];
+    if (existsSync(sourceCommandDir)) {
+      // Create target directory
+      if (!existsSync(targetCommandDir)) {
+        await mkdir(targetCommandDir, { recursive: true });
+        console.log(`  ✓ Created directory: .opencode/command`);
+      }
 
-    console.log(`    🔄 Syncing to ${targetFormat} format...`);
+      const files = await readdir(sourceCommandDir);
+      const mdFiles = files.filter((f) => f.endsWith('.md'));
 
-    let syncCount = 0;
+      for (const file of mdFiles) {
+        const sourceFile = join(sourceCommandDir, file);
+        const targetFile = join(targetCommandDir, file);
 
-    for (const agent of filteredAgents) {
-      try {
-        // Convert to target format if needed
-        let convertedAgent = agent;
-        if (agent.format !== targetFormat) {
-          convertedAgent = converter.convert(agent, targetFormat);
+        try {
+          await copyFile(sourceFile, targetFile);
+          console.log(`  ✓ Synced command: ${file}`);
+          totalSynced++;
+        } catch (error: any) {
+          console.error(`  ❌ Failed to sync command ${file}: ${error.message}`);
         }
-
-        // Validate if requested
-        if (validate) {
-          const validation = validator.validateAgent(convertedAgent);
-          if (!validation.valid) {
-            console.log(
-              `    ⚠️  Validation failed for ${agent.name}: ${validation.errors[0]?.message}`
-            );
-            totalErrors++;
-            continue;
-          }
-        }
-
-        // Write to global directory
-        if (!dryRun) {
-          const filename = `${convertedAgent.name}.md`;
-          const filePath = join(targetPath, filename);
-          const serialized = serializeAgent(convertedAgent);
-
-          await writeFile(filePath, serialized);
-        }
-
-        syncCount++;
-      } catch (error: any) {
-        console.log(`    ❌ Failed to sync ${agent.name}: ${error.message}`);
-        totalErrors++;
       }
     }
 
-    // Apply permissions after syncing to this format
-    // Permissions are always set in agent file frontmatter; no external config is used
-    if (!dryRun && targetFormat === 'opencode') {
-      try {
-        console.log(`    510 Applying OpenCode permissions to ${targetPath}...`);
-        await applyOpenCodePermissionsToDirectory(targetPath, DEFAULT_OPENCODE_PERMISSIONS);
-        console.log(`    705 Applied OpenCode permissions`);
-      } catch (error: any) {
-        console.log(`    0  Failed to apply OpenCode permissions: ${error.message}`);
+    // Sync agents
+    const sourceAgentDir = join(codeflowDir, 'codeflow-agents');
+    const targetAgentDir = join(resolvedPath, '.opencode/agent');
+
+    if (existsSync(sourceAgentDir)) {
+      // Create target directory
+      if (!existsSync(targetAgentDir)) {
+        await mkdir(targetAgentDir, { recursive: true });
+        console.log(`  ✓ Created directory: .opencode/agent`);
+      }
+
+      // Parse and convert agents
+      const { agents, errors: parseErrors } = await parseAgentsFromDirectory(
+        sourceAgentDir,
+        'base'
+      );
+
+      if (parseErrors.length > 0) {
+        console.error(`❌ Failed to parse agents from ${sourceAgentDir}`);
+        return;
+      }
+
+      if (agents.length === 0) {
+        console.log(`⚠️  No agents found in ${sourceAgentDir}`);
+        return;
+      }
+
+      // Convert to OpenCode format
+      const converter = new FormatConverter();
+      const convertedAgents = converter.convertBatch(agents, 'opencode');
+
+      // Write converted agents
+      for (const agent of convertedAgents) {
+        try {
+          const filename = `${agent.frontmatter.name}.md`;
+          const targetFile = join(targetAgentDir, filename);
+          const serialized = serializeAgent(agent);
+          await Bun.write(targetFile, serialized);
+          console.log(`  ✓ Synced agent: ${filename}`);
+          totalSynced++;
+        } catch (error: any) {
+          console.error(`  ❌ Failed to sync agent ${agent.frontmatter.name}: ${error.message}`);
+        }
       }
     }
 
-    console.log(`    705 Synced ${syncCount} agents to ${targetFormat}`);
-    totalSynced += syncCount;
+    console.log(`\n✅ Sync complete! ${totalSynced} files synced`);
+  } catch (error: any) {
+    console.error(`❌ Sync failed: ${error.message}`);
+    process.exit(1);
   }
-
-  // Sync commands to global directory
-  if (!dryRun) {
-    console.log('');
-    await syncGlobalCommands();
-  }
-
-  if (dryRun) {
-    console.log('🔍 Dry run complete - no files were written');
-  } else {
-    console.log(`✅ Global sync complete!`);
-
-    // Provide MCP restart guidance if agents were synced
-    if (totalSynced > 0) {
-      console.log('');
-      console.log('💡 MCP Server Restart:');
-      console.log("   If you're using MCP integration, restart the server to use updated agents:");
-      console.log('   codeflow mcp restart');
-    }
-  }
-
-  console.log(`📊 Summary: ${totalSynced} agents synced, ${totalErrors} errors`);
 }
 
-/**
- * Check which agents need syncing (updated for single source approach)
- */
-export async function checkGlobalSync(): Promise<{
-  needsSync: boolean;
-  summary: {
-    source: number;
-    global: { claudeCode: number; opencode: number };
+export async function syncGlobalAgents(options: SyncOptions = {}) {
+  // For now, this is an alias to the main sync function
+  // This could be expanded to support global agent synchronization
+  return sync(options.projectPath);
+}
+
+export async function checkGlobalSync(): Promise<{ needsSync: boolean; needsUpdate: boolean; message: string }> {
+  // This is a placeholder implementation
+  // In a full implementation, this would check if global agents need updates
+  return {
+    needsSync: false,
+    needsUpdate: false,
+    message: "Global sync check not fully implemented yet"
   };
-}> {
-  const codeflowDir = join(import.meta.dir, '../..');
-  const globalPaths = getGlobalPaths();
-
-  const summary = {
-    source: 0,
-    global: { claudeCode: 0, opencode: 0 },
-  };
-
-  // Count source agents
-  const sourcePath = join(codeflowDir, 'codeflow-agents');
-  if (existsSync(sourcePath)) {
-    try {
-      const { agents } = await parseAgentsFromDirectory(sourcePath, 'base');
-      summary.source = agents.length;
-    } catch (e) {
-      // Ignore parse errors
-    }
-  }
-
-  // Count global agents
-  const globalDirs = [
-    { path: globalPaths.agents.claudeCode, key: 'claudeCode' as const },
-    { path: globalPaths.agents.opencode, key: 'opencode' as const },
-  ];
-
-  for (const dir of globalDirs) {
-    if (existsSync(dir.path)) {
-      try {
-        const files = await readdir(dir.path);
-        summary.global[dir.key] = files.filter(
-          (f: string) => f.endsWith('.md') && !f.startsWith('README')
-        ).length;
-      } catch (e) {
-        // Ignore read errors
-      }
-    }
-  }
-
-  // Check if sync is needed
-  const needsSync =
-    summary.source !== summary.global.claudeCode || summary.source !== summary.global.opencode;
-
-  return { needsSync, summary };
 }

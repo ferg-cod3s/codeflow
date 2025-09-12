@@ -1,6 +1,6 @@
 {
   "name": "@agentic-codeflow/cli",
-  "version": "0.9.3",
+  "version": "0.9.6",
   "description": "CLI for Agentic CodeFlow AI-assisted development workflows",
   "type": "module",
   "bin": {
@@ -48,17 +48,22 @@
     "test:coverage": "bun test --coverage",
     "mcp:server": "bun run mcp/codeflow-server.mjs",
     "mcp:dev": "bun run --watch mcp/codeflow-server.mjs",
+    "server": "bun run src/cli/index.ts server start",
+    "server:dev": "bun run --watch src/cli/index.ts server start",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
+    "validate:agents": "node scripts/validate-agent-models.js",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
     "changelog:first": "conventional-changelog -p angular -i CHANGELOG.md -s",
     "prepublishOnly": "bun run typecheck && bun run test && bun run lint || echo 'Lint warnings found but continuing with publish'",
     "prepack": "bun run typecheck",
+    "build:cli": "bun build src/cli/index.ts --target bun",
     "prepare": "husky"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.17.4",
+    "yaml": "^2.8.1",
     "zod": "^4.1.1"
   },
   "devDependencies": {

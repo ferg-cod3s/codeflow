@@ -1,4 +1,8 @@
 import { Agent, BaseAgent, ClaudeCodeAgent, OpenCodeAgent } from './agent-parser';
+import { ValidationEngine } from '../yaml/validation-engine';
+import { readFile, readdir, stat } from 'fs/promises';
+import { existsSync } from 'fs';
+import path from 'path';
 
 /**
  * Validation result interface
@@ -27,346 +31,82 @@ export interface ValidationWarning {
 }
 
 /**
+ * Duplicate validation result interface
+ */
+export interface DuplicateValidationResult {
+  valid: boolean;
+  totalAgents: number;
+  canonicalAgentCount: number;
+  duplicates: Array<{
+    agentName: string;
+    totalCopies?: number;
+    expectedCopies?: number;
+    extraCopies?: string[];
+    canonicalSources?: string[];
+    issue?: string;
+    missingFormats?: string[];
+    existingLocations?: string[];
+  }>;
+}
+
+/**
+ * Canonical validation result interface
+ */
+export interface CanonicalValidationResult {
+  valid: boolean;
+  manifestAgents: number;
+  expectedCount: number;
+  errors: Array<{
+    agent: string;
+    issue: string;
+    suggestion?: string;
+  }>;
+}
+
+/**
+ * Batch validation result interface
+ */
+export interface BatchValidationResult {
+  results: Array<ValidationResult & { agent: string }>;
+  summary: {
+    total: number;
+    valid: number;
+    errors: number;
+    warnings: number;
+    errorsByType: Record<string, number>;
+    warningsByType: Record<string, number>;
+  };
+}
+
+/**
  * Agent validation system
  */
 export class AgentValidator {
+  private validationEngine: ValidationEngine;
+
+  constructor() {
+    this.validationEngine = new ValidationEngine();
+  }
+
   /**
-   * Validate base agent format (single source of truth)
+   * Validate base agent format using ValidationEngine
    */
   validateBase(agent: BaseAgent): ValidationResult {
-    const errors: ValidationError[] = [];
-    const warnings: ValidationWarning[] = [];
-
-    // Required fields
-    if (!agent.name || agent.name.trim() === '') {
-      errors.push({
-        field: 'name',
-        message: 'Name is required and cannot be empty',
-        severity: 'error',
-      });
-    }
-
-    if (!agent.description || agent.description.trim() === '') {
-      errors.push({
-        field: 'description',
-        message: 'Description is required and cannot be empty',
-        severity: 'error',
-      });
-    }
-
-    // Name format validation (should be lowercase with hyphens)
-    if (agent.name && !/^[a-z0-9-]+$/.test(agent.name)) {
-      warnings.push({
-        field: 'name',
-        message: 'Name should use lowercase letters, numbers, and hyphens only',
-      });
-    }
-
-    // Description length validation
-    if (agent.description && agent.description.length < 10) {
-      warnings.push({
-        field: 'description',
-        message: 'Description is very short, consider adding more detail',
-      });
-    }
-
-    if (agent.description && agent.description.length > 500) {
-      warnings.push({
-        field: 'description',
-        message: 'Description is very long, consider making it more concise',
-      });
-    }
-
-    // Mode validation - validate official modes
-    if (agent.mode && !['subagent', 'primary', 'all'].includes(agent.mode)) {
-      errors.push({
-        field: 'mode',
-        message: 'Mode must be one of: subagent, primary, all',
-        severity: 'error',
-      });
-    }
-
-    // Temperature validation
-    if (agent.temperature !== undefined) {
-      if (typeof agent.temperature !== 'number') {
-        errors.push({
-          field: 'temperature',
-          message: 'Temperature must be a number',
-          severity: 'error',
-        });
-      } else if (agent.temperature < 0 || agent.temperature > 2) {
-        errors.push({
-          field: 'temperature',
-          message: 'Temperature must be between 0 and 2',
-          severity: 'error',
-        });
-      }
-    }
-
-    // Model validation (basic format check)
-    if (agent.model) {
-      if (typeof agent.model !== 'string') {
-        errors.push({
-          field: 'model',
-          message: 'Model must be a string',
-          severity: 'error',
-        });
-      } else if (!agent.model.includes('/') && !agent.model.includes('-')) {
-        warnings.push({
-          field: 'model',
-          message: 'Model format seems unusual, expected provider/model or provider-model format',
-        });
-      }
-    }
-
-    // Tools validation (object format for base)
-    if (agent.tools) {
-      if (typeof agent.tools !== 'object' || Array.isArray(agent.tools)) {
-        errors.push({
-          field: 'tools',
-          message: 'Tools must be an object with tool names as keys and boolean values',
-          severity: 'error',
-        });
-      } else {
-        for (const [toolName, toolValue] of Object.entries(agent.tools)) {
-          if (typeof toolValue !== 'boolean') {
-            errors.push({
-              field: `tools.${toolName}`,
-              message: `Tool '${toolName}' must have a boolean value`,
-              severity: 'error',
-            });
-          }
-        }
-
-        // Check for common tools
-        const enabledTools = Object.entries(agent.tools)
-          .filter(([_, enabled]) => enabled === true)
-          .map(([name, _]) => name);
-
-        if (enabledTools.length === 0) {
-          warnings.push({
-            field: 'tools',
-            message: 'No tools are enabled, agent may have limited functionality',
-          });
-        }
-
-        // Check if read/write tools are balanced
-        const hasRead = agent.tools.read === true;
-        const hasWrite = agent.tools.write === true;
-        const hasEdit = agent.tools.edit === true;
-
-        if (hasWrite && !hasRead) {
-          warnings.push({
-            field: 'tools',
-            message: 'Agent can write but not read files, which may cause issues',
-          });
-        }
-
-        if (hasEdit && !hasRead) {
-          warnings.push({
-            field: 'tools',
-            message: 'Agent can edit but not read files, which may cause issues',
-          });
-        }
-      }
-    }
-
-    return {
-      valid: errors.length === 0,
-      errors,
-      warnings,
-    };
+    return this.validationEngine.validateBase(agent);
   }
 
   /**
-   * Validate Claude Code agent format (converted from base)
+   * Validate Claude Code agent format using ValidationEngine
    */
   validateClaudeCode(agent: ClaudeCodeAgent): ValidationResult {
-    // Convert Claude Code agent to Base format for validation
-    const baseAgent: BaseAgent = {
-      ...agent,
-      tools: agent.tools
-        ? agent.tools.split(',').reduce(
-            (acc, tool) => {
-              acc[tool.trim()] = true;
-              return acc;
-            },
-            {} as Record<string, boolean>
-          )
-        : undefined,
-    };
-    return this.validateBase(baseAgent);
+    return this.validationEngine.validateClaudeCode(agent);
   }
 
   /**
-   * Validate OpenCode agent format (official OpenCode.ai specification)
+   * Validate OpenCode agent format using ValidationEngine
    */
   validateOpenCode(agent: OpenCodeAgent): ValidationResult {
-    const errors: ValidationError[] = [];
-    const warnings: ValidationWarning[] = [];
-
-    // Required fields for official OpenCode format
-    if (!agent.description || agent.description.trim() === '') {
-      errors.push({
-        field: 'description',
-        message: 'Description is required and cannot be empty',
-        severity: 'error',
-      });
-    }
-
-    if (!agent.mode) {
-      errors.push({
-        field: 'mode',
-        message: 'Mode is required and must be one of: primary, subagent, all',
-        severity: 'error',
-      });
-    }
-
-    // Mode validation - support official OpenCode modes only
-    if (agent.mode && !['primary', 'subagent', 'all'].includes(agent.mode)) {
-      errors.push({
-        field: 'mode',
-        message: 'Mode must be one of: primary, subagent, all',
-        severity: 'error',
-      });
-    }
-
-    // Model validation
-    if (agent.model && typeof agent.model !== 'string') {
-      errors.push({
-        field: 'model',
-        message: 'Model must be a string',
-        severity: 'error',
-      });
-    }
-
-    // Temperature validation
-    if (agent.temperature !== undefined) {
-      if (typeof agent.temperature !== 'number') {
-        errors.push({
-          field: 'temperature',
-          message: 'Temperature must be a number',
-          severity: 'error',
-        });
-      } else if (agent.temperature < 0.0 || agent.temperature > 1.0) {
-        errors.push({
-          field: 'temperature',
-          message: 'Temperature must be between 0.0 and 1.0',
-          severity: 'error',
-        });
-      }
-    }
-
-    // Tools validation (object format with boolean values)
-    if (agent.tools) {
-      if (typeof agent.tools !== 'object' || Array.isArray(agent.tools)) {
-        errors.push({
-          field: 'tools',
-          message: 'Tools must be an object with tool names as keys and boolean values',
-          severity: 'error',
-        });
-      } else {
-        for (const [toolName, toolValue] of Object.entries(agent.tools)) {
-          if (typeof toolValue !== 'boolean') {
-            errors.push({
-              field: `tools.${toolName}`,
-              message: `Tool '${toolName}' must have a boolean value`,
-              severity: 'error',
-            });
-          }
-        }
-      }
-    }
-
-    // Permission validation (official OpenCode format)
-    if (agent.permission) {
-      if (typeof agent.permission !== 'object' || Array.isArray(agent.permission)) {
-        errors.push({
-          field: 'permission',
-          message: 'Permission must be an object with action names as keys and permission values',
-          severity: 'error',
-        });
-      } else {
-        for (const [action, permission] of Object.entries(agent.permission)) {
-          if (!['allow', 'ask', 'deny'].includes(permission as string)) {
-            errors.push({
-              field: `permission.${action}`,
-              message: `Permission for '${action}' must be one of: allow, ask, deny`,
-              severity: 'error',
-            });
-          }
-        }
-      }
-    }
-
-    // Disable validation (if provided)
-    if (agent.disable !== undefined && typeof agent.disable !== 'boolean') {
-      errors.push({
-        field: 'disable',
-        message: 'Disable field must be boolean (true/false)',
-        severity: 'error',
-      });
-    }
-
-    // Legacy field validations for backward compatibility
-    if (agent.name && agent.name.includes(' ')) {
-      errors.push({
-        field: 'name',
-        message: 'Agent name should not contain spaces (use hyphens instead)',
-        severity: 'error',
-      });
-    }
-
-    // Tags validation (array format in custom format)
-    if (agent.tags) {
-      if (!Array.isArray(agent.tags)) {
-        errors.push({
-          field: 'tags',
-          message: 'Tags must be an array',
-          severity: 'error',
-        });
-      } else {
-        for (const tag of agent.tags) {
-          if (typeof tag !== 'string') {
-            errors.push({
-              field: 'tags',
-              message: 'All tags must be strings',
-              severity: 'error',
-            });
-          }
-        }
-      }
-    }
-
-    // Category validation (string format)
-    if (agent.category && typeof agent.category !== 'string') {
-      errors.push({
-        field: 'category',
-        message: 'Category must be a string',
-        severity: 'error',
-      });
-    }
-
-    // If there are validation errors, return them
-    if (errors.length > 0) {
-      return {
-        valid: false,
-        errors,
-        warnings,
-      };
-    }
-
-    // Convert OpenCode agent to Base format for additional validation
-    const baseAgent: BaseAgent = {
-      name: agent.name || 'unnamed-agent', // Provide default name for base validation
-      description: agent.description,
-      mode: agent.mode || 'subagent',
-      model: agent.model,
-      temperature: agent.temperature,
-      tools: agent.tools,
-    };
-
-    return this.validateBase(baseAgent);
+    return this.validationEngine.validateOpenCode(agent);
   }
 
   /**
@@ -485,6 +225,392 @@ export class AgentValidator {
       errors,
       warnings,
     };
+  }
+
+  /**
+   * Duplicate detection validation
+   */
+  async validateNoDuplicates(agentDirectories: string[]): Promise<DuplicateValidationResult> {
+    const agentsByName: Record<
+      string,
+      Array<{ file: string; format: string; directory: string }>
+    > = {};
+    const duplicates: Array<{
+      agentName: string;
+      totalCopies?: number;
+      expectedCopies?: number;
+      extraCopies?: string[];
+      canonicalSources?: string[];
+      issue?: string;
+      missingFormats?: string[];
+      existingLocations?: string[];
+    }> = [];
+
+    // Recursive function to find all .md files in a directory
+    async function findMarkdownFiles(dir: string, baseDir = ''): Promise<string[]> {
+      const files: string[] = [];
+      try {
+        const entries = await readdir(dir);
+
+        for (const entry of entries) {
+          const fullPath = path.join(dir, entry);
+          const stats = await stat(fullPath);
+
+          if (stats.isDirectory()) {
+            const subFiles = await findMarkdownFiles(fullPath, path.join(baseDir, entry));
+            files.push(...subFiles);
+          } else if (entry.endsWith('.md')) {
+            files.push(fullPath);
+          }
+        }
+      } catch (error) {
+        // Directory doesn't exist or can't be read
+        console.warn(`⚠️ Could not read directory ${dir}: ${(error as Error).message}`);
+      }
+
+      return files;
+    }
+
+    for (const directory of agentDirectories) {
+      const files = await findMarkdownFiles(directory);
+
+      for (const file of files) {
+        const basename = path.basename(file, '.md');
+        const format = this.detectFormatFromPath(file);
+
+        if (!agentsByName[basename]) {
+          agentsByName[basename] = [];
+        }
+
+        agentsByName[basename].push({
+          file,
+          format,
+          directory: path.dirname(file),
+        });
+      }
+    }
+
+    // Find agents with more than expected formats (base, claude-code, opencode)
+    Object.entries(agentsByName).forEach(([name, locations]) => {
+      const expectedFormats = ['base', 'claude-code', 'opencode'];
+      const actualFormats = locations.map((l) => l.format);
+
+      // Check for extra copies beyond the 3 canonical formats
+      const extraCopies = locations.filter((loc, index) => {
+        const format = loc.format;
+        const firstOccurrence = actualFormats.indexOf(format);
+        return index !== firstOccurrence; // This is a duplicate of the format
+      });
+
+      if (extraCopies.length > 0) {
+        duplicates.push({
+          agentName: name,
+          totalCopies: locations.length,
+          expectedCopies: 3,
+          extraCopies: extraCopies.map((c) => c.file),
+          canonicalSources: locations
+            .filter(
+              (l) =>
+                (l.format === 'base' &&
+                  l.file.includes('codeflow-agents/') &&
+                  !l.file.includes('backup/')) ||
+                (l.format === 'claude-code' &&
+                  (l.file.includes('claude-agents/') || l.file.includes('.claude/agents/')) &&
+                  !l.file.includes('backup/')) ||
+                (l.format === 'opencode' &&
+                  (l.file.includes('opencode-agents/') || l.file.includes('.opencode/agent/')) &&
+                  !l.file.includes('backup/'))
+            )
+            .map((c) => c.file),
+        });
+      }
+
+      // Check for missing canonical formats
+      const missingFormats = expectedFormats.filter((f) => !actualFormats.includes(f));
+      if (missingFormats.length > 0) {
+        duplicates.push({
+          agentName: name,
+          issue: 'missing_canonical_formats',
+          missingFormats,
+          existingLocations: locations.map((l) => l.file),
+        });
+      }
+    });
+
+    return {
+      valid: duplicates.length === 0,
+      totalAgents: Object.keys(agentsByName).length,
+      canonicalAgentCount: Object.keys(agentsByName).filter(
+        (name) =>
+          agentsByName[name].length >= 3 && // At least 3 formats (may have extras)
+          agentsByName[name].some((l) => l.directory.includes('codeflow-agents')) &&
+          (agentsByName[name].some((l) => l.directory.includes('claude-agents')) ||
+            agentsByName[name].some((l) => l.directory.includes('.claude'))) &&
+          (agentsByName[name].some((l) => l.directory.includes('opencode-agents')) ||
+            agentsByName[name].some((l) => l.directory.includes('.opencode')))
+      ).length,
+      duplicates,
+    };
+  }
+
+  /**
+   * Canonical source integrity validation
+   */
+  async validateCanonicalIntegrity(): Promise<CanonicalValidationResult> {
+    const manifestPath = path.join(process.cwd(), 'AGENT_MANIFEST.json');
+    if (!existsSync(manifestPath)) {
+      return {
+        valid: false,
+        manifestAgents: 0,
+        expectedCount: 42,
+        errors: [
+          {
+            agent: 'manifest',
+            issue: 'AGENT_MANIFEST.json not found',
+            suggestion: 'Create AGENT_MANIFEST.json with canonical agent definitions',
+          },
+        ],
+      };
+    }
+
+    const manifest = JSON.parse(await readFile(manifestPath, 'utf-8'));
+    const errors = [];
+
+    for (const agent of manifest.canonical_agents || []) {
+      // Check that all three canonical files exist
+      for (const [format, filePath] of Object.entries(agent.sources || {})) {
+        if (!existsSync(filePath as string)) {
+          errors.push({
+            agent: agent.name,
+            issue: `Missing canonical ${format} file: ${filePath}`,
+          });
+        }
+      }
+
+      // Validate content consistency (core functionality should be equivalent)
+      if (errors.length === 0 && agent.sources) {
+        try {
+          const baseContent = await readFile(agent.sources.base as string, 'utf-8');
+          const claudeContent = await readFile(agent.sources['claude-code'] as string, 'utf-8');
+          const opencodeContent = await readFile(agent.sources.opencode as string, 'utf-8');
+
+          // Extract descriptions to compare core purpose
+          const baseDesc = this.extractDescription(baseContent);
+          const claudeDesc = this.extractDescription(claudeContent);
+          const opencodeDesc = this.extractDescription(opencodeContent);
+
+          // Check for significant divergence in purpose (basic similarity check)
+          if (!this.descriptionsMatch(baseDesc, claudeDesc, opencodeDesc)) {
+            errors.push({
+              agent: agent.name,
+              issue: 'Content divergence detected across formats',
+              suggestion: 'Review and sync agent descriptions and core functionality',
+            });
+          }
+        } catch (error) {
+          errors.push({
+            agent: agent.name,
+            issue: `Error reading canonical files: ${(error as Error).message}`,
+          });
+        }
+      }
+    }
+
+    return {
+      valid: errors.length === 0,
+      manifestAgents: manifest.canonical_agents?.length || 0,
+      expectedCount: 42,
+      errors,
+    };
+  }
+
+  /**
+   * Enhanced OpenCode validation
+   */
+  validateOpenCodeAgent(agent: OpenCodeAgent): ValidationResult {
+    const errors: ValidationError[] = [];
+    const warnings: ValidationWarning[] = [];
+
+    // Required fields validation
+    if (!agent.description || agent.description.trim().length === 0) {
+      errors.push({
+        field: 'description',
+        message: 'OpenCode agents must have a non-empty description',
+        severity: 'error',
+      });
+    }
+
+    // Mode validation
+    if (!['primary', 'subagent', 'all'].includes(agent.mode || '')) {
+      errors.push({
+        field: 'mode',
+        message: `Invalid mode '${agent.mode}'. Must be 'primary', 'subagent', or 'all'`,
+        severity: 'error',
+      });
+    }
+
+    // Model format validation
+    if (agent.model && !agent.model.includes('/')) {
+      warnings.push({
+        field: 'model',
+        message: `Model '${agent.model}' should use provider/model format for OpenCode`,
+      });
+    }
+
+    // Tools/Permission validation - OpenCode supports both formats
+    const hasTools =
+      agent.tools !== undefined && (typeof agent.tools !== 'string' || agent.tools !== 'undefined');
+    const hasPermissions =
+      agent.permission !== undefined &&
+      (typeof agent.permission !== 'string' || agent.permission !== 'undefined');
+
+    if (!hasTools && !hasPermissions) {
+      errors.push({
+        field: 'tools',
+        message: 'Either tools or permission field must be defined',
+        severity: 'error',
+      });
+    }
+
+    if (agent.tools && typeof agent.tools === 'object') {
+      // Validate tool dependencies
+      if (agent.tools.write && !agent.tools.read) {
+        warnings.push({
+          field: 'tools',
+          message: 'Write permission typically requires read permission',
+        });
+      }
+    }
+
+    if (agent.permission && typeof agent.permission === 'object') {
+      // Validate permission dependencies
+      if (agent.permission.write === 'allow' && agent.permission.read !== 'allow') {
+        warnings.push({
+          field: 'permission',
+          message: 'Write permission typically requires read permission',
+        });
+      }
+    }
+
+    // Temperature validation
+    if (agent.temperature !== undefined && (agent.temperature < 0 || agent.temperature > 2)) {
+      errors.push({
+        field: 'temperature',
+        message: `Temperature ${agent.temperature} is outside valid range 0-2`,
+        severity: 'error',
+      });
+    }
+
+    return {
+      valid: errors.length === 0,
+      errors,
+      warnings,
+    };
+  }
+
+  /**
+   * Batch validation with detailed reporting
+   */
+  async validateBatchWithDetails(agents: Agent[]): Promise<BatchValidationResult> {
+    const results = [];
+    const summary = {
+      total: agents.length,
+      valid: 0,
+      errors: 0,
+      warnings: 0,
+      errorsByType: {} as Record<string, number>,
+      warningsByType: {} as Record<string, number>,
+    };
+
+    for (const agent of agents) {
+      const result = this.validateAgent(agent);
+      results.push({ ...result, agent: agent.name });
+
+      if (result.valid) {
+        summary.valid++;
+      } else {
+        summary.errors += result.errors.length;
+
+        // Categorize errors for reporting
+        result.errors.forEach((error) => {
+          const key = error.field || 'general';
+          summary.errorsByType[key] = (summary.errorsByType[key] || 0) + 1;
+        });
+      }
+
+      summary.warnings += result.warnings.length;
+      result.warnings.forEach((warning) => {
+        const key = warning.field || 'general';
+        summary.warningsByType[key] = (summary.warningsByType[key] || 0) + 1;
+      });
+    }
+
+    return { results, summary };
+  }
+
+  /**
+   * Generate fix suggestions
+   */
+  generateFixScript(validationResults: ValidationResult[]): string {
+    const fixes: string[] = [];
+
+    validationResults.forEach((result) => {
+      if (!result.valid && 'agent' in result) {
+        fixes.push(`# Fixes for ${result.agent}`);
+        result.errors.forEach((error) => {
+          fixes.push(`# ${error.message}`);
+          if ('suggestion' in error && error.suggestion) {
+            fixes.push(`# Suggestion: ${error.suggestion}`);
+          }
+        });
+        fixes.push(''); // empty line
+      }
+    });
+
+    return fixes.join('\n');
+  }
+
+  /**
+   * Helper method to detect format from file path
+   */
+  private detectFormatFromPath(filePath: string): string {
+    if (filePath.includes('codeflow-agents/')) return 'base';
+    if (filePath.includes('.claude/agents/')) return 'claude-code';
+    if (filePath.includes('.opencode/agent/')) return 'opencode';
+    if (filePath.includes('claude-agents/')) return 'claude-code';
+    if (filePath.includes('opencode-agents/')) return 'opencode';
+    return 'unknown';
+  }
+
+  /**
+   * Extract description from agent content
+   */
+  private extractDescription(content: string): string {
+    // Simple extraction - look for description in frontmatter or first paragraph
+    const lines = content.split('\n');
+    for (const line of lines) {
+      if (line.includes('description:')) {
+        return line.split('description:')[1].trim();
+      }
+    }
+    return content.substring(0, 200); // Fallback to first 200 chars
+  }
+
+  /**
+   * Check if descriptions match (basic similarity check)
+   */
+  private descriptionsMatch(desc1: string, desc2: string, desc3: string): boolean {
+    // Simple check - all descriptions should contain similar keywords
+    const keywords1 = desc1.toLowerCase().split(/\s+/);
+    const keywords2 = desc2.toLowerCase().split(/\s+/);
+    const keywords3 = desc3.toLowerCase().split(/\s+/);
+
+    // Check if they have significant overlap
+    const common12 = keywords1.filter((k) => keywords2.includes(k)).length;
+    const common13 = keywords1.filter((k) => keywords3.includes(k)).length;
+    const common23 = keywords2.filter((k) => keywords3.includes(k)).length;
+
+    return common12 > 2 && common13 > 2 && common23 > 2;
   }
 
   /**

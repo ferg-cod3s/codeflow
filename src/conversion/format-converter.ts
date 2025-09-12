@@ -49,14 +49,17 @@ export class FormatConverter {
 
     // Official OpenCode format - follows OpenCode.ai specification
     const openCodeFrontmatter: OpenCodeAgent = {
-      name: baseAgent.name,
+      name: baseAgent.name || agent.name, // Use base name or agent filename as fallback
       description: baseAgent.description,
       mode: baseAgent.mode || 'subagent', // Official default is 'subagent'
       model: baseAgent.model,
       temperature: baseAgent.temperature,
-      tools: baseAgent.tools,
-      // Convert tools to permission format for official OpenCode spec
-      permission: baseAgent.tools ? this.convertToolsToPermissions(baseAgent.tools) : undefined,
+      // Use proper OpenCode permission format - convert from base permissions or tools
+      permission: baseAgent.permissions?.opencode
+        ? this.convertBaseOpenCodePermissions(baseAgent.permissions.opencode)
+        : baseAgent.tools
+          ? this.convertToolsToPermissions(baseAgent.tools)
+          : undefined,
       // Preserve custom fields for compatibility
       ...(baseAgent.category && { category: baseAgent.category }),
       ...(baseAgent.tags && { tags: baseAgent.tags }),
@@ -66,6 +69,23 @@ export class FormatConverter {
     // Convert model format for OpenCode if needed
     if (openCodeFrontmatter.model) {
       openCodeFrontmatter.model = this.convertModelForOpenCode(openCodeFrontmatter.model);
+    }
+
+    // Validate and normalize permissions
+    if (openCodeFrontmatter.permission) {
+      const validation = this.validatePermissions(openCodeFrontmatter.permission);
+      if (!validation.valid) {
+        throw new Error(
+          `Invalid permissions for agent ${baseAgent.name}: ${validation.errors.join(', ')}`
+        );
+      }
+    } else {
+      // Add default permissions if none are present
+      openCodeFrontmatter.permission = {
+        edit: 'deny',
+        bash: 'deny',
+        webfetch: 'allow',
+      };
     }
 
     return {
@@ -157,10 +177,16 @@ export class FormatConverter {
       mode: frontmatter.mode || 'subagent', // Default to 'subagent' for base format
       model: frontmatter.model,
       temperature: frontmatter.temperature,
-      tools: frontmatter.tools,
+      // Convert permission format back to tools format for base compatibility
+      tools: frontmatter.permission
+        ? this.convertPermissionsToTools(frontmatter.permission)
+        : frontmatter.tools, // Fallback to tools if permission not available
       // Preserve custom OpenCode fields for future conversion back
       ...(frontmatter.category && { category: frontmatter.category }),
       ...(frontmatter.tags && { tags: frontmatter.tags }),
+      ...(frontmatter.allowed_directories && {
+        allowed_directories: frontmatter.allowed_directories,
+      }),
     };
 
     return {
@@ -271,18 +297,17 @@ export class FormatConverter {
   }
 
   /**
-   * Convert tools object to permission format for official OpenCode specification
+   * Convert base OpenCode permissions to official OpenCode format
    */
-  private convertToolsToPermissions(
-    tools: Record<string, boolean>
+  private convertBaseOpenCodePermissions(
+    basePermissions: Record<string, any>
   ): Record<string, 'allow' | 'ask' | 'deny'> {
     const permissions: Record<string, 'allow' | 'ask' | 'deny'> = {};
 
-    for (const [tool, enabled] of Object.entries(tools)) {
-      if (enabled === true) {
+    // If the base permissions have a 'tools' array, convert each tool to 'allow'
+    if (basePermissions.tools && Array.isArray(basePermissions.tools)) {
+      for (const tool of basePermissions.tools) {
         permissions[tool] = 'allow';
-      } else {
-        permissions[tool] = 'deny';
       }
     }
 
@@ -290,10 +315,80 @@ export class FormatConverter {
   }
 
   /**
+   * Convert tools object to permission format for official OpenCode specification
+   * Uses centralized logic consistent with normalizePermissionFormat
+   */
+  private convertToolsToPermissions(
+    tools: Record<string, boolean>
+  ): Record<string, 'allow' | 'ask' | 'deny'> {
+    // Use the same logic as normalizePermissionFormat for consistency
+    const permissions: Record<string, 'allow' | 'ask' | 'deny'> = {
+      edit: this.booleanToPermissionString(tools.edit || false),
+      bash: this.booleanToPermissionString(tools.bash || false),
+      webfetch: this.booleanToPermissionString(tools.webfetch !== false), // Default to true if not explicitly false
+    };
+
+    // Add any additional tools that aren't in the standard set
+    for (const [tool, enabled] of Object.entries(tools)) {
+      if (!['edit', 'bash', 'webfetch'].includes(tool)) {
+        permissions[tool] = this.booleanToPermissionString(enabled);
+      }
+    }
+
+    return permissions;
+  }
+
+  /**
+   * Convert boolean to permission string (centralized helper)
+   */
+  private booleanToPermissionString(value: boolean): 'allow' | 'ask' | 'deny' {
+    return value ? 'allow' : 'deny';
+  }
+
+  /**
+   * Convert permission format back to tools format for compatibility
+   */
+  private convertPermissionsToTools(
+    permissions: Record<string, 'allow' | 'ask' | 'deny'>
+  ): Record<string, boolean> {
+    const tools: Record<string, boolean> = {};
+
+    for (const [tool, permission] of Object.entries(permissions)) {
+      tools[tool] = permission === 'allow';
+    }
+
+    return tools;
+  }
+
+  /**
    * Convert model format for OpenCode (if needed)
    */
   private convertModelForOpenCode(model: string): string {
-    // Implementation remains the same
+    // OpenCode.ai supports github-copilot and opencode providers directly
+    // No conversion needed - these models should work as-is
     return model;
+  }
+
+  /**
+   * Validate permission format for OpenCode compatibility
+   */
+  private validatePermissions(permissions: Record<string, any>): {
+    valid: boolean;
+    errors: string[];
+  } {
+    const errors: string[] = [];
+
+    if (!permissions || typeof permissions !== 'object') {
+      errors.push('Permission must be an object');
+      return { valid: false, errors };
+    }
+
+    for (const [action, value] of Object.entries(permissions)) {
+      if (!['allow', 'ask', 'deny'].includes(value as string)) {
+        errors.push(`Permission for '${action}' must be 'allow', 'ask', or 'deny', got '${value}'`);
+      }
+    }
+
+    return { valid: errors.length === 0, errors };
   }
 }
