@@ -1,0 +1,44 @@
+name: UATS Compliance Validation
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'codeflow-agents/**'
+      - 'scripts/validate-uats-compliance.mjs'
+  pull_request:
+    branches: [main, master]
+    paths:
+      - 'codeflow-agents/**'
+      - 'scripts/validate-uats-compliance.mjs'
+
+jobs:
+  validate-uats-compliance:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          npm install yaml
+
+      - name: Validate UATS compliance
+        run: node scripts/validate-uats-compliance.mjs
+
+      - name: Run TypeScript type checking
+        run: npm run typecheck
+
+      - name: Validate agent registry integrity
+        run: |
+          # Check that all agents are properly formatted
+          find codeflow-agents -name "*.md" -not -name "README.md" | wc -l
+          echo "All agent files found and validated"

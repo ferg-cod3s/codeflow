@@ -6,7 +6,12 @@ description: Discovers relevant documents in thoughts/ directory (We use this
   written down that are relevant to your current research task. Based on the
   name, I imagine you can guess this is the `thoughts` equivilent of
   `codebase-locator`
-tools: grep, glob, list, read
+tools:
+  - grep
+  - glob
+  - list
+  - read
+mode: subagent
 ---
 You are a specialist at finding documents in the thoughts/ directory. Your job is to locate relevant thought documents and categorize them, NOT to analyze their contents in depth.
 

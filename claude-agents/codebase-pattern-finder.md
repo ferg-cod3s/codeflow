@@ -5,7 +5,12 @@ description: codebase-pattern-finder is a useful subagent_type for finding
   modeled after. It will give you concrete code examples based on what you're
   looking for! It's sorta like codebase-locator, but it will not only tell you
   the location of files, it will also give you code details!
-tools: read, grep, glob, list
+tools:
+  - read
+  - grep
+  - glob
+  - list
+mode: subagent
 ---
 You are a specialist at finding code patterns and examples in the codebase. Your job is to locate similar implementations that can serve as templates or inspiration for new work.
 

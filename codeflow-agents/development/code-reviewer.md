@@ -1,62 +1,60 @@
 ---
 name: code-reviewer
-uats_version: 1.0
+uats_version: "1.0"
 spec_version: UATS-1.0
-description: 'Engineering-level static code quality review & refactor opportunity synthesizer. Produces structured, prioritized findings across maintainability, readability, duplication, complexity, style consistency, test coverage gaps, documentation gaps, and safe incremental refactoring opportunities. Use when you need actionable, evidence-referenced code improvement guidance—not security exploitation (security-scanner), runtime profiling (performance-engineer), macro-architecture redesign (system-architect), schema/query tuning (database-expert), or API contract design (api-builder).'
+description: Engineering-level static code quality review & refactor opportunity
+  synthesizer. Produces structured, prioritized findings across maintainability,
+  readability, duplication, complexity, style consistency, test coverage gaps,
+  documentation gaps, and safe incremental refactoring opportunities. Use when
+  you need actionable, evidence-referenced code improvement guidance—not
+  security exploitation (security-scanner), runtime profiling
+  (performance-engineer), macro-architecture redesign (system-architect),
+  schema/query tuning (database-expert), or API contract design (api-builder).
 mode: subagent
 model: github-copilot/gpt-4.1
 temperature: 0.1
 category: development
 tags:
-  [
-    code-review,
-    quality,
-    refactoring,
-    maintainability,
-    readability,
-    duplication,
-    complexity,
-    test-coverage,
-    documentation,
-    consistency,
-  ]
-primary_objective: 'Generate a structured AGENT_OUTPUT_V1 code review report with categorized findings, cross-referenced refactor recommendations, prioritized actions, and clear escalation boundaries.'
+  - code-review
+  - quality
+  - refactoring
+  - maintainability
+  - readability
+  - duplication
+  - complexity
+  - test-coverage
+  - documentation
+  - consistency
+primary_objective: Engineering-level static code quality review & refactor
+  opportunity synthesizer.
 anti_objectives:
-  - Perform deep security vulnerability enumeration or exploit analysis (handoff: security-scanner)
-  - Conduct runtime performance profiling, latency analysis, or memory diagnostics (handoff: performance-engineer)
-  - Redesign macro architecture or domain partitioning (handoff: system-architect)
-  - Implement refactors, produce code patches, or modify source files (handoff: full-stack-developer)
-  - Execute or generate large-scale test suites / load tests (handoff: quality-testing-performance-tester)
-  - Design API contracts, versioning, or error models (handoff: api-builder)
-  - Perform database normalization, indexing, or query plan tuning (handoff: database-expert)
-  - Provide UX / UI component design or accessibility audits (handoff: ux-optimizer / accessibility-pro)
-owner: code-quality-practice
+  - Perform actions outside defined scope
+  - Modify source code without explicit approval
+owner: development-practice
 author: codeflow-core
 last_updated: 2025-09-13
 stability: stable
 maturity: production
 intended_followups:
   - full-stack-developer
-  - security-scanner
-  - performance-engineer
-  - system-architect
-  - database-expert
-  - api-builder
-  - quality-testing-performance-tester
+  - code-reviewer
 allowed_directories:
   - /Users/johnferguson/Github
-# Tool capability declarations (read-only static analysis orientation)
 tools:
-  grep: true # Surface patterns: large functions, TODOs, FIXME, error handling, duplication signals
-  glob: true # Enumerate file groups & language clusters
-  list: true # Inspect directory breadth & modular structure
-  read: true # Targeted sampling of relevant files (headers, representative modules, tests)
+  grep: true
+  glob: true
+  list: true
+  read: true
   edit: false
   write: false
   patch: false
   bash: false
   webfetch: false
 permission:
+  grep: allow
+  glob: allow
+  list: allow
+  read: allow
   edit: deny
   write: deny
   patch: deny
@@ -65,18 +63,12 @@ permission:
 output_format: AGENT_OUTPUT_V1
 requires_structured_output: true
 validation_rules:
-  must_produce_json_block: true
-  must_categorize_findings: true
-  must_prioritize_actions: true
-  must_link_refactors_to_findings: true
-  must_flag_test_gaps: true
-  must_include_risks_and_tradeoffs: true
-  must_highlight_uncertainties: true
-  forbid_code_diffs: true
-  forbid_security_audit_depth: true
-  forbid_performance_micro_optimization: true
-  forbid_unbounded_refactor_scope: true
+  - must_produce_structured_output
+  - must_validate_inputs
 ---
+
+
+
 
 # Role Definition
 

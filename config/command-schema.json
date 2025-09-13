@@ -1,0 +1,324 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://codeflow.dev/schemas/command/v1.0",
+  "title": "CodeFlow Command Schema",
+  "description": "Schema for validating CodeFlow command prompts with caching support",
+  "version": "1.0.0",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Command name in kebab-case",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "minLength": 2,
+      "maxLength": 50
+    },
+    "description": {
+      "type": "string",
+      "description": "Brief description of command purpose",
+      "minLength": 10,
+      "maxLength": 200
+    },
+    "version": {
+      "type": "string",
+      "description": "Semantic version of the command",
+      "pattern": "^\\d+\\.\\d+\\.\\d+(-[a-zA-Z0-9]+)?$"
+    },
+    "last_updated": {
+      "type": "string",
+      "description": "Last modification date in YYYY-MM-DD format",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "command_schema_version": {
+      "type": "string",
+      "description": "Version of this schema the command conforms to",
+      "enum": ["1.0"]
+    },
+    "inputs": {
+      "type": "array",
+      "description": "List of command inputs",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^[a-z][a-zA-Z0-9_]*$"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["string", "file", "path", "boolean", "number", "object"]
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 5,
+            "maxLength": 100
+          },
+          "validation": {
+            "type": "object",
+            "properties": {
+              "pattern": {
+                "type": "string"
+              },
+              "minLength": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "maxLength": {
+                "type": "integer",
+                "minimum": 1
+              }
+            }
+          }
+        },
+        "required": ["name", "type", "required", "description"]
+      }
+    },
+    "outputs": {
+      "type": "array",
+      "description": "List of command outputs",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^[a-z][a-zA-Z0-9_]*$"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["structured", "file", "text", "json", "markdown"]
+          },
+          "format": {
+            "type": "string",
+            "description": "Format specification or schema reference"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 5,
+            "maxLength": 100
+          }
+        },
+        "required": ["name", "type", "description"]
+      }
+    },
+    "cache_strategy": {
+      "type": "object",
+      "description": "Caching configuration for the command",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["agent_specific", "shared", "hierarchical"],
+          "description": "Type of caching strategy"
+        },
+        "ttl": {
+          "type": "integer",
+          "description": "Time-to-live in seconds",
+          "minimum": 60,
+          "maximum": 86400
+        },
+        "invalidation": {
+          "type": "string",
+          "enum": ["content_based", "time_based", "manual"],
+          "description": "Cache invalidation strategy"
+        },
+        "scope": {
+          "type": "string",
+          "enum": ["command", "workflow", "global"],
+          "description": "Scope of cache sharing"
+        },
+        "compression": {
+          "type": "boolean",
+          "description": "Whether to compress cache entries",
+          "default": true
+        },
+        "max_size": {
+          "type": "integer",
+          "description": "Maximum cache size in bytes",
+          "minimum": 1024,
+          "maximum": 104857600
+        }
+      },
+      "required": ["type", "ttl", "invalidation", "scope"]
+    },
+    "success_signals": {
+      "type": "array",
+      "description": "Indicators of successful command execution",
+      "items": {
+        "type": "string",
+        "minLength": 5,
+        "maxLength": 100
+      },
+      "minItems": 1,
+      "maxItems": 10
+    },
+    "failure_modes": {
+      "type": "array",
+      "description": "Common failure scenarios and their indicators",
+      "items": {
+        "type": "string",
+        "minLength": 5,
+        "maxLength": 100
+      },
+      "minItems": 1,
+      "maxItems": 10
+    },
+    "performance_targets": {
+      "type": "object",
+      "description": "Performance expectations for the command",
+      "properties": {
+        "max_tokens": {
+          "type": "integer",
+          "description": "Maximum token usage",
+          "minimum": 100,
+          "maximum": 10000
+        },
+        "target_execution_time": {
+          "type": "integer",
+          "description": "Target execution time in milliseconds",
+          "minimum": 100,
+          "maximum": 30000
+        },
+        "cache_hit_rate_target": {
+          "type": "number",
+          "description": "Target cache hit rate (0.0 to 1.0)",
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "memory_limit": {
+          "type": "integer",
+          "description": "Memory usage limit in bytes",
+          "minimum": 1024,
+          "maximum": 536870912
+        }
+      }
+    },
+    "sections": {
+      "type": "object",
+      "description": "Required sections that must be present in the command",
+      "properties": {
+        "purpose": {
+          "type": "boolean",
+          "description": "Command purpose section",
+          "default": true
+        },
+        "inputs": {
+          "type": "boolean",
+          "description": "Inputs specification section",
+          "default": true
+        },
+        "preconditions": {
+          "type": "boolean",
+          "description": "Preconditions section",
+          "default": true
+        },
+        "process_phases": {
+          "type": "boolean",
+          "description": "Process phases section",
+          "default": true
+        },
+        "error_handling": {
+          "type": "boolean",
+          "description": "Error handling section",
+          "default": true
+        },
+        "structured_output": {
+          "type": "boolean",
+          "description": "Structured output specification",
+          "default": true
+        },
+        "success_criteria": {
+          "type": "boolean",
+          "description": "Success criteria section",
+          "default": true
+        },
+        "edge_cases": {
+          "type": "boolean",
+          "description": "Edge cases section",
+          "default": true
+        },
+        "anti_patterns": {
+          "type": "boolean",
+          "description": "Anti-patterns section",
+          "default": true
+        },
+        "caching_guidelines": {
+          "type": "boolean",
+          "description": "Caching guidelines section",
+          "default": true
+        }
+      },
+      "required": ["purpose", "inputs", "process_phases", "error_handling", "success_criteria"]
+    },
+    "dependencies": {
+      "type": "object",
+      "description": "Command dependencies and relationships",
+      "properties": {
+        "requires_commands": {
+          "type": "array",
+          "description": "Commands that must run before this one",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          }
+        },
+        "provides_for": {
+          "type": "array",
+          "description": "Commands that depend on this command's output",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          }
+        },
+        "shared_cache_with": {
+          "type": "array",
+          "description": "Commands that share cache with this command",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          }
+        }
+      }
+    },
+    "validation_rules": {
+      "type": "array",
+      "description": "Custom validation rules for this command",
+      "items": {
+        "type": "object",
+        "properties": {
+          "rule": {
+            "type": "string",
+            "description": "Validation rule name"
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["error", "warning", "info"],
+            "default": "error"
+          },
+          "message": {
+            "type": "string",
+            "description": "Validation error message"
+          },
+          "condition": {
+            "type": "string",
+            "description": "Condition to evaluate"
+          }
+        },
+        "required": ["rule", "message"]
+      }
+    }
+  },
+  "required": [
+    "name",
+    "description",
+    "version",
+    "last_updated",
+    "command_schema_version",
+    "inputs",
+    "cache_strategy",
+    "success_signals",
+    "failure_modes"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,47 @@
+{
+  "command": "research",
+  "scenarios": [
+    {
+      "name": "component-architecture-research",
+      "description": "Research existing component patterns for new feature",
+      "inputs": {
+        "ticket": "thoughts/tickets/implement-dashboard-widget.md",
+        "scope": "Find existing dashboard components and patterns",
+        "expected_subagents": 3
+      },
+      "expected_clarifications": 1,
+      "expected_findings": 5,
+      "complexity": "low"
+    },
+    {
+      "name": "system-wide-pattern-analysis",
+      "description": "Research patterns across entire codebase",
+      "inputs": {
+        "ticket": "thoughts/tickets/audit-error-handling.md",
+        "scope": "Analyze error handling patterns across all services",
+        "expected_subagents": 6
+      },
+      "expected_clarifications": 3,
+      "expected_findings": 12,
+      "complexity": "high"
+    },
+    {
+      "name": "api-integration-research",
+      "description": "Research existing API integration patterns",
+      "inputs": {
+        "ticket": "thoughts/tickets/add-external-api.md",
+        "scope": "Find existing API clients and authentication patterns",
+        "expected_subagents": 4
+      },
+      "expected_clarifications": 2,
+      "expected_findings": 8,
+      "complexity": "medium"
+    }
+  ],
+  "baseline_metrics": {
+    "average_clarifications": 2,
+    "average_subagents_spawned": 4.3,
+    "success_rate": 0.85,
+    "token_efficiency": 0.72
+  }
+}

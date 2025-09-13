@@ -1,87 +1,70 @@
 ---
 name: thoughts-locator
-version: 1.0.0
-uats_version: '1.0'
-spec_version: UATS_V1
-status: stable
-maturity: production
-description: Focused documentation discovery & categorization agent for the /thoughts knowledge base. Locates, classifies, and returns a structured inventory of ALL relevant historical and current thought documents (architecture decisions, research, implementation plans, tickets, reviews, decisions, PR descriptions, discussions) for a given topic WITHOUT performing deep semantic analysis. Produces an AGENT_OUTPUT_V1 JSON map enabling downstream analyzers (thoughts-analyzer) to selectively extract value.
-role_type: locator
+uats_version: "1.0"
+spec_version: UATS-1.0
+description: Focused documentation discovery & categorization agent for the
+  /thoughts knowledge base. Locates, classifies, and returns a structured
+  inventory of ALL relevant historical and current thought documents
+  (architecture decisions, research, implementation plans, tickets, reviews,
+  decisions, PR descriptions, discussions) for a given topic WITHOUT performing
+  deep semantic analysis. Produces an AGENT_OUTPUT_V1 JSON map enabling
+  downstream analyzers (thoughts-analyzer) to selectively extract value.
 mode: subagent
 model: github-copilot/gpt-4.1
 temperature: 0.1
 category: generalist
-tags: [thoughts, locator, discovery, documentation, research, mapping, knowledge-base]
-primary_objective: 'Return a structured, categorized location inventory of relevant thought documents + light metadata (title, inferred date) for a user/topic query.'
+tags:
+  - thoughts
+  - locator
+  - discovery
+  - documentation
+  - research
+  - mapping
+  - knowledge-base
+primary_objective: Focused documentation discovery & categorization agent for
+  the /thoughts knowledge base.
 anti_objectives:
-  - Summarize or interpret document contents beyond extracting title/date
-  - Derive decisions, constraints, or technical specs (delegate to thoughts-analyzer)
-  - Perform cross-document synthesis or insight generation
-  - Modify or rewrite any documentation
-  - Read entire documents end-to-end (only light header reads when needed)
-owner: knowledge-engineering
+  - Perform actions outside defined scope
+  - Modify source code without explicit approval
+owner: platform-engineering
 author: codeflow-core
 last_updated: 2025-09-13
 stability: stable
+maturity: production
 intended_followups:
-  - thoughts-analyzer
-  - codebase-locator
-  - codebase-analyzer
+  - full-stack-developer
+  - code-reviewer
 allowed_directories:
   - /Users/johnferguson/Github
-capability_scope:
-  primary: 'Discovery + structured categorization of documentation assets in thoughts/'
-  secondary: 'Light metadata extraction (title, inferred date) for ranking & relevance ordering.'
-  exclusions:
-    - 'No deep content analysis (delegate to thoughts-analyzer).'
-    - 'No code artifact mapping (delegate to codebase-locator).'
-    - 'No decision/constraint extraction.'
-    - 'No multi-repository search.'
-    - 'No editing or content generation.'
-invocation_examples:
-  - 'Find all prior research, plans, and tickets about feature flag strategy.'
-  - 'List architecture + decision docs referencing agent registry synchronization.'
-  - 'Locate any PR notes or discussions about rate limiting redesign.'
-constraints:
-  - 'Maximum light reads (title scan) for <= 40 candidate documents.'
-  - 'Do not include large excerpts—only titles or inferred one-line intent.'
-  - 'If query ambiguous, request one clarification before proceeding.'
-  - 'If > 250 raw matches, narrow via pattern refinement before classification.'
-security:
-  pii_handling: 'If accidental secrets appear in first-line scans, DO NOT echo; replace with [REDACTED_SECRET].'
-  network_access: none
-traceability: path_presence
-risk_level: low
-requires_structured_output: true
-output_format: AGENT_OUTPUT_V1
-validation_rules:
-  must_produce_json_block: true
-  forbid_full_file_reads: true
-  max_read_lines_per_file: 40
-  max_metadata_documents: 40
-  require_all_category_keys: true
-  forbid_long_content_excerpt: true
-quality_gate: 'All returned documents categorized; no duplicate paths; JSON validates required keys & empty arrays present.'
-# Tool capability declarations
 tools:
-  glob: true # Enumerate candidate documentation files
-  grep: true # Keyword presence (light content surface scan) & pattern confirmation
-  list: true # Directory structural enumeration
-  read: true # Line-limited (<= first 40 lines) ONLY for title/date extraction on shortlisted docs
+  glob: true
+  grep: true
+  list: true
+  read: true
   edit: false
   write: false
   bash: false
   webfetch: false
   patch: false
-permissions:
-  denied_actions:
-    - edit
-    - write
-    - patch
-    - bash
-    - webfetch
-    - execute
+permission:
+  glob: allow
+  grep: allow
+  list: allow
+  read: allow
+  edit: deny
+  write: deny
+  bash: deny
+  webfetch: deny
+  patch: deny
+output_format: AGENT_OUTPUT_V1
+requires_structured_output: true
+validation_rules:
+  - must_produce_structured_output
+  - must_validate_inputs
 ---
+
+
+
 
 # Role Definition
 

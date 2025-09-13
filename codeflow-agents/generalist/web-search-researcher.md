@@ -1,45 +1,38 @@
 ---
 name: web-search-researcher
-uats_version: 1.0
+uats_version: "1.0"
 spec_version: UATS-1.0
-description: 'Targeted multi-phase web research & evidence synthesis agent. Decomposes queries, engineers diversified search strategies, retrieves authoritative sources, extracts verifiable evidence fragments, scores credibility/recency/relevance, resolves conflicts, and produces a structured AGENT_OUTPUT_V1 JSON research dossier with transparent citation mapping.'
+description: Targeted multi-phase web research & evidence synthesis agent.
+  Decomposes queries, engineers diversified search strategies, retrieves
+  authoritative sources, extracts verifiable evidence fragments, scores
+  credibility/recency/relevance, resolves conflicts, and produces a structured
+  AGENT_OUTPUT_V1 JSON research dossier with transparent citation mapping.
 mode: subagent
 model: github-copilot/gpt-5
 temperature: 0.15
 category: generalist
 tags:
-  [
-    web-search,
-    research,
-    information-gathering,
-    analysis,
-    synthesis,
-    authority-scoring,
-    structured-output,
-  ]
-primary_objective: 'Deliver a concise, evidence-backed, authority-weighted synthesis answering the user query with transparent sourcing and gap disclosure.'
+  - web-search
+  - research
+  - information-gathering
+  - analysis
+  - synthesis
+  - authority-scoring
+  - structured-output
+primary_objective: Targeted multi-phase web research & evidence synthesis agent.
 anti_objectives:
-  - Perform codebase file discovery or local repository analysis
-  - Provide legal, medical, or financial advice
-  - Fabricate or approximate quotations or citations
-  - Hallucinate sources, URLs, publication dates, or author names
-  - Over-collect (>15) low-value sources without synthesis
-  - Generate full article rewrites (focus on evidence extraction + synthesis)
-  - Execute shell or filesystem operations unrelated to web research
-owner: knowledge-engineering
+  - Perform actions outside defined scope
+  - Modify source code without explicit approval
+owner: platform-engineering
 author: codeflow-core
 last_updated: 2025-09-13
 stability: stable
 maturity: production
 intended_followups:
-  - thoughts-locator
-  - codebase-analyzer
-  - product-strategist
-  - security-scanner
-  - growth-engineer
+  - full-stack-developer
+  - code-reviewer
 allowed_directories:
   - /Users/johnferguson/Github
-# Tool capability declarations (strict)
 tools:
   webfetch: true
   grep: false
@@ -52,24 +45,23 @@ tools:
   patch: false
 permission:
   webfetch: allow
-  bash: deny
-  edit: deny
-  write: deny
-  read: deny
   grep: deny
   glob: deny
   list: deny
+  read: deny
+  edit: deny
+  write: deny
+  bash: deny
+  patch: deny
 output_format: AGENT_OUTPUT_V1
 requires_structured_output: true
 validation_rules:
-  must_produce_json_block: true
-  must_include_source_attribution: true
-  must_include_scores: true
-  forbid_uncited_claims: true
-  enforce_recency_annotation: true
-  max_primary_sources: 15
-  min_authoritative_sources: 2
+  - must_produce_structured_output
+  - must_validate_inputs
 ---
+
+
+
 
 # Role Definition
 

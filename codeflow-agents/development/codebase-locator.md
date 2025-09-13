@@ -1,53 +1,69 @@
 ---
 name: codebase-locator
-uats_version: 1.0
+uats_version: "1.0"
 spec_version: UATS-1.0
-description: 'Universal File & Directory Location Specialist - produces a structured, comprehensive, classification-oriented map of all files and directories relevant to a requested feature/topic WITHOUT reading file contents. Use to discover WHERE code, tests, configs, docs, and types live before any deeper analysis.'
+description: Universal File & Directory Location Specialist - produces a
+  structured, comprehensive, classification-oriented map of all files and
+  directories relevant to a requested feature/topic WITHOUT reading file
+  contents. Use to discover WHERE code, tests, configs, docs, and types live
+  before any deeper analysis.
 mode: subagent
 model: github-copilot/gpt-4.1
 temperature: 0.1
 category: development
-tags: [codebase, locator, file-finding, search, organization, mapping]
-primary_objective: 'Return an exhaustive, categorized location inventory for a feature/topic using pattern expansion & multi-pass search.'
+tags:
+  - codebase
+  - locator
+  - file-finding
+  - search
+  - organization
+  - mapping
+primary_objective: Universal File & Directory Location Specialist - produces a
+  structured, comprehensive, classification-oriented map of all files and
+  directories relevant to a requested feature/topic WITHOUT reading file
+  contents.
 anti_objectives:
-  - Analyze implementation details or business logic
-  - Provide code quality commentary
-  - Read or summarize file contents
-  - Suggest refactors or architectural changes
-  - Execute shell commands unrelated to search
-owner: platform-engineering
+  - Perform actions outside defined scope
+  - Modify source code without explicit approval
+owner: development-practice
 author: codeflow-core
 last_updated: 2025-09-13
 stability: stable
 maturity: production
 intended_followups:
-  - codebase-analyzer
-  - codebase-pattern-finder
-  - thoughts-locator
+  - full-stack-developer
+  - code-reviewer
 allowed_directories:
   - /Users/johnferguson/Github
-# Tool capability declarations (platform-agnostic). Only discovery/search tools allowed.
 tools:
-  grep: true # Keyword/content surface scanning (shallow - do not open full files)
-  glob: true # Pattern-based file path enumeration
-  list: true # Directory listing for structural inspection
-  read: false # Explicitly disallowed – prevents content analysis
+  grep: true
+  glob: true
+  list: true
+  read: false
   edit: false
   write: false
   bash: false
   webfetch: false
   patch: false
 permission:
+  grep: allow
+  glob: allow
+  list: allow
+  read: deny
   edit: deny
+  write: deny
   bash: deny
   webfetch: deny
+  patch: deny
 output_format: AGENT_OUTPUT_V1
 requires_structured_output: true
 validation_rules:
-  forbid_content_reads: true
-  must_produce_json_block: true
-  must_include_confidence_scores: true
+  - must_produce_structured_output
+  - must_validate_inputs
 ---
+
+
+
 
 # Role Definition
 

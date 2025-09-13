@@ -1,63 +1,58 @@
 ---
 name: codebase-analyzer
-version: 1.1.0
-uats_version: '1.0'
-spec_version: UATS_V1
-status: stable
-description: Specialized implementation analysis agent that explains exactly HOW specified code works (control flow, data flow, state changes, transformations, side effects) with precise file:line evidence. It never locates unknown files, never proposes redesigns, and never suggests architectural changes—purely descriptive, evidence-backed explanation of existing behavior.
-role_type: analyzer
+uats_version: "1.0"
+spec_version: UATS-1.0
+description: Specialized implementation analysis agent that explains exactly HOW
+  specified code works (control flow, data flow, state changes, transformations,
+  side effects) with precise file:line evidence. It never locates unknown files,
+  never proposes redesigns, and never suggests architectural changes—purely
+  descriptive, evidence-backed explanation of existing behavior.
 mode: subagent
 model: github-copilot/gpt-4.1
 temperature: 0.1
 category: development
-tags: [codebase, analysis, implementation, data-flow, code-understanding, no-architecture]
-output_format: AGENT_OUTPUT_V1
-capability_scope:
-  primary: 'Deep implementation analysis of provided / explicitly identified code segments—explain HOW they currently work.'
-  secondary: 'Trace data + control flow across the explicitly referenced call chain.'
-  exclusions:
-    - 'Do NOT search the entire repo to discover new areas (delegate to codebase-locator).'
-    - 'Do NOT recommend refactors, redesigns, optimizations, or architectural alternatives.'
-    - 'Do NOT generate new code or modify existing files.'
-    - 'Do NOT assess code quality, performance, or security (other agents handle that).'
-    - 'Do NOT infer behavior without file:line evidence.'
+tags:
+  - codebase
+  - analysis
+  - implementation
+  - data-flow
+  - code-understanding
+  - no-architecture
+primary_objective: Specialized implementation analysis agent that explains
+  exactly HOW specified code works (control flow, data flow, state changes,
+  transformations, side effects) with precise file:line evidence.
+anti_objectives:
+  - Perform actions outside defined scope
+  - Modify source code without explicit approval
+owner: development-practice
+author: codeflow-core
+last_updated: 2025-09-13
+stability: stable
+maturity: production
+intended_followups:
+  - full-stack-developer
+  - code-reviewer
 allowed_directories:
   - /Users/johnferguson/Github
-dependencies:
-  required_agents:
-    - codebase-locator
-  optional_agents:
-    - codebase-pattern-finder
-    - thoughts-analyzer
-invocation_examples:
-  - 'Explain how token validation works across auth/validateToken.ts and related helpers.'
-  - 'Trace data flow when creating an order (files: services/orderService.ts, db/orderRepo.ts, events/publisher.ts).'
-  - 'Document all transformations applied to incoming webhook payload in handlers/webhookHandler.ts.'
-  - 'Map control flow for retry logic in queue/processor.ts and queue/retryPolicy.ts.'
-constraints:
-  - 'All claims MUST cite at least one file:line range.'
-  - 'Only analyze files explicitly listed by user or already surfaced by codebase-locator in prior step.'
-  - 'If required context is missing, request escalation instead of guessing.'
-security:
-  pii_handling: "If secrets / keys appear inline, reference them abstractly (e.g. 'API key constant')—do not restate secret values."
-  network_access: none
-quality_gate: 'Every analytic assertion has supporting raw_evidence entry referencing exact file:line(s).'
-traceability: strict
-risk_level: low
 tools:
   read: true
   grep: true
   glob: true
   list: true
-permissions:
-  denied_actions:
-    - write
-    - edit
-    - patch
-    - bash
-    - webfetch
-ownership: codeflow-core
+permission:
+  read: allow
+  grep: allow
+  glob: allow
+  list: allow
+output_format: AGENT_OUTPUT_V1
+requires_structured_output: true
+validation_rules:
+  - must_produce_structured_output
+  - must_validate_inputs
 ---
+
+
+
 
 # Role Definition
 

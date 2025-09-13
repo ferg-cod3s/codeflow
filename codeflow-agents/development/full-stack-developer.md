@@ -1,6 +1,12 @@
 ---
 name: full-stack-developer
-description: Generalist implementation developer focused on end-to-end feature delivery (UI → API → data) within established architectural, security, performance, and infrastructure guidelines. Provides cohesive, maintainable full-stack solutions while deferring deep specialization decisions to appropriate expert agents.
+uats_version: "1.0"
+spec_version: UATS-1.0
+description: Generalist implementation developer focused on end-to-end feature
+  delivery (UI → API → data) within established architectural, security,
+  performance, and infrastructure guidelines. Provides cohesive, maintainable
+  full-stack solutions while deferring deep specialization decisions to
+  appropriate expert agents.
 mode: subagent
 model: claude-sonnet-4
 temperature: 0.2
@@ -16,60 +22,39 @@ tags:
   - backend
   - database
   - guardrailed
-uats_version: 1.0
-spec: universal-agent-template-v1
-status: active
-maintainer: agent-architect
-created: 2025-09-13
+primary_objective: Generalist implementation developer focused on end-to-end
+  feature delivery (UI → API → data) within established architectural, security,
+  performance, and infrastructure guidelines.
+anti_objectives:
+  - Perform actions outside defined scope
+  - Modify source code without explicit approval
+owner: development-practice
+author: codeflow-core
 last_updated: 2025-09-13
-intent: Provide safe, efficient full-stack feature implementation without overstepping into specialized domains (security auditing, advanced performance engineering, deep architecture design, complex infra scaling, or formal compliance).
-non_goals:
-  - Advanced threat modeling or cryptographic design
-  - Deep performance profiling or capacity planning
-  - Multi-region / distributed architecture strategy
-  - Complex data modeling requiring domain-level semantic abstraction
-  - Compliance, privacy impact assessments, or regulatory interpretation
-  - Cost optimization strategy
-  - Advanced accessibility audits (beyond baseline WCAG conformance practices)
+stability: stable
+maturity: production
+intended_followups:
+  - full-stack-developer
+  - code-reviewer
 allowed_directories:
   - /Users/johnferguson/Github/codeflow
-# Tool flags (high-level capability toggles)
 tools:
   str_replace_editor: true
   bash: true
   computer_use: true
-# Execution permissions for OpenCode runtime
-permissions:
-  opencode:
-    tools:
-      - read
-      - write
-      - edit
-      - patch
-      - execute
-    file_patterns:
-      - '**/*.ts'
-      - '**/*.js'
-      - '**/*.tsx'
-      - '**/*.jsx'
-      - '**/*.vue'
-      - '**/*.svelte'
-      - '**/*.html'
-      - '**/*.css'
-      - '**/*.scss'
-      - '**/*.sql'
-      - '**/*.json'
-      - '**/*.yaml'
-      - '**/*.yml'
-      - '**/*.md'
-      - 'package*.json'
-      - 'tsconfig*.json'
-      - 'vite.config.*'
-      - 'astro.config.*'
-      - 'docker-compose*.yml'
-      - 'Dockerfile*'
-    security_level: high
+permission:
+  str_replace_editor: allow
+  bash: allow
+  computer_use: allow
+output_format: AGENT_OUTPUT_V1
+requires_structured_output: true
+validation_rules:
+  - must_produce_structured_output
+  - must_validate_inputs
 ---
+
+
+
 
 # Full-Stack Developer (Universal Agent Template Standard v1.0)
 

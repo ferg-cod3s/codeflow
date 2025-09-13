@@ -1,0 +1,43 @@
+{
+  "command": "document",
+  "scenarios": [
+    {
+      "name": "api-documentation-single-endpoint",
+      "description": "Document a single API endpoint for developers",
+      "inputs": {
+        "audience": "api",
+        "files": ["src/api/users.ts"],
+        "plan": "thoughts/plans/user-api-implementation.md"
+      },
+      "expected_clarifications": 1,
+      "complexity": "low"
+    },
+    {
+      "name": "user-guide-multi-step",
+      "description": "Create user guide for complex multi-step feature",
+      "inputs": {
+        "audience": "user",
+        "files": ["src/components/Wizard.tsx", "src/hooks/useWizard.ts"],
+        "changelog": ["Added step validation", "Improved error handling"]
+      },
+      "expected_clarifications": 2,
+      "complexity": "medium"
+    },
+    {
+      "name": "mixed-audience-documentation",
+      "description": "Create documentation for multiple audiences",
+      "inputs": {
+        "audience": "mixed",
+        "files": ["src/features/auth/", "src/components/LoginForm.tsx"],
+        "plan": "thoughts/plans/auth-system-implementation.md"
+      },
+      "expected_clarifications": 3,
+      "complexity": "high"
+    }
+  ],
+  "baseline_metrics": {
+    "average_clarifications": 2,
+    "success_rate": 0.88,
+    "token_efficiency": 0.78
+  }
+}

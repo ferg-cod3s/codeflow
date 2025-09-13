@@ -1,0 +1,47 @@
+{
+  "command": "review",
+  "scenarios": [
+    {
+      "name": "simple-pr-review",
+      "description": "Review small PR with focused changes",
+      "context": {
+        "changes": "Single file modification with clear purpose",
+        "test_coverage": "Unit tests added",
+        "complexity": "Straightforward bug fix"
+      },
+      "expected_clarifications": 1,
+      "expected_findings": 3,
+      "complexity": "low"
+    },
+    {
+      "name": "complex-feature-review",
+      "description": "Review large feature with multiple components",
+      "context": {
+        "changes": "Multiple files, new components, database changes",
+        "test_coverage": "Integration tests added",
+        "complexity": "Cross-cutting feature with dependencies"
+      },
+      "expected_clarifications": 4,
+      "expected_findings": 8,
+      "complexity": "high"
+    },
+    {
+      "name": "refactor-review",
+      "description": "Review code refactoring with no functional changes",
+      "context": {
+        "changes": "Structural changes without behavior modification",
+        "test_coverage": "Existing tests pass",
+        "complexity": "Maintainability improvement"
+      },
+      "expected_clarifications": 2,
+      "expected_findings": 5,
+      "complexity": "medium"
+    }
+  ],
+  "baseline_metrics": {
+    "average_clarifications": 2.3,
+    "average_findings_per_review": 5.3,
+    "success_rate": 0.91,
+    "token_efficiency": 0.68
+  }
+}

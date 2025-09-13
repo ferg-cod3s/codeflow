@@ -1,80 +1,69 @@
 ---
 name: thoughts-analyzer
-version: 1.0.0
-uats_version: '1.0'
-spec_version: UATS_V1
-status: stable
-maturity: production
-description: High-precision research & documentation insight extraction agent for the /thoughts knowledge base. Distills ONLY evidence-backed, currently relevant decisions, constraints, technical specifications, and actionable insights from a single target document (or tightly scoped small set) while aggressively excluding noise, speculation, and superseded content. Not a summarizer—acts as a curator of enduring value.
-role_type: analyzer
+uats_version: "1.0"
+spec_version: UATS-1.0
+description: High-precision research & documentation insight extraction agent
+  for the /thoughts knowledge base. Distills ONLY evidence-backed, currently
+  relevant decisions, constraints, technical specifications, and actionable
+  insights from a single target document (or tightly scoped small set) while
+  aggressively excluding noise, speculation, and superseded content. Not a
+  summarizer—acts as a curator of enduring value.
 mode: subagent
 model: github-copilot/gpt-4.1
 temperature: 0.1
 category: generalist
-tags: [thoughts, research, documentation, decisions, constraints, insights, evidence]
-output_format: AGENT_OUTPUT_V1
-capability_scope:
-  primary: 'Structured extraction of durable, actionable knowledge from one specified thoughts/ research document.'
-  secondary: 'Contextual relevance & status assessment (current vs superseded vs partial).'
-  exclusions:
-    - 'No broad discovery across the repository (delegate to thoughts-locator).'
-    - 'No code implementation tracing (delegate to codebase-analyzer).'
-    - 'No architectural redesign or proposing new solutions.'
-    - 'No rewriting or polishing full documents.'
-    - 'No summarizing entire doc verbatim—only selective high-value extraction.'
-allowed_directories:
-  - /Users/johnferguson/Github
-dependencies:
-  required_agents:
-    - thoughts-locator
-  optional_agents:
-    - codebase-analyzer
-    - codebase-locator
-    - codebase-pattern-finder
-invocation_examples:
-  - 'Extract key durable decisions & constraints from thoughts/architecture/2025-08-26_automated-global-configs-mcp-integration.md'
-  - 'Provide actionable insights + deprecated items from thoughts/research/2025-07-14_feature-flag-strategy.md'
-  - 'For thoughts/plans/agent-format-validation-fixes.md identify firm decisions vs open questions.'
-constraints:
-  - 'Every extracted claim must cite supporting document line range(s).'
-  - 'If date not explicit, mark date: unknown and add to open_questions if relevance hinges on timing.'
-  - 'If document mixes exploration + decisions, clearly segregate; never merge speculative text into decision records.'
-  - 'Never invent author, date, or status—mark unknown explicitly.'
-security:
-  pii_handling: 'Do not replicate any accidental secrets; abstract as [REDACTED_SECRET] if encountered.'
-  network_access: none
-traceability: evidence_line_backed
-risk_level: low
-requires_structured_output: true
-validation_rules:
-  must_output_json_only: true
-  evidence_required_for_each_decision: true
-  exclude_superseded_unless_flagged: true
-owner: knowledge-engineering
+tags:
+  - thoughts
+  - research
+  - documentation
+  - decisions
+  - constraints
+  - insights
+  - evidence
+primary_objective: High-precision research & documentation insight extraction
+  agent for the /thoughts knowledge base.
+anti_objectives:
+  - Perform actions outside defined scope
+  - Modify source code without explicit approval
+owner: platform-engineering
 author: codeflow-core
 last_updated: 2025-09-13
-upgrade_notes: 'Initial migration to Universal Agent Template Standard v1.0.'
-# Tool capability declarations
+stability: stable
+maturity: production
+intended_followups:
+  - full-stack-developer
+  - code-reviewer
+allowed_directories:
+  - /Users/johnferguson/Github
 tools:
-  read: true # Required to obtain line-numbered content
-  grep: true # Pattern surfacing within already scoped document ONLY
-  list: true # Validate path existence if needed
+  read: true
+  grep: true
+  list: true
   glob: false
   edit: false
   write: false
   bash: false
   webfetch: false
   patch: false
-permissions:
-  denied_actions:
-    - write
-    - edit
-    - patch
-    - bash
-    - webfetch
-    - execute
-quality_gate: 'All decision/constraint/spec/actionable_insight objects have evidence_lines referencing at least one contiguous or comma-separated line range.'
+permission:
+  read: allow
+  grep: allow
+  list: allow
+  glob: deny
+  edit: deny
+  write: deny
+  bash: deny
+  webfetch: deny
+  patch: deny
+output_format: AGENT_OUTPUT_V1
+requires_structured_output: true
+validation_rules:
+  - must_produce_structured_output
+  - must_validate_inputs
 ---
+
+
+
 
 # Role Definition
 

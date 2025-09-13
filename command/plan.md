@@ -1,391 +1,316 @@
 ---
+name: plan
 description: Create an implementation plan from a ticket and research
+version: 2.0.0-internal
+last_updated: 2025-09-13
+command_schema_version: 1.0
+inputs:
+  - name: files
+    type: array
+    required: true
+    description: Array of ticket and research files to analyze
+  - name: scope
+    type: string
+    required: false
+    description: Scope hint for the implementation (feature|refactor|bugfix)
+  - name: complexity
+    type: string
+    required: false
+    description: Complexity estimate (simple|medium|complex)
+outputs:
+  - name: plan_document
+    type: structured
+    format: JSON with plan metadata and file path
+    description: Generated implementation plan with metadata
+cache_strategy:
+  type: content_based
+  ttl: 7200
+  invalidation: manual
+  scope: command
+success_signals:
+  - 'Implementation plan created successfully'
+  - 'Plan saved to thoughts/plans/ directory'
+  - 'All research questions resolved'
+failure_modes:
+  - 'Required files not found or invalid'
+  - 'Unresolved research questions remain'
+  - 'Technical feasibility concerns'
 ---
 
-# Implementation Plan
+# Create Implementation Plan
 
-You are tasked with creating detailed implementation plans through an interactive, iterative process. You should be skeptical, thorough, and work collaboratively with the user to produce high-quality technical specifications.
+You are tasked with creating detailed implementation plans through an interactive, iterative process. This command uses intelligent caching to optimize research workflows and maintain consistency across similar planning scenarios.
 
-## Process Steps
+## Purpose
 
-### Step 1: Context Gathering & Initial Analysis
+Create comprehensive, actionable implementation plans by thoroughly researching requirements, analyzing codebase constraints, and producing structured technical specifications.
 
-1. **Read all mentioned <files> immediately and FULLY**:
-   - Ticket files (e.g., `thoughts/tickets/eng_1234.md`)
-   - Research documents
-   - Related implementation plans
-   - Any JSON/data files mentioned
-   - **IMPORTANT**: Use the Read tool WITHOUT limit/offset parameters to read entire <files>
-   - **CRITICAL**: DO NOT spawn sub-tasks before reading these <files> yourself in the main context
+## Inputs
 
-2. **Spawn initial research tasks to gather context**:
-   Before asking the user any questions, use specialized agents to research in parallel:
-   - Use the **codebase-locator** task to find all files related to the <files> given by the user
-   - Use the **codebase-analyzer** task to understand how the current implementation works
-   - If relevant, use the **thoughts-locator** task to find any existing thoughts documents about this feature
+- **files**: Array of ticket files, research documents, and related materials
+- **scope**: Optional scope hint to guide planning approach
+- **complexity**: Optional complexity estimate for resource planning
+- **conversation_context**: History of planning discussions and decisions
 
-   These agents will:
-   - Find relevant source files, configs, and tests
-   - Identify the specific directories to focus on (e.g., if client is mentioned, they'll focus on apps/client/)
-   - Trace data flow and key functions
-   - Return detailed explanations with file:line references
+## Preconditions
 
-3. **Read all files identified by research tasks**:
-   - After research tasks complete, read ALL files they identified as relevant
-   - Read them FULLY into the main context
-   - This ensures you have complete understanding before proceeding
+- All referenced ticket and research files exist and are readable
+- Development environment is accessible for research
+- User available for clarification on ambiguous requirements
+- Sufficient time allocated for thorough analysis
 
-4. **Analyze and verify understanding**:
-   - Cross-reference the ticket requirements with actual code
-   - Identify any discrepancies or misunderstandings
-   - Note assumptions that need verification
-   - Determine true scope based on codebase reality
+## Process Phases
 
-5. **Present informed understanding and focused questions**:
+### Phase 1: Context Analysis & Initial Research
 
-   ```
-   Based on the ticket and my research of the codebase, I understand we need to [accurate summary].
+1. **Check Cache First**: Query cache for similar planning patterns using ticket context hash
+2. **Read All Input Files**: Completely read all specified ticket and research files
+3. **Spawn Parallel Research**: Launch codebase-locator, codebase-analyzer, and thoughts-locator agents
+4. **Gather Comprehensive Context**: Read all files identified by research agents
+5. **Cross-Reference Analysis**: Verify requirements against actual codebase state
 
-   I've found that:
-   - [Current implementation detail with file:line reference]
-   - [Relevant pattern or constraint discovered]
-   - [Potential complexity or edge case identified]
+### Phase 2: Interactive Discovery & Clarification
 
-   Questions that my research couldn't answer:
-   - [Specific technical question that requires human judgment]
-   - [Business logic clarification]
-   - [Design preference that affects implementation]
-   ```
+1. **Present Informed Understanding**: Share findings with specific file:line references
+2. **Identify Knowledge Gaps**: Ask targeted questions that research couldn't answer
+3. **Verify Corrections**: Research any user-provided corrections thoroughly
+4. **Create Research Todo List**: Track all exploration and clarification tasks
+5. **Iterate Until Aligned**: Continue research until all questions are resolved
 
-   Only ask questions that you genuinely cannot answer through code investigation.
+### Phase 3: Design Exploration & Decision Making
 
-### Step 2: Research & Discovery
+1. **Spawn Focused Research Tasks**: Use specialized agents for deeper investigation
+2. **Present Design Options**: Show multiple approaches with pros/cons analysis
+3. **Facilitate Decision Making**: Guide user toward optimal technical choices
+4. **Validate Feasibility**: Ensure chosen approach works within codebase constraints
+5. **Update Cache**: Store successful research patterns for future planning
 
-After getting initial clarifications:
+### Phase 4: Plan Structure & Documentation
 
-1. **If the user corrects any misunderstanding**:
-   - DO NOT just accept the correction
-   - Spawn new research tasks to verify the correct information
-   - Read the specific files/directories they mention
-   - Only proceed once you've verified the facts yourself
+1. **Develop Phase Structure**: Create logical implementation phases with clear boundaries
+2. **Get Structure Approval**: Confirm phasing approach before detailed writing
+3. **Write Comprehensive Plan**: Document all phases with specific changes and success criteria
+4. **Include Testing Strategy**: Define both automated and manual verification approaches
+5. **Add References**: Link to original tickets, research, and related implementations
 
-2. **Create a research todo list** using TodoWrite to track exploration tasks
+## Error Handling
 
-3. **Spawn sub-tasks for comprehensive research**:
-   - Create multiple Task agents to research different aspects concurrently
-   - Use the right agent for each type of research:
+### Missing Files Error
 
-   **For deeper investigation:**
-   - **codebase-locator** - To find more specific files (e.g., "find all files that handle [specific component]")
-   - **codebase-analyzer** - To understand implementation details (e.g., "analyze how [system] works")
-   - **codebase-pattern-finder** - To find similar features we can model after
-
-   **For historical context:**
-   - **thoughts-locator** - To find any research, plans, or decisions about this area
-   - **thoughts-analyzer** - To extract key insights from the most relevant documents
-
-   Each agent knows how to:
-   - Find the right files and code patterns
-   - Identify conventions and patterns to follow
-   - Look for integration points and dependencies
-   - Return specific file:line references
-   - Find tests and examples
-
-4. **Wait for ALL sub-tasks to complete** before proceeding
-
-5. **Present findings and design options**:
-
-   ```
-   Based on my research, here's what I found:
-
-   **Current State:**
-   - [Key discovery about existing code]
-   - [Pattern or convention to follow]
-
-   **Design Options:**
-   1. [Option A] - [pros/cons]
-   2. [Option B] - [pros/cons]
-
-   **Open Questions:**
-   - [Technical uncertainty]
-   - [Design decision needed]
-
-   Which approach aligns best with your vision?
-   ```
-
-### Step 3: Plan Structure Development
-
-Once aligned on approach:
-
-1. **Create initial plan outline**:
-
-   ```
-   Here's my proposed plan structure:
-
-   ## Overview
-   [1-2 sentence summary]
-
-   ## Implementation Phases:
-   1. [Phase name] - [what it accomplishes]
-   2. [Phase name] - [what it accomplishes]
-   3. [Phase name] - [what it accomplishes]
-
-   Does this phasing make sense? Should I adjust the order or granularity?
-   ```
-
-2. **Get feedback on structure** before writing details
-
-### Step 4: Detailed Plan Writing
-
-After structure approval:
-
-1. **Write the plan** to `thoughts/plans/{descriptive_name}.md`
-2. **Use this template structure**:
-
-````markdown
-# [Feature/Task Name] Implementation Plan
-
-## Overview
-
-[Brief description of what we're implementing and why]
-
-## Current State Analysis
-
-[What exists now, what's missing, key constraints discovered]
-
-## Desired End State
-
-[A Specification of the desired end state after this plan is complete, and how to verify it]
-
-### Key Discoveries:
-
-- [Important finding with file:line reference]
-- [Pattern to follow]
-- [Constraint to work within]
-
-## What We're NOT Doing
-
-[Explicitly list out-of-scope items to prevent scope creep]
-
-## Implementation Approach
-
-[High-level strategy and reasoning]
-
-## Phase 1: [Descriptive Name]
-
-### Overview
-
-[What this phase accomplishes]
-
-### Changes Required:
-
-#### 1. [Component/File Group]
-
-**File**: `path/to/file.ext`
-**Changes**: [Summary of changes]
-
-```[language]
-// Specific code to add/modify
-```
-````
-
-### Success Criteria:
-
-#### Automated Verification:
-
-- [ ] Unit tests pass: `turbo test`
-- [ ] Type checking passes: `turbo check`
-- [ ] Integration tests pass: `turbo test-integration`
-
-#### Manual Verification:
-
-- [ ] Feature works as expected when tested via UI
-- [ ] Performance is acceptable under load
-- [ ] Edge case handling verified manually
-- [ ] No regressions in related features
-
----
-
-## Phase 2: [Descriptive Name]
-
-[Similar structure with both automated and manual success criteria...]
-
----
-
-## Testing Strategy
-
-### Unit Tests:
-
-- [What to test]
-- [Key edge cases]
-
-### Integration Tests:
-
-- [End-to-end scenarios]
-
-### Manual Testing Steps:
-
-1. [Specific step to verify feature]
-2. [Another verification step]
-3. [Edge case to test manually]
-
-## Performance Considerations
-
-[Any performance implications or optimizations needed]
-
-## Migration Notes
-
-[If applicable, how to handle existing data/systems]
-
-## References
-
-- Original ticket: `thoughts/tickets/eng_XXXX.md`
-- Related research: `thoughts/research/[relevant].md`
-- Similar implementation: `[file:line]`
-
+```error-context
+{
+  "command": "plan",
+  "phase": "context_analysis",
+  "error_type": "missing_files",
+  "expected": "All specified files exist",
+  "found": "File not found: thoughts/tickets/missing-ticket.md",
+  "mitigation": "Verify file paths and ensure all referenced files exist",
+  "requires_user_input": true
+}
 ```
 
-### Step 5: Review
+### Unresolved Questions Error
 
-2. **Present the draft plan location**:
+```error-context
+{
+  "command": "plan",
+  "phase": "discovery",
+  "error_type": "unresolved_questions",
+  "expected": "All research questions answered",
+  "found": "3 open questions remain about API design",
+  "mitigation": "Complete research or request clarification before proceeding",
+  "requires_user_input": true
+}
 ```
 
-I've created the initial implementation plan at:
-`thoughts/plans/[filename].md`
+### Technical Feasibility Error
 
-Please review it and let me know:
+```error-context
+{
+  "command": "plan",
+  "phase": "design_validation",
+  "error_type": "technical_blocker",
+  "expected": "Chosen approach is technically feasible",
+  "found": "Database schema conflict prevents proposed solution",
+  "mitigation": "Re-evaluate design options or adjust technical requirements",
+  "requires_user_input": true
+}
+```
 
-- Are the phases properly scoped?
-- Are the success criteria specific enough?
-- Any technical details that need adjustment?
-- Missing edge cases or considerations?
+## Structured Output Specification
 
-````
+### Primary Output
 
-3. **Iterate based on feedback** - be ready to:
-- Add missing phases
-- Adjust technical approach
-- Clarify success criteria (both automated and manual)
-- Add/remove scope items
+```command-output:plan_document
+{
+  "status": "success|in_progress|clarification_needed|error",
+  "timestamp": "ISO-8601",
+  "cache": {
+    "hit": true|false,
+    "key": "plan_pattern:{ticket_hash}:{scope}",
+    "ttl_remaining": 7200,
+    "savings": 0.30
+  },
+  "analysis": {
+    "input_files": 5,
+    "research_tasks": 8,
+    "key_discoveries": 12,
+    "open_questions": 0
+  },
+  "plan": {
+    "path": "thoughts/plans/2025-09-13-feature-implementation.md",
+    "title": "User Authentication System Implementation Plan",
+    "phases": 4,
+    "estimated_effort": "medium",
+    "risk_level": "low"
+  },
+  "research_summary": {
+    "codebase_locator_findings": 15,
+    "codebase_analyzer_insights": 8,
+    "thoughts_locator_documents": 3,
+    "pattern_finder_matches": 6
+  },
+  "metadata": {
+    "processing_time": 240,
+    "cache_savings": 0.30,
+    "user_interactions": 3,
+    "research_iterations": 2
+  }
+}
+```
 
-4. **Continue refining** until the user is satisfied
+## Success Criteria
 
-## Important Guidelines
+#### Automated Verification
 
-1. **Be Skeptical**:
-- Question vague requirements
-- Identify potential issues early
-- Ask "why" and "what about"
-- Don't assume - verify with code
+- [ ] Plan file created in `thoughts/plans/` directory with correct naming
+- [ ] All referenced files exist and are accessible
+- [ ] Plan follows required template structure
+- [ ] Success criteria include both automated and manual verification
+- [ ] Cache updated with successful planning patterns
 
-2. **Be Interactive**:
-- Don't write the full plan in one shot
-- Get buy-in at each major step
-- Allow course corrections
-- Work collaboratively
+#### Manual Verification
 
-3. **Be Thorough**:
-- Read all context files COMPLETELY before planning
-- Research actual code patterns using parallel sub-tasks
-- Include specific file paths and line numbers
-- Write measurable success criteria with clear automated vs manual distinction
+- [ ] Plan addresses all requirements from original ticket
+- [ ] Implementation phases are logically ordered and scoped
+- [ ] Success criteria are measurable and comprehensive
+- [ ] Edge cases and error conditions are considered
+- [ ] Plan is clear and actionable for implementation team
 
-4. **Be Practical**:
-- Focus on incremental, testable changes
-- Consider migration and rollback
-- Think about edge cases
-- Include "what we're NOT doing"
+## Planning Best Practices
 
-5. **Track Progress**:
-- Use TodoWrite to track planning tasks
-- Update todos as you complete research
-- Mark planning tasks complete when done
+### Research Strategy
 
-6. **No Open Questions in Final Plan**:
-- If you encounter open questions during planning, STOP
-- Research or ask for clarification immediately
-- Do NOT write the plan with unresolved questions
-- The implementation plan must be complete and actionable
-- Every decision must be made before finalizing the plan
+- **Parallel Investigation**: Spawn multiple research agents simultaneously for efficiency
+- **Complete Context First**: Read all input files fully before asking questions
+- **Verify Everything**: Cross-check user statements against actual code
+- **Iterate Thoughtfully**: Use research findings to guide next questions
 
-## Success Criteria Guidelines
+### Interactive Collaboration
 
-**Always separate success criteria into two categories:**
+- **Present Findings Clearly**: Share discoveries with specific file:line references
+- **Ask Focused Questions**: Only ask what research genuinely cannot answer
+- **Guide Decisions**: Present options with clear pros/cons analysis
+- **Maintain Momentum**: Keep user engaged through regular progress updates
 
-1. **Automated Verification** (can be run by execution agents):
-- Commands that can be run: `make test`, `npm run lint`, etc.
-- Specific files that should exist
-- Code compilation/type checking
-- Automated test suites
+### Plan Structure Guidelines
 
-2. **Manual Verification** (requires human testing):
-- UI/UX functionality
-- Performance under real conditions
-- Edge cases that are hard to automate
-- User acceptance criteria
+- **Logical Phasing**: Break work into testable, incremental phases
+- **Clear Success Criteria**: Separate automated and manual verification
+- **Scope Definition**: Explicitly state what is NOT included
+- **Risk Assessment**: Identify potential blockers and mitigation strategies
 
-**Format example:**
-```markdown
-### Success Criteria:
+## Common Implementation Patterns
 
-#### Automated Verification:
-- [ ] All unit tests pass: `turbo test`
-- [ ] No linting errors: `turbo check`
-- [ ] API endpoint returns 200: `curl localhost:3001/auth/sign-in`
+### Database Changes Pattern
 
-#### Manual Verification:
-- [ ] New feature appears correctly in the UI
-- [ ] Performance is acceptable with 1000+ items
-- [ ] Error messages are user-friendly
-- [ ] Feature works correctly on mobile devices
-````
+1. Schema/Migration Definition
+2. Data Access Layer Updates
+3. Business Logic Integration
+4. API Endpoint Creation
+5. Client-Side Integration
 
-## Common Patterns
+### New Feature Pattern
 
-### For Database Changes:
+1. Requirements Analysis & Design
+2. Data Model Definition
+3. Backend Implementation
+4. API Development
+5. Frontend Integration
+6. Testing & Validation
 
-- Start with schema/migration
-- Add store methods
-- Update business logic
-- Expose via API
-- Update clients
+### Refactoring Pattern
 
-### For New Features:
+1. Current Behavior Documentation
+2. Incremental Change Planning
+3. Backward Compatibility Assurance
+4. Migration Strategy Development
+5. Rollback Plan Creation
 
-- Research existing patterns first
-- Start with data model
-- Build backend logic
-- Add API endpoints
-- Implement UI last
+## Research Agent Guidelines
 
-### For Refactoring:
+### Agent Selection Strategy
 
-- Document current behavior
-- Plan incremental changes
-- Maintain backwards compatibility
-- Include migration strategy
+- **codebase-locator**: Find all relevant files and components
+- **codebase-analyzer**: Understand current implementation details
+- **codebase-pattern-finder**: Discover similar implementations to model after
+- **thoughts-locator**: Find existing research and decisions
+- **thoughts-analyzer**: Extract insights from documentation
 
-## Sub-task Spawning Best Practices
+### Task Specification Best Practices
 
-When spawning research sub-tasks:
+- **Be Specific**: Include exact search terms and directory contexts
+- **Request Structure**: Ask for specific file:line references in responses
+- **Parallel Execution**: Spawn multiple focused tasks simultaneously
+- **Result Verification**: Cross-check agent findings against actual code
 
-1. **Spawn multiple tasks in parallel** for efficiency
-2. **Each task should be focused** on a specific area
-3. **Provide detailed instructions** including:
-   - Exactly what to search for
-   - Which directories to focus on
-   - What information to extract
-   - Expected output format
-4. **Be EXTREMELY specific about directories**:
-   - Include the full path context in your prompts
-5. **Specify read-only tools** to use
-6. **Request specific file:line references** in responses
-7. **Wait for all tasks to complete** before synthesizing
-8. **Verify sub-task results**:
-   - If a sub-task returns unexpected results, spawn follow-up tasks
-   - Cross-check findings against the actual codebase
-   - Don't accept results that seem incorrect
+## Edge Cases
 
-<files>
-$ARGUMENTS
-</files>
+### Complex Multi-System Changes
+
+- Break into smaller, independent plans when possible
+- Identify integration points and coordination requirements
+- Plan for phased rollout with feature flags
+
+### Legacy System Integration
+
+- Document current behavior thoroughly before changes
+- Plan incremental migration with rollback capabilities
+- Include data migration and compatibility testing
+
+### High-Uncertainty Requirements
+
+- Increase research phase duration for unclear requirements
+- Create multiple design options with clear trade-offs
+- Plan for iterative refinement during implementation
+
+## Anti-Patterns
+
+### Avoid These Practices
+
+- **Assumptions without verification**: Don't proceed without researching user statements
+- **Planning without context**: Don't create plans without reading all relevant files
+- **Open questions in final plan**: Don't finalize plans with unresolved technical decisions
+- **Cache bypass**: Don't skip cache checks for performance reasons
+
+## Caching Guidelines
+
+### Cache Usage Patterns
+
+- **Research patterns**: Store successful investigation approaches for similar features
+- **Question sets**: Cache effective clarification questions for common scenarios
+- **Plan templates**: Remember successful plan structures by complexity and scope
+
+### Cache Invalidation Triggers
+
+- **Manual**: Clear cache when planning standards or codebase structure change
+- **Content-based**: Invalidate when ticket requirements change significantly
+- **Time-based**: Refresh cache every 2 hours for active planning sessions
+
+### Performance Optimization
+
+- Cache hit rate target: ≥ 70% for repeated planning patterns
+- Memory usage: < 25MB for planning pattern cache
+- Response time: < 100ms for cache queries
+
+<files>$ARGUMENTS</files>

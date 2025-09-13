@@ -20,18 +20,30 @@ export async function status(projectPath?: string) {
   let outdatedCount = 0;
   let missingCount = 0;
 
-  // Check commands
+  // Check commands in all possible locations
   const sourceCommandDir = join(codeflowDir, 'command');
-  const targetCommandDir = join(targetBase, 'command');
 
   if (existsSync(sourceCommandDir)) {
     const sourceFiles = await readdir(sourceCommandDir);
     const mdFiles = sourceFiles.filter((f) => f.endsWith('.md'));
 
     for (const file of mdFiles) {
-      const targetFile = join(targetCommandDir, file);
+      // Check multiple possible command locations
+      const possibleLocations = [
+        join(targetBase, 'command'), // .opencode/command
+        join(resolvedPath, '.claude', 'commands'), // .claude/commands
+        join(resolvedPath, '.cursor', 'mcp.json'), // Cursor MCP (commands in config)
+      ];
 
-      if (!existsSync(targetFile)) {
+      const foundInProject = possibleLocations.some((location) => {
+        if (location.includes('mcp.json')) {
+          // Special handling for Cursor MCP config
+          return existsSync(location);
+        }
+        return existsSync(join(location, file));
+      });
+
+      if (!foundInProject) {
         console.log(`❌ command/${file} (missing in project)`);
         missingCount++;
       } else {

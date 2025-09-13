@@ -1,177 +1,348 @@
 ---
-description: Research a ticket or provider a prompt for ad-hoc research
+name: research
+description: Research a ticket or provide a prompt for ad-hoc research
+version: 2.0.0-internal
+last_updated: 2025-09-13
+command_schema_version: 1.0
+inputs:
+  - name: ticket
+    type: string
+    required: true
+    description: Path to ticket file or research question/topic
+  - name: scope
+    type: string
+    required: false
+    description: Research scope hint (codebase|thoughts|both)
+  - name: depth
+    type: string
+    required: false
+    description: Research depth (shallow|medium|deep)
+outputs:
+  - name: research_document
+    type: structured
+    format: JSON with research findings and document metadata
+    description: Comprehensive research findings with document path
+cache_strategy:
+  type: content_based
+  ttl: 3600
+  invalidation: manual
+  scope: command
+success_signals:
+  - 'Research completed successfully'
+  - 'Findings documented in thoughts/research/'
+  - 'All research questions addressed'
+failure_modes:
+  - 'Ticket file not found or invalid'
+  - 'Research agents unable to complete analysis'
+  - 'Insufficient findings to answer research question'
 ---
 
 # Research Codebase
 
-You are tasked with conducting comprehensive research across the codebase to answer user questions by spawning tasks and synthesizing their findings.
+You are tasked with conducting comprehensive research across the codebase to answer user questions by spawning specialized agents and synthesizing their findings. This command uses intelligent caching to optimize research workflows and maintain consistency across similar investigations.
 
-The user will provide a <ticket> for you to read and begin researching.
+## Purpose
 
-## Steps to follow after receiving the research query:
+Conduct thorough, multi-dimensional research by coordinating specialized agents to explore codebase patterns, historical context, and architectural insights, then synthesize findings into actionable documentation.
 
-1. **Read the <ticket> first:**
-   - **IMPORTANT**: Use the Read tool WITHOUT limit/offset parameters to read entire files
-   - **CRITICAL**: Read these files yourself in the main context before spawning any sub-tasks
-   - This ensures you have full context before decomposing the research
+## Inputs
 
-2. **Analyze and decompose the <ticket>:**
-   - Break down the user's <ticket> into composable research areas
-   - Take time to think about the underlying patterns, connections, and architectural the <ticket> has provided
-   - Identify specific components, patterns, or concepts to investigate
-   - Create a research plan using TodoWrite to track all subtasks
-   - Consider which directories, files, or architectural patterns are relevant
+- **ticket**: Path to ticket file or specific research question/topic
+- **scope**: Optional scope hint to guide research focus (codebase, thoughts, or both)
+- **depth**: Optional depth parameter for research thoroughness
+- **conversation_context**: History of related research and discussions
 
-3. **Spawn tasks for comprehensive research:**
-   - Create multiple Task agents to research different aspects concurrently
-   - When spawning Tasks, run locators in parallel first, when they are done you should then use the pattern-finder.
-   - ONLY WHEN those are done should you then run the appropirate analyzer Tasks
+## Preconditions
 
-   **For codebase research:**
-   - Use the **codebase-locator** agent to find WHERE files and components live
-   - Use the **codebase-pattern-finder** agent if you need examples of similar implementations
-   - Use the **codebase-analyzer** agent to understand HOW specific code works
-   - **CRITICAL** Only run codebase-analyzer AFTER the other codebase agents.
+- Ticket file exists and is readable (if path provided)
+- Research question is clearly defined
+- Development environment accessible for agent coordination
+- Sufficient time allocated for comprehensive analysis
 
-   **For thoughts directory:**
-   - Use the **thoughts-locator** agent to discover what documents exist about the topic
-   - Use the **thoughts-analyzer** agent to extract key insights from specific documents (only the most relevant ones)
-   - **CRITICAL** Only run thoughts-analyzer AFTER the thoughts-locator
+## Process Phases
 
-   **For specialized domain research (use selectively when relevant):**
-   - **operations-incident-commander** - For incident response, SLO analysis, or operational issues
-   - **development-migrations-specialist** - For database schema changes, data migrations, or expand/contract patterns
-   - **programmatic-seo-engineer** - For SEO architecture, content generation, or site structure
-   - **content-localization-coordinator** - For i18n/l10n workflows, translation processes, or multi-locale features
-   - **quality-testing_performance_tester** - For performance analysis, load testing, or SLO validation
+### Phase 1: Context Analysis & Planning
 
-   The key is to use these agents intelligently:
-   - Start with locator agents to find what exists
-   - Then use analyzer agents on the most promising findings
-   - Each agent knows its job - just tell it what you're looking for
-   - Don't write detailed prompts about HOW to search - the agents already know
+1. **Check Cache First**: Query cache for similar research patterns using ticket/question hash
+2. **Read Primary Source**: Completely read the ticket file or understand the research question
+3. **Decompose Research Scope**: Break down the query into specific investigation areas
+4. **Create Research Plan**: Set up todo list to track all research subtasks
+5. **Identify Research Strategy**: Determine which agents and approaches to use
 
-4. **Wait for all sub-agents to complete and synthesize findings:**
-   - IMPORTANT: Wait for ALL sub-agent tasks to complete before proceeding
-   - Compile all sub-agent results (both codebase and thoughts findings)
-   - Prioritize live codebase findings as primary source of truth
-   - Use thoughts/ findings as supplementary historical context
-   - Connect findings across different components
-   - Include specific file paths and line numbers for reference
-   - Highlight patterns, connections, and architectural decisions
-   - Answer the user's specific questions with concrete evidence
+### Phase 2: Parallel Agent Coordination
 
-Use the following metadata to for the research document frontmatter
+1. **Spawn Locator Agents**: Launch codebase-locator and thoughts-locator in parallel
+2. **Gather Pattern Intelligence**: Use codebase-pattern-finder for similar implementation examples
+3. **Deep Analysis**: Execute codebase-analyzer and thoughts-analyzer on key findings
+4. **Domain-Specific Research**: Deploy specialized agents as needed for domain expertise
+5. **Wait for Completion**: Ensure all agents finish before synthesis
 
-<metadata>
-!hack/spec_metadata.sh
-</metadata>
+### Phase 3: Synthesis & Documentation
 
-6. **Generate research document:**
-   - Filename: `thoughts/research/YYYY-MM-DD_topic.md`
-   - Use the metadata gathered in step 4
-   - Structure the document with YAML frontmatter followed by content:
+1. **Compile Findings**: Aggregate results from all research agents
+2. **Cross-Reference Analysis**: Connect findings across components and contexts
+3. **Generate Insights**: Identify patterns, architectural decisions, and key relationships
+4. **Create Research Document**: Structure findings with proper metadata and references
+5. **Update Cache**: Store successful research patterns for future investigations
 
-     ```markdown
-     ---
-     date: [Current date and time with timezone in ISO format]
-     researcher: [Researcher name from thoughts status]
-     git_commit: [Current commit hash]
-     branch: [Current branch name]
-     repository: [Repository name]
-     topic: "[User's Question/Topic]"
-     tags: [research, codebase, relevant-component-names]
-     status: complete
-     last_updated: [Current date in YYYY-MM-DD format]
-     last_updated_by: [Researcher name]
-     ---
+## Error Handling
 
-     ## Ticket Synopsis
+### Invalid Ticket Error
 
-     [Synopsis of the ticket information]
+```error-context
+{
+  "command": "research",
+  "phase": "context_analysis",
+  "error_type": "invalid_ticket",
+  "expected": "Valid ticket file or research question",
+  "found": "File not found: thoughts/tickets/missing-ticket.md",
+  "mitigation": "Verify ticket path or clarify research question",
+  "requires_user_input": true
+}
+```
 
-     ## Summary
+### Agent Coordination Failure
 
-     [High-level findings answering the user's question]
+```error-context
+{
+  "command": "research",
+  "phase": "agent_execution",
+  "error_type": "agent_failure",
+  "expected": "All research agents complete successfully",
+  "found": "codebase-locator agent failed with timeout",
+  "mitigation": "Retry agent execution or adjust research scope",
+  "requires_user_input": false
+}
+```
 
-     ## Detailed Findings
+### Insufficient Findings Error
 
-     ### [Component/Area 1]
+```error-context
+{
+  "command": "research",
+  "phase": "synthesis",
+  "error_type": "insufficient_findings",
+  "expected": "Adequate findings to answer research question",
+  "found": "Only 2 relevant files found for complex architectural question",
+  "mitigation": "Expand research scope or clarify research objectives",
+  "requires_user_input": true
+}
+```
 
-     - Finding with reference ([file.ext:line])
-     - Connection to other components
-     - Implementation details
+## Structured Output Specification
 
-     ### [Component/Area 2]
+### Primary Output
 
-     - Finding with reference ([file.ext:line])
-     - Connection to other components
-     - Implementation details
-       ...
+```command-output:research_document
+{
+  "status": "success|in_progress|error",
+  "timestamp": "ISO-8601",
+  "cache": {
+    "hit": true|false,
+    "key": "research_pattern:{ticket_hash}:{scope}",
+    "ttl_remaining": 3600,
+    "savings": 0.25
+  },
+  "research": {
+    "question": "How does the authentication system work?",
+    "scope": "codebase|thoughts|both",
+    "depth": "shallow|medium|deep"
+  },
+  "findings": {
+    "total_files_analyzed": 23,
+    "codebase_findings": 18,
+    "thoughts_findings": 5,
+    "key_insights": 7,
+    "architectural_patterns": 3
+  },
+  "document": {
+    "path": "thoughts/research/2025-09-13-authentication-system.md",
+    "sections": ["synopsis", "summary", "detailed_findings", "references"],
+    "code_references": 12,
+    "historical_context": 3
+  },
+  "agents_used": [
+    "codebase-locator",
+    "codebase-analyzer",
+    "thoughts-locator",
+    "thoughts-analyzer"
+  ],
+  "metadata": {
+    "processing_time": 180,
+    "cache_savings": 0.25,
+    "agent_tasks": 6,
+    "follow_up_questions": 0
+  }
+}
+```
 
-     ## Code References
+## Success Criteria
 
-     - `path/to/file.py:123` - Description of what's there
-     - `another/file.ts:45-67` - Description of the code block
+#### Automated Verification
 
-     ## Architecture Insights
+- [ ] Research document created in `thoughts/research/` directory
+- [ ] Document follows required structure with YAML frontmatter
+- [ ] All specified agents completed their analysis successfully
+- [ ] Document includes specific file:line references for key findings
+- [ ] Cache updated with successful research patterns
 
-     [Patterns, conventions, and design decisions discovered]
+#### Manual Verification
 
-     ## Historical Context (from thoughts/)
+- [ ] Research question is fully addressed with concrete evidence
+- [ ] Findings connect across different components and contexts
+- [ ] Document provides actionable insights for development
+- [ ] Historical context from thoughts/ is properly integrated
+- [ ] Open questions are identified and addressed
 
-     [Relevant insights from thoughts/ directory with references]
+## Agent Coordination Strategy
 
-     - `thoughts/shared/something.md` - Historical decision about X
-     - `thoughts/local/notes.md` - Past exploration of Y
-       Note: Paths exclude "searchable/" even if found there
+### Agent Execution Order
 
-     ## Related Research
+1. **Phase 1 - Discovery**: Run locator agents in parallel
+   - codebase-locator: Find relevant files and components
+   - thoughts-locator: Discover existing documentation
 
-     [Links to other research documents in thoughts/shared/research/]
+2. **Phase 2 - Pattern Analysis**: Execute pattern-finder after locators complete
+   - codebase-pattern-finder: Identify similar implementation examples
 
-     ## Open Questions
+3. **Phase 3 - Deep Analysis**: Run analyzers on most promising findings
+   - codebase-analyzer: Understand how specific code works
+   - thoughts-analyzer: Extract insights from key documents
 
-     [Any areas that need further investigation]
-     ```
+### Specialized Agent Selection
 
-7. **Present findings:**
-   - Present a concise summary of findings to the user
-   - Include key file references for easy navigation
-   - Ask if they have follow-up questions or need clarification
+- **operations-incident-commander**: Incident response and operational issues
+- **development-migrations-specialist**: Database changes and migrations
+- **programmatic-seo-engineer**: SEO architecture and content generation
+- **content-localization-coordinator**: i18n/l10n workflows
+- **quality-testing-performance-tester**: Performance analysis and testing
 
-8. **Handle follow-up questions:**
-   - If the user has follow-up questions, append to the same research document
-   - Update the frontmatter fields `last_updated` and `last_updated_by` to reflect the update
-   - Add `last_updated_note: "Added follow-up research for [brief description]"` to frontmatter
-   - Add a new section: `## Follow-up Research [timestamp]`
-   - Spawn new sub-agents as needed for additional investigation
-   - Continue updating the document and syncing
+## Research Best Practices
 
-## Important notes:
+### Investigation Methodology
 
-- Use parallel Task agents OF THE SAME TYPE ONLY to maximize efficiency and minimize context usage
-- Always run fresh codebase research - never rely solely on existing research documents
-- The thoughts/architecture directory contains important information about the codebase details
-- Focus on finding concrete file paths and line numbers for developer reference
-- Research documents should be self-contained with all necessary context
-- Each sub-agent prompt should be specific and focused on read-only operations
-- Consider cross-component connections and architectural patterns
-- Include temporal context (when the research was conducted)
-- Keep the main agent focused on synthesis, not deep file reading
-- Encourage sub-agents to find examples and usage patterns, not just definitions
-- Explore all of thoughts/ directory, not just research subdirectory
-- **File reading**: Always read mentioned files FULLY (no limit/offset) before spawning sub-tasks
-- **Critical ordering**: Follow the numbered steps exactly
-  - ALWAYS read mentioned files first before spawning sub-tasks (step 1)
-  - ALWAYS wait for all sub-agents to complete before synthesizing (step 4)
-  - ALWAYS gather metadata before writing the document (step 5 before step 6)
-  - NEVER write the research document with placeholder values
-- **Frontmatter consistency**:
-  - Always include frontmatter at the beginning of research documents
-  - Keep frontmatter fields consistent across all research documents
-  - Update frontmatter when adding follow-up research
-  - Use snake_case for multi-word field names (e.g., `last_updated`, `git_commit`)
-  - Tags should be relevant to the research topic and components studied
+- **Complete Context First**: Always read primary sources fully before agent coordination
+- **Parallel Execution**: Maximize efficiency by running same-type agents concurrently
+- **Fresh Analysis**: Prioritize current codebase over cached documentation
+- **Cross-Component Connections**: Identify relationships between different system parts
+
+### Documentation Standards
+
+- **Structured Format**: Use consistent YAML frontmatter and section organization
+- **Concrete References**: Include specific file paths and line numbers
+- **Temporal Context**: Document when research was conducted
+- **Self-Contained**: Ensure documents stand alone with necessary context
+
+## Research Document Template
+
+```markdown
+---
+date: 2025-09-13T10:30:00Z
+researcher: Assistant
+git_commit: abc123def456
+branch: main
+repository: codeflow
+topic: 'Authentication System Architecture'
+tags: [research, authentication, security, architecture]
+status: complete
+last_updated: 2025-09-13
+last_updated_by: Assistant
+---
+
+## Ticket Synopsis
+
+[Brief summary of the research question or ticket requirements]
+
+## Summary
+
+[High-level findings answering the research question]
+
+## Detailed Findings
+
+### [Component/Area 1]
+
+- Finding with reference ([file.ext:line])
+- Connection to other components
+- Implementation details and patterns
+
+### [Component/Area 2]
+
+- Finding with reference ([file.ext:line])
+- Architectural insights
+- Usage patterns discovered
+
+## Code References
+
+- `path/to/auth.ts:123` - Main authentication logic
+- `src/components/Login.tsx:45-67` - Frontend implementation
+
+## Architecture Insights
+
+[Key patterns, conventions, and design decisions]
+
+## Historical Context (from thoughts/)
+
+[Relevant insights from thoughts/ directory]
+
+- `thoughts/architecture/auth-design.md` - Previous authentication decisions
+- `thoughts/research/2024-12-01-auth-analysis.md` - Related research
+
+## Related Research
+
+[Links to other relevant research documents]
+
+## Open Questions
+
+[Any areas requiring further investigation]
+```
+
+## Edge Cases
+
+### Limited Findings Scenario
+
+- When research yields minimal results, expand scope systematically
+- Consider alternative search terms and directory patterns
+- Document what was NOT found as well as what was discovered
+
+### Complex Multi-Component Systems
+
+- Break research into focused sub-questions
+- Use multiple specialized agents for different aspects
+- Create separate sections for each major component
+
+### Historical vs Current Analysis
+
+- Always prioritize current codebase as source of truth
+- Use historical documents for context and decision rationale
+- Note any discrepancies between documentation and implementation
+
+## Anti-Patterns
+
+### Avoid These Practices
+
+- **Incomplete context**: Don't spawn agents before reading primary sources
+- **Sequential execution**: Don't run agents one at a time when parallel execution is possible
+- **Stale research**: Don't rely solely on existing documentation without fresh analysis
+- **Cache bypass**: Don't skip cache checks for performance reasons
+
+## Caching Guidelines
+
+### Cache Usage Patterns
+
+- **Research strategies**: Store successful investigation approaches for similar topics
+- **Agent combinations**: Cache effective agent coordination patterns
+- **Question decomposition**: Remember how to break down complex research questions
+
+### Cache Invalidation Triggers
+
+- **Manual**: Clear cache when research standards or codebase structure change
+- **Content-based**: Invalidate when research questions change significantly
+- **Time-based**: Refresh cache every hour for active research sessions
+
+### Performance Optimization
+
+- Cache hit rate target: ≥ 60% for repeated research patterns
+- Memory usage: < 30MB for research pattern cache
+- Response time: < 150ms for cache queries
 
 <ticket>$ARGUMENTS</ticket>

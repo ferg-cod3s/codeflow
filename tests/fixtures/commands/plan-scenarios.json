@@ -1,0 +1,47 @@
+{
+  "command": "plan",
+  "scenarios": [
+    {
+      "name": "simple-feature-implementation",
+      "description": "Create plan for straightforward feature addition",
+      "inputs": {
+        "ticket": "thoughts/tickets/add-search-functionality.md",
+        "scope": "Add search input to existing component",
+        "complexity": "Single component modification"
+      },
+      "expected_clarifications": 2,
+      "expected_plan_phases": 2,
+      "complexity": "low"
+    },
+    {
+      "name": "complex-system-refactor",
+      "description": "Create comprehensive plan for system-wide refactor",
+      "inputs": {
+        "ticket": "thoughts/tickets/refactor-state-management.md",
+        "scope": "Replace Redux with Zustand across entire application",
+        "complexity": "Multiple components, tests, and migration strategy"
+      },
+      "expected_clarifications": 4,
+      "expected_plan_phases": 5,
+      "complexity": "high"
+    },
+    {
+      "name": "api-integration-plan",
+      "description": "Plan integration with third-party API",
+      "inputs": {
+        "ticket": "thoughts/tickets/integrate-payment-api.md",
+        "scope": "Add payment processing with error handling and testing",
+        "complexity": "External API integration with security considerations"
+      },
+      "expected_clarifications": 3,
+      "expected_plan_phases": 4,
+      "complexity": "medium"
+    }
+  ],
+  "baseline_metrics": {
+    "average_clarifications": 3,
+    "average_plan_quality_score": 7.5,
+    "success_rate": 0.78,
+    "token_efficiency": 0.65
+  }
+}

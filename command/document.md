@@ -1,50 +1,208 @@
 ---
+name: document
 description: Produce high-quality documentation for implemented features
+version: 2.0.0-internal
+last_updated: 2025-09-13
+command_schema_version: 1.0
+inputs:
+  - name: audience
+    type: string
+    required: true
+    description: Target audience (user | api | developer | mixed)
+  - name: plan
+    type: string
+    required: false
+    description: Path to implementation plan file
+  - name: files
+    type: array
+    required: true
+    description: Key code files for documentation reference
+  - name: changelog
+    type: array
+    required: false
+    description: List of notable changes for documentation
+outputs:
+  - name: documentation_files
+    type: structured
+    format: JSON with file paths and metadata
+    description: Generated documentation files with metadata
+cache_strategy:
+  type: content_based
+  ttl: 3600
+  invalidation: manual
+  scope: command
+success_signals:
+  - 'Documentation files created successfully'
+  - 'All audience types documented'
+  - 'Files saved to thoughts/documentation/'
+failure_modes:
+  - 'Invalid audience specification'
+  - 'Missing required code files'
+  - 'Documentation directory not accessible'
 ---
 
 # Document Feature
 
-You are tasked with producing high-quality documentation based on the implemented feature, its plan, and the code. Deliver user-facing guides, API references, and developer notes as appropriate.
+You are tasked with producing high-quality documentation based on the implemented feature, its plan, and the code. This command uses intelligent caching to optimize documentation generation and maintain consistency across similar features.
+
+## Purpose
+
+Deliver user-facing guides, API references, and developer notes that are accurate, comprehensive, and properly structured for the target audience.
 
 ## Inputs
 
-- <audience>: user | api | developer | mixed
-- <plan>: optional path to implementation plan
-- <files>: key code files for reference
-- <changelog>: optional list of notable changes
+- **audience**: Target audience type (user, api, developer, or mixed)
+- **plan**: Optional path to implementation plan for context
+- **files**: Array of key code files to reference for documentation
+- **changelog**: Optional list of notable changes to document
+- **conversation_context**: History of implementation decisions
 
-## Process
+## Preconditions
 
-1. Gather and read context
+- Target audience is clearly specified and valid
+- Required code files exist and are accessible
+- Documentation directory `thoughts/documentation/` is writable
+- Implementation is complete and testable
 
-- Read <plan> if provided
-- Read all <files> fully (no limit/offset)
-- Skim related modules to confirm behavior and constraints
+## Process Phases
 
-2. Choose document set by audience
+### Phase 1: Context Analysis & Cache Check
 
-- user: step-by-step how-to, screenshots/placeholders, troubleshooting
-- api: endpoint/CLI reference, request/response, error codes, examples
-- developer: architecture overview, data flow, invariants, extension points
+1. **Check Cache First**: Query cache for similar documentation patterns using feature context hash
+2. **Gather Context**: Read implementation plan and all specified code files
+3. **Analyze Audience Requirements**: Determine documentation scope based on audience type
+4. **Validate Inputs**: Ensure all required files exist and are readable
 
-3. Draft structure, then fill in details
+### Phase 2: Documentation Planning
 
-- Present a concise outline first if scope is broad
-- Keep sections short, scannable, and accurate to code
+1. **Determine Document Set**: Select appropriate documentation types for audience
+2. **Create Structure Outline**: Plan documentation organization and sections
+3. **Identify Key Information**: Extract important details from code and plan
+4. **Plan Examples**: Determine what code examples and use cases to include
 
-4. Validate correctness
+### Phase 3: Content Generation & Validation
 
-- Cross-check examples with real code/CLI outputs
-- Prefer copyable examples that run
+1. **Generate Documentation**: Create content using appropriate templates
+2. **Validate Accuracy**: Cross-check examples with actual code and outputs
+3. **Ensure Completeness**: Verify all important aspects are documented
+4. **Update Cache**: Store successful documentation patterns for future reference
 
-5. Save docs
+## Error Handling
 
-- Use `thoughts/documentation/` with descriptive filenames
-- Keep one file per audience when possible
+### Invalid Audience Error
 
-## Templates
+```error-context
+{
+  "command": "document",
+  "phase": "input_validation",
+  "error_type": "invalid_audience",
+  "expected": "user | api | developer | mixed",
+  "found": "invalid_value",
+  "mitigation": "Specify valid audience type",
+  "requires_user_input": true
+}
+```
 
-### User Guide
+### Missing Files Error
+
+```error-context
+{
+  "command": "document",
+  "phase": "context_gathering",
+  "error_type": "missing_files",
+  "expected": "All specified files exist",
+  "found": "File not found: path/to/missing/file.ts",
+  "mitigation": "Verify file paths and ensure files exist",
+  "requires_user_input": true
+}
+```
+
+### Permission Error
+
+```error-context
+{
+  "command": "document",
+  "phase": "file_creation",
+  "error_type": "permission_denied",
+  "expected": "Write access to thoughts/documentation/",
+  "found": "Permission denied",
+  "mitigation": "Check directory permissions or use alternative location",
+  "requires_user_input": true
+}
+```
+
+## Structured Output Specification
+
+### Primary Output
+
+```command-output:documentation_files
+{
+  "status": "success|planning|error",
+  "timestamp": "ISO-8601",
+  "cache": {
+    "hit": true|false,
+    "key": "doc_pattern:{feature_hash}:{audience}",
+    "ttl_remaining": 3600,
+    "savings": 0.25
+  },
+  "analysis": {
+    "audience": "user|api|developer|mixed",
+    "feature_scope": "small|medium|large",
+    "document_types": ["user_guide", "api_reference", "dev_notes"]
+  },
+  "files": [
+    {
+      "type": "user_guide",
+      "path": "thoughts/documentation/2025-09-13-feature-user.md",
+      "title": "Feature Name - User Guide",
+      "sections": ["overview", "prerequisites", "steps", "troubleshooting"],
+      "word_count": 450
+    },
+    {
+      "type": "api_reference",
+      "path": "thoughts/documentation/2025-09-13-feature-api.md",
+      "title": "Feature Name - API Reference",
+      "endpoints": 3,
+      "examples": 5
+    },
+    {
+      "type": "dev_notes",
+      "path": "thoughts/documentation/2025-09-13-feature-dev.md",
+      "title": "Feature Name - Developer Notes",
+      "sections": ["architecture", "decisions", "extension_points"],
+      "code_references": 8
+    }
+  ],
+  "metadata": {
+    "processing_time": 180,
+    "cache_savings": 0.25,
+    "total_files": 3,
+    "total_words": 1200
+  }
+}
+```
+
+## Success Criteria
+
+#### Automated Verification
+
+- [ ] All specified audience types have corresponding documentation files
+- [ ] Documentation files created in `thoughts/documentation/` directory
+- [ ] File paths follow naming convention: `YYYY-MM-DD-<feature>-<type>.md`
+- [ ] No file system errors during creation
+- [ ] Cache updated with successful documentation patterns
+
+#### Manual Verification
+
+- [ ] Documentation content is accurate and matches code implementation
+- [ ] Examples are functional and can be copied/pasted
+- [ ] Documentation is well-structured and scannable
+- [ ] Appropriate level of detail for target audience
+- [ ] Cross-references between related documents are correct
+
+## Documentation Templates
+
+### User Guide Template
 
 ```markdown
 ---
@@ -59,19 +217,20 @@ Short description of the value and when to use it.
 
 ## Prerequisites
 
-- ...
+- Required dependencies and setup steps
 
 ## Steps
 
-1. ...
-2. ...
+1. Step-by-step instructions with clear actions
+2. Include screenshots placeholders where helpful
 
 ## Troubleshooting
 
-- Symptom → Cause → Fix
+- Common issues and their solutions
+- Error messages and what they mean
 ```
 
-### API Reference
+### API Reference Template
 
 ````markdown
 ---
@@ -82,20 +241,27 @@ version: <semver or commit>
 
 ## Endpoints / Commands
 
-- Method/Command: Path / Name
-- Request: fields and types
-- Response: fields and types
-- Errors: codes/messages
-- Examples:
+### Endpoint/Command Name
+
+- **Method/Command**: HTTP method or CLI command
+- **Path/Usage**: Endpoint path or command syntax
+- **Request**: Input parameters and types
+- **Response**: Output format and fields
+- **Errors**: Error codes and messages
+
+#### Example
 
 ```bash
-curl ...
+curl -X POST /api/feature \
+  -H "Content-Type: application/json" \
+  -d '{"param": "value"}'
 ```
 ````
 
 ````
 
-### Developer Notes
+### Developer Notes Template
+
 ```markdown
 ---
 title: <Feature Name> - Developer Notes
@@ -104,20 +270,71 @@ version: <semver or commit>
 ---
 
 ## Architecture
-- Components and data flow
+
+- High-level component overview
+- Data flow and interactions
+- Key design patterns used
 
 ## Key Decisions
-- Rationale and implications
+
+- Important architectural choices
+- Trade-offs and rationale
+- Alternative approaches considered
 
 ## Extension Points
-- How to add/modify behavior safely
+
+- How to safely modify behavior
+- Plugin interfaces and hooks
+- Configuration options
 ````
 
-## Deliverables
+## Edge Cases
 
-- Files under `thoughts/documentation/`:
-  - `YYYY-MM-DD-<feature>-user.md` (if audience includes user)
-  - `YYYY-MM-DD-<feature>-api.md` (if audience includes api)
-  - `YYYY-MM-DD-<feature>-dev.md` (if audience includes developer)
+### Mixed Audience Documentation
+
+- For mixed audiences, create separate files for each type
+- Link between related documents
+- Avoid mixing user and developer content in same file
+
+### Large Feature Sets
+
+- Break complex features into multiple focused documents
+- Use table of contents and cross-references
+- Consider creating overview document linking to details
+
+### API-Only Features
+
+- Focus on comprehensive endpoint documentation
+- Include authentication and rate limiting details
+- Provide SDK examples if applicable
+
+## Anti-Patterns
+
+### Avoid These Practices
+
+- **Generic content**: Don't use placeholder text or vague descriptions
+- **Code dumping**: Don't include large code blocks without explanation
+- **Missing examples**: Don't document APIs without working examples
+- **Cache bypass**: Don't skip cache checks for performance reasons
+
+## Caching Guidelines
+
+### Cache Usage Patterns
+
+- **Template caching**: Store successful documentation templates by audience type
+- **Structure patterns**: Cache outline structures for similar feature types
+- **Example repositories**: Remember successful code examples for reuse
+
+### Cache Invalidation Triggers
+
+- **Manual**: Clear cache when documentation standards change
+- **Content-based**: Invalidate when feature implementation changes significantly
+- **Time-based**: Refresh cache every hour for active development
+
+### Performance Optimization
+
+- Cache hit rate target: ≥ 60% for repeated documentation patterns
+- Memory usage: < 15MB for documentation template cache
+- Response time: < 100ms for cache queries
 
 <audience>$ARGUMENTS</audience>
