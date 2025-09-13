@@ -166,7 +166,7 @@ class AgentComplianceAuditor {
 
       // Validate required fields
       for (const field of REQUIRED_FRONTMATTER_FIELDS) {
-        if (!frontmatter.hasOwnProperty(field)) {
+        if (!Object.prototype.hasOwnProperty.call(frontmatter, field)) {
           this.auditResults.yamlIssues.push({
             file: filePath,
             name: fileName,

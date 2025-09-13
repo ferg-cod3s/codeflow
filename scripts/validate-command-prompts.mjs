@@ -128,7 +128,7 @@ function validateSections(content, fileName, result) {
     const headingMatch = line.match(/^#{1,6}\s(.+)$/);
     if (headingMatch) {
       const heading = headingMatch[1].trim();
-      if (sections.hasOwnProperty(heading)) {
+      if (Object.prototype.hasOwnProperty.call(sections, heading)) {
         sections[heading] = true;
         result.incrementScore();
       }
