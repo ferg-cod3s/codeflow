@@ -1,6 +1,11 @@
 ## [0.10.1](https://github.com/ferg-cod3s/codeflow/compare/v0.9.5...v0.10.1) (2025-09-13)
 
 
+### Bug Fixes
+
+* **sync:** resolve global sync command issue and update build artifacts ([9c39ad9](https://github.com/ferg-cod3s/codeflow/commit/9c39ad9383a3546df32c0ce8a47cca6a7190e76a))
+
+
 ### Features
 
 * **agent:** api-builder upgraded to UATS v1.0 with structured output + contract/DX spec ([eb03e79](https://github.com/ferg-cod3s/codeflow/commit/eb03e79d09bc78899ee1eedc3ca7fccd66569239))
