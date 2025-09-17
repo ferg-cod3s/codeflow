@@ -1,11 +1,11 @@
 import { existsSync } from 'node:fs';
-import { readdir, copyFile, mkdir } from 'node:fs/promises';
+import { readFile } from "node:fs/promises";import { readdir, copyFile, mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { parseAgentsFromDirectory, serializeAgent } from '../conversion/agent-parser';
 import { FormatConverter } from '../conversion/format-converter';
 import { CanonicalSyncer } from '../sync/canonical-syncer';
 import { homedir } from 'node:os';
-
+import { load as loadYaml } from "js-yaml";
 export interface SyncOptions {
   projectPath?: string;
   force?: boolean;
@@ -19,6 +19,22 @@ export interface SyncOptions {
   target?: 'project' | 'global' | 'all';
 }
 
+/**
+ * Validate if a markdown file has valid YAML frontmatter
+ */
+async function isValidYamlFile(filePath: string): Promise<boolean> {
+  try {
+    const content = await readFile(filePath, "utf-8");
+    const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---/);
+    if (!frontmatterMatch) return false;
+    
+    const yamlContent = frontmatterMatch[1];
+    loadYaml(yamlContent);
+    return true;
+  } catch {
+    return false;
+  }
+}
 export async function sync(projectPath?: string, options: SyncOptions = {}) {
   // Determine sync target
   const target = options.target || (options.global ? 'global' : 'project');
@@ -36,7 +52,7 @@ export async function sync(projectPath?: string, options: SyncOptions = {}) {
     
     try {
       const result = await syncer.syncFromCanonical({
-        target,
+        projectPath: target === 'project' ? resolvedPath : undefined,        target,
         sourceFormat: 'base',
         dryRun: options.dryRun || false,
         force: options.force || false,
@@ -113,12 +129,31 @@ export async function sync(projectPath?: string, options: SyncOptions = {}) {
         const sourceFile = join(sourceCommandDir, file);
         const targetFile = join(targetCommandDir, file);
 
-        try {
-          await copyFile(sourceFile, targetFile);
-          console.log(`  ✓ Synced command: ${file}`);
-          totalSynced++;
-        } catch (error: any) {
-          console.error(`  ❌ Failed to sync command ${file}: ${error.message}`);
+
+        // Check if target file exists and is corrupted
+        const targetExists = existsSync(targetFile);
+        let needsOverwrite = !targetExists || options.force;
+        
+        if (targetExists && !options.force) {
+          // Validate existing target file
+          const isValid = await isValidYamlFile(targetFile);
+          if (!isValid) {
+            console.log(`  ⚠️  Target file corrupted, will overwrite: ${file}`);
+            needsOverwrite = true;
+          }
+        }
+        
+        if (needsOverwrite) {
+          try {
+            await copyFile(sourceFile, targetFile);
+            const action = targetExists ? "Overwrote" : "Synced";
+            console.log(`  ✓ ${action} command: ${file}`);
+            totalSynced++;
+          } catch (error: any) {
+            console.error(`  ❌ Failed to sync command ${file}: ${error.message}`);
+          }
+        } else {
+          console.log(`  ⏭️ Skipped command (already exists): ${file}`);
         }
       }
     }

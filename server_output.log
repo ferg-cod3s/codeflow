@@ -1,0 +1,203 @@
+$ bun run mcp/codeflow-server.mjs
+Initializing codeflow MCP server...
+Building agent registry...
+🔐 Agent 'codebase-pattern-finder' permissions: edit=deny, bash=deny, webfetch=allow
+📁 Agent 'codebase-pattern-finder' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'code-reviewer' permissions: edit=deny, bash=deny, webfetch=deny
+📁 Agent 'code-reviewer' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'thoughts-analyzer' permissions: edit=deny, bash=deny, webfetch=deny
+📁 Agent 'thoughts-analyzer' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'agent-architect' permissions: edit=allow, bash=allow, webfetch=allow
+📁 Agent 'agent-architect' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'web-search-researcher' permissions: edit=deny, bash=deny, webfetch=allow
+📁 Agent 'web-search-researcher' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'quality-testing-performance-tester' permissions: edit=deny, bash=deny, webfetch=allow
+📁 Agent 'quality-testing-performance-tester' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'full-stack-developer' permissions: edit=allow, bash=undefined, webfetch=undefined
+📁 Agent 'full-stack-developer' allowed directories: /Users/johnferguson/Github/codeflow
+🔐 Agent 'performance-engineer' permissions: edit=deny, bash=deny, webfetch=deny
+📁 Agent 'performance-engineer' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'monitoring-expert' permissions: edit=deny, bash=deny, webfetch=allow
+📁 Agent 'monitoring-expert' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'api-builder' permissions: edit=allow, bash=deny, webfetch=deny
+📁 Agent 'api-builder' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'ai-integration-expert' permissions: edit=deny, bash=deny, webfetch=allow
+📁 Agent 'ai-integration-expert' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'security-scanner' permissions: edit=deny, bash=deny, webfetch=deny
+📁 Agent 'security-scanner' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'content-localization-coordinator' permissions: edit=deny, bash=deny, webfetch=allow
+📁 Agent 'content-localization-coordinator' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'thoughts-locator' permissions: edit=deny, bash=deny, webfetch=deny
+📁 Agent 'thoughts-locator' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'accessibility-pro' permissions: edit=deny, bash=deny, webfetch=allow
+📁 Agent 'accessibility-pro' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'codebase-analyzer' permissions: edit=deny, bash=deny, webfetch=allow
+📁 Agent 'codebase-analyzer' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'database-expert' permissions: edit=deny, bash=deny, webfetch=allow
+📁 Agent 'database-expert' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'analytics-engineer' permissions: edit=deny, bash=deny, webfetch=deny
+📁 Agent 'analytics-engineer' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'devops-operations-specialist' permissions: edit=allow, bash=undefined, webfetch=undefined
+📁 Agent 'devops-operations-specialist' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'system-architect' permissions: edit=deny, bash=deny, webfetch=deny
+📁 Agent 'system-architect' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'operations-incident-commander' permissions: edit=deny, bash=deny, webfetch=allow
+📁 Agent 'operations-incident-commander' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'infrastructure-builder' permissions: edit=deny, bash=deny, webfetch=allow
+📁 Agent 'infrastructure-builder' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'smart-subagent-orchestrator' permissions: edit=allow, bash=undefined, webfetch=undefined
+📁 Agent 'smart-subagent-orchestrator' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'ux-optimizer' permissions: edit=deny, bash=deny, webfetch=allow
+📁 Agent 'ux-optimizer' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'development-migrations-specialist' permissions: edit=deny, bash=deny, webfetch=allow
+📁 Agent 'development-migrations-specialist' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'deployment-wizard' permissions: edit=allow, bash=allow, webfetch=allow
+📁 Agent 'deployment-wizard' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'codebase-locator' permissions: edit=deny, bash=deny, webfetch=deny
+📁 Agent 'codebase-locator' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'programmatic-seo-engineer' permissions: edit=deny, bash=deny, webfetch=allow
+🔐 Agent 'growth-engineer' permissions: edit=allow, bash=allow, webfetch=allow
+📁 Agent 'growth-engineer' allowed directories: /Users/johnferguson/Github
+❌ Validation errors in /Users/johnferguson/.codeflow/agents/monitoring_expert.md:
+  - Invalid mode 'undefined' in monitoring_expert.md: expected 'subagent', 'primary', or 'all'
+  - Invalid temperature 'undefined' in monitoring_expert.md: expected number between 0-2
+❌ Failed to parse agent file /Users/johnferguson/.codeflow/agents/monitoring_expert.md: Validation failed for /Users/johnferguson/.codeflow/agents/monitoring_expert.md: 2 errors
+Failed to load agents from directory /Users/johnferguson/.codeflow/agents: Validation failed for /Users/johnferguson/.codeflow/agents/monitoring_expert.md: 2 errors
+🔐 Agent 'codebase-pattern-finder' permissions: edit=allow, bash=allow, webfetch=deny
+📁 Agent 'codebase-pattern-finder' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'code-reviewer' permissions: edit=deny, bash=deny, webfetch=deny
+📁 Agent 'code-reviewer' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'thoughts-analyzer' permissions: edit=deny, bash=deny, webfetch=deny
+📁 Agent 'thoughts-analyzer' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'agent-architect' permissions: edit=allow, bash=allow, webfetch=allow
+📁 Agent 'agent-architect' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'web-search-researcher' permissions: edit=deny, bash=deny, webfetch=allow
+📁 Agent 'web-search-researcher' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'quality-testing-performance-tester' permissions: edit=deny, bash=deny, webfetch=deny
+📁 Agent 'quality-testing-performance-tester' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'full-stack-developer' permissions: edit=deny, bash=allow, webfetch=allow
+📁 Agent 'full-stack-developer' allowed directories: /Users/johnferguson/Github/codeflow
+🔐 Agent 'performance-engineer' permissions: edit=deny, bash=deny, webfetch=deny
+📁 Agent 'performance-engineer' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'monitoring-expert' permissions: edit=allow, bash=allow, webfetch=deny
+📁 Agent 'monitoring-expert' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'api-builder' permissions: edit=allow, bash=deny, webfetch=deny
+📁 Agent 'api-builder' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'ai-integration-expert' permissions: edit=allow, bash=allow, webfetch=allow
+📁 Agent 'ai-integration-expert' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'security-scanner' permissions: edit=deny, bash=deny, webfetch=deny
+📁 Agent 'security-scanner' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'content-localization-coordinator' permissions: edit=allow, bash=allow, webfetch=deny
+📁 Agent 'content-localization-coordinator' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'thoughts-locator' permissions: edit=deny, bash=deny, webfetch=deny
+📁 Agent 'thoughts-locator' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'accessibility-pro' permissions: edit=allow, bash=allow, webfetch=deny
+📁 Agent 'accessibility-pro' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'codebase-analyzer' permissions: edit=deny, bash=deny, webfetch=allow
+📁 Agent 'codebase-analyzer' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'database-expert' permissions: edit=allow, bash=allow, webfetch=deny
+📁 Agent 'database-expert' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'analytics-engineer' permissions: edit=deny, bash=deny, webfetch=deny
+📁 Agent 'analytics-engineer' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'devops-operations-specialist' permissions: edit=deny, bash=allow, webfetch=allow
+📁 Agent 'devops-operations-specialist' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'system-architect' permissions: edit=deny, bash=deny, webfetch=deny
+📁 Agent 'system-architect' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'operations-incident-commander' permissions: edit=allow, bash=allow, webfetch=deny
+📁 Agent 'operations-incident-commander' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'infrastructure-builder' permissions: edit=allow, bash=allow, webfetch=deny
+📁 Agent 'infrastructure-builder' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'smart-subagent-orchestrator' permissions: edit=deny, bash=allow, webfetch=allow
+📁 Agent 'smart-subagent-orchestrator' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'ux-optimizer' permissions: edit=allow, bash=allow, webfetch=deny
+📁 Agent 'ux-optimizer' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'development-migrations-specialist' permissions: edit=allow, bash=allow, webfetch=deny
+📁 Agent 'development-migrations-specialist' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'deployment-wizard' permissions: edit=allow, bash=allow, webfetch=allow
+📁 Agent 'deployment-wizard' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'codebase-locator' permissions: edit=deny, bash=deny, webfetch=deny
+📁 Agent 'codebase-locator' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'programmatic-seo-engineer' permissions: edit=allow, bash=allow, webfetch=allow
+📁 Agent 'programmatic-seo-engineer' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'growth-engineer' permissions: edit=allow, bash=allow, webfetch=allow
+📁 Agent 'growth-engineer' allowed directories: /Users/johnferguson/Github
+❌ Validation errors in /Users/johnferguson/Github/codeflow/.claude/agents/health-test.md:
+  - Invalid tools configuration in health-test.md: Claude Code format expects string, got object
+❌ Failed to parse agent file /Users/johnferguson/Github/codeflow/.claude/agents/health-test.md: Validation failed for /Users/johnferguson/Github/codeflow/.claude/agents/health-test.md: 1 errors
+Failed to load agents from directory /Users/johnferguson/Github/codeflow/.claude/agents: Validation failed for /Users/johnferguson/Github/codeflow/.claude/agents/health-test.md: 1 errors
+🔐 Agent 'codebase-pattern-finder' permissions: edit=allow, bash=allow, webfetch=deny
+📁 Agent 'codebase-pattern-finder' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'code-reviewer' permissions: edit=deny, bash=deny, webfetch=deny
+📁 Agent 'code-reviewer' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'health-test' permissions: edit=deny, bash=deny, webfetch=allow
+🔐 Agent 'thoughts-analyzer' permissions: edit=deny, bash=deny, webfetch=deny
+📁 Agent 'thoughts-analyzer' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'agent-architect' permissions: edit=allow, bash=allow, webfetch=allow
+📁 Agent 'agent-architect' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'web-search-researcher' permissions: edit=deny, bash=deny, webfetch=allow
+📁 Agent 'web-search-researcher' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'quality-testing-performance-tester' permissions: edit=deny, bash=deny, webfetch=deny
+📁 Agent 'quality-testing-performance-tester' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'full-stack-developer' permissions: edit=deny, bash=allow, webfetch=allow
+📁 Agent 'full-stack-developer' allowed directories: /Users/johnferguson/Github/codeflow
+🔐 Agent 'performance-engineer' permissions: edit=deny, bash=deny, webfetch=deny
+📁 Agent 'performance-engineer' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'compliance-expert' permissions: edit=deny, bash=deny, webfetch=deny
+📁 Agent 'compliance-expert' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'monitoring-expert' permissions: edit=allow, bash=allow, webfetch=deny
+📁 Agent 'monitoring-expert' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'api-builder' permissions: edit=allow, bash=deny, webfetch=deny
+📁 Agent 'api-builder' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'release-manager' permissions: edit=deny, bash=deny, webfetch=deny
+📁 Agent 'release-manager' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'ai-integration-expert' permissions: edit=allow, bash=allow, webfetch=allow
+📁 Agent 'ai-integration-expert' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'security-scanner' permissions: edit=deny, bash=deny, webfetch=deny
+📁 Agent 'security-scanner' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'content-localization-coordinator' permissions: edit=allow, bash=allow, webfetch=deny
+📁 Agent 'content-localization-coordinator' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'test-generator' permissions: edit=deny, bash=deny, webfetch=deny
+📁 Agent 'test-generator' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'thoughts-locator' permissions: edit=deny, bash=deny, webfetch=deny
+📁 Agent 'thoughts-locator' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'accessibility-pro' permissions: edit=allow, bash=allow, webfetch=deny
+📁 Agent 'accessibility-pro' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'codebase-analyzer' permissions: edit=deny, bash=deny, webfetch=allow
+📁 Agent 'codebase-analyzer' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'database-expert' permissions: edit=allow, bash=allow, webfetch=deny
+📁 Agent 'database-expert' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'analytics-engineer' permissions: edit=deny, bash=deny, webfetch=deny
+📁 Agent 'analytics-engineer' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'devops-operations-specialist' permissions: edit=deny, bash=allow, webfetch=allow
+📁 Agent 'devops-operations-specialist' allowed directories: /Users/johnferguson/Github
+⚠️ Validation warnings in /Users/johnferguson/Github/codeflow/.opencode/agent/dryrun-test.md:
+  - Missing 'model' field in dryrun-test.md, model will be undefined
+🔐 Agent 'dryrun-test' permissions: edit=deny, bash=deny, webfetch=allow
+🔐 Agent 'system-architect' permissions: edit=deny, bash=deny, webfetch=deny
+📁 Agent 'system-architect' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'operations-incident-commander' permissions: edit=allow, bash=allow, webfetch=deny
+📁 Agent 'operations-incident-commander' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'infrastructure-builder' permissions: edit=allow, bash=allow, webfetch=deny
+📁 Agent 'infrastructure-builder' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'smart-subagent-orchestrator' permissions: edit=deny, bash=allow, webfetch=allow
+📁 Agent 'smart-subagent-orchestrator' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'ux-optimizer' permissions: edit=allow, bash=allow, webfetch=deny
+📁 Agent 'ux-optimizer' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'cost-optimizer' permissions: edit=deny, bash=deny, webfetch=deny
+📁 Agent 'cost-optimizer' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'development-migrations-specialist' permissions: edit=allow, bash=allow, webfetch=deny
+📁 Agent 'development-migrations-specialist' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'deployment-wizard' permissions: edit=allow, bash=allow, webfetch=allow
+📁 Agent 'deployment-wizard' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'codebase-locator' permissions: edit=deny, bash=deny, webfetch=deny
+📁 Agent 'codebase-locator' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'programmatic-seo-engineer' permissions: edit=allow, bash=allow, webfetch=allow
+📁 Agent 'programmatic-seo-engineer' allowed directories: /Users/johnferguson/Github
+🔐 Agent 'growth-engineer' permissions: edit=allow, bash=allow, webfetch=allow
+📁 Agent 'growth-engineer' allowed directories: /Users/johnferguson/Github
+Agent registry built: 125 agents loaded
+Agent registry initialized with 35 agents
+Connecting MCP server transport...
+Codeflow MCP server running with enhanced agent capabilities
+Shutting down codeflow MCP server...
+Shutting down codeflow MCP server...

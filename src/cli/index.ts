@@ -124,7 +124,7 @@ Usage:
   codeflow <command> [options]
 
 Commands:
-  setup [project-path]       Smart setup for Claude Code or OpenCode integration
+  setup [project-path]       Smart setup for Claude Code or OpenCode integration (use --global for global directories)
   status [project-path]      Check which files are up-to-date or outdated
   sync [options]             Sync agents and commands across formats
   convert <source> <target> <format>  Convert agents between formats
@@ -157,6 +157,7 @@ switch (command) {
   case 'setup':
     const setupPath = args[1];
     await setup(setupPath, {
+      global: values.global,
       force: values.force,
       type: values.type,
     });

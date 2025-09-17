@@ -12,7 +12,7 @@ import os from 'os';
  */
 
 export interface SyncOptions {
-  target: 'project' | 'global' | 'all';
+  projectPath?: string;  target: 'project' | 'global' | 'all';
   sourceFormat: 'base' | 'claude-code' | 'opencode';
   dryRun: boolean;
   force: boolean;
@@ -108,8 +108,8 @@ export class CanonicalSyncer {
       }
 
       // Phase 3: Sync commands if target includes global
-      if (options.target === 'global' || options.target === 'all') {
-        const commandTempFiles = await this.syncCommandsToGlobal(options);
+      if (options.target === 'global' || options.target === 'all' || options.target === 'project') {
+        const commandTempFiles = await this.syncCommands(options);
         tempFiles.push(...commandTempFiles);
       }
 
@@ -430,7 +430,7 @@ export class CanonicalSyncer {
   /**
    * Sync commands to global directories
    */
-  private async syncCommandsToGlobal(_options: SyncOptions): Promise<string[]> {
+  private async syncCommands(options: SyncOptions): Promise<string[]> {
     const tempFiles: string[] = [];
     const codeflowRoot = path.join(process.cwd());
     const sourceCommandDir = path.join(codeflowRoot, 'command');
@@ -445,14 +445,26 @@ export class CanonicalSyncer {
 
       for (const file of mdFiles) {
         const sourceFile = path.join(sourceCommandDir, file);
-
-        // Create temp files for both global directories
-        const globalTargetPaths = [
-          path.join(os.homedir(), '.claude', 'commands', file),
-          path.join(os.homedir(), '.config', 'opencode', 'command', file),
-        ];
-
-        for (const targetPath of globalTargetPaths) {
+        // Determine target paths based on sync target
+        const targetPaths: string[] = [];
+        
+        if (options.target === 'global' || options.target === 'all') {
+          targetPaths.push(
+            path.join(os.homedir(), '.claude', 'commands', file),
+            path.join(os.homedir(), '.config', 'opencode', 'command', file)
+          );
+        }
+        
+        if (options.target === 'project' || options.target === 'all') {
+          const projectPath = options.projectPath || process.cwd();
+          targetPaths.push(
+            path.join(projectPath, '.claude', 'commands', file),
+            path.join(projectPath, '.opencode', 'command', file)
+          );
+        
+        }
+        
+        for (const targetPath of targetPaths) {
           const tempPath = `${targetPath}.tmp`;
 
           try {

@@ -9138,7 +9138,7 @@ async function startWatch(projectPath) {
 // package.json
 var package_default = {
   name: "@agentic-codeflow/cli",
-  version: "0.10.1",
+  version: "0.10.2",
   description: "CLI for Agentic CodeFlow AI-assisted development workflows",
   type: "module",
   bin: {

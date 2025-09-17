@@ -47,11 +47,11 @@ export function getGlobalPaths() {
 /**
  * Setup global agent directories
  */
-export async function setupGlobalAgents(baseDir?: string): Promise<void> {
+export async function setupGlobalAgents(baseDir?: string, options: { dryRun?: boolean } = {}): Promise<void> {
   const paths = getGlobalPaths();
 
   console.log('📁 Setting up global agent directories...');
-
+  if (options.dryRun) console.log('🔍 Dry run mode - no directories will be created');
   const envOverride =
     baseDir && baseDir.trim().length > 0
       ? baseDir

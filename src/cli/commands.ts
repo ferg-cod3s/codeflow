@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import YAML from "yaml";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -19,19 +20,12 @@ function parseMarkdownFrontmatter(content: string): { [key: string]: any } {
 
   if (!match) return {};
 
-  const frontmatter: { [key: string]: any } = {};
-  const lines = match[1].split('\n');
-
-  for (const line of lines) {
-    const colonIndex = line.indexOf(':');
-    if (colonIndex > 0) {
-      const key = line.substring(0, colonIndex).trim();
-      const value = line.substring(colonIndex + 1).trim();
-      frontmatter[key] = value;
-    }
+  try {
+    return YAML.parse(match[1]);
+  } catch (error) {
+    console.error("Error parsing YAML frontmatter:", error);
+    return {};
   }
-
-  return frontmatter;
 }
 
 function loadSlashCommands(): SlashCommand[] {
