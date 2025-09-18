@@ -1,11 +1,12 @@
 import { existsSync } from 'node:fs';
-import { readFile } from "node:fs/promises";import { readdir, copyFile, mkdir } from 'node:fs/promises';
+import { readFile } from 'node:fs/promises';
+import { readdir, copyFile, mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { parseAgentsFromDirectory, serializeAgent } from '../conversion/agent-parser';
 import { FormatConverter } from '../conversion/format-converter';
 import { CanonicalSyncer } from '../sync/canonical-syncer';
 import { homedir } from 'node:os';
-import { load as loadYaml } from "js-yaml";
+import { parse as loadYaml } from 'yaml';
 export interface SyncOptions {
   projectPath?: string;
   force?: boolean;
@@ -24,10 +25,10 @@ export interface SyncOptions {
  */
 async function isValidYamlFile(filePath: string): Promise<boolean> {
   try {
-    const content = await readFile(filePath, "utf-8");
+    const content = await readFile(filePath, 'utf-8');
     const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---/);
     if (!frontmatterMatch) return false;
-    
+
     const yamlContent = frontmatterMatch[1];
     loadYaml(yamlContent);
     return true;
@@ -38,9 +39,9 @@ async function isValidYamlFile(filePath: string): Promise<boolean> {
 export async function sync(projectPath?: string, options: SyncOptions = {}) {
   // Determine sync target
   const target = options.target || (options.global ? 'global' : 'project');
-  
+
   // For global sync, we don't need a specific project path
-  const resolvedPath = target === 'global' ? homedir() : (projectPath || process.cwd());
+  const resolvedPath = target === 'global' ? homedir() : projectPath || process.cwd();
 
   // Check if we should use the new canonical syncer or legacy sync
   const manifestPath = join(process.cwd(), 'AGENT_MANIFEST.json');
@@ -49,10 +50,11 @@ export async function sync(projectPath?: string, options: SyncOptions = {}) {
   if (hasManifest) {
     // Use new canonical syncer
     const syncer = new CanonicalSyncer();
-    
+
     try {
       const result = await syncer.syncFromCanonical({
-        projectPath: target === 'project' ? resolvedPath : undefined,        target,
+        projectPath: target === 'project' ? resolvedPath : undefined,
+        target,
         sourceFormat: 'base',
         dryRun: options.dryRun || false,
         force: options.force || false,
@@ -60,36 +62,37 @@ export async function sync(projectPath?: string, options: SyncOptions = {}) {
 
       // Report results
       console.log(`🔄 Syncing to ${target} directories...`);
-      
+
       if (result.synced.length > 0) {
         console.log(`\n✅ Synced ${result.synced.length} files:`);
-        result.synced.forEach(sync => {
+        result.synced.forEach((sync) => {
           console.log(`  ✓ ${sync.agent}: ${sync.from} → ${sync.to}`);
         });
       }
 
       if (result.skipped.length > 0 && options.verbose) {
         console.log(`\n⏭️ Skipped ${result.skipped.length} files:`);
-        result.skipped.forEach(skip => {
+        result.skipped.forEach((skip) => {
           console.log(`  ⏭️ ${skip.agent}: ${skip.reason}`);
         });
       }
 
       if (result.errors.length > 0) {
         console.log(`\n❌ Errors (${result.errors.length}):`);
-        result.errors.forEach(error => {
+        result.errors.forEach((error) => {
           console.log(`  ❌ ${error.agent}: ${error.message}`);
         });
       }
 
       const totalProcessed = result.synced.length + result.skipped.length + result.errors.length;
-      console.log(`\n📊 Summary: ${result.synced.length}/${totalProcessed} files synced successfully`);
-      
+      console.log(
+        `\n📊 Summary: ${result.synced.length}/${totalProcessed} files synced successfully`
+      );
     } catch (error: any) {
       console.error(`❌ Canonical sync failed: ${error.message}`);
       process.exit(1);
     }
-    
+
     return;
   }
 
@@ -129,11 +132,10 @@ export async function sync(projectPath?: string, options: SyncOptions = {}) {
         const sourceFile = join(sourceCommandDir, file);
         const targetFile = join(targetCommandDir, file);
 
-
         // Check if target file exists and is corrupted
         const targetExists = existsSync(targetFile);
         let needsOverwrite = !targetExists || options.force;
-        
+
         if (targetExists && !options.force) {
           // Validate existing target file
           const isValid = await isValidYamlFile(targetFile);
@@ -142,11 +144,11 @@ export async function sync(projectPath?: string, options: SyncOptions = {}) {
             needsOverwrite = true;
           }
         }
-        
+
         if (needsOverwrite) {
           try {
             await copyFile(sourceFile, targetFile);
-            const action = targetExists ? "Overwrote" : "Synced";
+            const action = targetExists ? 'Overwrote' : 'Synced';
             console.log(`  ✓ ${action} command: ${file}`);
             totalSynced++;
           } catch (error: any) {
@@ -217,12 +219,16 @@ export async function syncGlobalAgents(options: SyncOptions = {}) {
   return sync(options.projectPath);
 }
 
-export async function checkGlobalSync(): Promise<{ needsSync: boolean; needsUpdate: boolean; message: string }> {
+export async function checkGlobalSync(): Promise<{
+  needsSync: boolean;
+  needsUpdate: boolean;
+  message: string;
+}> {
   // This is a placeholder implementation
   // In a full implementation, this would check if global agents need updates
   return {
     needsSync: false,
     needsUpdate: false,
-    message: "Global sync check not fully implemented yet"
+    message: 'Global sync check not fully implemented yet',
   };
 }

@@ -3,6 +3,7 @@ import { ValidationEngine } from '../yaml/validation-engine';
 import { readFile, readdir, stat } from 'fs/promises';
 import { existsSync } from 'fs';
 import path from 'path';
+import { findAgentManifest } from \'../utils/manifest-discovery.js\';
 
 /**
  * Validation result interface
@@ -357,7 +358,25 @@ export class AgentValidator {
    * Canonical source integrity validation
    */
   async validateCanonicalIntegrity(): Promise<CanonicalValidationResult> {
-    const manifestPath = path.join(process.cwd(), 'AGENT_MANIFEST.json');
+    let manifestPath: string;
+    try {
+      const discovery = await findAgentManifest();
+      manifestPath = discovery.path;
+    } catch (error) {
+      return {
+        valid: false,
+        manifestAgents: 0,
+        expectedCount: 42,
+        errors: [
+          {
+            agent: 'manifest',
+            issue: 'AGENT_MANIFEST.json not found',
+            suggestion: 'Run setup from the codeflow repository or copy AGENT_MANIFEST.json manually',
+          }
+        ]
+      };
+    }
+
     if (!existsSync(manifestPath)) {
       return {
         valid: false,

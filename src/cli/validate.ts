@@ -137,6 +137,7 @@ export async function validate(options: {
     } catch (error) {
       console.error(`❌ Could not validate canonical integrity: ${(error as Error).message}`);
       console.error(`   Make sure AGENT_MANIFEST.json exists and is valid`);
+      console.error(`   Try running setup from the codeflow repository root or copy the manifest manually`);
       process.exit(1);
     }
   }

@@ -1,8 +1,10 @@
 import { readFile, readdir } from 'fs/promises';
 import { existsSync } from 'fs';
 import { mkdir, copyFile, stat } from 'fs/promises';
+import { readFile } from \'fs/promises\';
 import path, { basename } from 'path';
 import os from 'os';
+import { findAgentManifest } from \'../utils/manifest-discovery.js\';
 
 /**
  * Canonical Agent Synchronization System
@@ -67,11 +69,12 @@ export class CanonicalSyncer {
    * Load the agent manifest
    */
   private async loadManifest(): Promise<any> {
-    const manifestPath = path.join(process.cwd(), 'AGENT_MANIFEST.json');
-    if (!existsSync(manifestPath)) {
-      throw new Error('AGENT_MANIFEST.json not found. Run setup first.');
+    try {
+      const discovery = await findAgentManifest();
+      return JSON.parse(await readFile(discovery.path, 'utf-8'));
+    } catch (error) {
+      throw new Error(`AGENT_MANIFEST.json not found. ${error.message}`);
     }
-    return JSON.parse(await readFile(manifestPath, 'utf-8'));
   }
 
   /**
