@@ -7,7 +7,7 @@ description: Automated test generation specialist focused on creating
   prevention. Generates unit tests, integration tests, and edge case scenarios
   based on code analysis and requirements.
 mode: subagent
-model: github-copilot/gpt-5
+model: github/copilot-chat
 temperature: 0.2
 category: quality-testing
 tags:

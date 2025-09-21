@@ -2,7 +2,7 @@
 name: cost-optimizer
 description: Cloud cost optimization and resource efficiency specialist. Analyzes cloud spending patterns, identifies cost-saving opportunities, and provides recommendations for resource rightsizing, reserved instances, and cost-effective architectures.
 mode: subagent
-model: github-copilot/gpt-5
+model: github/copilot-chat
 temperature: 0.1
 permission:
   edit: deny

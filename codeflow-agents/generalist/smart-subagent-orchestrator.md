@@ -4,7 +4,7 @@ uats_version: '1.0'
 spec_version: UATS-1.0
 description: Reference documentation for the advanced orchestration agent that coordinates existing, independently configured specialized subagents for complex multi-domain projects. This file documents capabilities and coordination patterns (it is NOT a registry and does NOT control which subagents are available).
 mode: primary
-model: claude-sonnet-4
+model: anthropic/claude-sonnet-4
 temperature: 0.3
 category: generalist
 tags:

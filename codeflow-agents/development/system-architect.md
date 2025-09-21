@@ -10,7 +10,7 @@ description: Macro-level architecture & large-scale transformation strategist.
   architectural decisions – NOT line-level implementation or performance
   micro-tuning.
 mode: subagent
-model: github-copilot/gpt-4.1
+model: github/copilot-chat
 temperature: 0.15
 category: development
 tags:

@@ -6,7 +6,7 @@ description: Lead incident response from detection through resolution and
   post-incident analysis. Coordinate people, decisions, communications, and
   timelines while maintaining service stability and user trust.
 mode: subagent
-model: github-copilot/gpt-5
+model: github/copilot-chat
 temperature: 0.2
 category: operations
 tags:

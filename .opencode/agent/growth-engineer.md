@@ -2,7 +2,7 @@
 name: growth-engineer
 description: Identifies user engagement opportunities and implements growth mechanisms. Specializes in user acquisition strategies, retention optimization, and viral growth feature development. Use this agent when you need to optimize for user growth and engagement.
 mode: subagent
-model: github-copilot/gpt-5
+model: github/copilot-chat
 temperature: 0.3
 permission:
   edit: allow

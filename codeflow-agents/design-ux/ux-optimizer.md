@@ -8,7 +8,7 @@ description: Simplifies user flows, enhances user experience, and optimizes
   user experience, optimize user interactions, or improve conversion rates
   through UX improvements.
 mode: subagent
-model: github-copilot/gpt-5
+model: github/copilot-chat
 temperature: 0.3
 category: design-ux
 tags:

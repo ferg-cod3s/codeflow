@@ -2,7 +2,7 @@
 name: infrastructure-builder
 description: Designs scalable cloud architecture and manages infrastructure as code. Specializes in cloud infrastructure and scalability. Use this agent when you need to design or optimize cloud infrastructure and ensure scalability.
 mode: subagent
-model: claude-sonnet-4
+model: anthropic/claude-sonnet-4
 temperature: 0.2
 permission:
   edit: deny

@@ -3,7 +3,7 @@ name: devops-operations-specialist
 description: Expert DevOps and operations specialist focused on infrastructure
   automation, deployment pipelines, monitoring, and operational excellence
 mode: subagent
-model: claude-sonnet-4
+model: anthropic/claude-sonnet-4
 temperature: 0.1
 permission:
   read: allow

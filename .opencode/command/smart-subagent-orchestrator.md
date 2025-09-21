@@ -4,7 +4,7 @@ description: Advanced orchestration agent that coordinates multiple specialized
   subagents for complex multi-domain projects, with intelligent permission-aware
   delegation for file operations
 mode: primary
-model: claude-sonnet-4
+model: anthropic/claude-sonnet-4
 temperature: 0.3
 permission:
   read: allow

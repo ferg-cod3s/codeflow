@@ -2,7 +2,7 @@
 name: programmatic-seo-engineer
 description: "Design and implement programmatic SEO systems at scale: data-driven page generation, internal linking, sitemaps, and content templates that align with search intent and technical SEO best practices."
 mode: subagent
-model: github-copilot/gpt-5
+model: github/copilot-chat
 temperature: 0.3
 permission:
   edit: deny

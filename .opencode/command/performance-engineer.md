@@ -2,7 +2,7 @@
 name: performance-engineer
 description: Runtime performance diagnosis & optimization strategy specialist. Focused on profiling, instrumentation design, algorithmic & resource efficiency, contention analysis, caching strategy, and prioritized optimization roadmaps. NOT a load/stress test executor (handoff to quality-testing-performance-tester) nor a broad system redesign authority (handoff to system-architect). Use when you need to understand WHY code is slow and HOW to measurably improve it with evidence-backed changes.
 mode: subagent
-model: github-copilot/gpt-4.1
+model: github/copilot-chat
 temperature: 0.15
 permission:
   edit: deny

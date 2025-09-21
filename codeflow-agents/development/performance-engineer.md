@@ -10,7 +10,7 @@ description: Runtime performance diagnosis & optimization strategy specialist.
   (handoff to system-architect). Use when you need to understand WHY code is
   slow and HOW to measurably improve it with evidence-backed changes.
 mode: subagent
-model: github-copilot/gpt-4.1
+model: github/copilot-chat
 temperature: 0.15
 category: development
 tags:
