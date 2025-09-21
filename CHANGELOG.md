@@ -1,10 +1,11 @@
-## [0.10.5](https://github.com/ferg-cod3s/codeflow/compare/v0.9.5...v0.10.5) (2025-09-21)
+## [0.10.6](https://github.com/ferg-cod3s/codeflow/compare/v0.9.5...v0.10.6) (2025-09-21)
 
 
 ### Bug Fixes
 
 * replace js-yaml import with yaml package to resolve import error ([a91db80](https://github.com/ferg-cod3s/codeflow/commit/a91db80c87258930661d84dd3d00c5be9637816a))
 * **sync:** resolve global sync command issue and update build artifacts ([9c39ad9](https://github.com/ferg-cod3s/codeflow/commit/9c39ad9383a3546df32c0ce8a47cca6a7190e76a))
+* update validation script to accept optimized model assignments ([5c643c7](https://github.com/ferg-cod3s/codeflow/commit/5c643c7b92550712d1e4b49ecf10789c98bf645a))
 
 
 ### Features
