@@ -208,10 +208,10 @@ Create atomic, well-structured git commits that follow conventional commit stand
 - Memory usage: < 10MB for commit pattern cache
 - Response time: < 50ms for cache queries
 
-<git-status>
+{{git-status}}
 `!git status -s`
-</git-status>
+{{/git-status}}
 
-<git-diff>
+{{git-diff}}
 `!git diff`
-</git-diff>
+{{/git-diff}}

@@ -112,7 +112,7 @@ This document explains the slash commands available in the codeflow workflow sys
 description: Brief description of what the command does
 ---
 
-Command prompt content with {{variable}} placeholder for user input.
+Command prompt content with $ARGUMENTS placeholder for user input.
 ```
 
 ### OpenCode (`.opencode/command/*.md`)
@@ -124,7 +124,7 @@ agent: agent_name
 model: model_identifier
 ---
 
-Command prompt content with {{variable}} placeholder and !shell commands support.
+Command prompt content with $ARGUMENTS placeholder and !shell commands support.
 ```
 
 ## Usage Examples
@@ -270,5 +270,5 @@ To create custom commands:
 
 1. Add `.md` files to `.claude/commands/` or `.opencode/command/`
 2. Use proper YAML frontmatter format for each platform
-3. Include `{{variable}}` placeholder for user input
+3. Include `$ARGUMENTS` placeholder for user input
 4. Test with `codeflow commands` to verify recognition

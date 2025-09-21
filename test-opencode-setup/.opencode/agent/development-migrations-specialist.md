@@ -2,12 +2,18 @@
 name: development-migrations-specialist
 description: Plan and execute safe, reversible database schema and data migrations with zero/minimal downtime, across PostgreSQL/MySQL/NoSQL systems.
 mode: subagent
-model: github-copilot/gpt-4.1
+model: opencode/grok-code
 temperature: 0.3
 permission:
-  edit: deny
-  bash: deny
-  webfetch: allow
+  edit: allow
+  bash: allow
+  webfetch: deny
+  read: allow
+  grep: allow
+  list: allow
+  glob: allow
+  write: allow
+  patch: allow
 category: development
 tags:
   - database

@@ -5,9 +5,15 @@ mode: subagent
 model: github-copilot/gpt-4.1
 temperature: 0.3
 permission:
-  edit: deny
-  bash: deny
-  webfetch: allow
+  edit: allow
+  bash: allow
+  webfetch: deny
+  read: allow
+  grep: allow
+  list: allow
+  glob: allow
+  write: allow
+  patch: deny
 category: design-ux
 tags:
   - ux

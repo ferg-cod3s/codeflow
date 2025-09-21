@@ -8,21 +8,21 @@ You are tasked with designing, generating, and executing tests for the implement
 
 ## Inputs
 
-- {{scope}}: short description of the feature/area under test
-- {{files}}: any paths that must be tested or that changed
-- {{plan}}: optional path to an implementation plan to derive criteria from
+- <scope>: short description of the feature/area under test
+- <files>: any paths that must be tested or that changed
+- <plan>: optional path to an implementation plan to derive criteria from
 
 ## Process
 
 1. Read context fully
 
-- Read {{plan}} if provided
-- Read all {{files}} fully (no limit/offset)
-- Read related modules that integrate with {{files}}
+- Read <plan> if provided
+- Read all <files> fully (no limit/offset)
+- Read related modules that integrate with <files>
 
 2. Derive testing strategy
 
-- Identify unit, integration, and E2E layers relevant to {{scope}}
+- Identify unit, integration, and E2E layers relevant to <scope>
 - Enumerate critical paths, edge cases, and failure modes
 - Map success criteria from the plan to concrete checks
 
@@ -58,7 +58,7 @@ You are tasked with designing, generating, and executing tests for the implement
 ## Output Template
 
 ```markdown
-## Test Plan for: {{scope}}
+## Test Plan for: <scope>
 
 ### Strategy
 

@@ -2,12 +2,18 @@
 name: database-expert
 description: Optimizes database queries and designs efficient data models. Specializes in performance tuning and database architecture. Use this agent when you need to optimize queries, design schemas, implement migrations, or resolve performance bottlenecks in PostgreSQL, MySQL, MongoDB, or other database systems.
 mode: subagent
-model: github-copilot/gpt-4.1
+model: opencode/grok-code
 temperature: 0.1
 permission:
-  edit: deny
-  bash: deny
-  webfetch: allow
+  edit: allow
+  bash: allow
+  webfetch: deny
+  read: allow
+  grep: allow
+  list: allow
+  glob: allow
+  write: allow
+  patch: allow
 category: development
 tags:
   - database

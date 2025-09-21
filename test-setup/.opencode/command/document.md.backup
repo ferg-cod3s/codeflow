@@ -8,17 +8,17 @@ You are tasked with producing high-quality documentation based on the implemente
 
 ## Inputs
 
-- {{audience}}: user | api | developer | mixed
-- {{plan}}: optional path to implementation plan
-- {{files}}: key code files for reference
-- {{changelog}}: optional list of notable changes
+- <audience>: user | api | developer | mixed
+- <plan>: optional path to implementation plan
+- <files>: key code files for reference
+- <changelog>: optional list of notable changes
 
 ## Process
 
 1. Gather and read context
 
-- Read {{plan}} if provided
-- Read all {{files}} fully (no limit/offset)
+- Read <plan> if provided
+- Read all <files> fully (no limit/offset)
 - Skim related modules to confirm behavior and constraints
 
 2. Choose document set by audience

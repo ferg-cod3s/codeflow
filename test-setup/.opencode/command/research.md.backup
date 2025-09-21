@@ -6,18 +6,18 @@ description: Research a ticket or provider a prompt for ad-hoc research
 
 You are tasked with conducting comprehensive research across the codebase to answer user questions by spawning tasks and synthesizing their findings.
 
-The user will provide a {{ticket}} for you to read and begin researching.
+The user will provide a <ticket> for you to read and begin researching.
 
 ## Steps to follow after receiving the research query:
 
-1. **Read the {{ticket}} first:**
+1. **Read the <ticket> first:**
    - **IMPORTANT**: Use the Read tool WITHOUT limit/offset parameters to read entire files
    - **CRITICAL**: Read these files yourself in the main context before spawning any sub-tasks
    - This ensures you have full context before decomposing the research
 
-2. **Analyze and decompose the {{ticket}}:**
-   - Break down the user's {{ticket}} into composable research areas
-   - Take time to think about the underlying patterns, connections, and architectural the {{ticket}} has provided
+2. **Analyze and decompose the <ticket>:**
+   - Break down the user's <ticket> into composable research areas
+   - Take time to think about the underlying patterns, connections, and architectural the <ticket> has provided
    - Identify specific components, patterns, or concepts to investigate
    - Create a research plan using TodoWrite to track all subtasks
    - Consider which directories, files, or architectural patterns are relevant
@@ -63,9 +63,9 @@ The user will provide a {{ticket}} for you to read and begin researching.
 
 Use the following metadata to for the research document frontmatter
 
-{{metadata}}
+<metadata>
 !hack/spec_metadata.sh
-{{/metadata}}
+</metadata>
 
 6. **Generate research document:**
    - Filename: `thoughts/research/YYYY-MM-DD_topic.md`

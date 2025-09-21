@@ -2,7 +2,7 @@
 name: deployment-wizard
 description: Sets up CI/CD pipelines and automates deployment processes. Specializes in deployment automation and DevOps practices. Use this agent when you need to set up or improve deployment processes and CI/CD workflows.
 mode: subagent
-model: anthropic/claude-sonnet-4
+model: opencode/grok-code
 temperature: 0.2
 permission:
   edit: allow

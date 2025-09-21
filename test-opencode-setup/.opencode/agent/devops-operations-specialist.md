@@ -1,16 +1,15 @@
 ---
 name: devops-operations-specialist
-description: Expert DevOps and operations specialist focused on infrastructure
-  automation, deployment pipelines, monitoring, and operational excellence
+description: Expert DevOps and operations specialist focused on infrastructure automation, deployment pipelines, monitoring, and operational excellence
 mode: subagent
 model: anthropic/claude-sonnet-4
 temperature: 0.1
 permission:
-  read: allow
-  write: allow
-  edit: allow
-  patch: allow
-  execute: allow
+  edit: deny
+  bash: allow
+  webfetch: allow
+  str_replace_editor: allow
+  computer_use: allow
 category: operations
 tags:
   - devops

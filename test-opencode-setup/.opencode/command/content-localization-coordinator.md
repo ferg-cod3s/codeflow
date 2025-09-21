@@ -2,7 +2,7 @@
 name: content-localization-coordinator
 description: Coordinate localization (l10n) and internationalization (i18n) workflows including translation management, locale setup, and cultural adaptation processes.
 mode: subagent
-model: github-copilot/gpt-4.1
+model: github-copilot/gpt-5
 temperature: 0.3
 permission:
   edit: deny

@@ -1,3 +1,14 @@
+## [0.10.7](https://github.com/ferg-cod3s/codeflow/compare/v0.10.6...v0.10.7) (2025-09-21)
+
+
+### Bug Fixes
+
+* update all agent models to use correct github-copilot/gpt-4.1 format ([16b63b1](https://github.com/ferg-cod3s/codeflow/commit/16b63b104f192e3798567adadc25a62d79f6de5e))
+* update all agent models to use correct provider/model format ([438b0f9](https://github.com/ferg-cod3s/codeflow/commit/438b0f92510a3e141efcb16138fbec8a72f89292))
+* update all agent models to use correct provider/model identifiers ([69f7375](https://github.com/ferg-cod3s/codeflow/commit/69f7375d5537d0ef819b4545381f66a10c0fc50e))
+
+
+
 ## [0.10.6](https://github.com/ferg-cod3s/codeflow/compare/v0.9.5...v0.10.6) (2025-09-21)
 
 
