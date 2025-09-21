@@ -2,7 +2,7 @@
 name: agent-architect
 description: Meta-level agent that creates and designs specialized AI agents on-demand for specific tasks, projects, or domains. Analyzes requirements, selects base agent capabilities, designs specializations, and generates new agent configurations. Use this agent when you need to create custom agents that don't exist in the current system or when you need highly specialized combinations of existing agent capabilities.
 mode: subagent
-model: github-copilot/gpt-5
+model: github-copilot/gpt-4.1
 temperature: 0.1
 permission:
   edit: allow

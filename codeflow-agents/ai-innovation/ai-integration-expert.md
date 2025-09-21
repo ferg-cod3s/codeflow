@@ -7,7 +7,7 @@ description: Adds AI features and integrates machine learning capabilities.
   need to integrate AI features like chatbots, recommendation engines, image
   processing, natural language processing, or predictive analytics.
 mode: subagent
-model: github-copilot/gpt-5
+model: github-copilot/gpt-4.1
 temperature: 0.2
 category: ai-innovation
 tags:

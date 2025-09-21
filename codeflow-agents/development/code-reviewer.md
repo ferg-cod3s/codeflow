@@ -11,7 +11,7 @@ description: Engineering-level static code quality review & refactor opportunity
   (performance-engineer), macro-architecture redesign (system-architect),
   schema/query tuning (database-expert), or API contract design (api-builder).
 mode: subagent
-model: github-copilot/gpt-5
+model: github-copilot/gpt-4.1
 temperature: 0.1
 category: development
 tags:

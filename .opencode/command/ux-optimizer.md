@@ -2,7 +2,7 @@
 name: ux-optimizer
 description: Simplifies user flows, enhances user experience, and optimizes conversion paths. Specializes in user journey optimization, interaction design, and conversion optimization. Use this agent when you need to improve user experience, optimize user interactions, or improve conversion rates through UX improvements.
 mode: subagent
-model: github-copilot/gpt-5
+model: github-copilot/gpt-4.1
 temperature: 0.3
 permission:
   edit: deny
