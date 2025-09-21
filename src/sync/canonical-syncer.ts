@@ -72,7 +72,7 @@ export class CanonicalSyncer {
       const discovery = await findAgentManifest();
       return JSON.parse(await readFile(discovery.path, 'utf-8'));
     } catch (error) {
-      throw new Error(`AGENT_MANIFEST.json not found. ${error.message}`);
+      throw new Error(`AGENT_MANIFEST.json not found. ${(error as Error).message}`);
     }
   }
 

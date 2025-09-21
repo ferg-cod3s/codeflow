@@ -1,8 +1,8 @@
 ---
 name: document
 description: Produce high-quality documentation for implemented features
-version: 2.0.0-internal
-last_updated: 2025-09-13
+version: 2.0.1
+last_updated: 2025-09-21
 command_schema_version: 1.0
 inputs:
   - name: audience
