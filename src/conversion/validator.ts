@@ -3,7 +3,8 @@ import { ValidationEngine } from '../yaml/validation-engine';
 import { readFile, readdir, stat } from 'fs/promises';
 import { existsSync } from 'fs';
 import path from 'path';
-import { findAgentManifest } from "../utils/manifest-discovery.js";
+import { findAgentManifest } from '../utils/manifest-discovery.js';
+
 /**
  * Validation result interface
  */
