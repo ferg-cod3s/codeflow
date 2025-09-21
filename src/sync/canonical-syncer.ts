@@ -1,10 +1,9 @@
 import { readFile, readdir } from 'fs/promises';
 import { existsSync } from 'fs';
 import { mkdir, copyFile, stat } from 'fs/promises';
-import { readFile } from \'fs/promises\';
 import path, { basename } from 'path';
 import os from 'os';
-import { findAgentManifest } from \'../utils/manifest-discovery.js\';
+import { findAgentManifest } from '../utils/manifest-discovery.js';
 
 /**
  * Canonical Agent Synchronization System
