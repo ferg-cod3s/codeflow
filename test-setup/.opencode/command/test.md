@@ -90,4 +90,4 @@ You are tasked with designing, generating, and executing tests for the implement
 - Known gaps: [...]
 ```
 
-<scope>$ARGUMENTS</scope>
+{{scope}}

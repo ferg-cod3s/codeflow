@@ -1,11 +1,9 @@
 import { readFile, readdir } from 'fs/promises';
 import { existsSync } from 'fs';
 import { mkdir, copyFile, stat } from 'fs/promises';
-import { readFile } from \'fs/promises\';
 import path, { basename } from 'path';
 import os from 'os';
-import { findAgentManifest } from \'../utils/manifest-discovery.js\';
-
+import { findAgentManifest } from '../utils/manifest-discovery.js';
 /**
  * Canonical Agent Synchronization System
  *
@@ -14,7 +12,8 @@ import { findAgentManifest } from \'../utils/manifest-discovery.js\';
  */
 
 export interface SyncOptions {
-  projectPath?: string;  target: 'project' | 'global' | 'all';
+  projectPath?: string;
+  target: 'project' | 'global' | 'all';
   sourceFormat: 'base' | 'claude-code' | 'opencode';
   dryRun: boolean;
   force: boolean;
@@ -73,7 +72,9 @@ export class CanonicalSyncer {
       const discovery = await findAgentManifest();
       return JSON.parse(await readFile(discovery.path, 'utf-8'));
     } catch (error) {
-      throw new Error(`AGENT_MANIFEST.json not found. ${error.message}`);
+      throw new Error(
+        `AGENT_MANIFEST.json not found. ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
 
@@ -450,23 +451,22 @@ export class CanonicalSyncer {
         const sourceFile = path.join(sourceCommandDir, file);
         // Determine target paths based on sync target
         const targetPaths: string[] = [];
-        
+
         if (options.target === 'global' || options.target === 'all') {
           targetPaths.push(
             path.join(os.homedir(), '.claude', 'commands', file),
             path.join(os.homedir(), '.config', 'opencode', 'command', file)
           );
         }
-        
+
         if (options.target === 'project' || options.target === 'all') {
           const projectPath = options.projectPath || process.cwd();
           targetPaths.push(
             path.join(projectPath, '.claude', 'commands', file),
             path.join(projectPath, '.opencode', 'command', file)
           );
-        
         }
-        
+
         for (const targetPath of targetPaths) {
           const tempPath = `${targetPath}.tmp`;
 

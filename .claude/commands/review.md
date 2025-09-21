@@ -368,4 +368,4 @@ Systematically validate implementation correctness by comparing executed changes
 - Memory usage: < 20MB for validation pattern cache
 - Response time: < 100ms for cache queries
 
-<plan_path>$ARGUMENTS</plan_path>
+{{plan_path}}

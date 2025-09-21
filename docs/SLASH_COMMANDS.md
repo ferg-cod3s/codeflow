@@ -89,6 +89,19 @@ This document explains the slash commands available in the codeflow workflow sys
 - Tests all automated and manual success criteria
 - Identifies deviations and categorizes their severity
 - Generates comprehensive review report with recommendations
+#### `/project-docs`
+
+**Purpose**: Generate comprehensive project documentation including PRD, security docs, user flows, and more
+**Usage**: `/project-docs [project prompt or --analyze-existing]`
+**Model**: GPT-5
+**Process**:
+
+- Orchestrates multiple specialized agents to generate complete project documentation
+- Creates PRD, security documentation, user flows, API docs, architecture docs, and deployment guides
+- Analyzes project prompts or existing project structure
+- Generates structured documentation with consistent formatting
+
+
 
 ## Platform-Specific Formats
 
@@ -168,6 +181,15 @@ Command prompt content with $ARGUMENTS placeholder and !shell commands support.
 ```bash
 # Both platforms
 /review thoughts/plans/oauth-integration-plan.md
+### Project Documentation Command
+
+```bash
+# Generate comprehensive project documentation from a prompt
+/project-docs "Create a task management application with user authentication, team collaboration, and real-time updates"
+
+# Generate documentation by analyzing existing project structure
+/project-docs --analyze-existing
+```
 ```
 
 ## Agent Integration

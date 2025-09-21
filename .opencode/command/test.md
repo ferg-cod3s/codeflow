@@ -370,4 +370,4 @@ Create complete test coverage including automated unit/integration tests, manual
 - Memory usage: < 25MB for testing pattern cache
 - Response time: < 75ms for cache queries
 
-<scope>$ARGUMENTS</scope>
+{{scope}}

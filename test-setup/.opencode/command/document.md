@@ -120,4 +120,4 @@ version: <semver or commit>
   - `YYYY-MM-DD-<feature>-api.md` (if audience includes api)
   - `YYYY-MM-DD-<feature>-dev.md` (if audience includes developer)
 
-<audience>$ARGUMENTS</audience>
+{{audience}}

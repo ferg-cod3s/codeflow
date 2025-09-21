@@ -313,4 +313,4 @@ Create comprehensive, actionable implementation plans by thoroughly researching 
 - Memory usage: < 25MB for planning pattern cache
 - Response time: < 100ms for cache queries
 
-<files>$ARGUMENTS</files>
+{{files}}

@@ -288,4 +288,4 @@ When the actual codebase differs from the plan:
 - Memory usage: < 20MB for execution pattern cache
 - Response time: < 75ms for cache queries
 
-<plan_path>$ARGUMENTS</plan_path>
+{{plan_path}}

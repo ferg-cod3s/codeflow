@@ -337,4 +337,4 @@ version: <semver or commit>
 - Memory usage: < 15MB for documentation template cache
 - Response time: < 100ms for cache queries
 
-<audience>$ARGUMENTS</audience>
+{{audience}}

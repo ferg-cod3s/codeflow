@@ -345,4 +345,4 @@ last_updated_by: Assistant
 - Memory usage: < 30MB for research pattern cache
 - Response time: < 150ms for cache queries
 
-<ticket>$ARGUMENTS</ticket>
+{{ticket}}

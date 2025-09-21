@@ -1,4 +1,4 @@
-## [0.10.5](https://github.com/ferg-cod3s/codeflow/compare/v0.9.5...v0.10.5) (2025-09-18)
+## [0.10.5](https://github.com/ferg-cod3s/codeflow/compare/v0.9.5...v0.10.5) (2025-09-21)
 
 
 ### Bug Fixes

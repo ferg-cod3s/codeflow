@@ -277,7 +277,7 @@ Commands are located in \`.opencode/command/\`.
 
 export async function setup(
   projectPath?: string,
-  options: { force?: boolean; type?: string } = {}
+  options: { force?: boolean; type?: string; global?: boolean } = {}
 ) {
   const inputPath = projectPath || process.cwd();
 

@@ -174,4 +174,4 @@ Use the following metadata to for the research document frontmatter
   - Use snake_case for multi-word field names (e.g., `last_updated`, `git_commit`)
   - Tags should be relevant to the research topic and components studied
 
-<ticket>$ARGUMENTS</ticket>
+{{ticket}}
