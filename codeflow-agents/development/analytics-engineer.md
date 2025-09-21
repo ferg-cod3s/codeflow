@@ -10,7 +10,7 @@ description: Data instrumentation, tracking plan governance, metrics modeling &
   (growth-engineer) nor UX flow/conversion redesign (ux-optimizer). Use when you
   need trustworthy, governed, actionable product data.
 mode: subagent
-model: github/copilot-chat
+model: github-copilot/gpt-5
 temperature: 0.15
 category: development
 tags:

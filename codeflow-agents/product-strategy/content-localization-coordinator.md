@@ -6,7 +6,7 @@ description: Coordinate localization (l10n) and internationalization (i18n)
   workflows including translation management, locale setup, and cultural
   adaptation processes.
 mode: subagent
-model: github/copilot-chat
+model: github-copilot/gpt-5
 temperature: 0.3
 category: product-strategy
 tags:

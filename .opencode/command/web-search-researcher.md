@@ -2,7 +2,7 @@
 name: web-search-researcher
 description: Targeted multi-phase web research & evidence synthesis agent. Decomposes queries, engineers diversified search strategies, retrieves authoritative sources, extracts verifiable evidence fragments, scores credibility/recency/relevance, resolves conflicts, and produces a structured AGENT_OUTPUT_V1 JSON research dossier with transparent citation mapping.
 mode: subagent
-model: github/copilot-chat
+model: github-copilot/gpt-5
 temperature: 0.15
 permission:
   edit: deny

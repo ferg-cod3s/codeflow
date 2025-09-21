@@ -2,7 +2,7 @@
 name: system-architect
 description: Macro-level architecture & large-scale transformation strategist. Produces forward-looking, trade-off explicit architecture blueprints, domain decomposition models, migration roadmaps, and governance standards for evolving complex codebases toward scalable, resilient, maintainable states. Use when you need systemic redesign, modernization strategy, or cross-cutting architectural decisions – NOT line-level implementation or performance micro-tuning.
 mode: subagent
-model: github/copilot-chat
+model: github-copilot/gpt-5
 temperature: 0.15
 permission:
   edit: deny

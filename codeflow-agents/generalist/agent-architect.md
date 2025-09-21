@@ -9,7 +9,7 @@ description: Meta-level agent that creates and designs specialized AI agents
   that don't exist in the current system or when you need highly specialized
   combinations of existing agent capabilities.
 mode: subagent
-model: github/copilot-chat
+model: github-copilot/gpt-5
 temperature: 0.1
 category: generalist
 tags:

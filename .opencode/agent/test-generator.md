@@ -2,7 +2,7 @@
 name: test-generator
 description: Automated test generation specialist focused on creating comprehensive test suites for code coverage, quality assurance, and regression prevention. Generates unit tests, integration tests, and edge case scenarios based on code analysis and requirements.
 mode: subagent
-model: github/copilot-chat
+model: github-copilot/gpt-5
 temperature: 0.2
 permission:
   edit: deny

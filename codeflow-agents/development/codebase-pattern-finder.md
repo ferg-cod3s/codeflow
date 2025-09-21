@@ -8,7 +8,7 @@ description: codebase-pattern-finder is a useful subagent_type for finding
   looking for! It's sorta like codebase-locator, but it will not only tell you
   the location of files, it will also give you code details!
 mode: subagent
-model: github/copilot-chat
+model: github-copilot/gpt-5
 temperature: 0.1
 category: development
 tags:

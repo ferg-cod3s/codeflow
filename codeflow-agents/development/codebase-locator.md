@@ -8,7 +8,7 @@ description: Universal File & Directory Location Specialist - produces a
   contents. Use to discover WHERE code, tests, configs, docs, and types live
   before any deeper analysis.
 mode: subagent
-model: github/copilot-chat
+model: github-copilot/gpt-5
 temperature: 0.1
 category: development
 tags:

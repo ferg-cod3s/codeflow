@@ -2,7 +2,7 @@
 name: operations-incident-commander
 description: Lead incident response from detection through resolution and post-incident analysis. Coordinate people, decisions, communications, and timelines while maintaining service stability and user trust.
 mode: subagent
-model: github/copilot-chat
+model: github-copilot/gpt-5
 temperature: 0.2
 permission:
   edit: allow

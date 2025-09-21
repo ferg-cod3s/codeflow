@@ -10,7 +10,7 @@ description: Defensive application & platform security analysis agent. Performs
   performance, maintainability, compliance). Not a penetration tester—purely
   defensive, static & configuration oriented.
 mode: subagent
-model: github/copilot-chat
+model: github-copilot/gpt-5
 temperature: 0.1
 category: quality-testing
 tags:

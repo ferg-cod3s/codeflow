@@ -2,7 +2,7 @@
 name: ai-integration-expert
 description: Adds AI features and integrates machine learning capabilities. Specializes in AI/ML implementation and optimization. Use this agent when you need to integrate AI features like chatbots, recommendation engines, image processing, natural language processing, or predictive analytics.
 mode: subagent
-model: github/copilot-chat
+model: github-copilot/gpt-5
 temperature: 0.2
 permission:
   edit: deny

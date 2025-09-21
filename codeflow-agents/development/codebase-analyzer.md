@@ -8,7 +8,7 @@ description: Specialized implementation analysis agent that explains exactly HOW
   never proposes redesigns, and never suggests architectural changes—purely
   descriptive, evidence-backed explanation of existing behavior.
 mode: subagent
-model: github/copilot-chat
+model: github-copilot/gpt-5
 temperature: 0.1
 category: development
 tags:

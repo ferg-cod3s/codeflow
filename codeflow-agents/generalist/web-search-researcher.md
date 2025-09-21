@@ -8,7 +8,7 @@ description: Targeted multi-phase web research & evidence synthesis agent.
   credibility/recency/relevance, resolves conflicts, and produces a structured
   AGENT_OUTPUT_V1 JSON research dossier with transparent citation mapping.
 mode: subagent
-model: github/copilot-chat
+model: github-copilot/gpt-5
 temperature: 0.15
 category: generalist
 tags:

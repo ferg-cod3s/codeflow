@@ -12,7 +12,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const VALID_MODELS = ['opencode/grok-code', 'github/copilot-chat', 'anthropic/claude-sonnet-4'];
+const VALID_MODELS = ['opencode/grok-code', 'opencode/code-supernova', 'github-copilot/gpt-5', 'github-copilot/gpt-5-mini', 'anthropic/claude-sonnet-4'];
 const INVALID_MODELS = ['opencode/grok-code-fast'];
 
 function findAgentFiles(dir) {

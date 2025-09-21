@@ -10,7 +10,7 @@ description: Focused documentation discovery & categorization agent for the
   deep semantic analysis. Produces an AGENT_OUTPUT_V1 JSON map enabling
   downstream analyzers (thoughts-analyzer) to selectively extract value.
 mode: subagent
-model: github/copilot-chat
+model: github-copilot/gpt-5
 temperature: 0.1
 category: generalist
 tags:

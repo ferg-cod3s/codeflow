@@ -7,7 +7,7 @@ description: CI/CD release coordination and deployment management specialist.
   rollback procedures. Ensures smooth transitions from development to production
   with proper testing gates and monitoring.
 mode: subagent
-model: github/copilot-chat
+model: github-copilot/gpt-5
 temperature: 0.1
 category: operations
 tags:
