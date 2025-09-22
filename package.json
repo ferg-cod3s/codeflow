@@ -1,10 +1,10 @@
 {
   "name": "@agentic-codeflow/cli",
-  "version": "0.10.7",
+  "version": "0.10.8",
   "description": "CLI for Agentic CodeFlow AI-assisted development workflows",
   "type": "module",
   "bin": {
-    "codeflow": "./codeflow-0.10.7.js"
+    "codeflow": "./codeflow-0.10.8.js"
   },
   "keywords": [
     "cli",

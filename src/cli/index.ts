@@ -6,6 +6,7 @@ import { setup } from './setup';
 import { convert } from './convert';
 import { sync } from './sync';
 import { startWatch } from './watch';
+import { CatalogCLI } from './catalog';
 import packageJson from '../../package.json';
 import { join } from 'node:path';
 import { existsSync } from 'node:fs';
@@ -129,6 +130,18 @@ Commands:
   sync [options]             Sync agents and commands across formats
   convert <source> <target> <format>  Convert agents between formats
   watch start [options]      Start automatic file synchronization daemon
+  catalog <subcommand>       Browse, search, and install catalog items
+
+Catalog Subcommands:
+  catalog list [type] [source]     List catalog items (optional: filter by type or source)
+  catalog search <term> [options]  Search catalog items
+  catalog info <item-id>           Show detailed information about an item
+  catalog install <item-id> [targets]  Install item to specified targets
+  catalog import <source> [options]    Import items from external source
+  catalog update [item-ids]        Update catalog items
+  catalog remove <item-id>         Remove item from catalog
+  catalog health-check             Check catalog health and integrity
+  catalog sync [options]           Sync catalog with external sources
 
 Options:
   -f, --force               Force overwrite existing setup
@@ -149,6 +162,9 @@ Examples:
   codeflow sync --global --dry-run     # Preview global sync changes
   codeflow convert ./codeflow-agents ./claude-agents claude-code
   codeflow watch start --global
+  codeflow catalog list agent          # List all agents
+  codeflow catalog search "code review"  # Search for code review items
+  codeflow catalog install claude-templates/blog-writer --target claude-code
 `);
   process.exit(0);
 }
@@ -230,6 +246,81 @@ switch (command) {
       console.error(`Error: Unknown watch action '${watchAction}'`);
       console.error('Available actions: start');
       process.exit(1);
+    }
+    break;
+  case 'catalog':
+    const catalogCLI = new CatalogCLI();
+    const catalogCommand = args[1];
+
+    switch (catalogCommand) {
+      case 'list':
+        const listType = args[2];
+        const listSource = args[3];
+        await catalogCLI.list(listType, listSource);
+        break;
+      case 'search':
+        const searchTerm = args[2];
+        if (!searchTerm) {
+          console.error('Error: search requires a search term');
+          console.error('Usage: codeflow catalog search <term>');
+          process.exit(1);
+        }
+        await catalogCLI.search(searchTerm);
+        break;
+      case 'info':
+        const itemId = args[2];
+        if (!itemId) {
+          console.error('Error: info requires an item ID');
+          console.error('Usage: codeflow catalog info <item-id>');
+          process.exit(1);
+        }
+        await catalogCLI.info(itemId);
+        break;
+      case 'install':
+        const installItemId = args[2];
+        const installTargets = args[3] ? args[3].split(',') : ['claude-code'];
+        if (!installItemId) {
+          console.error('Error: install requires an item ID');
+          console.error('Usage: codeflow catalog install <item-id> [targets]');
+          process.exit(1);
+        }
+        await catalogCLI.install(installItemId, installTargets, {
+          dryRun: values['dry-run'],
+          force: values.force
+        });
+        break;
+      case 'import':
+        const importSource = args[2];
+        if (!importSource) {
+          console.error('Error: import requires a source name');
+          console.error('Usage: codeflow catalog import <source>');
+          process.exit(1);
+        }
+        await catalogCLI.import(importSource);
+        break;
+      case 'update':
+        const updateItemIds = args[2] ? args[2].split(',') : undefined;
+        await catalogCLI.update(updateItemIds);
+        break;
+      case 'remove':
+        const removeItemId = args[2];
+        if (!removeItemId) {
+          console.error('Error: remove requires an item ID');
+          console.error('Usage: codeflow catalog remove <item-id>');
+          process.exit(1);
+        }
+        await catalogCLI.remove(removeItemId, { force: values.force });
+        break;
+      case 'health-check':
+        await catalogCLI.healthCheck();
+        break;
+      case 'sync':
+        await catalogCLI.sync({ dryRun: values['dry-run'] });
+        break;
+      default:
+        console.error(`Error: Unknown catalog command '${catalogCommand}'`);
+        console.error('Available catalog commands: list, search, info, install, import, update, remove, health-check, sync');
+        process.exit(1);
     }
     break;
   default:

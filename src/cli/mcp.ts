@@ -2,6 +2,7 @@ import { spawn } from "node:child_process";
 import { join } from "node:path";
 import { existsSync } from "node:fs";
 import { writeFile, readFile } from "node:fs/promises";
+import CLIErrorHandler from "./error-handler.js";
 
 interface MCPServerConfig {
   name: string;
@@ -64,7 +65,14 @@ async function loadClaudeConfig(): Promise<any> {
     const content = await readFile(configPath, "utf-8");
     return JSON.parse(content);
   } catch (error) {
-    console.warn(`⚠️  Could not parse Claude Desktop config: ${error}`);
+    CLIErrorHandler.displayWarning(
+      `Could not parse Claude Desktop config: ${(error as Error).message}`,
+      [
+        'Check if the config file is valid JSON',
+        'Verify file permissions',
+        'The config will be recreated if needed'
+      ]
+    );
     return { mcpServers: {} };
   }
 }
@@ -92,7 +100,14 @@ async function loadWarpConfig(): Promise<any> {
     const content = await readFile(configPath, "utf-8");
     return JSON.parse(content);
   } catch (error) {
-    console.warn(`⚠️  Could not parse Warp config: ${error}`);
+    CLIErrorHandler.displayWarning(
+      `Could not parse Warp config: ${(error as Error).message}`,
+      [
+        'Check if the config file is valid JSON',
+        'Verify file permissions',
+        'The config will be recreated if needed'
+      ]
+    );
     return { mcpServers: {} };
   }
 }
@@ -120,7 +135,14 @@ async function loadCursorConfig(): Promise<any> {
     const content = await readFile(configPath, "utf-8");
     return JSON.parse(content);
   } catch (error) {
-    console.warn(`⚠️  Could not parse Cursor config: ${error}`);
+    CLIErrorHandler.displayWarning(
+      `Could not parse Cursor config: ${(error as Error).message}`,
+      [
+        'Check if the config file is valid JSON',
+        'Verify file permissions',
+        'The config will be recreated if needed'
+      ]
+    );
     return { mcpServers: {} };
   }
 }
@@ -144,130 +166,168 @@ export async function mcpServer(action: string, options: { background?: boolean,
   const codeflowDir = join(import.meta.dir, "../..");
   const serverPath = join(codeflowDir, "mcp/codeflow-server.mjs");
   
-  if (!existsSync(serverPath)) {
-    console.error(`❌ MCP server not found: ${serverPath}`);
-    process.exit(1);
+  // Validate server path exists
+  const serverValidation = CLIErrorHandler.validatePath(serverPath, 'file');
+  if (!serverValidation.valid) {
+    CLIErrorHandler.displayValidationResult(serverValidation, 'MCP server');
+    return;
   }
   
-  switch (action) {
-    case "start":
-      console.log("🚀 Starting Codeflow MCP Server...");
-      console.log(`📁 Working directory: ${process.cwd()}`);
-      console.log(`🔧 Server path: ${serverPath}`);
-      
-      const serverProcess = spawn("bun", ["run", serverPath], {
-        stdio: options.background ? "ignore" : "inherit",
-        detached: options.background,
-        env: {
-          ...process.env,
-          CODEFLOW_PORT: options.port?.toString()
-        }
-      });
-      
-      if (options.background) {
-        serverProcess.unref();
-        console.log(`✅ MCP Server started in background (PID: ${serverProcess.pid})`);
-        console.log("   Use 'codeflow mcp stop' to stop the server");
-      } else {
-        console.log("🔗 MCP Server running (Ctrl+C to stop)");
+  try {
+    switch (action) {
+      case "start":
+        CLIErrorHandler.displayProgress("Starting Codeflow MCP Server");
+        CLIErrorHandler.displayProgress(`Working directory: ${process.cwd()}`);
+        CLIErrorHandler.displayProgress(`Server path: ${serverPath}`);
         
-        // Handle graceful shutdown
-        process.on('SIGINT', () => {
-          console.log("\n⏹️  Stopping MCP Server...");
-          serverProcess.kill('SIGTERM');
-          process.exit(0);
-        });
-        
-        serverProcess.on('close', (code) => {
-          if (code === 0) {
-            console.log("✅ MCP Server stopped");
-          } else {
-            console.log(`❌ MCP Server exited with code ${code}`);
+        const serverProcess = spawn("bun", ["run", serverPath], {
+          stdio: options.background ? "ignore" : "inherit",
+          detached: options.background,
+          env: {
+            ...process.env,
+            CODEFLOW_PORT: options.port?.toString()
           }
-          process.exit(code || 0);
         });
-      }
-      break;
-      
-    case "stop":
-      // Find and stop background MCP server processes
-      const { execSync } = await import("node:child_process");
-      try {
-        if (process.platform === "win32") {
-          execSync('taskkill /f /im bun.exe /fi "WINDOWTITLE eq codeflow-server*"');
+        
+        if (options.background) {
+          serverProcess.unref();
+          CLIErrorHandler.displaySuccess(
+            `MCP Server started in background (PID: ${serverProcess.pid})`,
+            [
+              "Use 'codeflow mcp stop' to stop the server",
+              "Check server status with 'codeflow mcp status'"
+            ]
+          );
         } else {
-          execSync("pkill -f 'codeflow-server.mjs'");
+          console.log("🔗 MCP Server running (Ctrl+C to stop)");
+          
+          // Handle graceful shutdown
+          process.on('SIGINT', () => {
+            console.log("\n⏹️  Stopping MCP Server...");
+            serverProcess.kill('SIGTERM');
+            process.exit(0);
+          });
+          
+          serverProcess.on('close', (code) => {
+            if (code === 0) {
+              console.log("✅ MCP Server stopped");
+            } else {
+              console.log(`❌ MCP Server exited with code ${code}`);
+            }
+            process.exit(code || 0);
+          });
         }
-        console.log("✅ Stopped MCP Server");
-      } catch (error) {
-        console.log("⚠️  No running MCP Server found");
-      }
-      break;
-      
-    case "restart":
-      console.log("🔄 Restarting Codeflow MCP Server...");
-      
-      // Stop existing server
-      const { execSync: restartExecSync } = await import("node:child_process");
-      try {
-        if (process.platform === "win32") {
-          restartExecSync('taskkill /f /im bun.exe /fi "WINDOWTITLE eq codeflow-server*"');
-        } else {
-          restartExecSync("pkill -f 'codeflow-server.mjs'");
+        break;
+        
+      case "stop":
+        CLIErrorHandler.displayProgress("Stopping MCP Server");
+        // Find and stop background MCP server processes
+        const { execSync } = await import("node:child_process");
+        try {
+          if (process.platform === "win32") {
+            execSync('taskkill /f /im bun.exe /fi "WINDOWTITLE eq codeflow-server*"');
+          } else {
+            execSync("pkill -f 'codeflow-server.mjs'");
+          }
+          CLIErrorHandler.displaySuccess("Stopped MCP Server");
+        } catch (error) {
+          CLIErrorHandler.displayWarning(
+            "No running MCP Server found",
+            [
+              'Check if the server is already stopped',
+              'Use "codeflow mcp status" to check server status'
+            ]
+          );
         }
-        console.log("⏹️  Stopped existing MCP Server");
-      } catch (error) {
-        console.log("ℹ️  No existing MCP Server found");
-      }
-      
-      // Wait a moment for cleanup
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Start server in background by default
-      console.log("🚀 Starting MCP Server...");
-      const restartServerProcess = spawn("bun", ["run", serverPath], {
-        stdio: "ignore",
-        detached: true,
-        env: {
-          ...process.env,
-          CODEFLOW_PORT: options.port?.toString()
+        break;
+        
+      case "restart":
+        CLIErrorHandler.displayProgress("Restarting Codeflow MCP Server");
+        
+        // Stop existing server
+        const { execSync: restartExecSync } = await import("node:child_process");
+        try {
+          if (process.platform === "win32") {
+            restartExecSync('taskkill /f /im bun.exe /fi "WINDOWTITLE eq codeflow-server*"');
+          } else {
+            restartExecSync("pkill -f 'codeflow-server.mjs'");
+          }
+          console.log("⏹️  Stopped existing MCP Server");
+        } catch (error) {
+          console.log("ℹ️  No existing MCP Server found");
         }
-      });
-      
-      restartServerProcess.unref();
-      console.log(`✅ MCP Server restarted in background (PID: ${restartServerProcess.pid})`);
-      console.log("🔄 MCP clients will now have access to updated agents");
-      break;
-      
-    case "status":
-      // Check if MCP server is running
-      const { execSync: statusExecSync } = await import("node:child_process");
-      try {
-        if (process.platform === "win32") {
-          const output = statusExecSync('tasklist /fi "IMAGENAME eq bun.exe" /fo csv', { encoding: "utf-8" });
-          const isRunning = output.includes("codeflow-server");
-          console.log(isRunning ? "✅ MCP Server is running" : "❌ MCP Server is not running");
-        } else {
-          statusExecSync("pgrep -f 'codeflow-server.mjs'", { stdio: "ignore" });
-          console.log("✅ MCP Server is running");
+        
+        // Wait a moment for cleanup
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Start server in background by default
+        console.log("🚀 Starting MCP Server...");
+        const restartServerProcess = spawn("bun", ["run", serverPath], {
+          stdio: "ignore",
+          detached: true,
+          env: {
+            ...process.env,
+            CODEFLOW_PORT: options.port?.toString()
+          }
+        });
+        
+        restartServerProcess.unref();
+        CLIErrorHandler.displaySuccess(
+          `MCP Server restarted in background (PID: ${restartServerProcess.pid})`,
+          [
+            "MCP clients will now have access to updated agents",
+            "Use 'codeflow mcp status' to check server status"
+          ]
+        );
+        break;
+        
+      case "status":
+        CLIErrorHandler.displayProgress("Checking MCP Server status");
+        // Check if MCP server is running
+        const { execSync: statusExecSync } = await import("node:child_process");
+        try {
+          if (process.platform === "win32") {
+            const output = statusExecSync('tasklist /fi "IMAGENAME eq bun.exe" /fo csv', { encoding: "utf-8" });
+            const isRunning = output.includes("codeflow-server");
+            console.log(isRunning ? "✅ MCP Server is running" : "❌ MCP Server is not running");
+          } else {
+            statusExecSync("pgrep -f 'codeflow-server.mjs'", { stdio: "ignore" });
+            console.log("✅ MCP Server is running");
+          }
+        } catch {
+          console.log("❌ MCP Server is not running");
         }
-      } catch {
-        console.log("❌ MCP Server is not running");
-      }
-      
-      // Also check Claude Desktop config
-      const config = await loadClaudeConfig();
-      const hasCodeflowServer = config.mcpServers && config.mcpServers["codeflow-tools"];
-      console.log(hasCodeflowServer ? 
-        "✅ Claude Desktop is configured for codeflow" : 
-        "❌ Claude Desktop is not configured for codeflow"
-      );
-      break;
-      
-    default:
-      console.error(`❌ Unknown MCP action: ${action}`);
-      console.error("Available actions: start, stop, restart, status");
-      process.exit(1);
+        
+        // Also check Claude Desktop config
+        const config = await loadClaudeConfig();
+        const hasCodeflowServer = config.mcpServers && config.mcpServers["codeflow-tools"];
+        console.log(hasCodeflowServer ? 
+          "✅ Claude Desktop is configured for codeflow" : 
+          "❌ Claude Desktop is not configured for codeflow"
+        );
+        break;
+        
+      default:
+        CLIErrorHandler.displayError(
+          CLIErrorHandler.createErrorContext(
+            'mcp-server',
+            'argument_validation',
+            'unknown_action',
+            'Valid MCP server action',
+            action,
+            'Check available actions and try again',
+            {
+              requiresUserInput: true,
+              suggestions: [
+                'Use "codeflow mcp --help" for available actions',
+                'Available actions: start, stop, restart, status'
+              ]
+            }
+          )
+        );
+    }
+  } catch (error) {
+    CLIErrorHandler.handleCommonError(error, 'mcp-server');
   }
 }
 
@@ -275,134 +335,181 @@ export async function mcpConfigure(client: string, options: { remove?: boolean }
   const codeflowDir = join(import.meta.dir, "../..");
   const serverPath = join(codeflowDir, "mcp/codeflow-server.mjs");
   
-  switch (client) {
-    case "claude-desktop":
-    case "claude":
-      const config = await loadClaudeConfig();
-      
-      if (options.remove) {
-        if (config.mcpServers && config.mcpServers["codeflow-tools"]) {
-          delete config.mcpServers["codeflow-tools"];
-          await saveClaudeConfig(config);
-          console.log("✅ Removed codeflow from Claude Desktop configuration");
-          console.log("🔄 Restart Claude Desktop for changes to take effect");
-        } else {
-          console.log("ℹ️  Codeflow is not configured in Claude Desktop");
+  try {
+    switch (client) {
+      case "claude-desktop":
+      case "claude":
+        const config = await loadClaudeConfig();
+        
+        if (options.remove) {
+          if (config.mcpServers && config.mcpServers["codeflow-tools"]) {
+            delete config.mcpServers["codeflow-tools"];
+            await saveClaudeConfig(config);
+            CLIErrorHandler.displaySuccess(
+              "Removed codeflow from Claude Desktop configuration",
+              [
+                "Restart Claude Desktop for changes to take effect",
+                "Use 'codeflow mcp configure claude-desktop' to reconfigure"
+              ]
+            );
+          } else {
+            CLIErrorHandler.displayWarning(
+              "Codeflow is not configured in Claude Desktop",
+              [
+                'Nothing to remove',
+                'Use "codeflow mcp configure claude-desktop" to add configuration'
+              ]
+            );
+          }
+          return;
         }
-        return;
-      }
-      
-      // Add/update configuration
-      if (!config.mcpServers) {
-        config.mcpServers = {};
-      }
-      
-      config.mcpServers["codeflow-tools"] = {
-        command: "bun",
-        args: ["run", serverPath],
-        env: {}
-      };
-      
-      await saveClaudeConfig(config);
-      console.log("✅ Configured Claude Desktop for codeflow MCP integration");
-      console.log("🔄 Restart Claude Desktop for changes to take effect");
-      console.log("");
-      console.log("📋 Next steps:");
-      console.log("  1. Restart Claude Desktop");
-      console.log("  2. Navigate to your project directory");
-      console.log("  3. Start using tools: research, plan, execute, etc.");
-      break;
-      
-    case "warp":
-      const warpConfig = await loadWarpConfig();
-      
-      if (options.remove) {
-        if (warpConfig.mcpServers && warpConfig.mcpServers["codeflow-tools"]) {
-          delete warpConfig.mcpServers["codeflow-tools"];
-          await saveWarpConfig(warpConfig);
-          console.log("✅ Removed codeflow from Warp configuration");
-          console.log("🔄 Restart Warp or reload settings for changes to take effect");
-        } else {
-          console.log("ℹ️  Codeflow is not configured in Warp");
+        
+        // Add/update configuration
+        if (!config.mcpServers) {
+          config.mcpServers = {};
         }
-        return;
-      }
-      
-      // Add/update configuration
-      if (!warpConfig.mcpServers) {
-        warpConfig.mcpServers = {};
-      }
-      
-      warpConfig.mcpServers["codeflow-tools"] = {
-        name: "Codeflow Tools",
-        command: "bun",
-        args: ["run", serverPath],
-        env: {},
-        description: "Codeflow workflow automation tools"
-      };
-      
-      await saveWarpConfig(warpConfig);
-      console.log("✅ Configured Warp for codeflow MCP integration");
-      console.log("📁 Config saved to: " + getWarpConfigPath());
-      console.log("");
-      console.log("📋 Next steps:");
-      console.log("  1. Open Warp Settings → AI → Tools (MCP)");
-      console.log("  2. Click 'Reload' or restart Warp");
-      console.log("  3. Navigate to your project directory");
-      console.log("  4. Use Warp AI with codeflow tools");
-      console.log("");
-      console.log("💡 Alternatively, add manually in Warp Settings:");
-      console.log("   Name: codeflow-tools");
-      console.log("   Command: bun");
-      console.log("   Args: run " + serverPath);
-      break;
-      
-    case "cursor":
-      const cursorConfig = await loadCursorConfig();
-      
-      if (options.remove) {
-        if (cursorConfig.mcpServers && cursorConfig.mcpServers["codeflow-tools"]) {
-          delete cursorConfig.mcpServers["codeflow-tools"];
-          await saveCursorConfig(cursorConfig);
-          console.log("✅ Removed codeflow from Cursor configuration");
-          console.log("🔄 Restart Cursor for changes to take effect");
-        } else {
-          console.log("ℹ️  Codeflow is not configured in Cursor");
+        
+        config.mcpServers["codeflow-tools"] = {
+          command: "bun",
+          args: ["run", serverPath],
+          env: {}
+        };
+        
+        await saveClaudeConfig(config);
+        CLIErrorHandler.displaySuccess(
+          "Configured Claude Desktop for codeflow MCP integration",
+          [
+            "Restart Claude Desktop for changes to take effect",
+            "Navigate to your project directory",
+            "Start using tools: research, plan, execute, etc."
+          ]
+        );
+        break;
+        
+      case "warp":
+        const warpConfig = await loadWarpConfig();
+        
+        if (options.remove) {
+          if (warpConfig.mcpServers && warpConfig.mcpServers["codeflow-tools"]) {
+            delete warpConfig.mcpServers["codeflow-tools"];
+            await saveWarpConfig(warpConfig);
+            CLIErrorHandler.displaySuccess(
+              "Removed codeflow from Warp configuration",
+              [
+                "Restart Warp or reload settings for changes to take effect",
+                "Use 'codeflow mcp configure warp' to reconfigure"
+              ]
+            );
+          } else {
+            CLIErrorHandler.displayWarning(
+              "Codeflow is not configured in Warp",
+              [
+                'Nothing to remove',
+                'Use "codeflow mcp configure warp" to add configuration'
+              ]
+            );
+          }
+          return;
         }
-        return;
-      }
-      
-      // Add/update configuration
-      if (!cursorConfig.mcpServers) {
-        cursorConfig.mcpServers = {};
-      }
-      
-      cursorConfig.mcpServers["codeflow-tools"] = {
-        command: "bun",
-        args: ["run", serverPath],
-        env: {}
-      };
-      
-      await saveCursorConfig(cursorConfig);
-      console.log("✅ Configured Cursor for codeflow MCP integration");
-      console.log("📁 Config saved to: " + getCursorConfigPath());
-      console.log("");
-      console.log("📋 Next steps:");
-      console.log("  1. Restart Cursor");
-      console.log("  2. Navigate to your project directory");
-      console.log("  3. Use Cursor AI features with codeflow tools");
-      console.log("");
-      console.log("💡 Note: Cursor also supports running commands directly via its AI assistant");
-      break;
-      
-    // OpenCode doesn't use MCP config - it uses .opencode/command/ directory
-    // Setup should be done via: codeflow setup . --type opencode
-      
-    default:
-      console.error(`❌ Unknown MCP client: ${client}`);
-      console.error("Available clients: claude-desktop, warp, cursor");
-      console.error("Note: OpenCode uses .opencode/command/ directory, not MCP. Use 'codeflow setup . --type opencode'");
-      process.exit(1);
+        
+        // Add/update configuration
+        if (!warpConfig.mcpServers) {
+          warpConfig.mcpServers = {};
+        }
+        
+        warpConfig.mcpServers["codeflow-tools"] = {
+          name: "Codeflow Tools",
+          command: "bun",
+          args: ["run", serverPath],
+          env: {},
+          description: "Codeflow workflow automation tools"
+        };
+        
+        await saveWarpConfig(warpConfig);
+        CLIErrorHandler.displaySuccess(
+          "Configured Warp for codeflow MCP integration",
+          [
+            "Open Warp Settings → AI → Tools (MCP)",
+            "Click 'Reload' or restart Warp",
+            "Navigate to your project directory",
+            "Use Warp AI with codeflow tools"
+          ]
+        );
+        break;
+        
+      case "cursor":
+        const cursorConfig = await loadCursorConfig();
+        
+        if (options.remove) {
+          if (cursorConfig.mcpServers && cursorConfig.mcpServers["codeflow-tools"]) {
+            delete cursorConfig.mcpServers["codeflow-tools"];
+            await saveCursorConfig(cursorConfig);
+            CLIErrorHandler.displaySuccess(
+              "Removed codeflow from Cursor configuration",
+              [
+                "Restart Cursor for changes to take effect",
+                "Use 'codeflow mcp configure cursor' to reconfigure"
+              ]
+            );
+          } else {
+            CLIErrorHandler.displayWarning(
+              "Codeflow is not configured in Cursor",
+              [
+                'Nothing to remove',
+                'Use "codeflow mcp configure cursor" to add configuration'
+              ]
+            );
+          }
+          return;
+        }
+        
+        // Add/update configuration
+        if (!cursorConfig.mcpServers) {
+          cursorConfig.mcpServers = {};
+        }
+        
+        cursorConfig.mcpServers["codeflow-tools"] = {
+          command: "bun",
+          args: ["run", serverPath],
+          env: {}
+        };
+        
+        await saveCursorConfig(cursorConfig);
+        CLIErrorHandler.displaySuccess(
+          "Configured Cursor for codeflow MCP integration",
+          [
+            "Restart Cursor",
+            "Navigate to your project directory",
+            "Use Cursor AI features with codeflow tools"
+          ]
+        );
+        break;
+        
+      // OpenCode doesn't use MCP config - it uses .opencode/command/ directory
+      // Setup should be done via: codeflow setup . --type opencode
+        
+      default:
+        CLIErrorHandler.displayError(
+          CLIErrorHandler.createErrorContext(
+            'mcp-configure',
+            'argument_validation',
+            'unknown_client',
+            'Valid MCP client',
+            client,
+            'Check available clients and try again',
+            {
+              requiresUserInput: true,
+              suggestions: [
+                'Use "codeflow mcp --help" for available clients',
+                'Available clients: claude-desktop, warp, cursor',
+                'For OpenCode: Use "codeflow setup . --type opencode"'
+              ]
+            }
+          )
+        );
+    }
+  } catch (error) {
+    CLIErrorHandler.handleCommonError(error, 'mcp-configure');
   }
 }
 

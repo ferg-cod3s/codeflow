@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import YAML from "yaml";
+import CLIErrorHandler from "./error-handler.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -124,8 +125,13 @@ export async function commands(): Promise<void> {
     const slashCommands = loadSlashCommands();
 
     if (slashCommands.length === 0) {
-      console.log("No slash commands found.");
-      console.log("Run 'codeflow pull' to install agents and commands to a project.");
+      CLIErrorHandler.displayWarning(
+        "No slash commands found",
+        [
+          "Run 'codeflow pull' to install agents and commands to a project",
+          "Check if you're in a valid project directory"
+        ]
+      );
       return;
     }
 
@@ -169,7 +175,7 @@ export async function commands(): Promise<void> {
     console.log("  codeflow pull [project-path]");
 
   } catch (error) {
-    console.error("Error loading slash commands:", error);
-    process.exit(1);
+    CLIErrorHandler.handleCommonError(error, "commands");
+    return;
   }
 }

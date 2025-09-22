@@ -1,3 +1,4 @@
+## [0.10.8](https://github.com/ferg-cod3s/codeflow/compare/v0.10.7...v0.10.8) (2025-09-21)nnn### Featuresnn* implement missing validateVariables method in EnhancedCommandValidatorn* add comprehensive variable substitution validation for OpenCode commandsn* improve command validation with better error reportingnn### Bug Fixesnn* fix variable extraction logic in extractVariables methodn* resolve syntax errors in command validationn* improve malformed variable pattern detectionnn
 ## [0.10.7](https://github.com/ferg-cod3s/codeflow/compare/v0.10.6...v0.10.7) (2025-09-21)
 
 

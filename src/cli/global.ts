@@ -2,6 +2,7 @@ import { join } from 'node:path';
 import { existsSync } from 'node:fs';
 import { mkdir, writeFile } from 'node:fs/promises';
 import os from 'node:os';
+import CLIErrorHandler from "./error-handler.js";
 
 /**
  * Global directory paths for codeflow
@@ -48,75 +49,83 @@ export function getGlobalPaths() {
  * Setup global agent directories
  */
 export async function setupGlobalAgents(baseDir?: string, options: { dryRun?: boolean } = {}): Promise<void> {
-  const paths = getGlobalPaths();
+  try {
+    const paths = getGlobalPaths();
 
-  console.log('📁 Setting up global agent directories...');
-  if (options.dryRun) console.log('🔍 Dry run mode - no directories will be created');
-  const envOverride =
-    baseDir && baseDir.trim().length > 0
-      ? baseDir
-      : process.env.CODEFLOW_GLOBAL_CONFIG || process.env.CODEFLOW_HOME;
-  const usingEnv = !!envOverride && envOverride.trim().length > 0;
+    CLIErrorHandler.displayProgress('Setting up global agent directories');
+    if (options.dryRun) CLIErrorHandler.displayProgress('Dry run mode - no directories will be created');
 
-  if (usingEnv) {
-    const base = envOverride!.trim();
-    // Flat structure for tests: create <base>/agent and <base>/command
-    const agentDir = join(base, 'agent');
-    const commandDir = join(base, 'command');
+    const envOverride =
+      baseDir && baseDir.trim().length > 0
+        ? baseDir
+        : process.env.CODEFLOW_GLOBAL_CONFIG || process.env.CODEFLOW_HOME;
+    const usingEnv = !!envOverride && envOverride.trim().length > 0;
 
-    if (!existsSync(agentDir)) {
-      await mkdir(agentDir, { recursive: true });
-      console.log(`  ✓ Created ${agentDir}`);
+    if (usingEnv) {
+      const base = envOverride!.trim();
+      // Flat structure for tests: create <base>/agent and <base>/command
+      const agentDir = join(base, 'agent');
+      const commandDir = join(base, 'command');
+
+      if (!existsSync(agentDir)) {
+        await mkdir(agentDir, { recursive: true });
+        console.log(`  ✓ Created ${agentDir}`);
+      }
+      if (!existsSync(commandDir)) {
+        await mkdir(commandDir, { recursive: true });
+        console.log(`  ✓ Created ${commandDir}`);
+      }
+
+      // For test environment, also create OpenCode command directory
+      const opencodeCommandDir = join(base, 'opencode', 'command');
+      if (!existsSync(opencodeCommandDir)) {
+        await mkdir(opencodeCommandDir, { recursive: true });
+        console.log(`  ✓ Created ${opencodeCommandDir}`);
+      }
+
+      CLIErrorHandler.displaySuccess(
+        'Global directories ready (env-based)',
+        [
+          'Using environment-based configuration',
+          'Directories created for testing environment'
+        ]
+      );
+      return;
     }
-    if (!existsSync(commandDir)) {
-      await mkdir(commandDir, { recursive: true });
-      console.log(`  ✓ Created ${commandDir}`);
+
+    // Default structure under ~/.claude
+    // Create main agents directory
+    const agentsDir = join(paths.global, 'agents');
+    if (!existsSync(agentsDir)) {
+      await mkdir(agentsDir, { recursive: true });
+      console.log(`  ✓ Created ${agentsDir}`);
     }
 
-    // For test environment, also create OpenCode command directory
-    const opencodeCommandDir = join(base, 'opencode', 'command');
-    if (!existsSync(opencodeCommandDir)) {
-      await mkdir(opencodeCommandDir, { recursive: true });
-      console.log(`  ✓ Created ${opencodeCommandDir}`);
+    // Create format-specific subdirectories
+    for (const [format, p] of Object.entries(paths.agents)) {
+      if (!existsSync(p)) {
+        await mkdir(p, { recursive: true });
+        console.log(`  ✓ Created ${format} agents directory: ${p}`);
+      }
     }
 
-    console.log('✅ Global directories ready (env-based)');
-    return;
-  }
-
-  // Default structure under ~/.claude
-  // Create main agents directory
-  const agentsDir = join(paths.global, 'agents');
-  if (!existsSync(agentsDir)) {
-    await mkdir(agentsDir, { recursive: true });
-    console.log(`  ✓ Created ${agentsDir}`);
-  }
-
-  // Create format-specific subdirectories
-  for (const [format, p] of Object.entries(paths.agents)) {
-    if (!existsSync(p)) {
-      await mkdir(p, { recursive: true });
-      console.log(`  ✓ Created ${format} agents directory: ${p}`);
+    // Ensure commands directories exist
+    if (!existsSync(paths.commands)) {
+      await mkdir(paths.commands, { recursive: true });
+      console.log(`  ✓ Created Claude Code commands directory: ${paths.commands}`);
     }
-  }
 
-  // Ensure commands directories exist
-  if (!existsSync(paths.commands)) {
-    await mkdir(paths.commands, { recursive: true });
-    console.log(`  ✓ Created Claude Code commands directory: ${paths.commands}`);
-  }
+    // Ensure OpenCode commands directory exists
+    const opencodeCommandsDir = paths.commandsByFormat?.opencode;
+    if (opencodeCommandsDir && !existsSync(opencodeCommandsDir)) {
+      await mkdir(opencodeCommandsDir, { recursive: true });
+      console.log(`  ✓ Created OpenCode commands directory: ${opencodeCommandsDir}`);
+    }
 
-  // Ensure OpenCode commands directory exists
-  const opencodeCommandsDir = paths.commandsByFormat?.opencode;
-  if (opencodeCommandsDir && !existsSync(opencodeCommandsDir)) {
-    await mkdir(opencodeCommandsDir, { recursive: true });
-    console.log(`  ✓ Created OpenCode commands directory: ${opencodeCommandsDir}`);
-  }
-
-  // Create a README explaining the structure
-  const readmePath = join(agentsDir, 'README.md');
-  if (!existsSync(readmePath)) {
-    const readmeContent = `# Codeflow Global Agents
+    // Create a README explaining the structure
+    const readmePath = join(agentsDir, 'README.md');
+    if (!existsSync(readmePath)) {
+      const readmeContent = `# Codeflow Global Agents
 
 This directory contains globally available agents that can be used across all your projects.
 
@@ -139,11 +148,22 @@ Use \`codeflow sync-global\` to synchronize agents to global directories.
 Use \`codeflow list-differences\` to see which agents are available in each format.
 `;
 
-    await writeFile(readmePath, readmeContent);
-    console.log('  ✓ Created README.md');
-  }
+      await writeFile(readmePath, readmeContent);
+      console.log('  ✓ Created README.md');
+    }
 
-  console.log('✅ Global agent directories ready');
+    CLIErrorHandler.displaySuccess(
+      'Global agent directories ready',
+      [
+        'All required directories have been created',
+        'Global agents are now available across projects',
+        'Use "codeflow sync-global" to populate with agents'
+      ]
+    );
+
+  } catch (error) {
+    CLIErrorHandler.handleCommonError(error, 'setup-global-agents');
+  }
 }
 
 /**
@@ -180,6 +200,13 @@ export async function getGlobalAgentStats(): Promise<{
     }
   } catch (e) {
     // Directory doesn't exist or can't be read
+    CLIErrorHandler.displayWarning(
+      `Could not read base agents directory: ${(e as Error).message}`,
+      [
+        'Check directory permissions',
+        'Run setup-global-agents to create missing directories'
+      ]
+    );
   }
 
   try {
@@ -189,6 +216,13 @@ export async function getGlobalAgentStats(): Promise<{
     }
   } catch (e) {
     // Directory doesn't exist or can't be read
+    CLIErrorHandler.displayWarning(
+      `Could not read Claude Code agents directory: ${(e as Error).message}`,
+      [
+        'Check directory permissions',
+        'Run setup-global-agents to create missing directories'
+      ]
+    );
   }
 
   try {
@@ -198,6 +232,13 @@ export async function getGlobalAgentStats(): Promise<{
     }
   } catch (e) {
     // Directory doesn't exist or can't be read
+    CLIErrorHandler.displayWarning(
+      `Could not read OpenCode agents directory: ${(e as Error).message}`,
+      [
+        'Check directory permissions',
+        'Run setup-global-agents to create missing directories'
+      ]
+    );
   }
 
   stats.total = stats.base + stats.claudeCode + stats.opencode;
