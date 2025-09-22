@@ -1,5 +1,4 @@
-## [0.10.8](https://github.com/ferg-cod3s/codeflow/compare/v0.10.7...v0.10.8) (2025-09-21)nnn### Featuresnn* implement missing validateVariables method in EnhancedCommandValidatorn* add comprehensive variable substitution validation for OpenCode commandsn* improve command validation with better error reportingnn### Bug Fixesnn* fix variable extraction logic in extractVariables methodn* resolve syntax errors in command validationn* improve malformed variable pattern detectionnn
-## [0.10.7](https://github.com/ferg-cod3s/codeflow/compare/v0.10.6...v0.10.7) (2025-09-21)
+## [0.10.8](https://github.com/ferg-cod3s/codeflow/compare/v0.10.6...v0.10.8) (2025-09-22)
 
 
 ### Bug Fixes
@@ -7,6 +6,12 @@
 * update all agent models to use correct github-copilot/gpt-4.1 format ([16b63b1](https://github.com/ferg-cod3s/codeflow/commit/16b63b104f192e3798567adadc25a62d79f6de5e))
 * update all agent models to use correct provider/model format ([438b0f9](https://github.com/ferg-cod3s/codeflow/commit/438b0f92510a3e141efcb16138fbec8a72f89292))
 * update all agent models to use correct provider/model identifiers ([69f7375](https://github.com/ferg-cod3s/codeflow/commit/69f7375d5537d0ef819b4545381f66a10c0fc50e))
+
+
+### Features
+
+* implement comprehensive CLI error handling improvements ([5358b7d](https://github.com/ferg-cod3s/codeflow/commit/5358b7d47a7d7617320280e713b6badf28dd9792))
+* reorganize OpenCode structure and publish v0.10.7 ([a28b197](https://github.com/ferg-cod3s/codeflow/commit/a28b19768855f672ace2548ec616e1a5ba4af425))
 
 
 
