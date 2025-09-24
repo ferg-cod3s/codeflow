@@ -1,0 +1,51 @@
+{
+  "name": "@agentic-codeflow/mcp-server",
+  "version": "0.1.0",
+  "description": "MCP server for Codeflow - AI-assisted development workflows",
+  "type": "module",
+  "main": "codeflow-server.mjs",
+  "bin": {
+    "codeflow-mcp": "./codeflow-server.mjs"
+  },
+  "scripts": {
+    "start": "node codeflow-server.mjs"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "claude",
+    "ai",
+    "development",
+    "workflow",
+    "automation"
+  ],
+  "author": "ferg.cod3s <john.ferguson@jferguson.info>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ferg-cod3s/codeflow.git",
+    "directory": "mcp"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.18.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "mcp": {
+    "name": "Codeflow Tools",
+    "description": "AI-assisted development workflow tools for research, planning, execution, and testing",
+    "tools": [
+      "research",
+      "plan",
+      "execute",
+      "test",
+      "document",
+      "commit",
+      "review"
+    ]
+  }
+}

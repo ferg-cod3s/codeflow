@@ -1,5 +1,7 @@
 ---
 name: project-docs
+mode: command
+model: claude-3-5-sonnet-20241022
 description: Generate comprehensive project documentation including PRD, security docs, user flows, and more
 version: 1.0.0
 last_updated: 2025-09-20
@@ -16,11 +18,11 @@ inputs:
   - name: include_security
     type: boolean
     required: false
-    description: Include security documentation (default: true)
+    description: 'Include security documentation (default: true)'
   - name: include_api_docs
     type: boolean
     required: false
-    description: Include API documentation (default: true)
+    description: 'Include API documentation (default: true)'
 outputs:
   - name: documentation_files
     type: structured
@@ -33,7 +35,7 @@ cache_strategy:
   scope: command
 success_signals:
   - 'All documentation files created successfully'
-  - 'Files saved to thoughts/documentation/'
+  - 'Files saved to docs/'
   - 'Documentation structure validated'
 failure_modes:
   - 'Invalid project prompt or description'
@@ -60,7 +62,7 @@ Generate complete project documentation including Product Requirements Document 
 ## Preconditions
 
 - Valid project prompt or existing project structure to analyze
-- Documentation directory `thoughts/documentation/` is writable
+- Documentation directory `docs/` is writable
 - All required agents are available and accessible
 - Sufficient context about the project or codebase
 
@@ -148,7 +150,7 @@ Generate complete project documentation including Product Requirements Document 
   "command": "project-docs",
   "phase": "file_creation",
   "error_type": "permission_denied",
-  "expected": "Write access to thoughts/documentation/",
+  "expected": "Write access to docs/",
   "found": "Permission denied",
   "mitigation": "Check directory permissions or specify alternative location",
   "requires_user_input": true
@@ -180,56 +182,56 @@ Generate complete project documentation including Product Requirements Document 
     "files": [
       {
         "type": "prd",
-        "path": "thoughts/documentation/2025-09-20-project-prd.md",
+        "path": "docs/2025-09-20-project-prd.md",
         "title": "Project Name - Product Requirements Document",
         "sections": ["vision", "user_personas", "functional_requirements", "success_metrics"],
         "word_count": 1200
       },
       {
         "type": "security",
-        "path": "thoughts/documentation/2025-09-20-project-security.md",
+        "path": "docs/2025-09-20-project-security.md",
         "title": "Project Name - Security Documentation",
         "sections": ["threat_model", "security_controls", "compliance", "incident_response"],
         "word_count": 800
       },
       {
         "type": "user_flows",
-        "path": "thoughts/documentation/2025-09-20-project-user-flows.md",
+        "path": "docs/2025-09-20-project-user-flows.md",
         "title": "Project Name - User Flow Documentation",
         "sections": ["user_journeys", "interaction_design", "wireframes", "usability_considerations"],
         "word_count": 600
       },
       {
         "type": "api",
-        "path": "thoughts/documentation/2025-09-20-project-api.md",
+        "path": "docs/2025-09-20-project-api.md",
         "title": "Project Name - API Documentation",
         "endpoints": 15,
         "examples": 8
       },
       {
         "type": "architecture",
-        "path": "thoughts/documentation/2025-09-20-project-architecture.md",
+        "path": "docs/2025-09-20-project-architecture.md",
         "title": "Project Name - Architecture Documentation",
         "sections": ["system_overview", "component_diagram", "data_flow", "deployment_architecture"],
         "word_count": 900
       },
       {
         "type": "deployment",
-        "path": "thoughts/documentation/2025-09-20-project-deployment.md",
+        "path": "docs/2025-09-20-project-deployment.md",
         "title": "Project Name - Deployment Guide",
         "sections": ["infrastructure_setup", "deployment_procedures", "monitoring", "rollback_strategy"],
         "word_count": 700
       },
       {
         "type": "development",
-        "path": "thoughts/documentation/2025-09-20-project-development.md",
+        "path": "docs/2025-09-20-project-development.md",
         "title": "Project Name - Development Guidelines",
         "sections": ["coding_standards", "code_review_process", "testing_requirements", "documentation_standards"],
         "word_count": 500
       },
       {
         "type": "testing",
-        "path": "thoughts/documentation/2025-09-20-project-testing.md",
+        "path": "docs/2025-09-20-project-testing.md",
         "title": "Project Name - Testing Strategy",
         "sections": ["testing_approach", "test_types", "test_environment", "quality_gates"],
         "word_count": 400
@@ -250,7 +252,7 @@ Generate complete project documentation including Product Requirements Document 
 #### Automated Verification
 
 - [ ] All planned documentation files created successfully
-- [ ] Files saved to `thoughts/documentation/` with proper naming convention
+- [ ] Files saved to `docs/` with proper naming convention
 - [ ] No file system errors during creation
 - [ ] Cache updated with successful documentation patterns
 - [ ] All required agents completed successfully

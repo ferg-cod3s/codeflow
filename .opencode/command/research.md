@@ -1,5 +1,7 @@
 ---
 name: research
+mode: command
+model: claude-3-5-sonnet-20241022
 description: Research a ticket or provide a prompt for ad-hoc research
 version: 2.0.0-internal
 last_updated: 2025-09-13
@@ -29,7 +31,7 @@ cache_strategy:
   scope: command
 success_signals:
   - 'Research completed successfully'
-  - 'Findings documented in thoughts/research/'
+  - 'Findings documented in docs/research/'
   - 'All research questions addressed'
 failure_modes:
   - 'Ticket file not found or invalid'
@@ -95,7 +97,7 @@ Conduct thorough, multi-dimensional research by coordinating specialized agents 
   "phase": "context_analysis",
   "error_type": "invalid_ticket",
   "expected": "Valid ticket file or research question",
-  "found": "File not found: thoughts/tickets/missing-ticket.md",
+  "found": "File not found: docs/tickets/missing-ticket.md",
   "mitigation": "Verify ticket path or clarify research question",
   "requires_user_input": true
 }
@@ -156,7 +158,7 @@ Conduct thorough, multi-dimensional research by coordinating specialized agents 
     "architectural_patterns": 3
   },
   "document": {
-    "path": "thoughts/research/2025-09-13-authentication-system.md",
+    "path": "docs/research/2025-09-13-authentication-system.md",
     "sections": ["synopsis", "summary", "detailed_findings", "references"],
     "code_references": 12,
     "historical_context": 3
@@ -180,7 +182,7 @@ Conduct thorough, multi-dimensional research by coordinating specialized agents 
 
 #### Automated Verification
 
-- [ ] Research document created in `thoughts/research/` directory
+- [ ] Research document created in `docs/research/` directory
 - [ ] Document follows required structure with YAML frontmatter
 - [ ] All specified agents completed their analysis successfully
 - [ ] Document includes specific file:line references for key findings
@@ -191,7 +193,7 @@ Conduct thorough, multi-dimensional research by coordinating specialized agents 
 - [ ] Research question is fully addressed with concrete evidence
 - [ ] Findings connect across different components and contexts
 - [ ] Document provides actionable insights for development
-- [ ] Historical context from thoughts/ is properly integrated
+- [ ] Historical context from docs/ is properly integrated
 - [ ] Open questions are identified and addressed
 
 ## Agent Coordination Strategy
@@ -280,12 +282,12 @@ last_updated_by: Assistant
 
 [Key patterns, conventions, and design decisions]
 
-## Historical Context (from thoughts/)
+## Historical Context (from docs/)
 
-[Relevant insights from thoughts/ directory]
+[Relevant insights from docs/ directory]
 
-- `thoughts/architecture/auth-design.md` - Previous authentication decisions
-- `thoughts/research/2024-12-01-auth-analysis.md` - Related research
+- `docs/architecture/auth-design.md` - Previous authentication decisions
+- `docs/research/2024-12-01-auth-analysis.md` - Related research
 
 ## Related Research
 

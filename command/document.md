@@ -1,5 +1,7 @@
 ---
 name: document
+mode: command
+model: claude-3-5-sonnet-20241022
 description: Produce high-quality documentation for implemented features
 version: 2.0.0-internal
 last_updated: 2025-09-13
@@ -34,7 +36,7 @@ cache_strategy:
 success_signals:
   - 'Documentation files created successfully'
   - 'All audience types documented'
-  - 'Files saved to thoughts/documentation/'
+  - 'Files saved to docs/'
 failure_modes:
   - 'Invalid audience specification'
   - 'Missing required code files'
@@ -61,7 +63,7 @@ Deliver user-facing guides, API references, and developer notes that are accurat
 
 - Target audience is clearly specified and valid
 - Required code files exist and are accessible
-- Documentation directory `thoughts/documentation/` is writable
+- Documentation directory `docs/` is writable
 - Implementation is complete and testable
 
 ## Process Phases
@@ -124,7 +126,7 @@ Deliver user-facing guides, API references, and developer notes that are accurat
   "command": "document",
   "phase": "file_creation",
   "error_type": "permission_denied",
-  "expected": "Write access to thoughts/documentation/",
+  "expected": "Write access to docs/",
   "found": "Permission denied",
   "mitigation": "Check directory permissions or use alternative location",
   "requires_user_input": true
@@ -153,21 +155,21 @@ Deliver user-facing guides, API references, and developer notes that are accurat
   "files": [
     {
       "type": "user_guide",
-      "path": "thoughts/documentation/2025-09-13-feature-user.md",
+      "path": "docs/2025-09-13-feature-user.md",
       "title": "Feature Name - User Guide",
       "sections": ["overview", "prerequisites", "steps", "troubleshooting"],
       "word_count": 450
     },
     {
       "type": "api_reference",
-      "path": "thoughts/documentation/2025-09-13-feature-api.md",
+      "path": "docs/2025-09-13-feature-api.md",
       "title": "Feature Name - API Reference",
       "endpoints": 3,
       "examples": 5
     },
     {
       "type": "dev_notes",
-      "path": "thoughts/documentation/2025-09-13-feature-dev.md",
+      "path": "docs/2025-09-13-feature-dev.md",
       "title": "Feature Name - Developer Notes",
       "sections": ["architecture", "decisions", "extension_points"],
       "code_references": 8
@@ -187,7 +189,7 @@ Deliver user-facing guides, API references, and developer notes that are accurat
 #### Automated Verification
 
 - [ ] All specified audience types have corresponding documentation files
-- [ ] Documentation files created in `thoughts/documentation/` directory
+- [ ] Documentation files created in `docs/` directory
 - [ ] File paths follow naming convention: `YYYY-MM-DD-<feature>-<type>.md`
 - [ ] No file system errors during creation
 - [ ] Cache updated with successful documentation patterns

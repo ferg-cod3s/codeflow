@@ -6,19 +6,26 @@
 *.log
 *.tmp
 *.temp
+.editorconfig
+bunfig.toml
 
-# Test files
+# Test files and directories
 tests/
+test-*/
 __tests__/
 *.test.*
 *.spec.*
 coverage/
 .nyc_output/
+test-reports/
+test-output/
+run-tests.ts
 
 # Development dependencies
 node_modules/
 .pnpm-store/
 bun.lockb
+bun.lock
 
 # Build artifacts
 dist/
@@ -44,9 +51,15 @@ Thumbs.db
 tmp/
 temp/
 
-# Documentation development
+# Documentation (keep only essential docs)
+docs/architecture/
 docs/development/
+docs/plans/
+docs/research/
+docs/2025-*
 thoughts/
+TEST_REPORT.md
+DEPLOYMENT_GUIDE.md
 
 # TypeScript cache
 tsconfig.tsbuildinfo
@@ -56,9 +69,17 @@ tsconfig.tsbuildinfo
 *.bak
 *.backup
 
-# Documentation development
-thoughts/
+# Scripts not needed in package
+scripts/*.js
+sync-claude-global.sh
 
-# Exclude development artifacts
-**/*.bak
-.editorconfig
+# MCP development files
+mcp/
+
+# Catalog build files
+CATALOG_INDEX.json
+
+# GitHub specific
+.github/
+CONTRIBUTING.md
+CODE_OF_CONDUCT.md

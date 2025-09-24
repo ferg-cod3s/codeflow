@@ -1,296 +1,336 @@
 {
   "canonical_agents": [
     {
-      "name": "codebase-locator",
-      "description": "Locates files, directories, and components relevant to a feature",
-      "category": "development",
+      "name": "accessibility-pro",
+      "description": "Ensures app accessibility and compliance with WCAG guidelines.",
+      "category": "design-ux",
       "sources": {
-        "base": "codeflow-agents/development/codebase-locator.md",
-        "claude-code": "claude-agents/codebase-locator.md",
-        "opencode": "opencode-agents/codebase-locator.md"
-      }
-    },
-    {
-      "name": "codebase-analyzer",
-      "description": "Analyzes code implementation details and functionality",
-      "category": "development",
-      "sources": {
-        "base": "codeflow-agents/development/codebase-analyzer.md",
-        "claude-code": "claude-agents/codebase-analyzer.md",
-        "opencode": "opencode-agents/codebase-analyzer.md"
-      }
-    },
-    {
-      "name": "codebase-pattern-finder",
-      "description": "Finds similar implementations and usage patterns",
-      "category": "development",
-      "sources": {
-        "base": "codeflow-agents/development/codebase-pattern-finder.md",
-        "claude-code": "claude-agents/codebase-pattern-finder.md",
-        "opencode": "opencode-agents/codebase-pattern-finder.md"
-      }
-    },
-    {
-      "name": "thoughts-analyzer",
-      "description": "Analyzes documentation and research materials",
-      "category": "generalist",
-      "sources": {
-        "base": "codeflow-agents/generalist/thoughts-analyzer.md",
-        "claude-code": "claude-agents/thoughts-analyzer.md",
-        "opencode": "opencode-agents/thoughts-analyzer.md"
-      }
-    },
-    {
-      "name": "thoughts-locator",
-      "description": "Locates relevant documentation and research",
-      "category": "generalist",
-      "sources": {
-        "base": "codeflow-agents/generalist/thoughts-locator.md",
-        "claude-code": "claude-agents/thoughts-locator.md",
-        "opencode": "opencode-agents/thoughts-locator.md"
-      }
-    },
-    {
-      "name": "web-search-researcher",
-      "description": "Performs web research and analysis",
-      "category": "generalist",
-      "sources": {
-        "base": "codeflow-agents/generalist/web-search-researcher.md",
-        "claude-code": "claude-agents/web-search-researcher.md",
-        "opencode": "opencode-agents/web-search-researcher.md"
+        "base": "codeflow-agents/design-ux/accessibility-pro.md",
+        "claude-code": ".claude/agents/accessibility-pro.md",
+        "opencode": ".opencode/agent/accessibility-pro.md"
       }
     },
     {
       "name": "agent-architect",
-      "description": "Creates and designs specialized AI agents",
+      "description": "Meta-level agent that creates and designs specialized AI agents on-demand for specific tasks, projects, or domains.",
       "category": "generalist",
       "sources": {
         "base": "codeflow-agents/generalist/agent-architect.md",
-        "claude-code": "claude-agents/agent-architect.md",
-        "opencode": "opencode-agents/agent-architect.md"
-      }
-    },
-    {
-      "name": "smart-subagent-orchestrator",
-      "description": "Coordinates complex multi-domain projects",
-      "category": "generalist",
-      "sources": {
-        "base": "codeflow-agents/generalist/smart-subagent-orchestrator.md",
-        "claude-code": "claude-agents/smart-subagent-orchestrator.md",
-        "opencode": "opencode-agents/smart-subagent-orchestrator.md"
-      }
-    },
-    {
-      "name": "code-reviewer",
-      "description": "Reviews code for quality, security, and best practices",
-      "category": "development",
-      "sources": {
-        "base": "codeflow-agents/development/code-reviewer.md",
-        "claude-code": "claude-agents/code-reviewer.md",
-        "opencode": "opencode-agents/code-reviewer.md"
-      }
-    },
-    {
-      "name": "full-stack-developer",
-      "description": "Handles full-stack development tasks",
-      "category": "development",
-      "sources": {
-        "base": "codeflow-agents/development/full-stack-developer.md",
-        "claude-code": "claude-agents/full-stack-developer.md",
-        "opencode": "opencode-agents/full-stack-developer.md"
-      }
-    },
-    {
-      "name": "performance-engineer",
-      "description": "Optimizes application performance and scalability",
-      "category": "development",
-      "sources": {
-        "base": "codeflow-agents/development/performance-engineer.md",
-        "claude-code": "claude-agents/performance-engineer.md",
-        "opencode": "opencode-agents/performance-engineer.md"
-      }
-    },
-    {
-      "name": "api-builder",
-      "description": "Creates and maintains APIs",
-      "category": "development",
-      "sources": {
-        "base": "codeflow-agents/development/api-builder.md",
-        "claude-code": "claude-agents/api-builder.md",
-        "opencode": "opencode-agents/api-builder.md"
-      }
-    },
-    {
-      "name": "database-expert",
-      "description": "Handles database design and optimization",
-      "category": "development",
-      "sources": {
-        "base": "codeflow-agents/development/database-expert.md",
-        "claude-code": "claude-agents/database-expert.md",
-        "opencode": "opencode-agents/database-expert.md"
-      }
-    },
-    {
-      "name": "analytics-engineer",
-      "description": "Builds data pipelines and analytics solutions",
-      "category": "development",
-      "sources": {
-        "base": "codeflow-agents/development/analytics-engineer.md",
-        "claude-code": "claude-agents/analytics-engineer.md",
-        "opencode": "opencode-agents/analytics-engineer.md"
-      }
-    },
-    {
-      "name": "system-architect",
-      "description": "Designs system architecture and technical solutions",
-      "category": "development",
-      "sources": {
-        "base": "codeflow-agents/development/system-architect.md",
-        "claude-code": "claude-agents/system-architect.md",
-        "opencode": "opencode-agents/system-architect.md"
-      }
-    },
-    {
-      "name": "development-migrations-specialist",
-      "description": "Handles database migrations and schema changes",
-      "category": "development",
-      "sources": {
-        "base": "codeflow-agents/development/development-migrations-specialist.md",
-        "claude-code": "claude-agents/development-migrations-specialist.md",
-        "opencode": "opencode-agents/development-migrations-specialist.md"
+        "claude-code": ".claude/agents/agent-architect.md",
+        "opencode": ".opencode/agent/agent-architect.md"
       }
     },
     {
       "name": "ai-integration-expert",
-      "description": "Integrates AI capabilities into applications",
+      "description": "Adds AI features and integrates machine learning capabilities.",
       "category": "ai-innovation",
       "sources": {
         "base": "codeflow-agents/ai-innovation/ai-integration-expert.md",
-        "claude-code": "claude-agents/ai-integration-expert.md",
-        "opencode": "opencode-agents/ai-integration-expert.md"
+        "claude-code": ".claude/agents/ai-integration-expert.md",
+        "opencode": ".opencode/agent/ai-integration-expert.md"
       }
     },
     {
-      "name": "security-scanner",
-      "description": "Identifies security vulnerabilities and issues",
-      "category": "quality-testing",
+      "name": "analytics-engineer",
+      "description": "Data instrumentation, tracking plan governance, metrics modeling & analytics platform implementation specialist.",
+      "category": "development",
       "sources": {
-        "base": "codeflow-agents/quality-testing/security-scanner.md",
-        "claude-code": "claude-agents/security-scanner.md",
-        "opencode": "opencode-agents/security-scanner.md"
+        "base": "codeflow-agents/development/analytics-engineer.md",
+        "claude-code": ".claude/agents/analytics-engineer.md",
+        "opencode": ".opencode/agent/analytics-engineer.md"
       }
     },
     {
-      "name": "quality-testing-performance-tester",
-      "description": "Performs quality testing and performance analysis",
+      "name": "api-builder",
+      "description": "End-to-end API contract & developer experience engineering specialist.",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/api-builder.md",
+        "claude-code": ".claude/agents/api-builder.md",
+        "opencode": ".opencode/agent/api-builder.md"
+      }
+    },
+    {
+      "name": "code-reviewer",
+      "description": "Engineering-level static code quality review & refactor opportunity synthesizer.",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/code-reviewer.md",
+        "claude-code": ".claude/agents/code-reviewer.md",
+        "opencode": ".opencode/agent/code-reviewer.md"
+      }
+    },
+    {
+      "name": "codebase-analyzer",
+      "description": "Specialized implementation analysis agent that explains exactly HOW specified code works (control flow, data flow, state changes, transformations, side effects) with precise file:line evidence.",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/codebase-analyzer.md",
+        "claude-code": ".claude/agents/codebase-analyzer.md",
+        "opencode": ".opencode/agent/codebase-analyzer.md"
+      }
+    },
+    {
+      "name": "codebase-locator",
+      "description": "Universal File & Directory Location Specialist - produces a structured, comprehensive, classification-oriented map of all files and directories relevant to a requested feature/topic WITHOUT reading fi",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/codebase-locator.md",
+        "claude-code": ".claude/agents/codebase-locator.md",
+        "opencode": ".opencode/agent/codebase-locator.md"
+      }
+    },
+    {
+      "name": "codebase-pattern-finder",
+      "description": "codebase-pattern-finder is a useful subagent_type for finding similar implementations, usage examples, or existing patterns that can be modeled after.",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/codebase-pattern-finder.md",
+        "claude-code": ".claude/agents/codebase-pattern-finder.md",
+        "opencode": ".opencode/agent/codebase-pattern-finder.md"
+      }
+    },
+    {
+      "name": "compliance-expert",
+      "description": "Security compliance specialist focused on regulatory requirements, control validation, and compliance framework implementation.",
       "category": "quality-testing",
       "sources": {
-        "base": "codeflow-agents/quality-testing/quality-testing-performance-tester.md",
-        "claude-code": "claude-agents/quality-testing-performance-tester.md",
-        "opencode": "opencode-agents/quality-testing-performance-tester.md"
+        "base": "codeflow-agents/quality-testing/compliance-expert.md",
+        "claude-code": ".claude/agents/compliance-expert.md",
+        "opencode": ".opencode/agent/compliance-expert.md"
       }
     },
     {
       "name": "content-localization-coordinator",
-      "description": "Coordinates localization and internationalization",
+      "description": "Coordinate localization (l10n) and internationalization (i18n) workflows including translation management, locale setup, and cultural adaptation processes.",
       "category": "product-strategy",
       "sources": {
         "base": "codeflow-agents/product-strategy/content-localization-coordinator.md",
-        "claude-code": "claude-agents/content-localization-coordinator.md",
-        "opencode": "opencode-agents/content-localization-coordinator.md"
+        "claude-code": ".claude/agents/content-localization-coordinator.md",
+        "opencode": ".opencode/agent/content-localization-coordinator.md"
       }
     },
     {
-      "name": "accessibility-pro",
-      "description": "Ensures applications are accessible to all users",
-      "category": "design-ux",
+      "name": "cost-optimizer",
+      "description": "Cloud cost optimization and resource efficiency specialist.",
+      "category": "operations",
       "sources": {
-        "base": "codeflow-agents/design-ux/accessibility-pro.md",
-        "claude-code": "claude-agents/accessibility-pro.md",
-        "opencode": "opencode-agents/accessibility-pro.md"
+        "base": "codeflow-agents/operations/cost-optimizer.md",
+        "claude-code": ".claude/agents/cost-optimizer.md",
+        "opencode": ".opencode/agent/cost-optimizer.md"
       }
     },
     {
-      "name": "ux-optimizer",
-      "description": "Optimizes user experience and interface design",
-      "category": "design-ux",
+      "name": "database-expert",
+      "description": "Optimizes database queries and designs efficient data models.",
+      "category": "development",
       "sources": {
-        "base": "codeflow-agents/design-ux/ux-optimizer.md",
-        "claude-code": "claude-agents/ux-optimizer.md",
-        "opencode": "opencode-agents/ux-optimizer.md"
+        "base": "codeflow-agents/development/database-expert.md",
+        "claude-code": ".claude/agents/database-expert.md",
+        "opencode": ".opencode/agent/database-expert.md"
       }
     },
     {
       "name": "deployment-wizard",
-      "description": "Manages deployment processes and automation",
+      "description": "Sets up CI/CD pipelines and automates deployment processes.",
       "category": "operations",
       "sources": {
         "base": "codeflow-agents/operations/deployment-wizard.md",
-        "claude-code": "claude-agents/deployment-wizard.md",
-        "opencode": "opencode-agents/deployment-wizard.md"
+        "claude-code": ".claude/agents/deployment-wizard.md",
+        "opencode": ".opencode/agent/deployment-wizard.md"
+      }
+    },
+    {
+      "name": "development-migrations-specialist",
+      "description": "Plan and execute safe, reversible database schema and data migrations with zero/minimal downtime, across PostgreSQL/MySQL/NoSQL systems.",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/development-migrations-specialist.md",
+        "claude-code": ".claude/agents/development-migrations-specialist.md",
+        "opencode": ".opencode/agent/development-migrations-specialist.md"
       }
     },
     {
       "name": "devops-operations-specialist",
-      "description": "Handles DevOps and operational tasks",
+      "description": "Expert DevOps and operations specialist focused on infrastructure automation, deployment pipelines, monitoring, and operational excellence",
       "category": "operations",
       "sources": {
         "base": "codeflow-agents/operations/devops-operations-specialist.md",
-        "claude-code": "claude-agents/devops-operations-specialist.md",
-        "opencode": "opencode-agents/devops-operations-specialist.md"
+        "claude-code": ".claude/agents/devops-operations-specialist.md",
+        "opencode": ".opencode/agent/devops-operations-specialist.md"
       }
     },
     {
-      "name": "infrastructure-builder",
-      "description": "Designs and manages infrastructure",
-      "category": "operations",
+      "name": "full-stack-developer",
+      "description": "Generalist implementation developer focused on end-to-end feature delivery (UI → API → data) within established architectural, security, performance, and infrastructure guidelines.",
+      "category": "development",
       "sources": {
-        "base": "codeflow-agents/operations/infrastructure-builder.md",
-        "claude-code": "claude-agents/infrastructure-builder.md",
-        "opencode": "opencode-agents/infrastructure-builder.md"
-      }
-    },
-    {
-      "name": "monitoring-expert",
-      "description": "Implements monitoring and observability solutions",
-      "category": "operations",
-      "sources": {
-        "base": "codeflow-agents/operations/monitoring-expert.md",
-        "claude-code": "claude-agents/monitoring-expert.md",
-        "opencode": "opencode-agents/monitoring-expert.md"
-      }
-    },
-    {
-      "name": "operations-incident-commander",
-      "description": "Leads incident response and resolution",
-      "category": "operations",
-      "sources": {
-        "base": "codeflow-agents/operations/operations-incident-commander.md",
-        "claude-code": "claude-agents/operations-incident-commander.md",
-        "opencode": "opencode-agents/operations-incident-commander.md"
-      }
-    },
-    {
-      "name": "programmatic-seo-engineer",
-      "description": "Implements programmatic SEO solutions",
-      "category": "business-analytics",
-      "sources": {
-        "base": "codeflow-agents/business-analytics/programmatic-seo-engineer.md",
-        "claude-code": "claude-agents/programmatic-seo-engineer.md",
-        "opencode": "opencode-agents/programmatic-seo-engineer.md"
+        "base": "codeflow-agents/development/full-stack-developer.md",
+        "claude-code": ".claude/agents/full-stack-developer.md",
+        "opencode": ".opencode/agent/full-stack-developer.md"
       }
     },
     {
       "name": "growth-engineer",
-      "description": "Drives user growth and engagement",
+      "description": "Identifies user engagement opportunities and implements growth mechanisms.",
       "category": "business-analytics",
       "sources": {
         "base": "codeflow-agents/business-analytics/growth-engineer.md",
-        "claude-code": "claude-agents/growth-engineer.md",
-        "opencode": "opencode-agents/growth-engineer.md"
+        "claude-code": ".claude/agents/growth-engineer.md",
+        "opencode": ".opencode/agent/growth-engineer.md"
+      }
+    },
+    {
+      "name": "infrastructure-builder",
+      "description": "Designs scalable cloud architecture and manages infrastructure as code.",
+      "category": "operations",
+      "sources": {
+        "base": "codeflow-agents/operations/infrastructure-builder.md",
+        "claude-code": ".claude/agents/infrastructure-builder.md",
+        "opencode": ".opencode/agent/infrastructure-builder.md"
+      }
+    },
+    {
+      "name": "monitoring-expert",
+      "description": "Implements system alerts, monitoring solutions, and observability infrastructure.",
+      "category": "operations",
+      "sources": {
+        "base": "codeflow-agents/operations/monitoring-expert.md",
+        "claude-code": ".claude/agents/monitoring-expert.md",
+        "opencode": ".opencode/agent/monitoring-expert.md"
+      }
+    },
+    {
+      "name": "operations-incident-commander",
+      "description": "Lead incident response from detection through resolution and post-incident analysis.",
+      "category": "operations",
+      "sources": {
+        "base": "codeflow-agents/operations/operations-incident-commander.md",
+        "claude-code": ".claude/agents/operations-incident-commander.md",
+        "opencode": ".opencode/agent/operations-incident-commander.md"
+      }
+    },
+    {
+      "name": "performance-engineer",
+      "description": "Runtime performance diagnosis & optimization strategy specialist.",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/performance-engineer.md",
+        "claude-code": ".claude/agents/performance-engineer.md",
+        "opencode": ".opencode/agent/performance-engineer.md"
+      }
+    },
+    {
+      "name": "programmatic-seo-engineer",
+      "description": "Design and implement programmatic SEO systems at scale: data-driven page generation, internal linking, sitemaps, and content templates that align with search intent and technical SEO best practices.",
+      "category": "business-analytics",
+      "sources": {
+        "base": "codeflow-agents/business-analytics/programmatic-seo-engineer.md",
+        "claude-code": ".claude/agents/programmatic-seo-engineer.md",
+        "opencode": ".opencode/agent/programmatic-seo-engineer.md"
+      }
+    },
+    {
+      "name": "quality-testing-performance-tester",
+      "description": "Design and execute load, stress, soak, and spike tests; analyze performance bottlenecks; and recommend optimizations aligned with SLOs.",
+      "category": "quality-testing",
+      "sources": {
+        "base": "codeflow-agents/quality-testing/quality-testing-performance-tester.md",
+        "claude-code": ".claude/agents/quality-testing-performance-tester.md",
+        "opencode": ".opencode/agent/quality-testing-performance-tester.md"
+      }
+    },
+    {
+      "name": "release-manager",
+      "description": "CI/CD release coordination and deployment management specialist.",
+      "category": "operations",
+      "sources": {
+        "base": "codeflow-agents/operations/release-manager.md",
+        "claude-code": ".claude/agents/release-manager.md",
+        "opencode": ".opencode/agent/release-manager.md"
+      }
+    },
+    {
+      "name": "security-scanner",
+      "description": "Defensive application & platform security analysis agent.",
+      "category": "quality-testing",
+      "sources": {
+        "base": "codeflow-agents/quality-testing/security-scanner.md",
+        "claude-code": ".claude/agents/security-scanner.md",
+        "opencode": ".opencode/agent/security-scanner.md"
+      }
+    },
+    {
+      "name": "smart-subagent-orchestrator",
+      "description": "Reference documentation for the advanced orchestration agent that coordinates existing, independently configured specialized subagents for complex multi-domain projects.",
+      "category": "generalist",
+      "sources": {
+        "base": "codeflow-agents/generalist/smart-subagent-orchestrator.md",
+        "claude-code": ".claude/agents/smart-subagent-orchestrator.md",
+        "opencode": ".opencode/agent/smart-subagent-orchestrator.md"
+      }
+    },
+    {
+      "name": "system-architect",
+      "description": "Macro-level architecture & large-scale transformation strategist.",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/system-architect.md",
+        "claude-code": ".claude/agents/system-architect.md",
+        "opencode": ".opencode/agent/system-architect.md"
+      }
+    },
+    {
+      "name": "test-generator",
+      "description": "Automated test generation specialist focused on creating comprehensive test suites for code coverage, quality assurance, and regression prevention.",
+      "category": "quality-testing",
+      "sources": {
+        "base": "codeflow-agents/quality-testing/test-generator.md",
+        "claude-code": ".claude/agents/test-generator.md",
+        "opencode": ".opencode/agent/test-generator.md"
+      }
+    },
+    {
+      "name": "thoughts-analyzer",
+      "description": "High-precision research & documentation insight extraction agent for the /thoughts knowledge base.",
+      "category": "generalist",
+      "sources": {
+        "base": "codeflow-agents/generalist/thoughts-analyzer.md",
+        "claude-code": ".claude/agents/thoughts-analyzer.md",
+        "opencode": ".opencode/agent/thoughts-analyzer.md"
+      }
+    },
+    {
+      "name": "thoughts-locator",
+      "description": "Focused documentation discovery & categorization agent for the /thoughts knowledge base.",
+      "category": "generalist",
+      "sources": {
+        "base": "codeflow-agents/generalist/thoughts-locator.md",
+        "claude-code": ".claude/agents/thoughts-locator.md",
+        "opencode": ".opencode/agent/thoughts-locator.md"
+      }
+    },
+    {
+      "name": "ux-optimizer",
+      "description": "Simplifies user flows, enhances user experience, and optimizes conversion paths.",
+      "category": "design-ux",
+      "sources": {
+        "base": "codeflow-agents/design-ux/ux-optimizer.md",
+        "claude-code": ".claude/agents/ux-optimizer.md",
+        "opencode": ".opencode/agent/ux-optimizer.md"
+      }
+    },
+    {
+      "name": "web-search-researcher",
+      "description": "Targeted multi-phase web research & evidence synthesis agent.",
+      "category": "generalist",
+      "sources": {
+        "base": "codeflow-agents/generalist/web-search-researcher.md",
+        "claude-code": ".claude/agents/web-search-researcher.md",
+        "opencode": ".opencode/agent/web-search-researcher.md"
       }
     }
   ],
-  "total_agents": 29,
-  "last_updated": "2025-01-07T12:00:00Z"
+  "total_agents": 33,
+  "last_updated": "2025-09-24T11:16:15.319Z"
 }

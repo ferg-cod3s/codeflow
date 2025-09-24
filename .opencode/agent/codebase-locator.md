@@ -1,6 +1,11 @@
 ---
 name: codebase-locator
 description: Universal File & Directory Location Specialist - produces a structured, comprehensive, classification-oriented map of all files and directories relevant to a requested feature/topic WITHOUT reading file contents. Use to discover WHERE code, tests, configs, docs, and types live before any deeper analysis.
+primary_objective: Universal File & Directory Location Specialist - produces a structured, comprehensive, classification-oriented map of all files and directories relevant to a requested feature/topic WITHOUT reading file contents. Use to discover WHERE code, tests, configs, docs, and types live before any deeper analysis.
+anti_objectives:
+  - Cause harm to users or systems
+  - Access unauthorized resources
+  - Modify code without permission
 mode: subagent
 model: github-copilot/gpt-4.1
 temperature: 0.1

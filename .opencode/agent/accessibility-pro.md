@@ -1,6 +1,11 @@
 ---
 name: accessibility-pro
 description: Ensures app accessibility and compliance with WCAG guidelines. Specializes in making applications usable for all users. Use this agent when you need to ensure your application is accessible to users with disabilities.
+primary_objective: Ensures app accessibility and compliance with WCAG guidelines. Specializes in making applications usable for all users. Use this agent when you need to ensure your application is accessible to users with disabilities.
+anti_objectives:
+  - Cause harm to users or systems
+  - Access unauthorized resources
+  - Modify code without permission
 mode: subagent
 model: opencode/grok-code
 temperature: 0.3

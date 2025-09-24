@@ -6,7 +6,7 @@ import { setup } from './setup';
 import { convert } from './convert';
 import { sync } from './sync';
 import { startWatch } from './watch';
-import { CatalogCLI } from './catalog';
+import { catalog } from './catalog.js';
 import packageJson from '../../package.json';
 import { join } from 'node:path';
 import { existsSync } from 'node:fs';
@@ -249,79 +249,22 @@ switch (command) {
     }
     break;
   case 'catalog':
-    const catalogCLI = new CatalogCLI();
-    const catalogCommand = args[1];
-
-    switch (catalogCommand) {
-      case 'list':
-        const listType = args[2];
-        const listSource = args[3];
-        await catalogCLI.list(listType, listSource);
-        break;
-      case 'search':
-        const searchTerm = args[2];
-        if (!searchTerm) {
-          console.error('Error: search requires a search term');
-          console.error('Usage: codeflow catalog search <term>');
-          process.exit(1);
-        }
-        await catalogCLI.search(searchTerm);
-        break;
-      case 'info':
-        const itemId = args[2];
-        if (!itemId) {
-          console.error('Error: info requires an item ID');
-          console.error('Usage: codeflow catalog info <item-id>');
-          process.exit(1);
-        }
-        await catalogCLI.info(itemId);
-        break;
-      case 'install':
-        const installItemId = args[2];
-        const installTargets = args[3] ? args[3].split(',') : ['claude-code'];
-        if (!installItemId) {
-          console.error('Error: install requires an item ID');
-          console.error('Usage: codeflow catalog install <item-id> [targets]');
-          process.exit(1);
-        }
-        await catalogCLI.install(installItemId, installTargets, {
-          dryRun: values['dry-run'],
-          force: values.force
-        });
-        break;
-      case 'import':
-        const importSource = args[2];
-        if (!importSource) {
-          console.error('Error: import requires a source name');
-          console.error('Usage: codeflow catalog import <source>');
-          process.exit(1);
-        }
-        await catalogCLI.import(importSource);
-        break;
-      case 'update':
-        const updateItemIds = args[2] ? args[2].split(',') : undefined;
-        await catalogCLI.update(updateItemIds);
-        break;
-      case 'remove':
-        const removeItemId = args[2];
-        if (!removeItemId) {
-          console.error('Error: remove requires an item ID');
-          console.error('Usage: codeflow catalog remove <item-id>');
-          process.exit(1);
-        }
-        await catalogCLI.remove(removeItemId, { force: values.force });
-        break;
-      case 'health-check':
-        await catalogCLI.healthCheck();
-        break;
-      case 'sync':
-        await catalogCLI.sync({ dryRun: values['dry-run'] });
-        break;
-      default:
-        console.error(`Error: Unknown catalog command '${catalogCommand}'`);
-        console.error('Available catalog commands: list, search, info, install, import, update, remove, health-check, sync');
-        process.exit(1);
-    }
+    const catalogSubcommand = args[1] || 'help';
+    const catalogOptions: any = {
+      type: values.type,
+      source: args[2], // For import command, this is the repository URL
+      tags: values.tags ? values.tags.split(',') : undefined,
+      target: values.target ? values.target.split(',') : undefined,
+      global: values.global,
+      dryRun: values['dry-run'],
+      force: values.force,
+      query: args[2],
+      id: args[2],
+      adapter: values.adapter,
+      filter: values.filter ? values.filter.split(',') : undefined,
+      exclude: values.exclude ? values.exclude.split(',') : undefined
+    };
+    await catalog(catalogSubcommand, catalogOptions);
     break;
   default:
     console.error(`Error: Unknown command '${command}'`);

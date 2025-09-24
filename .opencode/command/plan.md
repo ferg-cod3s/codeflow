@@ -1,5 +1,7 @@
 ---
 name: plan
+mode: command
+model: claude-3-5-sonnet-20241022
 description: Create an implementation plan from a ticket and research
 version: 2.0.0-internal
 last_updated: 2025-09-13
@@ -29,7 +31,7 @@ cache_strategy:
   scope: command
 success_signals:
   - 'Implementation plan created successfully'
-  - 'Plan saved to thoughts/plans/ directory'
+  - 'Plan saved to docs/plans/ directory'
   - 'All research questions resolved'
 failure_modes:
   - 'Required files not found or invalid'
@@ -103,7 +105,7 @@ Create comprehensive, actionable implementation plans by thoroughly researching 
   "phase": "context_analysis",
   "error_type": "missing_files",
   "expected": "All specified files exist",
-  "found": "File not found: thoughts/tickets/missing-ticket.md",
+  "found": "File not found: docs/tickets/missing-ticket.md",
   "mitigation": "Verify file paths and ensure all referenced files exist",
   "requires_user_input": true
 }
@@ -158,7 +160,7 @@ Create comprehensive, actionable implementation plans by thoroughly researching 
     "open_questions": 0
   },
   "plan": {
-    "path": "thoughts/plans/2025-09-13-feature-implementation.md",
+    "path": "docs/plans/2025-09-13-feature-implementation.md",
     "title": "User Authentication System Implementation Plan",
     "phases": 4,
     "estimated_effort": "medium",
@@ -183,7 +185,7 @@ Create comprehensive, actionable implementation plans by thoroughly researching 
 
 #### Automated Verification
 
-- [ ] Plan file created in `thoughts/plans/` directory with correct naming
+- [ ] Plan file created in `docs/plans/` directory with correct naming
 - [ ] All referenced files exist and are accessible
 - [ ] Plan follows required template structure
 - [ ] Success criteria include both automated and manual verification

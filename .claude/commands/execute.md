@@ -1,6 +1,8 @@
 ---
 name: execute
-description: Execute a specific implementation plan from thoughts/plans/
+mode: command
+model: claude-3-5-sonnet-20241022
+description: Execute a specific implementation plan from docs/plans/
 version: 2.0.0-internal
 last_updated: 2025-09-13
 command_schema_version: 1.0
@@ -8,7 +10,7 @@ inputs:
   - name: plan_path
     type: string
     required: true
-    description: Path to the implementation plan in thoughts/plans/
+    description: Path to the implementation plan in docs/plans/
   - name: ticket_reference
     type: string
     required: false
@@ -39,7 +41,7 @@ failure_modes:
 
 # Execute Implementation Plan
 
-You are tasked with implementing an approved technical plan from `thoughts/plans/`. This command uses intelligent caching to optimize implementation workflows and maintain consistency across similar execution patterns.
+You are tasked with implementing an approved technical plan from `docs/plans/`. This command uses intelligent caching to optimize implementation workflows and maintain consistency across similar execution patterns.
 
 ## Purpose
 
@@ -47,7 +49,7 @@ Execute technical implementation plans by following structured phases, adapting 
 
 ## Inputs
 
-- **plan_path**: Path to the implementation plan file in `thoughts/plans/`
+- **plan_path**: Path to the implementation plan file in `docs/plans/`
 - **ticket_reference**: Optional reference to the original ticket or issue
 - **start_phase**: Optional phase number to begin execution from
 - **conversation_context**: History of planning and preparation work
@@ -93,8 +95,8 @@ Execute technical implementation plans by following structured phases, adapting 
   "command": "execute",
   "phase": "context_analysis",
   "error_type": "plan_not_found",
-  "expected": "Valid plan file in thoughts/plans/",
-  "found": "File does not exist: thoughts/plans/missing-plan.md",
+  "expected": "Valid plan file in docs/plans/",
+  "found": "File does not exist: docs/plans/missing-plan.md",
   "mitigation": "Verify plan path and ensure file exists",
   "requires_user_input": true
 }
@@ -143,7 +145,7 @@ Execute technical implementation plans by following structured phases, adapting 
     "savings": 0.20
   },
   "plan": {
-    "path": "thoughts/plans/2025-09-13-feature-implementation.md",
+    "path": "docs/plans/2025-09-13-feature-implementation.md",
     "total_phases": 5,
     "completed_phases": 3,
     "current_phase": 4

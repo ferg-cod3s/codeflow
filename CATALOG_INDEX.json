@@ -1,0 +1,1303 @@
+{
+  "version": "1.0.0",
+  "updated": "2025-09-24T11:25:05.853Z",
+  "sources": {
+    "codeflow-core": {
+      "name": "Codeflow Core",
+      "description": "Official Codeflow agents and commands",
+      "url": "https://github.com/ferg-cod3s/codeflow",
+      "type": "local"
+    }
+  },
+  "stats": {
+    "total_items": 41,
+    "agents": 33,
+    "commands": 8,
+    "templates": 0,
+    "mcps": 0
+  },
+  "items": [
+    {
+      "id": "codeflow-core/codebase-locator",
+      "kind": "agent",
+      "name": "codebase-locator",
+      "version": "1.0.0",
+      "description": "Universal File & Directory Location Specialist - produces a structured, comprehensive, classification-oriented map of all files and directories relevant to a requested feature/topic WITHOUT reading fi",
+      "tags": [
+        "development"
+      ],
+      "license": "MIT",
+      "source": "codeflow-core",
+      "dependencies": [
+        "full-stack-developer",
+        "code-reviewer"
+      ],
+      "install_targets": [
+        "claude-code",
+        "opencode"
+      ],
+      "conversion_rules": {
+        "base_path": "codeflow-agents/development/codebase-locator.md",
+        "supports_all_formats": true
+      },
+      "provenance": {
+        "repo": "ferg-cod3s/codeflow",
+        "path": "codeflow-agents/development/codebase-locator.md",
+        "sha": "4538821",
+        "license": "MIT",
+        "attribution": "Codeflow Team"
+      }
+    },
+    {
+      "id": "codeflow-core/development-migrations-specialist",
+      "kind": "agent",
+      "name": "development-migrations-specialist",
+      "version": "1.0.0",
+      "description": "Plan and execute safe, reversible database schema and data migrations with zero/minimal downtime, across PostgreSQL/MySQL/NoSQL systems.",
+      "tags": [
+        "development"
+      ],
+      "license": "MIT",
+      "source": "codeflow-core",
+      "dependencies": [
+        "full-stack-developer",
+        "code-reviewer"
+      ],
+      "install_targets": [
+        "claude-code",
+        "opencode"
+      ],
+      "conversion_rules": {
+        "base_path": "codeflow-agents/development/development-migrations-specialist.md",
+        "supports_all_formats": true
+      },
+      "provenance": {
+        "repo": "ferg-cod3s/codeflow",
+        "path": "codeflow-agents/development/development-migrations-specialist.md",
+        "sha": "d1c7e21",
+        "license": "MIT",
+        "attribution": "Codeflow Team"
+      }
+    },
+    {
+      "id": "codeflow-core/performance-engineer",
+      "kind": "agent",
+      "name": "performance-engineer",
+      "version": "1.0.0",
+      "description": "Runtime performance diagnosis & optimization strategy specialist. Focused on profiling, instrumentation design, algorithmic & resource efficiency, contention analysis, caching strategy, and prioritize",
+      "tags": [
+        "development"
+      ],
+      "license": "MIT",
+      "source": "codeflow-core",
+      "dependencies": [
+        "full-stack-developer",
+        "code-reviewer"
+      ],
+      "install_targets": [
+        "claude-code",
+        "opencode"
+      ],
+      "conversion_rules": {
+        "base_path": "codeflow-agents/development/performance-engineer.md",
+        "supports_all_formats": true
+      },
+      "provenance": {
+        "repo": "ferg-cod3s/codeflow",
+        "path": "codeflow-agents/development/performance-engineer.md",
+        "sha": "0f3793a",
+        "license": "MIT",
+        "attribution": "Codeflow Team"
+      }
+    },
+    {
+      "id": "codeflow-core/codebase-analyzer",
+      "kind": "agent",
+      "name": "codebase-analyzer",
+      "version": "1.0.0",
+      "description": "Specialized implementation analysis agent that explains exactly HOW specified code works (control flow, data flow, state changes, transformations, side effects) with precise file:line evidence. It nev",
+      "tags": [
+        "development"
+      ],
+      "license": "MIT",
+      "source": "codeflow-core",
+      "dependencies": [
+        "full-stack-developer",
+        "code-reviewer"
+      ],
+      "install_targets": [
+        "claude-code",
+        "opencode"
+      ],
+      "conversion_rules": {
+        "base_path": "codeflow-agents/development/codebase-analyzer.md",
+        "supports_all_formats": true
+      },
+      "provenance": {
+        "repo": "ferg-cod3s/codeflow",
+        "path": "codeflow-agents/development/codebase-analyzer.md",
+        "sha": "e39e0c3",
+        "license": "MIT",
+        "attribution": "Codeflow Team"
+      }
+    },
+    {
+      "id": "codeflow-core/full-stack-developer",
+      "kind": "agent",
+      "name": "full-stack-developer",
+      "version": "1.0.0",
+      "description": "Generalist implementation developer focused on end-to-end feature delivery (UI → API → data) within established architectural, security, performance, and infrastructure guidelines. Provides cohesive, ",
+      "tags": [
+        "development"
+      ],
+      "license": "MIT",
+      "source": "codeflow-core",
+      "dependencies": [
+        "full-stack-developer",
+        "code-reviewer"
+      ],
+      "install_targets": [
+        "claude-code",
+        "opencode"
+      ],
+      "conversion_rules": {
+        "base_path": "codeflow-agents/development/full-stack-developer.md",
+        "supports_all_formats": true
+      },
+      "provenance": {
+        "repo": "ferg-cod3s/codeflow",
+        "path": "codeflow-agents/development/full-stack-developer.md",
+        "sha": "bf3bffd",
+        "license": "MIT",
+        "attribution": "Codeflow Team"
+      }
+    },
+    {
+      "id": "codeflow-core/database-expert",
+      "kind": "agent",
+      "name": "database-expert",
+      "version": "1.0.0",
+      "description": "Optimizes database queries and designs efficient data models. Specializes in performance tuning and database architecture. Use this agent when you need to optimize queries, design schemas, implement m",
+      "tags": [
+        "development"
+      ],
+      "license": "MIT",
+      "source": "codeflow-core",
+      "dependencies": [
+        "full-stack-developer",
+        "code-reviewer"
+      ],
+      "install_targets": [
+        "claude-code",
+        "opencode"
+      ],
+      "conversion_rules": {
+        "base_path": "codeflow-agents/development/database-expert.md",
+        "supports_all_formats": true
+      },
+      "provenance": {
+        "repo": "ferg-cod3s/codeflow",
+        "path": "codeflow-agents/development/database-expert.md",
+        "sha": "1b2ed25",
+        "license": "MIT",
+        "attribution": "Codeflow Team"
+      }
+    },
+    {
+      "id": "codeflow-core/api-builder",
+      "kind": "agent",
+      "name": "api-builder",
+      "version": "1.0.0",
+      "description": "End-to-end API contract & developer experience engineering specialist. Designs, formalizes, validates, and evolves REST / GraphQL / Event / Webhook interfaces with consistent semantics, robust auth & ",
+      "tags": [
+        "development"
+      ],
+      "license": "MIT",
+      "source": "codeflow-core",
+      "dependencies": [
+        "full-stack-developer",
+        "code-reviewer"
+      ],
+      "install_targets": [
+        "claude-code",
+        "opencode"
+      ],
+      "conversion_rules": {
+        "base_path": "codeflow-agents/development/api-builder.md",
+        "supports_all_formats": true
+      },
+      "provenance": {
+        "repo": "ferg-cod3s/codeflow",
+        "path": "codeflow-agents/development/api-builder.md",
+        "sha": "2d1bc9f",
+        "license": "MIT",
+        "attribution": "Codeflow Team"
+      }
+    },
+    {
+      "id": "codeflow-core/code-reviewer",
+      "kind": "agent",
+      "name": "code-reviewer",
+      "version": "1.0.0",
+      "description": "Engineering-level static code quality review & refactor opportunity synthesizer. Produces structured, prioritized findings across maintainability, readability, duplication, complexity, style consisten",
+      "tags": [
+        "development"
+      ],
+      "license": "MIT",
+      "source": "codeflow-core",
+      "dependencies": [
+        "full-stack-developer",
+        "code-reviewer"
+      ],
+      "install_targets": [
+        "claude-code",
+        "opencode"
+      ],
+      "conversion_rules": {
+        "base_path": "codeflow-agents/development/code-reviewer.md",
+        "supports_all_formats": true
+      },
+      "provenance": {
+        "repo": "ferg-cod3s/codeflow",
+        "path": "codeflow-agents/development/code-reviewer.md",
+        "sha": "1c0174b",
+        "license": "MIT",
+        "attribution": "Codeflow Team"
+      }
+    },
+    {
+      "id": "codeflow-core/codebase-pattern-finder",
+      "kind": "agent",
+      "name": "codebase-pattern-finder",
+      "version": "1.0.0",
+      "description": "codebase-pattern-finder is a useful subagent_type for finding similar implementations, usage examples, or existing patterns that can be modeled after. It will give you concrete code examples based on ",
+      "tags": [
+        "development"
+      ],
+      "license": "MIT",
+      "source": "codeflow-core",
+      "dependencies": [
+        "full-stack-developer",
+        "code-reviewer"
+      ],
+      "install_targets": [
+        "claude-code",
+        "opencode"
+      ],
+      "conversion_rules": {
+        "base_path": "codeflow-agents/development/codebase-pattern-finder.md",
+        "supports_all_formats": true
+      },
+      "provenance": {
+        "repo": "ferg-cod3s/codeflow",
+        "path": "codeflow-agents/development/codebase-pattern-finder.md",
+        "sha": "4008239",
+        "license": "MIT",
+        "attribution": "Codeflow Team"
+      }
+    },
+    {
+      "id": "codeflow-core/analytics-engineer",
+      "kind": "agent",
+      "name": "analytics-engineer",
+      "version": "1.0.0",
+      "description": "Data instrumentation, tracking plan governance, metrics modeling & analytics platform implementation specialist. Designs event schemas, metrics layer, warehouse/data model transformations, attribution",
+      "tags": [
+        "development"
+      ],
+      "license": "MIT",
+      "source": "codeflow-core",
+      "dependencies": [
+        "full-stack-developer",
+        "code-reviewer"
+      ],
+      "install_targets": [
+        "claude-code",
+        "opencode"
+      ],
+      "conversion_rules": {
+        "base_path": "codeflow-agents/development/analytics-engineer.md",
+        "supports_all_formats": true
+      },
+      "provenance": {
+        "repo": "ferg-cod3s/codeflow",
+        "path": "codeflow-agents/development/analytics-engineer.md",
+        "sha": "ffc6910",
+        "license": "MIT",
+        "attribution": "Codeflow Team"
+      }
+    },
+    {
+      "id": "codeflow-core/system-architect",
+      "kind": "agent",
+      "name": "system-architect",
+      "version": "1.0.0",
+      "description": "Macro-level architecture & large-scale transformation strategist. Produces forward-looking, trade-off explicit architecture blueprints, domain decomposition models, migration roadmaps, and governance ",
+      "tags": [
+        "development"
+      ],
+      "license": "MIT",
+      "source": "codeflow-core",
+      "dependencies": [
+        "full-stack-developer",
+        "code-reviewer"
+      ],
+      "install_targets": [
+        "claude-code",
+        "opencode"
+      ],
+      "conversion_rules": {
+        "base_path": "codeflow-agents/development/system-architect.md",
+        "supports_all_formats": true
+      },
+      "provenance": {
+        "repo": "ferg-cod3s/codeflow",
+        "path": "codeflow-agents/development/system-architect.md",
+        "sha": "864ff3a",
+        "license": "MIT",
+        "attribution": "Codeflow Team"
+      }
+    },
+    {
+      "id": "codeflow-core/ai-integration-expert",
+      "kind": "agent",
+      "name": "ai-integration-expert",
+      "version": "1.0.0",
+      "description": "Adds AI features and integrates machine learning capabilities. Specializes in AI/ML implementation and optimization. Use this agent when you need to integrate AI features like chatbots, recommendation",
+      "tags": [
+        "ai innovation",
+        "ai-innovation"
+      ],
+      "license": "MIT",
+      "source": "codeflow-core",
+      "dependencies": [
+        "full-stack-developer",
+        "code-reviewer"
+      ],
+      "install_targets": [
+        "claude-code",
+        "opencode"
+      ],
+      "conversion_rules": {
+        "base_path": "codeflow-agents/ai-innovation/ai-integration-expert.md",
+        "supports_all_formats": true
+      },
+      "provenance": {
+        "repo": "ferg-cod3s/codeflow",
+        "path": "codeflow-agents/ai-innovation/ai-integration-expert.md",
+        "sha": "da08759",
+        "license": "MIT",
+        "attribution": "Codeflow Team"
+      }
+    },
+    {
+      "id": "codeflow-core/programmatic-seo-engineer",
+      "kind": "agent",
+      "name": "programmatic-seo-engineer",
+      "version": "1.0.0",
+      "description": "Design and implement programmatic SEO systems at scale: data-driven page generation, internal linking, sitemaps, and content templates that align with search intent and technical SEO best practices.",
+      "tags": [
+        "business analytics",
+        "business-analytics"
+      ],
+      "license": "MIT",
+      "source": "codeflow-core",
+      "dependencies": [
+        "full-stack-developer",
+        "code-reviewer"
+      ],
+      "install_targets": [
+        "claude-code",
+        "opencode"
+      ],
+      "conversion_rules": {
+        "base_path": "codeflow-agents/business-analytics/programmatic-seo-engineer.md",
+        "supports_all_formats": true
+      },
+      "provenance": {
+        "repo": "ferg-cod3s/codeflow",
+        "path": "codeflow-agents/business-analytics/programmatic-seo-engineer.md",
+        "sha": "c9db909",
+        "license": "MIT",
+        "attribution": "Codeflow Team"
+      }
+    },
+    {
+      "id": "codeflow-core/growth-engineer",
+      "kind": "agent",
+      "name": "growth-engineer",
+      "version": "1.0.0",
+      "description": "Identifies user engagement opportunities and implements growth mechanisms. Specializes in user acquisition strategies, retention optimization, and viral growth feature development. Use this agent when",
+      "tags": [
+        "business analytics",
+        "business-analytics"
+      ],
+      "license": "MIT",
+      "source": "codeflow-core",
+      "dependencies": [
+        "full-stack-developer",
+        "code-reviewer"
+      ],
+      "install_targets": [
+        "claude-code",
+        "opencode"
+      ],
+      "conversion_rules": {
+        "base_path": "codeflow-agents/business-analytics/growth-engineer.md",
+        "supports_all_formats": true
+      },
+      "provenance": {
+        "repo": "ferg-cod3s/codeflow",
+        "path": "codeflow-agents/business-analytics/growth-engineer.md",
+        "sha": "f9fe048",
+        "license": "MIT",
+        "attribution": "Codeflow Team"
+      }
+    },
+    {
+      "id": "codeflow-core/agent-architect",
+      "kind": "agent",
+      "name": "agent-architect",
+      "version": "1.0.0",
+      "description": "Meta-level agent that creates and designs specialized AI agents on-demand for specific tasks, projects, or domains. Analyzes requirements, selects base agent capabilities, designs specializations, and",
+      "tags": [
+        "generalist"
+      ],
+      "license": "MIT",
+      "source": "codeflow-core",
+      "dependencies": [
+        "full-stack-developer",
+        "code-reviewer",
+        "compliance-expert",
+        "test-generator",
+        "release-manager",
+        "cost-optimizer"
+      ],
+      "install_targets": [
+        "claude-code",
+        "opencode"
+      ],
+      "conversion_rules": {
+        "base_path": "codeflow-agents/generalist/agent-architect.md",
+        "supports_all_formats": true
+      },
+      "provenance": {
+        "repo": "ferg-cod3s/codeflow",
+        "path": "codeflow-agents/generalist/agent-architect.md",
+        "sha": "46c0b6a",
+        "license": "MIT",
+        "attribution": "Codeflow Team"
+      }
+    },
+    {
+      "id": "codeflow-core/thoughts-analyzer",
+      "kind": "agent",
+      "name": "thoughts-analyzer",
+      "version": "1.0.0",
+      "description": "High-precision research & documentation insight extraction agent for the /thoughts knowledge base. Distills ONLY evidence-backed, currently relevant decisions, constraints, technical specifications, a",
+      "tags": [
+        "generalist"
+      ],
+      "license": "MIT",
+      "source": "codeflow-core",
+      "dependencies": [
+        "full-stack-developer",
+        "code-reviewer"
+      ],
+      "install_targets": [
+        "claude-code",
+        "opencode"
+      ],
+      "conversion_rules": {
+        "base_path": "codeflow-agents/generalist/thoughts-analyzer.md",
+        "supports_all_formats": true
+      },
+      "provenance": {
+        "repo": "ferg-cod3s/codeflow",
+        "path": "codeflow-agents/generalist/thoughts-analyzer.md",
+        "sha": "3128294",
+        "license": "MIT",
+        "attribution": "Codeflow Team"
+      }
+    },
+    {
+      "id": "codeflow-core/thoughts-locator",
+      "kind": "agent",
+      "name": "thoughts-locator",
+      "version": "1.0.0",
+      "description": "Focused documentation discovery & categorization agent for the /thoughts knowledge base. Locates, classifies, and returns a structured inventory of ALL relevant historical and current thought document",
+      "tags": [
+        "generalist"
+      ],
+      "license": "MIT",
+      "source": "codeflow-core",
+      "dependencies": [
+        "full-stack-developer",
+        "code-reviewer"
+      ],
+      "install_targets": [
+        "claude-code",
+        "opencode"
+      ],
+      "conversion_rules": {
+        "base_path": "codeflow-agents/generalist/thoughts-locator.md",
+        "supports_all_formats": true
+      },
+      "provenance": {
+        "repo": "ferg-cod3s/codeflow",
+        "path": "codeflow-agents/generalist/thoughts-locator.md",
+        "sha": "d7e17c9",
+        "license": "MIT",
+        "attribution": "Codeflow Team"
+      }
+    },
+    {
+      "id": "codeflow-core/web-search-researcher",
+      "kind": "agent",
+      "name": "web-search-researcher",
+      "version": "1.0.0",
+      "description": "Targeted multi-phase web research & evidence synthesis agent. Decomposes queries, engineers diversified search strategies, retrieves authoritative sources, extracts verifiable evidence fragments, scor",
+      "tags": [
+        "generalist"
+      ],
+      "license": "MIT",
+      "source": "codeflow-core",
+      "dependencies": [
+        "full-stack-developer",
+        "code-reviewer"
+      ],
+      "install_targets": [
+        "claude-code",
+        "opencode"
+      ],
+      "conversion_rules": {
+        "base_path": "codeflow-agents/generalist/web-search-researcher.md",
+        "supports_all_formats": true
+      },
+      "provenance": {
+        "repo": "ferg-cod3s/codeflow",
+        "path": "codeflow-agents/generalist/web-search-researcher.md",
+        "sha": "2b2f1d4",
+        "license": "MIT",
+        "attribution": "Codeflow Team"
+      }
+    },
+    {
+      "id": "codeflow-core/smart-subagent-orchestrator",
+      "kind": "agent",
+      "name": "smart-subagent-orchestrator",
+      "version": "1.0.0",
+      "description": "Reference documentation for the advanced orchestration agent that coordinates existing, independently configured specialized subagents for complex multi-domain projects. This file documents capabiliti",
+      "tags": [
+        "generalist"
+      ],
+      "license": "MIT",
+      "source": "codeflow-core",
+      "dependencies": [
+        "full-stack-developer",
+        "code-reviewer",
+        "cost-optimizer"
+      ],
+      "install_targets": [
+        "claude-code",
+        "opencode"
+      ],
+      "conversion_rules": {
+        "base_path": "codeflow-agents/generalist/smart-subagent-orchestrator.md",
+        "supports_all_formats": true
+      },
+      "provenance": {
+        "repo": "ferg-cod3s/codeflow",
+        "path": "codeflow-agents/generalist/smart-subagent-orchestrator.md",
+        "sha": "462820e",
+        "license": "MIT",
+        "attribution": "Codeflow Team"
+      }
+    },
+    {
+      "id": "codeflow-core/devops-operations-specialist",
+      "kind": "agent",
+      "name": "devops-operations-specialist",
+      "version": "1.0.0",
+      "description": "Expert DevOps and operations specialist focused on infrastructure automation, deployment pipelines, monitoring, and operational excellence",
+      "tags": [
+        "operations"
+      ],
+      "license": "MIT",
+      "source": "codeflow-core",
+      "dependencies": [
+        "full-stack-developer",
+        "code-reviewer"
+      ],
+      "install_targets": [
+        "claude-code",
+        "opencode"
+      ],
+      "conversion_rules": {
+        "base_path": "codeflow-agents/operations/devops-operations-specialist.md",
+        "supports_all_formats": true
+      },
+      "provenance": {
+        "repo": "ferg-cod3s/codeflow",
+        "path": "codeflow-agents/operations/devops-operations-specialist.md",
+        "sha": "b0ec4ce",
+        "license": "MIT",
+        "attribution": "Codeflow Team"
+      }
+    },
+    {
+      "id": "codeflow-core/deployment-wizard",
+      "kind": "agent",
+      "name": "deployment-wizard",
+      "version": "1.0.0",
+      "description": "Sets up CI/CD pipelines and automates deployment processes. Specializes in deployment automation and DevOps practices. Use this agent when you need to set up or improve deployment processes and CI/CD ",
+      "tags": [
+        "operations"
+      ],
+      "license": "MIT",
+      "source": "codeflow-core",
+      "dependencies": [
+        "full-stack-developer",
+        "code-reviewer"
+      ],
+      "install_targets": [
+        "claude-code",
+        "opencode"
+      ],
+      "conversion_rules": {
+        "base_path": "codeflow-agents/operations/deployment-wizard.md",
+        "supports_all_formats": true
+      },
+      "provenance": {
+        "repo": "ferg-cod3s/codeflow",
+        "path": "codeflow-agents/operations/deployment-wizard.md",
+        "sha": "a66ce42",
+        "license": "MIT",
+        "attribution": "Codeflow Team"
+      }
+    },
+    {
+      "id": "codeflow-core/cost-optimizer",
+      "kind": "agent",
+      "name": "cost-optimizer",
+      "version": "1.0.0",
+      "description": "Cloud cost optimization and resource efficiency specialist. Analyzes cloud spending patterns, identifies cost-saving opportunities, and provides recommendations for resource rightsizing, reserved inst",
+      "tags": [
+        "operations"
+      ],
+      "license": "MIT",
+      "source": "codeflow-core",
+      "dependencies": [
+        "infrastructure-builder",
+        "devops-operations-specialist",
+        "monitoring-expert",
+        "system-architect"
+      ],
+      "install_targets": [
+        "claude-code",
+        "opencode"
+      ],
+      "conversion_rules": {
+        "base_path": "codeflow-agents/operations/cost-optimizer.md",
+        "supports_all_formats": true
+      },
+      "provenance": {
+        "repo": "ferg-cod3s/codeflow",
+        "path": "codeflow-agents/operations/cost-optimizer.md",
+        "sha": "1bfddeb",
+        "license": "MIT",
+        "attribution": "Codeflow Team"
+      }
+    },
+    {
+      "id": "codeflow-core/release-manager",
+      "kind": "agent",
+      "name": "release-manager",
+      "version": "1.0.0",
+      "description": "CI/CD release coordination and deployment management specialist. Manages release pipelines, version control, deployment strategies, and rollback procedures. Ensures smooth transitions from development",
+      "tags": [
+        "operations"
+      ],
+      "license": "MIT",
+      "source": "codeflow-core",
+      "dependencies": [
+        "deployment-wizard",
+        "devops-operations-specialist",
+        "monitoring-expert",
+        "quality-testing-performance-tester"
+      ],
+      "install_targets": [
+        "claude-code",
+        "opencode"
+      ],
+      "conversion_rules": {
+        "base_path": "codeflow-agents/operations/release-manager.md",
+        "supports_all_formats": true
+      },
+      "provenance": {
+        "repo": "ferg-cod3s/codeflow",
+        "path": "codeflow-agents/operations/release-manager.md",
+        "sha": "749b774",
+        "license": "MIT",
+        "attribution": "Codeflow Team"
+      }
+    },
+    {
+      "id": "codeflow-core/monitoring-expert",
+      "kind": "agent",
+      "name": "monitoring-expert",
+      "version": "1.0.0",
+      "description": "Implements system alerts, monitoring solutions, and observability infrastructure. Specializes in operational monitoring, alerting, and incident response. Use this agent when you need to implement comp",
+      "tags": [
+        "operations"
+      ],
+      "license": "MIT",
+      "source": "codeflow-core",
+      "dependencies": [
+        "full-stack-developer",
+        "code-reviewer"
+      ],
+      "install_targets": [
+        "claude-code",
+        "opencode"
+      ],
+      "conversion_rules": {
+        "base_path": "codeflow-agents/operations/monitoring-expert.md",
+        "supports_all_formats": true
+      },
+      "provenance": {
+        "repo": "ferg-cod3s/codeflow",
+        "path": "codeflow-agents/operations/monitoring-expert.md",
+        "sha": "53f1452",
+        "license": "MIT",
+        "attribution": "Codeflow Team"
+      }
+    },
+    {
+      "id": "codeflow-core/infrastructure-builder",
+      "kind": "agent",
+      "name": "infrastructure-builder",
+      "version": "1.0.0",
+      "description": "Designs scalable cloud architecture and manages infrastructure as code. Specializes in cloud infrastructure and scalability. Use this agent when you need to design or optimize cloud infrastructure and",
+      "tags": [
+        "operations"
+      ],
+      "license": "MIT",
+      "source": "codeflow-core",
+      "dependencies": [
+        "full-stack-developer",
+        "code-reviewer"
+      ],
+      "install_targets": [
+        "claude-code",
+        "opencode"
+      ],
+      "conversion_rules": {
+        "base_path": "codeflow-agents/operations/infrastructure-builder.md",
+        "supports_all_formats": true
+      },
+      "provenance": {
+        "repo": "ferg-cod3s/codeflow",
+        "path": "codeflow-agents/operations/infrastructure-builder.md",
+        "sha": "85c6080",
+        "license": "MIT",
+        "attribution": "Codeflow Team"
+      }
+    },
+    {
+      "id": "codeflow-core/operations-incident-commander",
+      "kind": "agent",
+      "name": "operations-incident-commander",
+      "version": "1.0.0",
+      "description": "Lead incident response from detection through resolution and post-incident analysis. Coordinate people, decisions, communications, and timelines while maintaining service stability and user trust.",
+      "tags": [
+        "operations"
+      ],
+      "license": "MIT",
+      "source": "codeflow-core",
+      "dependencies": [
+        "full-stack-developer",
+        "code-reviewer"
+      ],
+      "install_targets": [
+        "claude-code",
+        "opencode"
+      ],
+      "conversion_rules": {
+        "base_path": "codeflow-agents/operations/operations-incident-commander.md",
+        "supports_all_formats": true
+      },
+      "provenance": {
+        "repo": "ferg-cod3s/codeflow",
+        "path": "codeflow-agents/operations/operations-incident-commander.md",
+        "sha": "f6f1ff8",
+        "license": "MIT",
+        "attribution": "Codeflow Team"
+      }
+    },
+    {
+      "id": "codeflow-core/accessibility-pro",
+      "kind": "agent",
+      "name": "accessibility-pro",
+      "version": "1.0.0",
+      "description": "Ensures app accessibility and compliance with WCAG guidelines. Specializes in making applications usable for all users. Use this agent when you need to ensure your application is accessible to users w",
+      "tags": [
+        "design ux",
+        "design-ux"
+      ],
+      "license": "MIT",
+      "source": "codeflow-core",
+      "dependencies": [
+        "full-stack-developer",
+        "code-reviewer"
+      ],
+      "install_targets": [
+        "claude-code",
+        "opencode"
+      ],
+      "conversion_rules": {
+        "base_path": "codeflow-agents/design-ux/accessibility-pro.md",
+        "supports_all_formats": true
+      },
+      "provenance": {
+        "repo": "ferg-cod3s/codeflow",
+        "path": "codeflow-agents/design-ux/accessibility-pro.md",
+        "sha": "6346e92",
+        "license": "MIT",
+        "attribution": "Codeflow Team"
+      }
+    },
+    {
+      "id": "codeflow-core/ux-optimizer",
+      "kind": "agent",
+      "name": "ux-optimizer",
+      "version": "1.0.0",
+      "description": "Simplifies user flows, enhances user experience, and optimizes conversion paths. Specializes in user journey optimization, interaction design, and conversion optimization. Use this agent when you need",
+      "tags": [
+        "design ux",
+        "design-ux"
+      ],
+      "license": "MIT",
+      "source": "codeflow-core",
+      "dependencies": [
+        "full-stack-developer",
+        "code-reviewer"
+      ],
+      "install_targets": [
+        "claude-code",
+        "opencode"
+      ],
+      "conversion_rules": {
+        "base_path": "codeflow-agents/design-ux/ux-optimizer.md",
+        "supports_all_formats": true
+      },
+      "provenance": {
+        "repo": "ferg-cod3s/codeflow",
+        "path": "codeflow-agents/design-ux/ux-optimizer.md",
+        "sha": "4d064a2",
+        "license": "MIT",
+        "attribution": "Codeflow Team"
+      }
+    },
+    {
+      "id": "codeflow-core/compliance-expert",
+      "kind": "agent",
+      "name": "compliance-expert",
+      "version": "1.0.0",
+      "description": "Security compliance specialist focused on regulatory requirements, control validation, and compliance framework implementation. Assesses systems against industry standards (SOC 2, ISO 27001, GDPR, HIP",
+      "tags": [
+        "quality testing",
+        "quality-testing"
+      ],
+      "license": "MIT",
+      "source": "codeflow-core",
+      "dependencies": [
+        "security-scanner",
+        "system-architect",
+        "devops-operations-specialist",
+        "full-stack-developer"
+      ],
+      "install_targets": [
+        "claude-code",
+        "opencode"
+      ],
+      "conversion_rules": {
+        "base_path": "codeflow-agents/quality-testing/compliance-expert.md",
+        "supports_all_formats": true
+      },
+      "provenance": {
+        "repo": "ferg-cod3s/codeflow",
+        "path": "codeflow-agents/quality-testing/compliance-expert.md",
+        "sha": "a3eba60",
+        "license": "MIT",
+        "attribution": "Codeflow Team"
+      }
+    },
+    {
+      "id": "codeflow-core/quality-testing-performance-tester",
+      "kind": "agent",
+      "name": "quality-testing-performance-tester",
+      "version": "1.0.0",
+      "description": "Design and execute load, stress, soak, and spike tests; analyze performance bottlenecks; and recommend optimizations aligned with SLOs.",
+      "tags": [
+        "quality testing",
+        "quality-testing"
+      ],
+      "license": "MIT",
+      "source": "codeflow-core",
+      "dependencies": [
+        "full-stack-developer",
+        "code-reviewer"
+      ],
+      "install_targets": [
+        "claude-code",
+        "opencode"
+      ],
+      "conversion_rules": {
+        "base_path": "codeflow-agents/quality-testing/quality-testing-performance-tester.md",
+        "supports_all_formats": true
+      },
+      "provenance": {
+        "repo": "ferg-cod3s/codeflow",
+        "path": "codeflow-agents/quality-testing/quality-testing-performance-tester.md",
+        "sha": "a238dce",
+        "license": "MIT",
+        "attribution": "Codeflow Team"
+      }
+    },
+    {
+      "id": "codeflow-core/test-generator",
+      "kind": "agent",
+      "name": "test-generator",
+      "version": "1.0.0",
+      "description": "Automated test generation specialist focused on creating comprehensive test suites for code coverage, quality assurance, and regression prevention. Generates unit tests, integration tests, and edge ca",
+      "tags": [
+        "quality testing",
+        "quality-testing"
+      ],
+      "license": "MIT",
+      "source": "codeflow-core",
+      "dependencies": [
+        "code-reviewer",
+        "full-stack-developer",
+        "quality-testing-performance-tester"
+      ],
+      "install_targets": [
+        "claude-code",
+        "opencode"
+      ],
+      "conversion_rules": {
+        "base_path": "codeflow-agents/quality-testing/test-generator.md",
+        "supports_all_formats": true
+      },
+      "provenance": {
+        "repo": "ferg-cod3s/codeflow",
+        "path": "codeflow-agents/quality-testing/test-generator.md",
+        "sha": "db7f8c6",
+        "license": "MIT",
+        "attribution": "Codeflow Team"
+      }
+    },
+    {
+      "id": "codeflow-core/security-scanner",
+      "kind": "agent",
+      "name": "security-scanner",
+      "version": "1.0.0",
+      "description": "Defensive application & platform security analysis agent. Performs structured, read-only security posture evaluation across code, configuration, and dependency layers; identifies vulnerabilities, misc",
+      "tags": [
+        "quality testing",
+        "quality-testing"
+      ],
+      "license": "MIT",
+      "source": "codeflow-core",
+      "dependencies": [
+        "full-stack-developer",
+        "code-reviewer",
+        "system-architect",
+        "devops-operations-specialist",
+        "infrastructure-builder",
+        "compliance-expert",
+        "performance-engineer"
+      ],
+      "install_targets": [
+        "claude-code",
+        "opencode"
+      ],
+      "conversion_rules": {
+        "base_path": "codeflow-agents/quality-testing/security-scanner.md",
+        "supports_all_formats": true
+      },
+      "provenance": {
+        "repo": "ferg-cod3s/codeflow",
+        "path": "codeflow-agents/quality-testing/security-scanner.md",
+        "sha": "a2fe7fe",
+        "license": "MIT",
+        "attribution": "Codeflow Team"
+      }
+    },
+    {
+      "id": "codeflow-core/content-localization-coordinator",
+      "kind": "agent",
+      "name": "content-localization-coordinator",
+      "version": "1.0.0",
+      "description": "Coordinate localization (l10n) and internationalization (i18n) workflows including translation management, locale setup, and cultural adaptation processes.",
+      "tags": [
+        "product strategy",
+        "product-strategy"
+      ],
+      "license": "MIT",
+      "source": "codeflow-core",
+      "dependencies": [
+        "full-stack-developer",
+        "code-reviewer"
+      ],
+      "install_targets": [
+        "claude-code",
+        "opencode"
+      ],
+      "conversion_rules": {
+        "base_path": "codeflow-agents/product-strategy/content-localization-coordinator.md",
+        "supports_all_formats": true
+      },
+      "provenance": {
+        "repo": "ferg-cod3s/codeflow",
+        "path": "codeflow-agents/product-strategy/content-localization-coordinator.md",
+        "sha": "58e9b98",
+        "license": "MIT",
+        "attribution": "Codeflow Team"
+      }
+    },
+    {
+      "id": "codeflow-core/cmd-project-docs",
+      "kind": "command",
+      "name": "/project-docs",
+      "version": "1.0.0",
+      "description": "Generate comprehensive project documentation including PRD, security docs, user flows, and more",
+      "tags": [
+        "command",
+        "workflow"
+      ],
+      "license": "MIT",
+      "source": "codeflow-core",
+      "dependencies": [],
+      "install_targets": [
+        "claude-code",
+        "opencode"
+      ],
+      "conversion_rules": {
+        "base_path": "command/project-docs.md",
+        "supports_all_formats": true
+      },
+      "provenance": {
+        "repo": "ferg-cod3s/codeflow",
+        "path": "command/project-docs.md",
+        "sha": "695bda9",
+        "license": "MIT",
+        "attribution": "Codeflow Team"
+      }
+    },
+    {
+      "id": "codeflow-core/cmd-research",
+      "kind": "command",
+      "name": "/research",
+      "version": "1.0.0",
+      "description": "Research a ticket or provide a prompt for ad-hoc research",
+      "tags": [
+        "command",
+        "workflow"
+      ],
+      "license": "MIT",
+      "source": "codeflow-core",
+      "dependencies": [],
+      "install_targets": [
+        "claude-code",
+        "opencode"
+      ],
+      "conversion_rules": {
+        "base_path": "command/research.md",
+        "supports_all_formats": true
+      },
+      "provenance": {
+        "repo": "ferg-cod3s/codeflow",
+        "path": "command/research.md",
+        "sha": "e35fbe2",
+        "license": "MIT",
+        "attribution": "Codeflow Team"
+      }
+    },
+    {
+      "id": "codeflow-core/cmd-plan",
+      "kind": "command",
+      "name": "/plan",
+      "version": "1.0.0",
+      "description": "Create an implementation plan from a ticket and research",
+      "tags": [
+        "command",
+        "workflow"
+      ],
+      "license": "MIT",
+      "source": "codeflow-core",
+      "dependencies": [],
+      "install_targets": [
+        "claude-code",
+        "opencode"
+      ],
+      "conversion_rules": {
+        "base_path": "command/plan.md",
+        "supports_all_formats": true
+      },
+      "provenance": {
+        "repo": "ferg-cod3s/codeflow",
+        "path": "command/plan.md",
+        "sha": "ea32f24",
+        "license": "MIT",
+        "attribution": "Codeflow Team"
+      }
+    },
+    {
+      "id": "codeflow-core/cmd-document",
+      "kind": "command",
+      "name": "/document",
+      "version": "1.0.0",
+      "description": "Produce high-quality documentation for implemented features",
+      "tags": [
+        "command",
+        "workflow"
+      ],
+      "license": "MIT",
+      "source": "codeflow-core",
+      "dependencies": [],
+      "install_targets": [
+        "claude-code",
+        "opencode"
+      ],
+      "conversion_rules": {
+        "base_path": "command/document.md",
+        "supports_all_formats": true
+      },
+      "provenance": {
+        "repo": "ferg-cod3s/codeflow",
+        "path": "command/document.md",
+        "sha": "0b8fb74",
+        "license": "MIT",
+        "attribution": "Codeflow Team"
+      }
+    },
+    {
+      "id": "codeflow-core/cmd-commit",
+      "kind": "command",
+      "name": "/commit",
+      "version": "1.0.0",
+      "description": "Commits the local changes in multiple atomic commits",
+      "tags": [
+        "command",
+        "workflow"
+      ],
+      "license": "MIT",
+      "source": "codeflow-core",
+      "dependencies": [],
+      "install_targets": [
+        "claude-code",
+        "opencode"
+      ],
+      "conversion_rules": {
+        "base_path": "command/commit.md",
+        "supports_all_formats": true
+      },
+      "provenance": {
+        "repo": "ferg-cod3s/codeflow",
+        "path": "command/commit.md",
+        "sha": "e7ab1ee",
+        "license": "MIT",
+        "attribution": "Codeflow Team"
+      }
+    },
+    {
+      "id": "codeflow-core/cmd-test",
+      "kind": "command",
+      "name": "/test",
+      "version": "1.0.0",
+      "description": "Generate and run a comprehensive testing workflow",
+      "tags": [
+        "command",
+        "workflow"
+      ],
+      "license": "MIT",
+      "source": "codeflow-core",
+      "dependencies": [],
+      "install_targets": [
+        "claude-code",
+        "opencode"
+      ],
+      "conversion_rules": {
+        "base_path": "command/test.md",
+        "supports_all_formats": true
+      },
+      "provenance": {
+        "repo": "ferg-cod3s/codeflow",
+        "path": "command/test.md",
+        "sha": "ad35988",
+        "license": "MIT",
+        "attribution": "Codeflow Team"
+      }
+    },
+    {
+      "id": "codeflow-core/cmd-review",
+      "kind": "command",
+      "name": "/review",
+      "version": "1.0.0",
+      "description": "Validate that an implementation plan was correctly executed",
+      "tags": [
+        "command",
+        "workflow"
+      ],
+      "license": "MIT",
+      "source": "codeflow-core",
+      "dependencies": [],
+      "install_targets": [
+        "claude-code",
+        "opencode"
+      ],
+      "conversion_rules": {
+        "base_path": "command/review.md",
+        "supports_all_formats": true
+      },
+      "provenance": {
+        "repo": "ferg-cod3s/codeflow",
+        "path": "command/review.md",
+        "sha": "7f8cb3d",
+        "license": "MIT",
+        "attribution": "Codeflow Team"
+      }
+    },
+    {
+      "id": "codeflow-core/cmd-execute",
+      "kind": "command",
+      "name": "/execute",
+      "version": "1.0.0",
+      "description": "Execute a specific implementation plan from thoughts/plans/",
+      "tags": [
+        "command",
+        "workflow"
+      ],
+      "license": "MIT",
+      "source": "codeflow-core",
+      "dependencies": [],
+      "install_targets": [
+        "claude-code",
+        "opencode"
+      ],
+      "conversion_rules": {
+        "base_path": "command/execute.md",
+        "supports_all_formats": true
+      },
+      "provenance": {
+        "repo": "ferg-cod3s/codeflow",
+        "path": "command/execute.md",
+        "sha": "d490229",
+        "license": "MIT",
+        "attribution": "Codeflow Team"
+      }
+    }
+  ]
+}

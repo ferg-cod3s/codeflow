@@ -1,10 +1,10 @@
 {
   "name": "@agentic-codeflow/cli",
-  "version": "0.10.8",
+  "version": "1.2.0",
   "description": "CLI for Agentic CodeFlow AI-assisted development workflows",
   "type": "module",
   "bin": {
-    "codeflow": "./codeflow-0.10.8.js"
+    "codeflow": "./src/cli/index.ts"
   },
   "keywords": [
     "cli",
@@ -28,14 +28,20 @@
   "author": "ferg.cod3s <john.ferguson@jferguson.info>",
   "license": "MIT",
   "files": [
-    "src",
-    "mcp",
-    "agent",
-    "codeflow-agents",
-    "deprecated/",
-    "command",
-    "config.json",
-    "README.md"
+    "src/**/*",
+    ".claude/**/*",
+    ".opencode/**/*",
+    "codeflow-agents/**/*",
+    "command/**/*",
+    "scripts/sync.js",
+    "scripts/setup.js",
+    "AGENT_MANIFEST.json",
+    "README.md",
+    "LICENSE",
+    "docs/README.md",
+    "docs/ARCHITECTURE_OVERVIEW.md",
+    "docs/MCP_QUICKSTART.md",
+    "docs/SLASH_COMMANDS.md"
   ],
   "publishConfig": {
     "access": "public"
@@ -43,9 +49,23 @@
   "scripts": {
     "install": "bun link",
     "typecheck": "tsc --noEmit",
-    "test": "bun test",
+    "test": "bun run run-tests.ts",
+    "test:unit": "bun run run-tests.ts unit",
+    "test:integration": "bun run run-tests.ts integration",
+    "test:e2e": "bun run run-tests.ts e2e",
     "test:watch": "bun test --watch",
-    "test:coverage": "bun test --coverage",
+    "test:coverage": "bun run run-tests.ts --coverage",
+    "test:agents": "bun test tests/unit/agents",
+    "test:commands": "bun test tests/unit/commands",
+    "test:cli": "bun test tests/unit/cli",
+    "test:conversion": "bun test tests/unit/catalog/conversion.test.ts",
+    "sync": "bun run src/sync-with-validation.ts",
+    "sync:global": "bun run src/sync-with-validation.ts --global",
+    "sync:fix": "bun run src/sync-with-validation.ts --fix",
+    "sync:validate": "bun run src/sync-with-validation.ts --validate",
+    "sync:claude": "./sync-claude-global.sh",
+    "yaml:validate": "bun run src/utils/yaml-validator.ts",
+    "yaml:fix": "bun run src/utils/yaml-validator.ts --fix",
     "mcp:server": "bun run mcp/codeflow-server.mjs",
     "mcp:dev": "bun run --watch mcp/codeflow-server.mjs",
     "server": "bun run src/cli/index.ts server start",
@@ -63,6 +83,7 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.18.1",
+    "semver": "^7.7.2",
     "yaml": "^2.8.1",
     "zod": "^4.1.11"
   },
@@ -71,6 +92,7 @@
     "@commitlint/config-conventional": "^19.8.1",
     "@eslint/js": "^9.36.0",
     "@types/bun": "latest",
+    "@types/semver": "^7.7.1",
     "@typescript-eslint/eslint-plugin": "^8.44.0",
     "@typescript-eslint/parser": "^8.44.0",
     "conventional-changelog-angular": "^8.0.0",

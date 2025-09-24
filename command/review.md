@@ -1,5 +1,7 @@
 ---
 name: review
+mode: command
+model: claude-3-5-sonnet-20241022
 description: Validate that an implementation plan was correctly executed
 version: 2.0.0-internal
 last_updated: 2025-09-13
@@ -144,7 +146,7 @@ Systematically validate implementation correctness by comparing executed changes
     "savings": 0.20
   },
   "validation": {
-    "plan_path": "thoughts/plans/2025-09-13-feature-implementation.md",
+    "plan_path": "docs/plans/2025-09-13-feature-implementation.md",
     "scope": "current_session|recent_commits|full_history",
     "strictness": "lenient|standard|strict"
   },
