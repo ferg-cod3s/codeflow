@@ -3,7 +3,7 @@
 # Batch fix for agent validation issues
 # Fixes: temperature: undefined -> temperature: 0.3
 #        mode: undefined -> mode: subagent
-#        model: undefined -> model: claude-3-5-sonnet-20241022
+#        model: undefined -> model: opencode/grok-code
 #        tools: undefined -> (remove line)
 
 echo "🔧 Fixing agent validation issues..."
@@ -19,7 +19,7 @@ find /Users/johnferguson/Github/codeflow/agent/ -name "*.md" -not -path "*/openc
         sed -i '' \
             -e 's/^temperature: undefined$/temperature: 0.3/' \
             -e 's/^mode: undefined$/mode: subagent/' \
-            -e 's/^model: undefined$/model: claude-3-5-sonnet-20241022/' \
+            -e 's/^model: undefined$/model: opencode\/grok-code/' \
             -e '/^tools: undefined$/d' \
             "$file"
         
@@ -38,7 +38,7 @@ find /Users/johnferguson/Github/codeflow/claude-agents/ -name "*.md" | while rea
         sed -i '' \
             -e 's/^temperature: undefined$/temperature: 0.3/' \
             -e 's/^mode: undefined$/mode: subagent/' \
-            -e 's/^model: undefined$/model: claude-3-5-sonnet-20241022/' \
+            -e 's/^model: undefined$/model: opencode\/grok-code/' \
             -e '/^tools: undefined$/d' \
             "$file"
         
@@ -57,7 +57,7 @@ find /Users/johnferguson/Github/codeflow/opencode-agents/ -name "*.md" | while r
         sed -i '' \
             -e 's/^temperature: undefined$/temperature: 0.3/' \
             -e 's/^mode: undefined$/mode: subagent/' \
-            -e 's/^model: undefined$/model: claude-3-5-sonnet-20241022/' \
+            -e 's/^model: undefined$/model: opencode\/grok-code/' \
             -e '/^tools: undefined$/d' \
             "$file"
         

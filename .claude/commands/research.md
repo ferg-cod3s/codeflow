@@ -1,10 +1,9 @@
 ---
 name: research
 mode: command
-model: claude-3-5-sonnet-20241022
 description: Research a ticket or provide a prompt for ad-hoc research
-version: 2.0.0-internal
-last_updated: 2025-09-13
+version: 2.1.0-optimized
+last_updated: 2025-09-17
 command_schema_version: 1.0
 inputs:
   - name: ticket
@@ -41,310 +40,226 @@ failure_modes:
 
 # Research Codebase
 
-You are tasked with conducting comprehensive research across the codebase to answer user questions by spawning specialized agents and synthesizing their findings. This command uses intelligent caching to optimize research workflows and maintain consistency across similar investigations.
+Conduct comprehensive research across the codebase by coordinating specialized agents to explore patterns, context, and insights, then synthesize findings into actionable documentation. Uses intelligent caching for optimization.
 
 ## Purpose
 
-Conduct thorough, multi-dimensional research by coordinating specialized agents to explore codebase patterns, historical context, and architectural insights, then synthesize findings into actionable documentation.
+Multi-dimensional research via agent coordination for codebase patterns, historical context, and architectural insights, synthesized into documentation.
 
 ## Inputs
 
-- **ticket**: Path to ticket file or specific research question/topic
-- **scope**: Optional scope hint to guide research focus (codebase, thoughts, or both)
-- **depth**: Optional depth parameter for research thoroughness
-- **conversation_context**: History of related research and discussions
+- **ticket**: Path to ticket file or research question/topic
+- **scope**: Optional scope (codebase|thoughts|both)
+- **depth**: Optional depth (shallow|medium|deep)
+- **conversation_context**: Related research history
 
 ## Preconditions
 
-- Ticket file exists and is readable (if path provided)
-- Research question is clearly defined
-- Development environment accessible for agent coordination
-- Sufficient time allocated for comprehensive analysis
+- Valid ticket file or clear question
+- Accessible development environment
+- Time for comprehensive analysis
 
 ## Process Phases
 
 ### Phase 1: Context Analysis & Planning
 
-1. **Check Cache First**: Query cache for similar research patterns using ticket/question hash
-2. **Read Primary Source**: Completely read the ticket file or understand the research question
-3. **Decompose Research Scope**: Break down the query into specific investigation areas
-4. **Create Research Plan**: Set up todo list to track all research subtasks
-5. **Identify Research Strategy**: Determine which agents and approaches to use
+1. Check cache for similar patterns
+2. Read ticket/question fully
+3. Decompose into investigation areas
+4. Create research plan with subtasks
+5. Identify agents and strategies
 
 ### Phase 2: Parallel Agent Coordination
 
-1. **Spawn Locator Agents**: Launch codebase-locator and thoughts-locator in parallel
-2. **Gather Pattern Intelligence**: Use codebase-pattern-finder for similar implementation examples
-3. **Deep Analysis**: Execute codebase-analyzer and thoughts-analyzer on key findings
-4. **Domain-Specific Research**: Deploy specialized agents as needed for domain expertise
-5. **Wait for Completion**: Ensure all agents finish before synthesis
+1. Spawn locators: codebase-locator, thoughts-locator in parallel
+2. Pattern analysis: codebase-pattern-finder for examples
+3. Deep analysis: codebase-analyzer, thoughts-analyzer on key findings
+4. Domain agents: Deploy specialized agents as needed
+5. Wait for completion
 
 ### Phase 3: Synthesis & Documentation
 
-1. **Compile Findings**: Aggregate results from all research agents
-2. **Cross-Reference Analysis**: Connect findings across components and contexts
-3. **Generate Insights**: Identify patterns, architectural decisions, and key relationships
-4. **Create Research Document**: Structure findings with proper metadata and references
-5. **Update Cache**: Store successful research patterns for future investigations
+1. Aggregate agent results
+2. Cross-reference findings
+3. Generate insights and patterns
+4. Create structured research document
+5. Update cache with patterns
 
 ## Error Handling
 
-### Invalid Ticket Error
+### Invalid Ticket
 
-```error-context
-{
-  "command": "research",
-  "phase": "context_analysis",
-  "error_type": "invalid_ticket",
-  "expected": "Valid ticket file or research question",
-  "found": "File not found: docs/tickets/missing-ticket.md",
-  "mitigation": "Verify ticket path or clarify research question",
-  "requires_user_input": true
-}
-```
+- Phase: context_analysis
+- Expected: Valid ticket file/question
+- Mitigation: Verify path or clarify question
+- Requires user input: true
 
-### Agent Coordination Failure
+### Agent Failure
 
-```error-context
-{
-  "command": "research",
-  "phase": "agent_execution",
-  "error_type": "agent_failure",
-  "expected": "All research agents complete successfully",
-  "found": "codebase-locator agent failed with timeout",
-  "mitigation": "Retry agent execution or adjust research scope",
-  "requires_user_input": false
-}
-```
+- Phase: agent_execution
+- Expected: All agents complete
+- Mitigation: Retry or adjust scope
+- Requires user input: false
 
-### Insufficient Findings Error
+### Insufficient Findings
 
-```error-context
-{
-  "command": "research",
-  "phase": "synthesis",
-  "error_type": "insufficient_findings",
-  "expected": "Adequate findings to answer research question",
-  "found": "Only 2 relevant files found for complex architectural question",
-  "mitigation": "Expand research scope or clarify research objectives",
-  "requires_user_input": true
-}
-```
+- Phase: synthesis
+- Expected: Adequate findings
+- Mitigation: Expand scope/objectives
+- Requires user input: true
 
-## Structured Output Specification
-
-### Primary Output
+## Structured Output
 
 ```command-output:research_document
 {
   "status": "success|in_progress|error",
   "timestamp": "ISO-8601",
-  "cache": {
-    "hit": true|false,
-    "key": "research_pattern:{ticket_hash}:{scope}",
-    "ttl_remaining": 3600,
-    "savings": 0.25
-  },
-  "research": {
-    "question": "How does the authentication system work?",
-    "scope": "codebase|thoughts|both",
-    "depth": "shallow|medium|deep"
-  },
-  "findings": {
-    "total_files_analyzed": 23,
-    "codebase_findings": 18,
-    "thoughts_findings": 5,
-    "key_insights": 7,
-    "architectural_patterns": 3
-  },
-  "document": {
-    "path": "docs/research/2025-09-13-authentication-system.md",
-    "sections": ["synopsis", "summary", "detailed_findings", "references"],
-    "code_references": 12,
-    "historical_context": 3
-  },
-  "agents_used": [
-    "codebase-locator",
-    "codebase-analyzer",
-    "thoughts-locator",
-    "thoughts-analyzer"
-  ],
-  "metadata": {
-    "processing_time": 180,
-    "cache_savings": 0.25,
-    "agent_tasks": 6,
-    "follow_up_questions": 0
-  }
+  "cache": {"hit": true|false, "key": "pattern:{hash}:{scope}", "ttl_remaining": 3600, "savings": 0.25},
+  "research": {"question": "string", "scope": "codebase|thoughts|both", "depth": "shallow|medium|deep"},
+  "findings": {"total_files": 23, "codebase": 18, "thoughts": 5, "insights": 7, "patterns": 3},
+  "document": {"path": "docs/research/YYYY-MM-DD-topic.md", "sections": ["synopsis", "summary", "findings", "references"], "code_refs": 12, "historical": 3},
+  "agents_used": ["codebase-locator", "codebase-analyzer", "thoughts-locator", "thoughts-analyzer"],
+  "metadata": {"processing_time": 180, "cache_savings": 0.25, "agent_tasks": 6, "follow_up": 0}
 }
 ```
 
 ## Success Criteria
 
-#### Automated Verification
+### Automated
 
-- [ ] Research document created in `docs/research/` directory
-- [ ] Document follows required structure with YAML frontmatter
-- [ ] All specified agents completed their analysis successfully
-- [ ] Document includes specific file:line references for key findings
-- [ ] Cache updated with successful research patterns
+- Document created in `docs/research/`
+- YAML frontmatter structure
+- Agents completed successfully
+- File:line references included
+- Cache updated
 
-#### Manual Verification
+### Manual
 
-- [ ] Research question is fully addressed with concrete evidence
-- [ ] Findings connect across different components and contexts
-- [ ] Document provides actionable insights for development
-- [ ] Historical context from docs/ is properly integrated
-- [ ] Open questions are identified and addressed
+- Question fully addressed with evidence
+- Cross-component connections
+- Actionable development insights
+- Historical context integrated
+- Open questions addressed
 
-## Agent Coordination Strategy
+## Agent Coordination
 
-### Agent Execution Order
+### Execution Order
 
-1. **Phase 1 - Discovery**: Run locator agents in parallel
-   - codebase-locator: Find relevant files and components
-   - thoughts-locator: Discover existing documentation
+1. **Discovery**: Locators in parallel (codebase-locator, thoughts-locator)
+2. **Pattern Analysis**: codebase-pattern-finder after locators
+3. **Deep Analysis**: Analyzers on key findings (codebase-analyzer, thoughts-analyzer)
 
-2. **Phase 2 - Pattern Analysis**: Execute pattern-finder after locators complete
-   - codebase-pattern-finder: Identify similar implementation examples
+### Specialized Agents
 
-3. **Phase 3 - Deep Analysis**: Run analyzers on most promising findings
-   - codebase-analyzer: Understand how specific code works
-   - thoughts-analyzer: Extract insights from key documents
+- operations-incident-commander: Incident response
+- development-migrations-specialist: Database migrations
+- programmatic-seo-engineer: SEO architecture
+- content-localization-coordinator: i18n/l10n
+- quality-testing-performance-tester: Performance testing
 
-### Specialized Agent Selection
+## Best Practices
 
-- **operations-incident-commander**: Incident response and operational issues
-- **development-migrations-specialist**: Database changes and migrations
-- **programmatic-seo-engineer**: SEO architecture and content generation
-- **content-localization-coordinator**: i18n/l10n workflows
-- **quality-testing-performance-tester**: Performance analysis and testing
+### Methodology
 
-## Research Best Practices
+- Read primary sources fully before agents
+- Run same-type agents in parallel
+- Prioritize current codebase over cache
+- Identify cross-component relationships
 
-### Investigation Methodology
+### Documentation
 
-- **Complete Context First**: Always read primary sources fully before agent coordination
-- **Parallel Execution**: Maximize efficiency by running same-type agents concurrently
-- **Fresh Analysis**: Prioritize current codebase over cached documentation
-- **Cross-Component Connections**: Identify relationships between different system parts
+- Consistent YAML frontmatter and sections
+- Specific file:line references
+- Include temporal context
+- Self-contained with necessary context
 
-### Documentation Standards
-
-- **Structured Format**: Use consistent YAML frontmatter and section organization
-- **Concrete References**: Include specific file paths and line numbers
-- **Temporal Context**: Document when research was conducted
-- **Self-Contained**: Ensure documents stand alone with necessary context
-
-## Research Document Template
+## Document Template
 
 ```markdown
 ---
-date: 2025-09-13T10:30:00Z
+date: YYYY-MM-DDTHH:MM:SSZ
 researcher: Assistant
-git_commit: abc123def456
-branch: main
-repository: codeflow
-topic: 'Authentication System Architecture'
-tags: [research, authentication, security, architecture]
+topic: 'Research Topic'
+tags: [research, tags]
 status: complete
-last_updated: 2025-09-13
-last_updated_by: Assistant
 ---
 
-## Ticket Synopsis
+## Synopsis
 
-[Brief summary of the research question or ticket requirements]
+[Brief summary of question/requirements]
 
 ## Summary
 
-[High-level findings answering the research question]
+[High-level findings]
 
 ## Detailed Findings
 
-### [Component/Area 1]
+### Component 1
 
-- Finding with reference ([file.ext:line])
-- Connection to other components
-- Implementation details and patterns
-
-### [Component/Area 2]
-
-- Finding with reference ([file.ext:line])
-- Architectural insights
-- Usage patterns discovered
+- Finding ([file.ext:line])
+- Connections and patterns
 
 ## Code References
 
-- `path/to/auth.ts:123` - Main authentication logic
-- `src/components/Login.tsx:45-67` - Frontend implementation
+- `path/file.ext:line` - Description
 
 ## Architecture Insights
 
-[Key patterns, conventions, and design decisions]
+[Key patterns and decisions]
 
-## Historical Context (from docs/)
+## Historical Context
 
-[Relevant insights from docs/ directory]
-
-- `docs/architecture/auth-design.md` - Previous authentication decisions
-- `docs/research/2024-12-01-auth-analysis.md` - Related research
-
-## Related Research
-
-[Links to other relevant research documents]
+[Insights from docs/]
 
 ## Open Questions
 
-[Any areas requiring further investigation]
+[Any further investigation needed]
 ```
 
 ## Edge Cases
 
-### Limited Findings Scenario
+### Limited Findings
 
-- When research yields minimal results, expand scope systematically
-- Consider alternative search terms and directory patterns
-- Document what was NOT found as well as what was discovered
+- Expand scope with alternative terms/patterns
+- Document what was not found
 
-### Complex Multi-Component Systems
+### Multi-Component Systems
 
-- Break research into focused sub-questions
-- Use multiple specialized agents for different aspects
-- Create separate sections for each major component
+- Break into sub-questions
+- Use multiple agents per aspect
+- Separate sections per component
 
-### Historical vs Current Analysis
+### Historical vs Current
 
-- Always prioritize current codebase as source of truth
-- Use historical documents for context and decision rationale
-- Note any discrepancies between documentation and implementation
+- Prioritize current codebase
+- Use docs for context/rationale
+- Note discrepancies
 
 ## Anti-Patterns
 
-### Avoid These Practices
+- Spawn agents before reading sources
+- Run agents sequentially instead of parallel
+- Rely solely on cached documentation
+- Skip cache checks
 
-- **Incomplete context**: Don't spawn agents before reading primary sources
-- **Sequential execution**: Don't run agents one at a time when parallel execution is possible
-- **Stale research**: Don't rely solely on existing documentation without fresh analysis
-- **Cache bypass**: Don't skip cache checks for performance reasons
+## Caching
 
-## Caching Guidelines
+### Usage
 
-### Cache Usage Patterns
+- Store successful strategies for similar topics
+- Cache effective agent combinations
+- Remember question decomposition
 
-- **Research strategies**: Store successful investigation approaches for similar topics
-- **Agent combinations**: Cache effective agent coordination patterns
-- **Question decomposition**: Remember how to break down complex research questions
+### Invalidation
 
-### Cache Invalidation Triggers
+- Manual: Clear on standards/structure changes
+- Content-based: Significant question changes
+- Time-based: Refresh hourly for active sessions
 
-- **Manual**: Clear cache when research standards or codebase structure change
-- **Content-based**: Invalidate when research questions change significantly
-- **Time-based**: Refresh cache every hour for active research sessions
+### Performance
 
-### Performance Optimization
-
-- Cache hit rate target: ≥ 60% for repeated research patterns
-- Memory usage: < 30MB for research pattern cache
-- Response time: < 150ms for cache queries
+- Hit rate ≥60%
+- Memory <30MB
+- Response <150ms
 
 {{ticket}}

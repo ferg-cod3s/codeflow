@@ -7,6 +7,7 @@ import { ImportPipeline } from '../catalog/import-pipeline.js';
 import { FormatConverter } from '../conversion/format-converter.js';
 import { AgentValidator } from '../conversion/validator.js';
 import { ModelFixer } from '../catalog/model-fixer.js';
+import { parseAgentFile } from '../conversion/agent-parser.js';
 import CLIErrorHandler from './error-handler.js';
 
 export class CatalogCLI {
@@ -32,10 +33,9 @@ export class CatalogCLI {
     this.catalogIndex = await builder.load();
 
     if (!this.catalogIndex) {
-      CLIErrorHandler.displayWarning(
-        'Catalog index not found. Building from local sources...',
-        ['Run "codeflow catalog build" to create the catalog']
-      );
+      CLIErrorHandler.displayWarning('Catalog index not found. Building from local sources...', [
+        'Run "codeflow catalog build" to create the catalog',
+      ]);
       this.catalogIndex = await builder.buildFromLocal();
       await builder.save(this.catalogIndex);
     }
@@ -88,43 +88,49 @@ export class CatalogCLI {
   // List available items in the catalog
   async list(options: { type?: string; source?: string; tags?: string[] } = {}): Promise<void> {
     const catalog = await this.loadCatalog();
-    
+
     let items = catalog.items;
 
     // Filter by type
     if (options.type) {
-      items = items.filter(item => item.kind === options.type);
+      items = items.filter((item) => item.kind === options.type);
     }
 
     // Filter by source
     if (options.source) {
-      items = items.filter(item => item.source === options.source);
+      items = items.filter((item) => item.source === options.source);
     }
 
     // Filter by tags
     if (options.tags && options.tags.length > 0) {
-      items = items.filter(item => 
-        options.tags!.some(tag => item.tags.includes(tag))
-      );
+      items = items.filter((item) => options.tags!.some((tag) => item.tags.includes(tag)));
     }
 
     // Display results in a table format
     console.log('\n📦 Available Catalog Items\n');
-    console.log('┌─────────────────────────┬──────────┬──────────────────────────────┬─────────────┬──────────────┐');
-    console.log('│ ID                      │ Type     │ Description                  │ Tags        │ Targets      │');
-    console.log('├─────────────────────────┼──────────┼──────────────────────────────┼─────────────┼──────────────┤');
+    console.log(
+      '┌─────────────────────────┬──────────┬──────────────────────────────┬─────────────┬──────────────┐'
+    );
+    console.log(
+      '│ ID                      │ Type     │ Description                  │ Tags        │ Targets      │'
+    );
+    console.log(
+      '├─────────────────────────┼──────────┼──────────────────────────────┼─────────────┼──────────────┤'
+    );
 
-    items.slice(0, 20).forEach(item => {
+    items.slice(0, 20).forEach((item) => {
       const id = item.id.substring(0, 23).padEnd(23);
       const type = item.kind.padEnd(8);
       const desc = item.description.substring(0, 28).padEnd(28);
       const tags = item.tags.slice(0, 2).join(', ').substring(0, 11).padEnd(11);
       const targets = item.install_targets.join(', ').substring(0, 12).padEnd(12);
-      
+
       console.log(`│ ${id} │ ${type} │ ${desc} │ ${tags} │ ${targets} │`);
     });
 
-    console.log('└─────────────────────────┴──────────┴──────────────────────────────┴─────────────┴──────────────┘');
+    console.log(
+      '└─────────────────────────┴──────────┴──────────────────────────────┴─────────────┴──────────────┘'
+    );
 
     if (items.length > 20) {
       console.log(`\n... and ${items.length - 20} more items`);
@@ -139,29 +145,28 @@ export class CatalogCLI {
       CLIErrorHandler.displayError({
         command: 'catalog-search',
         phase: 'validation',
-        error_type: 'missing_query',
+        errorType: 'missing_query',
         expected: 'Search query',
         found: 'No query provided',
         mitigation: 'Provide a search term',
-        requires_user_input: true
+        requiresUserInput: true,
       });
       return;
     }
 
     const catalog = await this.loadCatalog();
     const searchTerm = query.toLowerCase();
-    
-    let results = catalog.items.filter(item => 
-      item.name.toLowerCase().includes(searchTerm) ||
-      item.description.toLowerCase().includes(searchTerm) ||
-      item.tags.some(tag => tag.toLowerCase().includes(searchTerm))
+
+    let results = catalog.items.filter(
+      (item) =>
+        item.name.toLowerCase().includes(searchTerm) ||
+        item.description.toLowerCase().includes(searchTerm) ||
+        item.tags.some((tag) => tag.toLowerCase().includes(searchTerm))
     );
 
     // Additional tag filtering
     if (options.tags && options.tags.length > 0) {
-      results = results.filter(item => 
-        options.tags!.some(tag => item.tags.includes(tag))
-      );
+      results = results.filter((item) => options.tags!.some((tag) => item.tags.includes(tag)));
     }
 
     if (results.length === 0) {
@@ -170,8 +175,8 @@ export class CatalogCLI {
     }
 
     console.log(`\n🔍 Found ${results.length} matches for "${query}":\n`);
-    
-    results.forEach(item => {
+
+    results.forEach((item) => {
       console.log(`  ${item.id}`);
       console.log(`    ${item.description.substring(0, 80)}`);
       console.log(`    Tags: ${item.tags.join(', ')}`);
@@ -185,17 +190,17 @@ export class CatalogCLI {
       CLIErrorHandler.displayError({
         command: 'catalog-info',
         phase: 'validation',
-        error_type: 'missing_id',
+        errorType: 'missing_id',
         expected: 'Item ID',
         found: 'No ID provided',
         mitigation: 'Provide an item ID',
-        requires_user_input: true
+        requiresUserInput: true,
       });
       return;
     }
 
     const catalog = await this.loadCatalog();
-    const item = catalog.items.find(i => i.id === itemId);
+    const item = catalog.items.find((i) => i.id === itemId);
 
     if (!item) {
       console.log(`\n❌ Item not found: ${itemId}`);
@@ -213,10 +218,10 @@ export class CatalogCLI {
     console.log(`  ${item.description}`);
     console.log(`\nTags:         ${item.tags.join(', ')}`);
     console.log(`Targets:      ${item.install_targets.join(', ')}`);
-    
+
     if (item.dependencies.length > 0) {
       console.log(`\nDependencies:`);
-      item.dependencies.forEach(dep => console.log(`  - ${dep}`));
+      item.dependencies.forEach((dep) => console.log(`  - ${dep}`));
     }
 
     console.log(`\nProvenance:`);
@@ -226,22 +231,25 @@ export class CatalogCLI {
   }
 
   // Install an item from the catalog
-  async install(itemId: string, options: { target?: string[]; global?: boolean; dryRun?: boolean } = {}): Promise<void> {
+  async install(
+    itemId: string,
+    options: { target?: string[]; global?: boolean; dryRun?: boolean } = {}
+  ): Promise<void> {
     if (!itemId) {
       CLIErrorHandler.displayError({
         command: 'catalog-install',
         phase: 'validation',
-        error_type: 'missing_id',
+        errorType: 'missing_id',
         expected: 'Item ID',
         found: 'No ID provided',
         mitigation: 'Provide an item ID to install',
-        requires_user_input: true
+        requiresUserInput: true,
       });
       return;
     }
 
     const catalog = await this.loadCatalog();
-    const item = catalog.items.find(i => i.id === itemId);
+    const item = catalog.items.find((i) => i.id === itemId);
 
     if (!item) {
       console.log(`\n❌ Item not found: ${itemId}`);
@@ -249,9 +257,9 @@ export class CatalogCLI {
     }
 
     const targets = options.target || item.install_targets;
-    
+
     console.log(`\n📦 Installing ${item.name}...`);
-    
+
     if (options.dryRun) {
       console.log('🔍 Dry run mode - no changes will be made');
     }
@@ -263,7 +271,11 @@ export class CatalogCLI {
     console.log(`\n✅ Successfully installed ${item.name}`);
   }
 
-  private async installToTarget(item: CatalogItem, target: string, options: { global?: boolean; dryRun?: boolean }): Promise<void> {
+  private async installToTarget(
+    item: CatalogItem,
+    target: string,
+    options: { global?: boolean; dryRun?: boolean }
+  ): Promise<void> {
     const home = homedir();
     let targetPath: string;
 
@@ -271,10 +283,21 @@ export class CatalogCLI {
     if (options.global) {
       switch (target) {
         case 'claude-code':
-          targetPath = join(home, '.claude', item.kind === 'command' ? 'commands' : 'agents', `${item.name}.md`);
+          targetPath = join(
+            home,
+            '.claude',
+            item.kind === 'command' ? 'commands' : 'agents',
+            `${item.name}.md`
+          );
           break;
         case 'opencode':
-          targetPath = join(home, '.config', 'opencode', item.kind === 'command' ? 'command' : 'agent', `${item.name}.md`);
+          targetPath = join(
+            home,
+            '.config',
+            'opencode',
+            item.kind === 'command' ? 'command' : 'agent',
+            `${item.name}.md`
+          );
           break;
         default:
           console.warn(`⚠️  Unknown target: ${target}`);
@@ -283,10 +306,20 @@ export class CatalogCLI {
     } else {
       switch (target) {
         case 'claude-code':
-          targetPath = join(this.projectRoot, '.claude', item.kind === 'command' ? 'commands' : 'agents', `${item.name}.md`);
+          targetPath = join(
+            this.projectRoot,
+            '.claude',
+            item.kind === 'command' ? 'commands' : 'agents',
+            `${item.name}.md`
+          );
           break;
         case 'opencode':
-          targetPath = join(this.projectRoot, '.opencode', item.kind === 'command' ? 'command' : 'agent', `${item.name}.md`);
+          targetPath = join(
+            this.projectRoot,
+            '.opencode',
+            item.kind === 'command' ? 'command' : 'agent',
+            `${item.name}.md`
+          );
           break;
         default:
           console.warn(`⚠️  Unknown target: ${target}`);
@@ -296,7 +329,7 @@ export class CatalogCLI {
 
     // Read source file
     const sourcePath = join(this.projectRoot, item.conversion_rules.base_path);
-    
+
     if (!existsSync(sourcePath)) {
       console.error(`❌ Source file not found: ${sourcePath}`);
       return;
@@ -304,26 +337,47 @@ export class CatalogCLI {
 
     const content = await readFile(sourcePath, 'utf-8');
 
+    // Parse the content into an Agent object
+    const sourceFormat = 'base'; // Assuming source is always in base format
+    let agent: any;
+    try {
+      agent = await parseAgentFile(sourcePath, sourceFormat);
+      if (!agent) {
+        console.error(`❌ Failed to parse agent from ${sourcePath}`);
+        return;
+      }
+    } catch (error) {
+      console.error(`❌ Error parsing agent: ${(error as Error).message}`);
+      return;
+    }
+
     // Convert format if needed
-    let convertedContent = content;
-    if (target !== 'base') {
+    let convertedAgent = agent;
+    if (target === 'claude-code' || target === 'opencode') {
       try {
-        const targetFormat = target === 'claude-code' ? 'claude-code' : 'opencode';
-        // The content is already in base format, so convert to target
-        convertedContent = await this.converter.convert(content, 'base', targetFormat);
+        const targetFormat = target;
+        // Convert the agent object
+        convertedAgent = this.converter.convert(agent, targetFormat);
         // Fix model configuration for the target
-        convertedContent = this.modelFixer.fixModel(convertedContent, targetFormat, item.kind as 'agent' | 'command');
+        convertedAgent.content = this.modelFixer.fixModel(
+          convertedAgent.content,
+          targetFormat,
+          item.kind as 'agent' | 'command'
+        );
       } catch (error) {
-        // If conversion fails, use original content
+        // If conversion fails, use original agent
         console.warn(`⚠️  Conversion failed for ${target}, using original format`);
-        convertedContent = content;
+        convertedAgent = agent;
       }
     }
 
-    // Validate converted content
-    const validation = await this.validator.validateAgent(convertedContent);
+    // Validate converted agent
+    const validation = this.validator.validateAgent(convertedAgent);
     if (!validation.valid) {
-      console.error(`❌ Validation failed for ${target}:`, validation.errors);
+      console.error(
+        `❌ Validation failed for ${target}:`,
+        validation.errors.map((e) => e.message)
+      );
       return;
     }
 
@@ -335,7 +389,7 @@ export class CatalogCLI {
       }
 
       // Write file
-      await writeFile(targetPath, convertedContent, 'utf-8');
+      await writeFile(targetPath, convertedAgent.content, 'utf-8');
       console.log(`  ✓ Installed to ${targetPath}`);
     } else {
       console.log(`  [DRY RUN] Would install to ${targetPath}`);
@@ -347,7 +401,7 @@ export class CatalogCLI {
     console.log('\n🏗️  Building catalog index...\n');
 
     const builder = new CatalogIndexBuilder(this.projectRoot);
-    
+
     if (!options.force) {
       const existing = await builder.load();
       if (existing) {
@@ -367,18 +421,21 @@ export class CatalogCLI {
   }
 
   // Import from external sources
-  async import(source: string, options: { adapter?: string; filter?: string[]; exclude?: string[]; dryRun?: boolean } = {}): Promise<void> {
+  async import(
+    source: string,
+    options: { adapter?: string; filter?: string[]; exclude?: string[]; dryRun?: boolean } = {}
+  ): Promise<void> {
     const pipeline = new ImportPipeline(this.projectRoot);
-    
+
     try {
       await pipeline.import(source, {
         adapter: options.adapter,
         filter: options.filter,
         exclude: options.exclude,
         dryRun: options.dryRun,
-        resolvedDependencies: true
+        resolvedDependencies: true,
       });
-      
+
       // Generate third-party notices if items were imported
       if (!options.dryRun) {
         await pipeline.generateThirdPartyNotices();
@@ -392,9 +449,11 @@ export class CatalogCLI {
   // Sync catalog items to configured locations
   async sync(options: { global?: boolean; dryRun?: boolean } = {}): Promise<void> {
     const catalog = await this.loadCatalog();
-    
-    console.log(`\n🔄 Syncing catalog items to ${options.global ? 'global' : 'project'} directories...`);
-    
+
+    console.log(
+      `\n🔄 Syncing catalog items to ${options.global ? 'global' : 'project'} directories...`
+    );
+
     if (options.dryRun) {
       console.log('🔍 Dry run mode - no changes will be made');
     }
@@ -403,7 +462,10 @@ export class CatalogCLI {
     for (const item of catalog.items) {
       if (item.source === 'codeflow-core') {
         for (const target of item.install_targets) {
-          await this.installToTarget(item, target, { global: options.global, dryRun: options.dryRun });
+          await this.installToTarget(item, target, {
+            global: options.global,
+            dryRun: options.dryRun,
+          });
           syncCount++;
         }
       }
@@ -423,21 +485,27 @@ export class CatalogCLI {
 
     for (const item of catalog.items) {
       const sourcePath = join(this.projectRoot, item.conversion_rules.base_path);
-      
+
       if (!existsSync(sourcePath)) {
         missing++;
         console.log(`❌ Missing: ${item.id}`);
       } else {
         try {
           const content = await readFile(sourcePath, 'utf-8');
-          const validation = await this.validator.validateAgent(content);
-          
+          const agent = await parseAgentFile(sourcePath, 'base');
+          if (!agent) {
+            invalid++;
+            console.log(`⚠️  Failed to parse: ${item.id}`);
+            continue;
+          }
+          const validation = this.validator.validateAgent(agent);
+
           if (validation.valid) {
             valid++;
           } else {
             invalid++;
             console.log(`⚠️  Invalid: ${item.id}`);
-            validation.errors?.forEach(err => console.log(`    - ${err}`));
+            validation.errors.forEach((err) => console.log(`    - ${err.message}`));
           }
         } catch (error) {
           invalid++;
@@ -459,7 +527,7 @@ export class CatalogCLI {
     } else {
       console.log('\n🔄 Checking for updates...');
     }
-    
+
     console.log('⚠️  Update functionality not yet implemented');
   }
 

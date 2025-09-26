@@ -202,7 +202,7 @@ function convertFromBase(content: string, targetFormat: AgentFormat): string {
   if (targetFormat === 'claude-code') {
     const frontmatter: ClaudeCodeMetadata = {
       role: 'system',
-      model: 'claude-3.5-sonnet-20241022',
+      model: 'opencode/grok-code',
       temperature: 0.1,
     };
 
@@ -320,8 +320,8 @@ async function convertOpenCodeAgent(filePath: string): Promise<void> {
 function convertModelName(oldModel: string): string {
   // Convert internal model names to OpenCode format
   const modelMap: Record<string, string> = {
-    'claude-3.5-sonnet-20241022': 'opencode/grok-code-fast',
-    'claude-3-5-sonnet-latest': 'opencode/grok-code-fast',
+    'claude-sonnet-4-20250514': 'opencode/grok-code-fast',
+    'claude-sonnet-4-20250514': 'opencode/grok-code-fast',
   };
 
   return modelMap[oldModel] || oldModel;
@@ -369,7 +369,7 @@ if (import.meta.main) {
 ---
 name: agent-architect
 role: system
-model: claude-3.5-sonnet-20241022
+model: claude-sonnet-4-20250514
 temperature: 0.1
 tools: []
 description: Meta-agent for creating specialized AI agents and defining their capabilities, prompts, and interaction patterns

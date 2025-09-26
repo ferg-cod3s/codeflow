@@ -15,7 +15,7 @@ export class ClaudeTemplatesAdapter extends SourceAdapter {
   name = 'claude-templates';
   version = '1.0.0';
   description = 'Adapter for davila7/claude-code-templates repository';
-  
+
   private tempDir: string = '';
   private repoPath: string = '';
 
@@ -23,14 +23,14 @@ export class ClaudeTemplatesAdapter extends SourceAdapter {
     // Create temp directory
     this.tempDir = join(tmpdir(), `codeflow-import-${Date.now()}`);
     await mkdir(this.tempDir, { recursive: true });
-    
+
     this.repoPath = join(this.tempDir, 'claude-code-templates');
-    
+
     console.log(`📥 Cloning ${this.config.repoUrl}...`);
-    
+
     const branch = this.config.branch || 'main';
     const cloneCmd = `git clone --depth 1 --branch ${branch} ${this.config.repoUrl} ${this.repoPath}`;
-    
+
     try {
       await execAsync(cloneCmd);
       console.log('✅ Repository cloned successfully');
@@ -46,22 +46,22 @@ export class ClaudeTemplatesAdapter extends SourceAdapter {
     }
 
     const items: CatalogItem[] = [];
-    
+
     // Scan .claude/agents/ directory for agent templates
     const agentsDir = join(this.repoPath, '.claude', 'agents');
     if (existsSync(agentsDir)) {
       console.log(`📂 Scanning ${agentsDir}...`);
       const agentFiles = await readdir(agentsDir);
-      
+
       for (const file of agentFiles) {
         if (file.endsWith('.md')) {
           const fullPath = join(agentsDir, file);
           const relativePath = `.claude/agents/${file}`;
-          
+
           if (!this.shouldImport(relativePath)) {
             continue;
           }
-          
+
           try {
             const item = await this.parseMarkdownTemplate(fullPath, relativePath, 'agent');
             if (item) {
@@ -73,22 +73,22 @@ export class ClaudeTemplatesAdapter extends SourceAdapter {
         }
       }
     }
-    
+
     // Scan .claude/commands/ directory for command templates
     const commandsDir = join(this.repoPath, '.claude', 'commands');
     if (existsSync(commandsDir)) {
       console.log(`📂 Scanning ${commandsDir}...`);
       const commandFiles = await readdir(commandsDir);
-      
+
       for (const file of commandFiles) {
         if (file.endsWith('.md')) {
           const fullPath = join(commandsDir, file);
           const relativePath = `.claude/commands/${file}`;
-          
+
           if (!this.shouldImport(relativePath)) {
             continue;
           }
-          
+
           try {
             const item = await this.parseMarkdownTemplate(fullPath, relativePath, 'command');
             if (item) {
@@ -100,19 +100,23 @@ export class ClaudeTemplatesAdapter extends SourceAdapter {
         }
       }
     }
-    
+
     console.log(`📊 Found ${items.length} templates`);
     return items;
   }
 
-  private async parseMarkdownTemplate(filePath: string, relativePath: string, kind: 'agent' | 'command'): Promise<CatalogItem | null> {
+  private async parseMarkdownTemplate(
+    filePath: string,
+    relativePath: string,
+    kind: 'agent' | 'command'
+  ): Promise<CatalogItem | null> {
     const content = await readFile(filePath, 'utf-8');
-    
+
     try {
       // Extract name from filename
       const fileName = basename(filePath, '.md');
       const sanitizedName = this.sanitizeName(fileName);
-      
+
       // Try to extract frontmatter if it exists
       let metadata: any = {};
       const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---/);
@@ -123,16 +127,20 @@ export class ClaudeTemplatesAdapter extends SourceAdapter {
           // Ignore YAML parse errors
         }
       }
-      
+
       // Extract description from content or metadata
-      const description = metadata.description || 
-                         metadata.prompt || 
-                         content.split('\n').find(line => line.trim() && !line.startsWith('#'))?.substring(0, 200) ||
-                         `Claude ${kind} template: ${fileName}`;
-      
+      const description =
+        metadata.description ||
+        metadata.prompt ||
+        content
+          .split('\n')
+          .find((line) => line.trim() && !line.startsWith('#'))
+          ?.substring(0, 200) ||
+        `Claude ${kind} template: ${fileName}`;
+
       const category = kind === 'agent' ? 'agents' : 'commands';
       const hash = crypto.createHash('sha256').update(content).digest('hex').substring(0, 7);
-      
+
       return {
         id: this.generateItemId('claude-templates', sanitizedName),
         kind: kind === 'agent' ? 'agent' : 'command',
@@ -148,7 +156,7 @@ export class ClaudeTemplatesAdapter extends SourceAdapter {
           base_path: `imported/claude-templates/${relativePath}`,
           supports_all_formats: true, // Allow conversion to any format
           supports_formats: ['claude-code', 'opencode'],
-          lossy_fields: ['model', 'temperature', 'max_tokens']
+          lossy_fields: ['model', 'temperature', 'max_tokens'],
         },
         provenance: {
           repo: 'davila7/claude-code-templates',
@@ -156,8 +164,8 @@ export class ClaudeTemplatesAdapter extends SourceAdapter {
           sha: hash,
           license: 'Apache-2.0',
           attribution: 'davila7',
-          import_date: new Date().toISOString()
-        }
+          import_date: new Date().toISOString(),
+        },
       };
     } catch (error) {
       console.warn(`Failed to parse YAML in ${relativePath}: ${error}`);
@@ -167,7 +175,7 @@ export class ClaudeTemplatesAdapter extends SourceAdapter {
 
   private extractTags(template: any, category: string): string[] {
     const tags: string[] = ['template', 'claude'];
-    
+
     // Add category as tag
     if (category && category !== '.') {
       tags.push(category.toLowerCase());
@@ -193,34 +201,33 @@ export class ClaudeTemplatesAdapter extends SourceAdapter {
       success: false,
       itemsImported: 0,
       errors: [],
-      warnings: []
+      warnings: [],
     };
 
     try {
       // Read the original template file
       const originalPath = join(this.repoPath, item.provenance.path);
       const content = await readFile(originalPath, 'utf-8');
-      
+
       // Convert to base format
       const baseContent = await this.convertToBase(content, item);
-      
+
       // Create the import directory
       const importDir = dirname(targetPath);
       if (!existsSync(importDir)) {
         await mkdir(importDir, { recursive: true });
       }
-      
+
       // Save the converted file
       await writeFile(targetPath, baseContent, 'utf-8');
-      
+
       // Also save original for reference
       const originalTargetPath = targetPath.replace('.md', '.original.yaml');
       await writeFile(originalTargetPath, content, 'utf-8');
-      
+
       result.success = true;
       result.itemsImported = 1;
       console.log(`✅ Imported ${item.name} to ${targetPath}`);
-      
     } catch (error) {
       result.errors.push(`Failed to import ${item.name}: ${error}`);
     }
@@ -232,7 +239,7 @@ export class ClaudeTemplatesAdapter extends SourceAdapter {
     try {
       // Try to parse the YAML template file
       let template: any = {};
-      
+
       try {
         template = yaml.parse(content);
       } catch (e) {
@@ -250,20 +257,23 @@ export class ClaudeTemplatesAdapter extends SourceAdapter {
           template = { content: content };
         }
       }
-      
+
       // Determine the kind (agent or command)
       const isCommand = item.kind === 'command';
-      
+
       // Generate base format markdown compatible with both Claude and OpenCode
       const baseContent = `---
 name: ${item.name}
 description: ${item.description}
 mode: ${isCommand ? 'command' : 'subagent'}
-model: ${template.model || 'anthropic/claude-3-5-sonnet-20241022'}
+model: ${template.model || 'opencode/grok-code'}
 temperature: ${template.temperature || 0.7}
 category: ${item.tags[0] || 'imported'}
 tags: ${JSON.stringify(item.tags)}
-${isCommand ? '' : `primary_objective: ${item.description}
+${
+  isCommand
+    ? ''
+    : `primary_objective: ${item.description}
 anti_objectives:
   - Modify code without permission
   - Access external systems without authorization
@@ -283,7 +293,8 @@ permission:
   write: deny
   bash: deny
   webfetch: deny
-`}x-claude:
+`
+}x-claude:
   original_name: "${template.name || item.name}"
   import_source: "${item.source}"
   import_path: "${item.provenance.path}"
@@ -332,21 +343,21 @@ ${yaml.stringify(template, null, 2)}
 
   private generateUsageFromTemplate(template: any): string {
     const usage: string[] = [];
-    
+
     if (template.use_cases) {
       usage.push(...template.use_cases.map((u: string) => `- ${u}`));
     }
-    
+
     if (template.capabilities) {
       usage.push('### Capabilities');
       usage.push(...template.capabilities.map((c: string) => `- ${c}`));
     }
-    
+
     if (usage.length === 0) {
       usage.push('- Use this template as configured in Claude');
       usage.push('- Customize the prompt and instructions as needed');
     }
-    
+
     return usage.join('\n');
   }
 
@@ -360,22 +371,22 @@ ${yaml.stringify(template, null, 2)}
 
   validate(item: CatalogItem): { valid: boolean; errors: string[] } {
     const errors: string[] = [];
-    
+
     if (!item.name) {
       errors.push('Item must have a name');
     }
-    
+
     if (!item.description) {
       errors.push('Item must have a description');
     }
-    
+
     if (!item.provenance?.repo) {
       errors.push('Item must have provenance information');
     }
-    
+
     return {
       valid: errors.length === 0,
-      errors
+      errors,
     };
   }
 

@@ -92,3 +92,43 @@ The system emphasizes **context compression** and **fresh analysis** over cachin
 - TypeScript configured for ES modules with Bun-specific types
 - Comprehensive test framework with unit, integration, and E2E tests
 - See `AGENT_REGISTRY.md` for complete agent capabilities and usage guidelines
+
+## Subagent Usage Guidelines
+
+**ALWAYS use the appropriate specialized subagents** for complex tasks instead of attempting to handle everything directly. This ensures thorough, accurate, and efficient execution.
+
+### When to Use Subagents
+
+- **Research Tasks**: Use `codebase-locator` + `thoughts-locator` first, then `codebase-analyzer` + `thoughts-analyzer`
+- **Code Analysis**: Use `codebase-analyzer` for understanding implementation details
+- **Testing**: Use `test-generator` for creating comprehensive test suites
+- **Documentation**: Use `thoughts-analyzer` for synthesizing information into structured docs
+- **Complex Multi-step Tasks**: Use `smart-subagent-orchestrator` for coordination
+- **Web Research**: Use `web-search-researcher` for external information gathering
+- **Architecture Decisions**: Use `system-architect` for design and planning
+
+### Subagent Coordination Best Practices
+
+1. **Start with Locators**: Always run locator agents first to gather comprehensive context
+2. **Parallel Execution**: Run same-type agents concurrently when possible
+3. **Sequential Analysis**: Run analyzers only after locators complete
+4. **Specialized Domains**: Use domain-specific agents (security-scanner, database-expert, etc.) for specialized tasks
+5. **Complex Orchestration**: Use `smart-subagent-orchestrator` for multi-domain coordination
+6. **Quality Validation**: Use `code-reviewer` for code quality assessment
+
+### Common Subagent Patterns
+
+- **Codebase Research**: `codebase-locator` → `codebase-analyzer` → `codebase-pattern-finder`
+- **Documentation Tasks**: `thoughts-locator` → `thoughts-analyzer` → document synthesis
+- **Implementation**: `system-architect` → `full-stack-developer` → `code-reviewer`
+- **Testing**: `test-generator` → integration testing → `quality-testing-performance-tester`
+- **Web Research**: `web-search-researcher` for external information gathering
+
+### Subagent Selection Criteria
+
+- **Task Complexity**: Use specialized agents for complex, multi-step tasks
+- **Domain Expertise**: Choose agents with relevant domain knowledge
+- **Output Requirements**: Select agents that produce the required output format
+- **Context Limits**: Use agents to work within context constraints efficiently
+
+**Remember**: Subagents are designed to handle specific types of work better than general assistance. Always leverage their specialized capabilities for optimal results.

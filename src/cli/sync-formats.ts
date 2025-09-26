@@ -9,7 +9,7 @@ import {
   DEFAULT_OPENCODE_PERMISSIONS,
 } from '../security/opencode-permissions';
 import { applyPermissionInheritance } from '../security/validation';
-import CLIErrorHandler from "./error-handler.js";
+import CLIErrorHandler from './error-handler.js';
 
 interface SyncFormatsOptions {
   validate?: boolean;
@@ -101,34 +101,25 @@ export async function syncAllFormats(options: SyncFormatsOptions = {}) {
         console.log(`  ${format}: ${agents.length} agents`);
 
         if (errors.length > 0) {
-          CLIErrorHandler.displayWarning(
-            `${errors.length} parsing errors in ${format}`,
-            [
-              'Check agent file formats and syntax',
-              'Run with --verbose for detailed error information'
-            ]
-          );
+          CLIErrorHandler.displayWarning(`${errors.length} parsing errors in ${format}`, [
+            'Check agent file formats and syntax',
+            'Run with --verbose for detailed error information',
+          ]);
         }
       } else {
         agentsByFormat[format] = [];
-        CLIErrorHandler.displayWarning(
-          `${format} directory not found`,
-          [
-            'Check if the directory exists',
-            'Run setup to create missing directories'
-          ]
-        );
+        CLIErrorHandler.displayWarning(`${format} directory not found`, [
+          'Check if the directory exists',
+          'Run setup to create missing directories',
+        ]);
       }
     }
 
     if (allErrors.length > 0) {
-      CLIErrorHandler.displayWarning(
-        `Total parsing errors: ${allErrors.length}`,
-        [
-          'Check agent file formats and syntax',
-          'Run with --verbose for detailed error information'
-        ]
-      );
+      CLIErrorHandler.displayWarning(`Total parsing errors: ${allErrors.length}`, [
+        'Check agent file formats and syntax',
+        'Run with --verbose for detailed error information',
+      ]);
     }
 
     // Create master agent list based on direction
@@ -160,7 +151,9 @@ export async function syncAllFormats(options: SyncFormatsOptions = {}) {
 
         masterAgents = Array.from(uniqueAgents.values());
         sourceFormat = 'merged';
-        CLIErrorHandler.displayProgress(`Using merged unique agents (${masterAgents.length} total)`);
+        CLIErrorHandler.displayProgress(
+          `Using merged unique agents (${masterAgents.length} total)`
+        );
         break;
 
       case 'to-all':
@@ -178,7 +171,9 @@ export async function syncAllFormats(options: SyncFormatsOptions = {}) {
 
         masterAgents = agentsByFormat[maxFormat];
         sourceFormat = maxFormat;
-        CLIErrorHandler.displayProgress(`Using ${maxFormat} as master (${masterAgents.length} agents)`);
+        CLIErrorHandler.displayProgress(
+          `Using ${maxFormat} as master (${masterAgents.length} agents)`
+        );
         break;
     }
 
@@ -242,10 +237,7 @@ export async function syncAllFormats(options: SyncFormatsOptions = {}) {
             if (!validation.valid) {
               CLIErrorHandler.displayWarning(
                 `Validation failed for ${agent.name}: ${validation.errors[0]?.message}`,
-                [
-                  'Check agent format and content',
-                  'Fix validation errors before syncing'
-                ]
+                ['Check agent format and content', 'Fix validation errors before syncing']
               );
               totalErrors++;
               continue;
@@ -294,8 +286,8 @@ export async function syncAllFormats(options: SyncFormatsOptions = {}) {
                 suggestions: [
                   'Verify agent file format and content',
                   'Check target directory permissions',
-                  'Run with --dry-run to test without writing files'
-                ]
+                  'Run with --dry-run to test without writing files',
+                ],
               }
             )
           );
@@ -327,7 +319,7 @@ export async function syncAllFormats(options: SyncFormatsOptions = {}) {
             [
               'Check file system permissions',
               'Verify security configuration',
-              'Files were synced but permissions may not be optimal'
+              'Files were synced but permissions may not be optimal',
             ]
           );
         }
@@ -339,8 +331,10 @@ export async function syncAllFormats(options: SyncFormatsOptions = {}) {
       [
         `Summary: ${totalSynced} agents synced, ${totalErrors} errors`,
         dryRun ? 'Dry run complete - no files were written' : undefined,
-        totalSynced > 0 ? 'MCP Server Restart: If you are using MCP integration, restart the server to use updated agents: codeflow mcp restart' : undefined
-      ].filter(Boolean)
+        totalSynced > 0
+          ? 'MCP Server Restart: If you are using MCP integration, restart the server to use updated agents: codeflow mcp restart'
+          : undefined,
+      ].filter((item): item is string => Boolean(item))
     );
 
     return {
@@ -348,7 +342,6 @@ export async function syncAllFormats(options: SyncFormatsOptions = {}) {
       errors: totalErrors,
       master: masterAgents.length,
     };
-
   } catch (error) {
     CLIErrorHandler.handleCommonError(error, 'sync-formats');
   }
@@ -378,13 +371,10 @@ export async function showFormatDifferences() {
         agentsByFormat[format] = agents;
       } else {
         agentsByFormat[format] = [];
-        CLIErrorHandler.displayWarning(
-          `${format} directory not found`,
-          [
-            'Check if the directory exists',
-            'Run setup to create missing directories'
-          ]
-        );
+        CLIErrorHandler.displayWarning(`${format} directory not found`, [
+          'Check if the directory exists',
+          'Run setup to create missing directories',
+        ]);
       }
     }
 
@@ -452,13 +442,10 @@ export async function showFormatDifferences() {
       }
     }
 
-    CLIErrorHandler.displaySuccess(
-      'Format differences analysis complete',
-      [
-        'Review the agent presence matrix above',
-        'Use sync-formats to synchronize missing agents'
-      ]
-    );
+    CLIErrorHandler.displaySuccess('Format differences analysis complete', [
+      'Review the agent presence matrix above',
+      'Use sync-formats to synchronize missing agents',
+    ]);
 
     return {
       total: sortedNames.length,
@@ -466,7 +453,6 @@ export async function showFormatDifferences() {
         Object.entries(agentsByFormat).map(([format, agents]) => [format, agents.length])
       ),
     };
-
   } catch (error) {
     CLIErrorHandler.handleCommonError(error, 'show-format-differences');
   }

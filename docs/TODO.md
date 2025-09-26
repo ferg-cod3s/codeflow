@@ -12,6 +12,15 @@
 - [x] **Testing Infrastructure** - New test suite for single-format validation
 
 ### 🚧 **In Progress**
+### ✅ **Completed (v0.10.9)**
+- [x] **OpenCode Command Validation** - Complete command validation system implementation
+- [x] **Test Suite Fixes** - All agent and command validation tests passing
+- [x] **Agent Permission Updates** - Extended permission validation for all platforms
+- [x] **Model Validation** - Cross-platform model prefix validation
+
+### 🚧 **In Progress**
+- [ ] **Phase 5: Enhanced MCP Server** - Internal agent registry with command-only tool exposure
+
 - [ ] **Phase 4: Automatic Synchronization** - Implement file watching and real-time updates
 - [ ] **Phase 5: Enhanced MCP Server** - Internal agent registry with command-only tool exposure
 

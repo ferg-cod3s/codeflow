@@ -39,9 +39,9 @@ The model configuration is stored in `config/models.json`:
     "temperature": 0.7
   },
   "opencode": {
-    "commands": "anthropic/claude-sonnet-4-20250514",
-    "agents": "anthropic/claude-sonnet-4-20250514",
-    "fallback": "anthropic/claude-sonnet-4-20250514"
+    "commands": "opencode/code-supernova",
+    "agents": "opencode/grok-code",
+    "fallback": "opencode/grok-code"
   },
   "claude": {
     "default": "claude-sonnet-4-20250514"

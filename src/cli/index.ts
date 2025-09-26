@@ -7,6 +7,7 @@ import { convert } from './convert';
 import { sync } from './sync';
 import { startWatch } from './watch';
 import { catalog } from './catalog.js';
+import { discover } from './discover.js';
 import { fixModels } from './fix-models.js';
 import packageJson from '../../package.json';
 import { join } from 'node:path';
@@ -133,6 +134,7 @@ Commands:
   convert <source> <target> <format>  Convert agents between formats
   watch start [options]      Start automatic file synchronization daemon
   catalog <subcommand>       Browse, search, and install catalog items
+  discover [query]           Find agents by use case (e.g., "build API", "fix performance")
 
 Catalog Subcommands:
   catalog list [type] [source]     List catalog items (optional: filter by type or source)
@@ -279,6 +281,16 @@ switch (command) {
     };
     await catalog(catalogSubcommand, catalogOptions);
     break;
+
+  case 'discover':
+    const discoverQuery = args[1];
+    await discover(discoverQuery, {
+      complexity: values.complexity,
+      useCase: values['use-case'],
+      domain: values.domain
+    });
+    break;
+
   default:
     console.error(`Error: Unknown command '${command}'`);
     console.error("Run 'codeflow --help' for usage information");

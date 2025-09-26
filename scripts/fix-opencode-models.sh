@@ -6,7 +6,7 @@ echo "Fixing OpenCode model configurations..."
 
 # The correct format should be provider/model
 OLD_MODEL="model: claude-3-5-sonnet-20241022"
-NEW_MODEL="model: anthropic/claude-3-5-sonnet-20241022"
+NEW_MODEL="model: opencode/code-supernova"
 
 echo "Updating local .opencode/command files..."
 for file in .opencode/command/*.md; do

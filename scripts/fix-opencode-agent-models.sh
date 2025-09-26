@@ -16,17 +16,20 @@ echo "Updating agent model references..."
 echo "Updating local .opencode/agent files..."
 for file in .opencode/agent/*.md; do
     if [ -f "$file" ]; then
-        # Fix standalone gpt-4 to use anthropic claude instead
-        sed -i "s|^model: gpt-4$|model: anthropic/claude-3-5-sonnet-20241022|" "$file"
-        
-        # Fix non-existent claude-sonnet-4 to claude-3-5-sonnet
-        sed -i "s|^model: anthropic/claude-sonnet-4$|model: anthropic/claude-3-5-sonnet-20241022|" "$file"
-        
-        # Fix non-existent github-copilot/gpt-4.1 to use anthropic claude
-        sed -i "s|^model: github-copilot/gpt-4.1$|model: anthropic/claude-3-5-sonnet-20241022|" "$file"
-        
+        # Fix standalone gpt-4 to use opencode model
+        sed -i "s|^model: gpt-4$|model: opencode/grok-code|" "$file"
+
+        # Fix non-existent claude-sonnet-4 to opencode model
+        sed -i "s|^model: anthropic/claude-sonnet-4$|model: opencode/grok-code|" "$file"
+
+        # Fix non-existent github-copilot/gpt-4.1 to use opencode model
+        sed -i "s|^model: github-copilot/gpt-4.1$|model: opencode/grok-code|" "$file"
+
+        # Fix existing anthropic models to use opencode model
+        sed -i "s|^model: anthropic/claude-3-5-sonnet-20241022$|model: opencode/grok-code|" "$file"
+
         # opencode/grok-code might be valid for OpenCode, leave it as is
-        
+
         echo "  Checked: $(basename $file)"
     fi
 done
@@ -35,15 +38,18 @@ done
 echo "Updating global ~/.config/opencode/agent files..."
 for file in ~/.config/opencode/agent/*.md; do
     if [ -f "$file" ]; then
-        # Fix standalone gpt-4 to use anthropic claude instead
-        sed -i "s|^model: gpt-4$|model: anthropic/claude-3-5-sonnet-20241022|" "$file"
-        
-        # Fix non-existent claude-sonnet-4 to claude-3-5-sonnet
-        sed -i "s|^model: anthropic/claude-sonnet-4$|model: anthropic/claude-3-5-sonnet-20241022|" "$file"
-        
-        # Fix non-existent github-copilot/gpt-4.1 to use anthropic claude
-        sed -i "s|^model: github-copilot/gpt-4.1$|model: anthropic/claude-3-5-sonnet-20241022|" "$file"
-        
+        # Fix standalone gpt-4 to use opencode model
+        sed -i "s|^model: gpt-4$|model: opencode/grok-code|" "$file"
+
+        # Fix non-existent claude-sonnet-4 to opencode model
+        sed -i "s|^model: anthropic/claude-sonnet-4$|model: opencode/grok-code|" "$file"
+
+        # Fix non-existent github-copilot/gpt-4.1 to use opencode model
+        sed -i "s|^model: github-copilot/gpt-4.1$|model: opencode/grok-code|" "$file"
+
+        # Fix existing anthropic models to use opencode model
+        sed -i "s|^model: anthropic/claude-3-5-sonnet-20241022$|model: opencode/grok-code|" "$file"
+
         echo "  Checked: $(basename $file)"
     fi
 done

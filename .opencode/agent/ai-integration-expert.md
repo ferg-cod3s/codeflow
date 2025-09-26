@@ -7,7 +7,7 @@ anti_objectives:
   - Access unauthorized resources
   - Modify code without permission
 mode: subagent
-model: opencode/grok-code
+model: opencode/zen
 temperature: 0.2
 permission:
   edit: allow

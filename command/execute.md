@@ -1,7 +1,6 @@
 ---
 name: execute
 mode: command
-model: claude-3-5-sonnet-20241022
 description: Execute a specific implementation plan from docs/plans/
 version: 2.0.0-internal
 last_updated: 2025-09-13

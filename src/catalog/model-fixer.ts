@@ -38,20 +38,24 @@ export class ModelFixer {
     // Default configuration
     return {
       opencode: {
-        commands: 'anthropic/claude-3-5-sonnet-20241022',
-        agents: 'anthropic/claude-3-5-sonnet-20241022',
-        fallback: 'opencode/grok-code'
+        commands: 'opencode/code-supernova',
+        agents: 'opencode/grok-code',
+        fallback: 'opencode/grok-code',
       },
       claude: {
-        default: 'claude-3-5-sonnet-20241022'
-      }
+        default: 'claude-sonnet-4-20250514',
+      },
     };
   }
 
   /**
    * Fix model in content based on target format
    */
-  fixModel(content: string, target: 'claude-code' | 'opencode', itemType: 'agent' | 'command'): string {
+  fixModel(
+    content: string,
+    target: 'claude-code' | 'opencode',
+    itemType: 'agent' | 'command'
+  ): string {
     // Extract frontmatter
     const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---/);
     if (!frontmatterMatch) {
@@ -66,9 +70,10 @@ export class ModelFixer {
     if (target === 'claude-code') {
       correctModel = this.modelConfig.claude.default;
     } else if (target === 'opencode') {
-      correctModel = itemType === 'command' 
-        ? this.modelConfig.opencode.commands
-        : this.modelConfig.opencode.agents;
+      correctModel =
+        itemType === 'command'
+          ? this.modelConfig.opencode.commands
+          : this.modelConfig.opencode.agents;
     } else {
       return content; // Unknown target, don't modify
     }
@@ -92,11 +97,11 @@ export class ModelFixer {
     if (target === 'claude-code') {
       return this.modelConfig.claude.default;
     } else if (target === 'opencode') {
-      return itemType === 'command' 
+      return itemType === 'command'
         ? this.modelConfig.opencode.commands
         : this.modelConfig.opencode.agents;
     }
-    return this.modelConfig.opencode.fallback || 'anthropic/claude-3-5-sonnet-20241022';
+    return this.modelConfig.opencode.fallback || 'opencode/grok-code';
   }
 
   /**

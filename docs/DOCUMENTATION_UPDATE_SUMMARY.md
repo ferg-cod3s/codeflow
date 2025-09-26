@@ -1,8 +1,22 @@
 # CodeFlow Documentation Update Summary
 
-## 📅 **Update Date**: August 31, 2025
+## 📅 **Update Date**: September 26, 2025
 
 This document summarizes all documentation updates made to reflect CodeFlow's new **single-format architecture** where `BaseAgent` serves as the single source of truth for all agent definitions.
+### **OpenCode Command Validation Implementation**
+- **NEW**: Complete command validation system for OpenCode platform
+- **NEW**: YAML frontmatter schema validation with comprehensive error reporting
+- **NEW**: Variable substitution validation for dynamic command templates
+- **NEW**: Cross-platform consistency validation between command formats
+- **NEW**: Command directory structure validation and metadata extraction
+
+### **Test Suite Enhancements**
+- **FIXED**: All agent validation test failures resolved
+- **FIXED**: Command validator Result type handling implemented
+- **FIXED**: OpenCode integration test suite fully functional
+- **ENHANCED**: Agent permission validation with extended permission sets
+- **ENHANCED**: Model prefix validation for multiple AI platforms
+
 
 ## 🎯 **What Changed**
 

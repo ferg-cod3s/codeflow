@@ -274,4 +274,6 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Total test suites:** 5" >> $GITHUB_STEP_SUMMARY
           echo "**Platform coverage:** Linux, Windows, macOS" >> $GITHUB_STEP_SUMMARY
-          echo "**Test categories:** Unit, Integration, Cross-platform, Format conversion, Real agents" >> $GITHUB_STEP_SUMMARY
+          echo "**Test categories:** Unit, Integration, Cross-platform, Format conversion, Real agents" >> $GITHUB_STEP_SUMMARY      - job_name: Validate Agent Models
+        run: node scripts/validate-agent-models.js
+        working-directory: .

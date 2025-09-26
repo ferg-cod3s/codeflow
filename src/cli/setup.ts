@@ -19,32 +19,62 @@ export function getTargetFormat(setupDir: string): SupportedFormat | null {
 function getCommandSourceDirs(sourcePath: string, targetDir: string): string[] {
   const sourceDirs: string[] = [];
 
-  // Primary source: command/ directory
-  sourceDirs.push(join(sourcePath, 'command'));
+  // Primary source: command/ directory (check in current working directory first)
+  const cwdCommandDir = join(process.cwd(), 'command');
+  if (existsSync(cwdCommandDir)) {
+    sourceDirs.push(cwdCommandDir);
+  } else {
+    sourceDirs.push(join(sourcePath, 'command'));
+  }
 
   // Fallback sources based on target format
   if (targetDir.includes('.claude')) {
     // For Claude Code, also check if there are commands in claude-agents or other locations
-    sourceDirs.push(join(sourcePath, 'claude-agents'));
+    const cwdClaudeAgentsDir = join(process.cwd(), 'claude-agents');
+    if (existsSync(cwdClaudeAgentsDir)) {
+      sourceDirs.push(cwdClaudeAgentsDir);
+    } else {
+      sourceDirs.push(join(sourcePath, 'claude-agents'));
+    }
   } else if (targetDir.includes('.opencode')) {
     // For OpenCode, check opencode-agents or other locations
-    sourceDirs.push(join(sourcePath, 'opencode-agents'));
+    const cwdOpenCodeAgentsDir = join(process.cwd(), 'opencode-agents');
+    if (existsSync(cwdOpenCodeAgentsDir)) {
+      sourceDirs.push(cwdOpenCodeAgentsDir);
+    } else {
+      sourceDirs.push(join(sourcePath, 'opencode-agents'));
+    }
   }
 
   return sourceDirs;
 }
 
-function getAgentSourceDirs(sourcePath: string, targetFormat: SupportedFormat): string[] {
+export function getAgentSourceDirs(sourcePath: string, targetFormat: SupportedFormat): string[] {
   const sourceDirs: string[] = [];
 
-  // Primary source: codeflow-agents/ directory (base format)
-  sourceDirs.push(join(sourcePath, 'codeflow-agents'));
+  // Primary source: codeflow-agents/ directory (base format) - check current working directory first
+  const cwdCodeflowAgentsDir = join(process.cwd(), 'codeflow-agents');
+  if (existsSync(cwdCodeflowAgentsDir)) {
+    sourceDirs.push(cwdCodeflowAgentsDir);
+  } else {
+    sourceDirs.push(join(sourcePath, 'codeflow-agents'));
+  }
 
   // Format-specific fallbacks
   if (targetFormat === 'claude-code') {
-    sourceDirs.push(join(sourcePath, 'claude-agents'));
+    const cwdClaudeAgentsDir = join(process.cwd(), 'claude-agents');
+    if (existsSync(cwdClaudeAgentsDir)) {
+      sourceDirs.push(cwdClaudeAgentsDir);
+    } else {
+      sourceDirs.push(join(sourcePath, 'claude-agents'));
+    }
   } else if (targetFormat === 'opencode') {
-    sourceDirs.push(join(sourcePath, 'opencode-agents'));
+    const cwdOpenCodeAgentsDir = join(process.cwd(), 'opencode-agents');
+    if (existsSync(cwdOpenCodeAgentsDir)) {
+      sourceDirs.push(cwdOpenCodeAgentsDir);
+    } else {
+      sourceDirs.push(join(sourcePath, 'opencode-agents'));
+    }
   }
 
   return sourceDirs;
@@ -122,7 +152,7 @@ async function copyCommands(
   return fileCount;
 }
 
-async function copyAgentsWithConversion(
+export async function copyAgentsWithConversion(
   sourcePath: string,
   targetDir: string,
   targetFormat: SupportedFormat
@@ -213,6 +243,85 @@ async function copyAgentsWithConversion(
   }
 }
 
+async function createMultiFormatReadme(projectPath: string, projectTypes: string[]): Promise<void> {
+  const readmePath = join(projectPath, 'README.md');
+  let readmeContent = '';
+
+  if (existsSync(readmePath)) {
+    const existingContent = await readFile(readmePath, 'utf-8');
+    if (existingContent.includes('## Codeflow Workflow')) {
+      return;
+    }
+    readmeContent = existingContent + '\n\n';
+  } else {
+    readmeContent = `# ${basename(projectPath)}\n\n`;
+  }
+
+  readmeContent += `## Codeflow Workflow
+
+This project supports multiple AI workflow integrations.
+
+`;
+
+  // Add each project type section
+  for (const projectType of projectTypes) {
+    if (projectType === 'claude-code') {
+      readmeContent += `### Claude Code Integration
+
+This project is set up for Claude Code with native slash commands.
+
+#### Available Commands
+
+- \`/research\` - Comprehensive codebase and documentation analysis
+- \`/plan\` - Create detailed implementation plans
+- \`/execute\` - Implement plans with verification
+- \`/test\` - Generate comprehensive test suites
+- \`/document\` - Create user guides and API documentation
+- \`/commit\` - Create structured git commits
+- \`/review\` - Validate implementations against plans
+
+Commands are located in \`.claude/commands/\`.
+
+`;
+    } else if (projectType === 'opencode') {
+      readmeContent += `### OpenCode Integration
+
+This project is set up with OpenCode agents and commands for AI-assisted development.
+
+#### Getting Started
+
+1. Install OpenCode from [opencode.ai](https://opencode.ai)
+2. Navigate to this project directory
+3. Run \`opencode\` to start the AI assistant
+4. Use \`/init\` to analyze the project and create \`AGENTS.md\`
+
+#### Available Commands
+
+- \`/research\` - Comprehensive codebase and documentation analysis
+- \`/plan\` - Create detailed implementation plans
+- \`/execute\` - Implement plans with verification
+- \`/test\` - Generate comprehensive test suites
+- \`/document\` - Create user guides and API documentation
+- \`/commit\` - Create structured git commits
+- \`/review\` - Validate implementations against plans
+
+#### OpenCode Features
+
+- Use \`@\` key to fuzzy search project files
+- Drag and drop images for visual references
+- Use Tab key to switch between "Plan mode" and "Build mode"
+- Use \`/share\` to create shareable conversation links
+
+Agents are located in \`.opencode/agent/\` and commands in \`.opencode/command/\`.
+
+`;
+    }
+  }
+
+  await writeFile(readmePath, readmeContent);
+  console.log(`  ✓ Updated README.md with ${projectTypes.join(' and ')} usage instructions`);
+}
+
 async function createProjectReadme(projectPath: string, projectType: string): Promise<void> {
   const readmePath = join(projectPath, 'README.md');
   let readmeContent = '';
@@ -254,19 +363,33 @@ Commands are located in \`.claude/commands/\`.
   } else if (projectType === 'opencode') {
     readmeContent += `### OpenCode Integration
 
-This project is set up for MCP integration.
+This project is set up with OpenCode agents and commands for AI-assisted development.
 
-#### Available Tools
+#### Getting Started
 
-- \`research\` - Comprehensive codebase and documentation analysis
-- \`plan\` - Create detailed implementation plans
-- \`execute\` - Implement plans with verification
-- \`test\` - Generate comprehensive test suites
-- \`document\` - Create user guides and API documentation
-- \`commit\` - Create structured git commits
-- \`review\` - Validate implementations against plans
+1. Install OpenCode from [opencode.ai](https://opencode.ai)
+2. Navigate to this project directory
+3. Run \`opencode\` to start the AI assistant
+4. Use \`/init\` to analyze the project and create \`AGENTS.md\`
 
-Commands are located in \`.opencode/command/\`.
+#### Available Commands
+
+- \`/research\` - Comprehensive codebase and documentation analysis
+- \`/plan\` - Create detailed implementation plans
+- \`/execute\` - Implement plans with verification
+- \`/test\` - Generate comprehensive test suites
+- \`/document\` - Create user guides and API documentation
+- \`/commit\` - Create structured git commits
+- \`/review\` - Validate implementations against plans
+
+#### OpenCode Features
+
+- Use \`@\` key to fuzzy search project files
+- Drag and drop images for visual references
+- Use Tab key to switch between "Plan mode" and "Build mode"
+- Use \`/share\` to create shareable conversation links
+
+Agents are located in \`.opencode/agent/\` and commands in \`.opencode/command/\`.
 
 `;
   }
@@ -347,9 +470,13 @@ export async function setup(
     // Copy commands and agents
     const fileCount = await copyCommands(codeflowDir, inputPath, setupDirs);
 
-    // Create/update README for each project type
-    for (const projectType of projectTypes) {
-      await createProjectReadme(inputPath, projectType);
+    // Create/update README for project types
+    if (projectTypes.length === 1) {
+      // Single format - use existing function
+      await createProjectReadme(inputPath, projectTypes[0]);
+    } else {
+      // Multi-format - create combined README
+      await createMultiFormatReadme(inputPath, projectTypes);
     }
 
     console.log(`\n✅ Successfully set up ${typeDescription} project!`);
@@ -363,9 +490,11 @@ export async function setup(
 
     if (projectTypes.includes('opencode')) {
       console.log('\n📋 OpenCode setup:');
-      console.log('  1. Configure your MCP client');
-      console.log('  2. Start MCP server');
-      console.log('  3. Use MCP tools: research, plan, execute, etc.');
+      console.log('  1. Install OpenCode from https://opencode.ai');
+      console.log('  2. Run `opencode` in this project directory');
+      console.log('  3. Use `/init` to analyze project and create AGENTS.md');
+      console.log('  4. Use commands: /research, /plan, /execute, etc.');
+      console.log('  5. Press @ to search files, Tab to switch Plan/Build mode');
     }
   } catch (error: any) {
     console.error(`❌ Setup failed: ${error.message}`);

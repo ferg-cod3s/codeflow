@@ -1,7 +1,7 @@
 {
   "name": "@agentic-codeflow/cli",
-  "version": "1.2.0",
-  "description": "CLI for Agentic CodeFlow AI-assisted development workflows",
+  "version": "0.10.9",
+  "description": "AI Agent & Command Distribution Platform - Deploy 33+ specialized AI agents and workflow commands to any project instantly",
   "type": "module",
   "bin": {
     "codeflow": "./src/cli/index.ts"

@@ -65,7 +65,7 @@ name: your-agent-name
 description: Description of when this agent should be invoked
 mode: subagent # Optional: subagent or primary
 temperature: 0.7 # Optional: 0-2 range
-model: claude-3-5-sonnet # Optional: model identifier
+model: claude-sonnet-4-20250514 # Optional: model identifier
 tools: # Optional: object with boolean values
   read: true
   write: true

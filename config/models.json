@@ -1,60 +1,67 @@
 {
   "default": {
     "provider": "opencode",
-    "model": "code-supernova",
-    "full": "opencode/code-supernova",
+    "model": "zen",
+    "full": "opencode/zen",
     "temperature": 0.7
   },
   "opencode": {
-    "commands": "opencode/code-supernova",
-    "agents": "opencode/grok-code",
-    "fallback": "opencode/grok-code"
+    "commands": "opencode/zen",
+    "agents": "opencode/zen",
+    "fallback": "opencode/zen"
   },
   "claude": {
     "default": "claude-sonnet-4-20250514"
   },
   "providers": {
+    "opencode": {
+      "models": [
+        "zen",
+        "code-supernova",
+        "grok-code",
+        "claude-sonnet-4",
+        "grok-code-fast-1",
+        "claude-opus-4-1",
+        "gpt-5",
+        "claude-3-5-haiku"
+      ],
+      "active": true
+    },
     "anthropic": {
       "models": [
-        "claude-3-5-sonnet-20241022",
-        "claude-3-5-sonnet-20240620",
-        "claude-3-haiku-20240307",
+        "claude-sonnet-4-20250514",
+        "claude-opus-4-1-20250805",
         "claude-3-5-haiku-20241022",
+        "claude-3-7-sonnet-20250219",
+        "claude-3-haiku-20240307",
+        "claude-3-5-sonnet-20241022",
         "claude-3-sonnet-20240229",
         "claude-3-opus-20240229"
       ],
       "active": true
     },
-    "opencode": {
+    "openai": {
       "models": [
-        "grok-code",
-        "claude-3-5-haiku",
-        "claude-sonnet-4",
-        "grok-code-fast-1",
-        "claude-opus-4-1",
-        "gpt-5",
-        "code-supernova"
+        "gpt-4.1",
+        "gpt-4o",
+        "o1",
+        "o3",
+        "o3-mini"
+      ],
+      "active": true
+    },
+    "google": {
+      "models": [
+        "gemini-2.5-pro",
+        "gemini-2.0-flash-001"
       ],
       "active": true
     },
     "github-copilot": {
       "models": [
-        "gemini-2.5-pro",
-        "claude-sonnet-4",
         "gpt-4.1",
-        "gemini-2.0-flash-001",
-        "claude-opus-4",
-        "grok-code-fast-1",
-        "gpt-5-codex",
-        "claude-opus-41",
-        "claude-3.7-sonnet-thought",
-        "gpt-5",
-        "o3",
-        "gpt-5-mini",
-        "claude-3.7-sonnet",
-        "claude-3.5-sonnet",
         "gpt-4o",
-        "o4-mini",
+        "o3",
         "o3-mini"
       ],
       "active": false

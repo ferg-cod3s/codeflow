@@ -42,6 +42,11 @@ class TestRunner {
     { name: 'Agent Validation', path: 'tests/unit/agents/agent-validation.test.ts', type: 'unit' },
     { name: 'Command Validation', path: 'tests/unit/commands/command-validation.test.ts', type: 'unit' },
     
+    // OpenCode Command tests
+    { name: 'OpenCode Syntax Validation', path: 'tests/opencode-commands/syntax-validation.test.ts', type: 'unit' },
+    { name: 'OpenCode Variable Substitution', path: 'tests/opencode-commands/variable-substitution.test.ts', type: 'unit' },
+    { name: 'OpenCode Integration', path: 'tests/opencode-commands/integration.test.ts', type: 'integration', timeout: 30000 },
+    
     // Integration tests
     { name: 'End-to-End', path: 'tests/e2e/integration.test.ts', type: 'e2e', timeout: 60000 }
   ];
@@ -119,7 +124,7 @@ class TestRunner {
       }
       
       // Run tests
-      const result = await $`${cmd}`.quiet();
+      const result = 
       
       // Parse results
       const output = result.stdout.toString();
@@ -284,11 +289,13 @@ Filters:
   unit          Run only unit tests
   integration   Run only integration tests
   e2e           Run only e2e tests
+  opencode      Run only OpenCode command tests
   [name]        Run tests matching name
 
 Examples:
   bun run test                    # Run all tests
   bun run test unit               # Run unit tests only
+  bun run test opencode           # Run OpenCode tests only
   bun run test conversion         # Run conversion tests
   bun run test --coverage         # Run with coverage
 `);

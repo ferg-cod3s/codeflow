@@ -2,7 +2,7 @@
 name: health-test
 description: Test agent for health monitoring
 mode: subagent
-model: opencode/grok-code
+model: opencode/zen
 permission:
   edit: deny
   bash: deny

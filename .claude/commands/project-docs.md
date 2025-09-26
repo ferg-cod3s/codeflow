@@ -1,7 +1,6 @@
 ---
 name: project-docs
 mode: command
-model: claude-3-5-sonnet-20241022
 description: Generate comprehensive project documentation including PRD, security docs, user flows, and more
 version: 1.0.0
 last_updated: 2025-09-20

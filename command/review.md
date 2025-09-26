@@ -1,7 +1,6 @@
 ---
 name: review
 mode: command
-model: claude-3-5-sonnet-20241022
 description: Validate that an implementation plan was correctly executed
 version: 2.0.0-internal
 last_updated: 2025-09-13

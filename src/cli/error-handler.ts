@@ -1,5 +1,4 @@
-import { existsSync } from "fs";
-import { existsSync } from "fs";
+import { existsSync } from 'fs';
 /**
  * Enhanced error handling utilities for CLI commands
  */
@@ -33,18 +32,18 @@ export class CLIErrorHandler {
     console.error(`├─ Expected: ${context.expected}`);
     console.error(`├─ Found: ${context.found}`);
     console.error(`└─ Action: ${context.mitigation}`);
-    
+
     if (context.suggestions && context.suggestions.length > 0) {
       console.error('\n💡 Suggestions:');
       context.suggestions.forEach((suggestion, index) => {
         console.error(`   ${index + 1}. ${suggestion}`);
       });
     }
-    
+
     if (context.requiresUserInput) {
       console.error('\n⚠️  This error requires user input to resolve.');
     }
-    
+
     console.error('');
   }
 
@@ -102,7 +101,7 @@ export class CLIErrorHandler {
       found,
       mitigation,
       requiresUserInput: options.requiresUserInput ?? false,
-      suggestions: options.suggestions
+      suggestions: options.suggestions,
     };
   }
 
@@ -114,7 +113,7 @@ export class CLIErrorHandler {
       valid: true,
       errors: [],
       warnings: [],
-      suggestions: []
+      suggestions: [],
     };
 
     if (!existsSync(path)) {
@@ -131,12 +130,16 @@ export class CLIErrorHandler {
   /**
    * Validate command arguments
    */
-  static validateArguments(args: string[], requiredCount: number, commandName: string): ValidationResult {
+  static validateArguments(
+    args: string[],
+    requiredCount: number,
+    commandName: string
+  ): ValidationResult {
     const result: ValidationResult = {
       valid: true,
       errors: [],
       warnings: [],
-      suggestions: []
+      suggestions: [],
     };
 
     if (args.length < requiredCount) {
@@ -170,8 +173,8 @@ export class CLIErrorHandler {
           suggestions: [
             'Verify the path is spelled correctly',
             'Check file/directory permissions',
-            'Use absolute paths if relative paths fail'
-          ]
+            'Use absolute paths if relative paths fail',
+          ],
         }
       );
       this.displayError(context);
@@ -191,8 +194,8 @@ export class CLIErrorHandler {
           suggestions: [
             'Run with appropriate permissions (sudo if needed)',
             'Check if the file is locked by another process',
-            'Verify user has write access to the directory'
-          ]
+            'Verify user has write access to the directory',
+          ],
         }
       );
       this.displayError(context);
@@ -212,8 +215,8 @@ export class CLIErrorHandler {
           suggestions: [
             `Run 'codeflow ${command} --help' for available options`,
             'Check for typos in option names',
-            'Use --force or -f to override safety checks'
-          ]
+            'Use --force or -f to override safety checks',
+          ],
         }
       );
       this.displayError(context);
@@ -233,8 +236,8 @@ export class CLIErrorHandler {
         suggestions: [
           'Check the command syntax',
           'Verify all required arguments are provided',
-          'Try running with --verbose for more details'
-        ]
+          'Try running with --verbose for more details',
+        ],
       }
     );
     this.displayError(context);
@@ -245,7 +248,7 @@ export class CLIErrorHandler {
    */
   static displaySuccess(message: string, nextSteps?: string[]): void {
     console.log(`\n✅ ${message}`);
-    
+
     if (nextSteps && nextSteps.length > 0) {
       console.log('\n📋 Next Steps:');
       nextSteps.forEach((step, index) => {
@@ -267,7 +270,7 @@ export class CLIErrorHandler {
    */
   static displayWarning(message: string, suggestions?: string[]): void {
     console.warn(`⚠️  ${message}`);
-    
+
     if (suggestions && suggestions.length > 0) {
       console.warn('💡 Suggestions:');
       suggestions.forEach((suggestion, index) => {

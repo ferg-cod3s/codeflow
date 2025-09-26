@@ -4,8 +4,8 @@ import { readdir, stat } from 'fs/promises';
 import { existsSync } from 'fs';
 import path from 'path';
 import { readFile } from 'fs/promises';
-import { EnhancedCommandValidator, commonValidators } from '../yaml/command-validator.js';
-import CLIErrorHandler from "./error-handler.js";
+import { CommandValidator } from '../yaml/command-validator.js';
+import CLIErrorHandler from './error-handler.js';
 
 /**
  * Validate agent format compliance and detect duplicates
@@ -62,10 +62,7 @@ export async function validate(options: {
         // Directory doesn't exist or can't be read
         CLIErrorHandler.displayWarning(
           `Could not read directory ${dir}: ${(error as Error).message}`,
-          [
-            'Check directory permissions',
-            'Verify the directory exists'
-          ]
+          ['Check directory permissions', 'Verify the directory exists']
         );
       }
 
@@ -127,8 +124,8 @@ export async function validate(options: {
               suggestions: [
                 'Fix canonical conflicts by ensuring consistent agent definitions',
                 'Add missing schema files',
-                'Check and fix permission violations'
-              ]
+                'Check and fix permission violations',
+              ],
             }
           )
         );
@@ -139,13 +136,10 @@ export async function validate(options: {
       const legacyIssues =
         duplicateResult.duplicates?.filter((d: any) => d.issue === 'legacy_duplicate') || [];
       if (legacyIssues.length > 0) {
-        CLIErrorHandler.displayWarning(
-          `${legacyIssues.length} legacy duplicates found`,
-          [
-            'Consider consolidating duplicate agents',
-            'Check if legacy duplicates are still needed'
-          ]
-        );
+        CLIErrorHandler.displayWarning(`${legacyIssues.length} legacy duplicates found`, [
+          'Consider consolidating duplicate agents',
+          'Check if legacy duplicates are still needed',
+        ]);
       }
     }
 
@@ -184,8 +178,8 @@ export async function validate(options: {
                 suggestions: [
                   'Ensure AGENT_MANIFEST.json exists and is valid',
                   'Run setup from the codeflow repository root',
-                  'Copy the manifest manually if needed'
-                ]
+                  'Copy the manifest manually if needed',
+                ],
               }
             )
           );
@@ -205,8 +199,8 @@ export async function validate(options: {
               suggestions: [
                 'Ensure AGENT_MANIFEST.json exists and is valid',
                 'Run setup from the codeflow repository root',
-                'Copy the manifest manually if needed'
-              ]
+                'Copy the manifest manually if needed',
+              ],
             }
           )
         );
@@ -236,13 +230,10 @@ export async function validate(options: {
     }
 
     if (parseErrors.length > 0) {
-      CLIErrorHandler.displayWarning(
-        `${parseErrors.length} files failed to parse`,
-        [
-          'Check file formats and syntax',
-          'Run with --verbose for detailed error information'
-        ]
-      );
+      CLIErrorHandler.displayWarning(`${parseErrors.length} files failed to parse`, [
+        'Check file formats and syntax',
+        'Run with --verbose for detailed error information',
+      ]);
       parseErrors.forEach(({ file, error }) => {
         console.error(`  ${file}: ${error}`);
       });
@@ -297,25 +288,18 @@ export async function validate(options: {
 
     // Exit with error code if validation failed
     if (summary.errors > 0) {
-      CLIErrorHandler.displayWarning(
-        `Validation completed with ${summary.errors} errors`,
-        [
-          'Review the validation results above',
-          'Fix critical issues before proceeding',
-          'Use --fix option to generate fix suggestions'
-        ]
-      );
+      CLIErrorHandler.displayWarning(`Validation completed with ${summary.errors} errors`, [
+        'Review the validation results above',
+        'Fix critical issues before proceeding',
+        'Use --fix option to generate fix suggestions',
+      ]);
       process.exit(1);
     }
 
-    CLIErrorHandler.displaySuccess(
-      'Agent validation completed successfully',
-      [
-        'All agents passed validation',
-        'No critical issues found'
-      ]
-    );
-
+    CLIErrorHandler.displaySuccess('Agent validation completed successfully', [
+      'All agents passed validation',
+      'No critical issues found',
+    ]);
   } catch (error) {
     CLIErrorHandler.handleCommonError(error, 'validate');
   }
@@ -336,251 +320,159 @@ export interface CommandValidationOptions {
  * Validates OpenCode and Claude Code command files
  */
 export async function validateCommands(options: CommandValidationOptions = {}) {
-  const validator = new EnhancedCommandValidator();
+  const commandValidator = new CommandValidator();
   const searchPath = options.path || '.';
   const format = options.format || 'opencode';
 
-  // Validate search path
-  const pathValidation = CLIErrorHandler.validatePath(searchPath, 'directory');
-  if (!pathValidation.valid) {
-    CLIErrorHandler.displayValidationResult(pathValidation, 'search path');
-    return;
-  }
+  CLIErrorHandler.displayProgress(`Validating ${format} commands in ${searchPath}`);
 
   try {
-    // Find command files based on format
-    const commandDirectories = {
-      opencode: ['.opencode/command', 'opencode-agents', 'test-setup/.opencode/command'],
-      'claude-code': ['.claude/commands', 'command', 'test-setup/.claude/commands']
+    // Determine directories to search based on format
+    const directories = {
+      'opencode': ['.opencode/command', 'opencode-commands'],
+      'claude-code': ['.claude/commands', 'claude-commands']
     };
 
-    const dirsToSearch = commandDirectories[format] || commandDirectories.opencode;
-    const files: string[] = [];
-
-    // Find all .md files in command directories
-    async function findCommandFiles(dir: string): Promise<string[]> {
-      const foundFiles: string[] = [];
-      try {
-        const entries = await readdir(dir);
-
-        for (const entry of entries) {
-          const fullPath = path.join(dir, entry);
-          const stats = await stat(fullPath);
-
-          if (stats.isDirectory()) {
-            const subFiles = await findCommandFiles(fullPath);
-            foundFiles.push(...subFiles);
-          } else if (entry.endsWith('.md')) {
-            foundFiles.push(fullPath);
-          }
-        }
-      } catch (error) {
-        // Directory doesn't exist or can't be read
-        CLIErrorHandler.displayWarning(
-          `Could not read directory ${dir}: ${(error as Error).message}`,
-          [
-            'Check directory permissions',
-            'Verify the directory exists'
-          ]
-        );
-      }
-
-      return foundFiles;
-    }
+    const dirsToSearch = directories[format] || directories.opencode;
+    let allResults: any[] = [];
 
     for (const dir of dirsToSearch) {
-      const fullDir = path.isAbsolute(dir) ? dir : path.join(searchPath, dir);
-      if (existsSync(fullDir)) {
-        const foundFiles = await findCommandFiles(fullDir);
-        files.push(...foundFiles);
+      const fullPath = path.isAbsolute(dir) ? dir : path.join(searchPath, dir);
+      
+      if (existsSync(fullPath)) {
+        CLIErrorHandler.displayProgress(`Searching directory: ${fullPath}`);
+        const result = await commandValidator.validateDirectory(fullPath);
+        allResults.push(result);
+      } else {
+        CLIErrorHandler.displayProgress(`Directory not found: ${fullPath}`);
       }
     }
 
-    CLIErrorHandler.displayProgress(`Validating ${files.length} command files (format: ${format})`);
+    // Aggregate results
+    const totalFiles = allResults.reduce((sum, r) => sum + (r.metadata?.fileCount || 0), 0);
+    const totalCommands = allResults.reduce((sum, r) => sum + (r.metadata?.totalCommands || 0), 0);
+    const totalErrors = allResults.reduce((sum, r) => sum + r.errors.length, 0);
+    const totalWarnings = allResults.reduce((sum, r) => sum + r.warnings.length, 0);
+    const totalTime = allResults.reduce((sum, r) => sum + (r.metadata?.processingTime || 0), 0);
 
-    const results: Array<{
-      file: string;
-      result: any;
-      content?: string;
-    }> = [];
-    const errors: Array<{ file: string; error: string }> = [];
-
-    // Validate each command file
-    for (const file of files) {
-      try {
-        const content = await readFile(file, 'utf-8');
-        
-        // Choose validator based on format
-        const schema = format === 'opencode' 
-          ? { 
-              requiredFields: ['description'], 
-              customValidators: [commonValidators.opencodeCommand] 
-            }
-          : { 
-              requiredFields: ['description'], 
-              customValidators: [commonValidators.claudeCommand] 
-            };
-
-        const result = validator.validateCompleteCommand(content, schema);
-        results.push({ file, result, content });
-
-      } catch (error) {
-        errors.push({ file, error: (error as Error).message });
-      }
-    }
-
-    // Print results
-    const validCount = results.filter(r => r.result.isValid).length;
-    const errorCount = results.filter(r => !r.result.isValid).length;
-    const warningCount = results.reduce((sum, r) => sum + r.result.warnings.length, 0);
-
+    // Print summary
     console.log(`\n📊 Command Validation Summary:`);
-    console.log(`  Total: ${results.length}`);
-    console.log(`  ✅ Valid: ${validCount}`);
-    console.log(`  ❌ Errors: ${errorCount}`);
-    console.log(`  ⚠️  Warnings: ${warningCount}`);
+    console.log(`  Directories searched: ${dirsToSearch.length}`);
+    console.log(`  Total files: ${totalFiles}`);
+    console.log(`  Total commands: ${totalCommands}`);
+    console.log(`  Total processing time: ${totalTime.toFixed(2)}ms`);
+    console.log(`  Average time per file: ${(totalTime / totalFiles).toFixed(2)}ms`);
+    console.log(`  ✅ Valid commands: ${totalCommands - totalErrors}`);
+    console.log(`  ❌ Errors: ${totalErrors}`);
+    console.log(`  ⚠️  Warnings: ${totalWarnings}`);
 
-    if (errorCount > 0) {
-      console.log(`\n❌ Files with errors:`);
-      results.forEach(({ file, result }) => {
-        if (!result.isValid) {
-          console.log(`  ${path.relative(process.cwd(), file)}:`);
-          result.errors.forEach((error: any, index: number) => {
-            console.log(`    ${index + 1}. ${error.message}`);
-            if (error.line) {
-              console.log(`       Line ${error.line}`);
-            }
+    if (totalErrors > 0) {
+      console.log(`\n❌ Validation Errors:`);
+      allResults.forEach((result, index) => {
+        if (result.errors.length > 0) {
+          console.log(`\nDirectory ${index + 1}:`);
+          result.errors.forEach((error, errorIndex) => {
+            console.log(`  ${errorIndex + 1}. ${error.file}: ${error.message}`);
             if (error.suggestion) {
-              console.log(`       💡 ${error.suggestion}`);
+              console.log(`     💡 ${error.suggestion}`);
             }
           });
         }
       });
     }
 
-    if (options.verbose && warningCount > 0) {
-      console.log(`\n⚠️  Files with warnings:`);
-      results.forEach(({ file, result }) => {
+    if (totalWarnings > 0) {
+      console.log(`\n⚠️  Validation Warnings:`);
+      allResults.forEach((result, index) => {
         if (result.warnings.length > 0) {
-          console.log(`  ${path.relative(process.cwd(), file)}:`);
-          result.warnings.forEach((warning: any, index: number) => {
-            console.log(`    ${index + 1}. ${warning.message}`);
+          console.log(`\nDirectory ${index + 1}:`);
+          result.warnings.forEach((warning, warningIndex) => {
+            console.log(`  ${warningIndex + 1}. ${warning.message}`);
             if (warning.suggestion) {
-              console.log(`       💡 ${warning.suggestion}`);
+              console.log(`     💡 ${warning.suggestion}`);
             }
           });
         }
       });
     }
 
-    if (options.fix && errorCount > 0) {
-      console.log(`\n🔧 Generating fix suggestions...`);
-      const fixReport = generateCommandFixReport(results);
-      await Bun.write('command-fixes.txt', fixReport);
-      console.log(`  Fix suggestions written to: command-fixes.txt`);
+    if (options.verbose) {
+      console.log(`\n📝 Detailed Performance Metrics:`);
+      allResults.forEach((result, index) => {
+        if (result.metadata) {
+          console.log(`  Directory ${index + 1}: ${result.metadata.processingTime.toFixed(2)}ms for ${result.metadata.fileCount} files`);
+        }
+      });
+    }
+
+    if (options.fix && totalErrors > 0) {
+      const allErrors = allResults.flatMap(r => r.errors);
+      const fixReport = commandValidator.generateFixes(allErrors);
+      console.log(`\n🔧 Fix suggestions written to: command-validation-fixes.txt`);
+      await Bun.write('command-validation-fixes.txt', fixReport);
     }
 
     // Exit with error code if validation failed
-    if (options.strict && errorCount > 0) {
-      CLIErrorHandler.displayError(
-        CLIErrorHandler.createErrorContext(
-          'validate-commands',
-          'strict_validation',
-          'strict_validation_failed',
-          'All commands pass strict validation',
-          `${errorCount} validation errors found`,
-          'Fix validation errors or remove --strict flag',
-          {
-            requiresUserInput: true,
-            suggestions: [
-              'Fix the validation errors listed above',
-              'Remove --strict flag to allow warnings',
-              'Use --fix option to generate fix suggestions'
-            ]
-          }
-        )
-      );
+    if (totalErrors > 0) {
+      CLIErrorHandler.displayWarning(`Command validation completed with ${totalErrors} errors`, [
+        'Review the validation results above',
+        'Fix critical issues before proceeding',
+        'Use --fix option to generate fix suggestions',
+      ]);
       process.exit(1);
     }
 
-    if (errorCount > 0) {
-      CLIErrorHandler.displayWarning(
-        `Command validation completed with ${errorCount} errors`,
-        [
-          'Review the validation results above',
-          'Fix critical issues before proceeding',
-          'Use --fix option to generate fix suggestions'
-        ]
-      );
-    } else {
-      CLIErrorHandler.displaySuccess(
-        'Command validation completed successfully',
-        [
-          'All commands passed validation',
-          'No issues found'
-        ]
-      );
-    }
+    CLIErrorHandler.displaySuccess('Command validation completed successfully', [
+      'All commands passed validation',
+      'No critical issues found',
+    ]);
 
     return {
-      total: results.length,
-      valid: validCount,
-      errors: errorCount,
-      warnings: warningCount,
-      results
+      total: totalCommands,
+      valid: totalCommands - totalErrors,
+      errors: totalErrors,
+      warnings: totalWarnings,
+      results: allResults,
     };
-
   } catch (error) {
-    CLIErrorHandler.handleCommonError(error, 'validate-commands');
+    CLIErrorHandler.handleCommonError(error, 'validateCommands');
+    return {
+      total: 0,
+      valid: 0,
+      errors: 1,
+      warnings: 0,
+      results: [],
+    };
   }
 }
 
 /**
  * Generates a fix report for command validation issues
  */
-function generateCommandFixReport(results: Array<{ file: string; result: any; content?: string }>): string {
-  let report = '# Command Validation Fix Report\n\n';
-  report += `Generated: ${new Date().toISOString()}\n\n`;
+export function generateCommandFixReport(
+  results: Array<{ file: string; result: any; content?: string }>
+): string {
+  const fixes: string[] = [
+    '# Command Validation Fix Report',
+    '',
+    '## Summary',
+    `${results.length} files with validation issues`,
+    '',
+    '## Fixes'
+  ];
 
-  const filesWithErrors = results.filter(r => !r.result.isValid);
-
-  if (filesWithErrors.length === 0) {
-    report += '✅ No fixes needed - all commands are valid!\n';
-    return report;
-  }
-
-  report += `## Files Requiring Fixes (${filesWithErrors.length})\n\n`;
-
-  filesWithErrors.forEach(({ file, result, content }) => {
-    report += `### ${path.relative(process.cwd(), file)}\n\n`;
-    
-    result.errors.forEach((error: any, index: number) => {
-      report += `**Error ${index + 1}:** ${error.message}\n`;
-      if (error.line && content) {
-        const lines = content.split('\n');
-        const errorLine = lines[error.line - 1];
-        report += `**Line ${error.line}:** \`${errorLine.trim()}\`\n`;
-      }
-      if (error.suggestion) {
-        report += `**Fix:** ${error.suggestion}\n`;
-      }
-      report += '\n';
-    });
-
-    if (result.warnings.length > 0) {
-      report += '**Warnings:**\n';
-      result.warnings.forEach((warning: any, index: number) => {
-        report += `- ${warning.message}`;
-        if (warning.suggestion) {
-          report += ` (${warning.suggestion})`;
+  results.forEach((item, index) => {
+    fixes.push(`\n### File ${index + 1}: ${item.file}`);
+    if (item.result.errors) {
+      item.result.errors.forEach((error: any, errorIndex: number) => {
+        fixes.push(`  Error ${errorIndex + 1}: ${error.message}`);
+        if (error.suggestion) {
+          fixes.push(`    Suggestion: ${error.suggestion}`);
         }
-        report += '\n';
       });
-      report += '\n';
     }
-
-    report += '---\n\n';
+    fixes.push('');
   });
 
-  return report;
+  return fixes.join('\n');
 }

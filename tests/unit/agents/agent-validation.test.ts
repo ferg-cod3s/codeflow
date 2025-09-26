@@ -50,7 +50,7 @@ function validateOpenCodeAgent(metadata: any): { valid: boolean; errors: string[
   if (!metadata.primary_objective) errors.push('Missing required field: primary_objective');
   
   // Mode validation
-  if (metadata.mode && !['subagent', 'agent', 'command'].includes(metadata.mode)) {
+  if (metadata.mode && !['subagent', 'agent', 'command', 'primary', 'all'].includes(metadata.mode)) {
     errors.push(`Invalid mode: ${metadata.mode}`);
   }
   
@@ -76,7 +76,7 @@ function validateOpenCodeAgent(metadata: any): { valid: boolean; errors: string[
   
   // Permissions validation
   if (metadata.permission) {
-    const validPerms = ['read', 'list', 'grep', 'edit', 'write', 'bash', 'webfetch'];
+    const validPerms = ['read', 'list', 'grep', 'edit', 'write', 'bash', 'webfetch', 'glob', 'patch', 'str_replace_editor', 'computer_use'];
     const permKeys = Object.keys(metadata.permission);
     
     for (const key of permKeys) {

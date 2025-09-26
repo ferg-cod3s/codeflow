@@ -1,3 +1,33 @@
+## [0.10.9] - 2025-09-26
+
+### 🎯 **OpenCode Command Validation Implementation**
+
+- **NEW**: Complete OpenCode command validation system
+- **NEW**: YAML frontmatter validation with schema compliance
+- **NEW**: Variable substitution validation for command templates
+- **NEW**: Cross-platform command consistency checking
+
+### ✨ **Test Suite Fixes**
+
+- **FIXED**: Agent validation test failures (missing model fields, invalid permissions)
+- **FIXED**: Command validator Result type handling
+- **FIXED**: OpenCode integration test imports and validation
+- **FIXED**: CLI command test environment issues
+
+### 🔧 **Improvements**
+
+- **ENHANCED**: Agent permission validation with extended permission set
+- **ENHANCED**: Model prefix validation for OpenCode agents
+- **ENHANCED**: Command validation error reporting and debugging
+
+### 🐛 **Bug Fixes**
+
+- **FIXED**: YAML processor Result type handling in command validator
+- **FIXED**: Missing imports in OpenCode integration tests
+- **FIXED**: Agent model field validation for both Claude and OpenCode formats
+
+---
+
 ## [0.3.0](https://github.com/ferg-cod3s/codeflow/compare/v0.2.1...v0.3.0) (2025-08-31)
 
 # Changelog
