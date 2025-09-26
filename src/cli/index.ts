@@ -7,6 +7,7 @@ import { convert } from './convert';
 import { sync } from './sync';
 import { startWatch } from './watch';
 import { catalog } from './catalog.js';
+import { fixModels } from './fix-models.js';
 import packageJson from '../../package.json';
 import { join } from 'node:path';
 import { existsSync } from 'node:fs';
@@ -128,6 +129,7 @@ Commands:
   setup [project-path]       Smart setup for Claude Code or OpenCode integration (use --global for global directories)
   status [project-path]      Check which files are up-to-date or outdated
   sync [options]             Sync agents and commands across formats
+  fix-models [options]       Fix model configurations (default: global, use --local for project)
   convert <source> <target> <format>  Convert agents between formats
   watch start [options]      Start automatic file synchronization daemon
   catalog <subcommand>       Browse, search, and install catalog items
@@ -160,6 +162,8 @@ Examples:
   codeflow sync                        # Sync to project directories
   codeflow sync --global               # Sync to global directories (~/.claude, ~/.config/opencode)
   codeflow sync --global --dry-run     # Preview global sync changes
+  codeflow fix-models                  # Fix model IDs globally
+  codeflow fix-models --local          # Fix model IDs in current project
   codeflow convert ./codeflow-agents ./claude-agents claude-code
   codeflow watch start --global
   codeflow catalog list agent          # List all agents
@@ -189,6 +193,15 @@ switch (command) {
       force: values.force,
       dryRun: values['dry-run'],
       verbose: true,
+    });
+    break;
+  case 'fix-models':
+    // For fix-models, default to global. Check if --local was passed
+    const hasLocalFlag = Bun.argv.includes('--local') || Bun.argv.includes('-l');
+    await fixModels({
+      dryRun: values['dry-run'],
+      verbose: values.help || false,
+      global: !hasLocalFlag  // Default to global unless --local is specified
     });
     break;
   case 'convert':

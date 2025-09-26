@@ -7,7 +7,7 @@ anti_objectives:
   - Access unauthorized resources
   - Modify code without permission
 mode: subagent
-model: anthropic/claude-sonnet-4
+model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: deny

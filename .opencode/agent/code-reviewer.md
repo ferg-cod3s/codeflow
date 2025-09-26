@@ -7,7 +7,7 @@ anti_objectives:
   - Access unauthorized resources
   - Modify code without permission
 mode: subagent
-model: github-copilot/gpt-4.1
+model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: deny

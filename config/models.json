@@ -1,0 +1,63 @@
+{
+  "default": {
+    "provider": "opencode",
+    "model": "code-supernova",
+    "full": "opencode/code-supernova",
+    "temperature": 0.7
+  },
+  "opencode": {
+    "commands": "opencode/code-supernova",
+    "agents": "opencode/grok-code",
+    "fallback": "opencode/grok-code"
+  },
+  "claude": {
+    "default": "claude-sonnet-4-20250514"
+  },
+  "providers": {
+    "anthropic": {
+      "models": [
+        "claude-3-5-sonnet-20241022",
+        "claude-3-5-sonnet-20240620",
+        "claude-3-haiku-20240307",
+        "claude-3-5-haiku-20241022",
+        "claude-3-sonnet-20240229",
+        "claude-3-opus-20240229"
+      ],
+      "active": true
+    },
+    "opencode": {
+      "models": [
+        "grok-code",
+        "claude-3-5-haiku",
+        "claude-sonnet-4",
+        "grok-code-fast-1",
+        "claude-opus-4-1",
+        "gpt-5",
+        "code-supernova"
+      ],
+      "active": true
+    },
+    "github-copilot": {
+      "models": [
+        "gemini-2.5-pro",
+        "claude-sonnet-4",
+        "gpt-4.1",
+        "gemini-2.0-flash-001",
+        "claude-opus-4",
+        "grok-code-fast-1",
+        "gpt-5-codex",
+        "claude-opus-41",
+        "claude-3.7-sonnet-thought",
+        "gpt-5",
+        "o3",
+        "gpt-5-mini",
+        "claude-3.7-sonnet",
+        "claude-3.5-sonnet",
+        "gpt-4o",
+        "o4-mini",
+        "o3-mini"
+      ],
+      "active": false
+    }
+  }
+}

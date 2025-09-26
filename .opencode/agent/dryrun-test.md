@@ -6,5 +6,6 @@ permission:
   edit: deny
   bash: deny
   webfetch: allow
+model: opencode/grok-code
 ---
 # Dry Run Test Agent

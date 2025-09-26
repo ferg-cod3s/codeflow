@@ -1,27 +1,15 @@
-## [0.10.8](https://github.com/ferg-cod3s/codeflow/compare/v0.10.6...v0.10.8) (2025-09-22)
-
-
-### Bug Fixes
-
-* update all agent models to use correct github-copilot/gpt-4.1 format ([16b63b1](https://github.com/ferg-cod3s/codeflow/commit/16b63b104f192e3798567adadc25a62d79f6de5e))
-* update all agent models to use correct provider/model format ([438b0f9](https://github.com/ferg-cod3s/codeflow/commit/438b0f92510a3e141efcb16138fbec8a72f89292))
-* update all agent models to use correct provider/model identifiers ([69f7375](https://github.com/ferg-cod3s/codeflow/commit/69f7375d5537d0ef819b4545381f66a10c0fc50e))
-
-
-### Features
-
-* implement comprehensive CLI error handling improvements ([5358b7d](https://github.com/ferg-cod3s/codeflow/commit/5358b7d47a7d7617320280e713b6badf28dd9792))
-* reorganize OpenCode structure and publish v0.10.7 ([a28b197](https://github.com/ferg-cod3s/codeflow/commit/a28b19768855f672ace2548ec616e1a5ba4af425))
-
-
-
-## [0.10.6](https://github.com/ferg-cod3s/codeflow/compare/v0.9.5...v0.10.6) (2025-09-21)
+# [1.2.0](https://github.com/ferg-cod3s/codeflow/compare/v0.9.2...v1.2.0) (2025-09-26)
 
 
 ### Bug Fixes
 
 * replace js-yaml import with yaml package to resolve import error ([a91db80](https://github.com/ferg-cod3s/codeflow/commit/a91db80c87258930661d84dd3d00c5be9637816a))
+* resolve agent parsing issues and update setup functionality ([6d6e9ef](https://github.com/ferg-cod3s/codeflow/commit/6d6e9ef73e2599fb69856350290c728f1e637545))
+* standardize command descriptions across directories ([9019bee](https://github.com/ferg-cod3s/codeflow/commit/9019bee34bb07675875857705eba3ee1fa01cfe7))
 * **sync:** resolve global sync command issue and update build artifacts ([9c39ad9](https://github.com/ferg-cod3s/codeflow/commit/9c39ad9383a3546df32c0ce8a47cca6a7190e76a))
+* update all agent models to use correct github-copilot/gpt-4.1 format ([16b63b1](https://github.com/ferg-cod3s/codeflow/commit/16b63b104f192e3798567adadc25a62d79f6de5e))
+* update all agent models to use correct provider/model format ([438b0f9](https://github.com/ferg-cod3s/codeflow/commit/438b0f92510a3e141efcb16138fbec8a72f89292))
+* update all agent models to use correct provider/model identifiers ([69f7375](https://github.com/ferg-cod3s/codeflow/commit/69f7375d5537d0ef819b4545381f66a10c0fc50e))
 * update validation script to accept optimized model assignments ([5c643c7](https://github.com/ferg-cod3s/codeflow/commit/5c643c7b92550712d1e4b49ecf10789c98bf645a))
 
 
@@ -33,16 +21,9 @@
 * **agent:** uats v1.0 upgrade web-search-researcher with structured taxonomy & evidence schema ([c3c0205](https://github.com/ferg-cod3s/codeflow/commit/c3c0205de46fb38b7c014364b2a0e084431a4e1a))
 * **agent:** upgrade code-reviewer to UATS v1.0 with structured output & clear boundaries ([cc27c9b](https://github.com/ferg-cod3s/codeflow/commit/cc27c9bc043714edb92c1be86ee7b9e04265686c))
 * **agent:** upgrade security-scanner to UATS v1.0 with structured output & scope boundaries ([0737bcf](https://github.com/ferg-cod3s/codeflow/commit/0737bcf62a6452fce7786da101a28f5a32bacec6))
-
-
-
-## [0.9.5](https://github.com/ferg-cod3s/codeflow/compare/v0.9.2...v0.9.5) (2025-09-06)
-
-
-### Bug Fixes
-
-* resolve agent parsing issues and update setup functionality ([6d6e9ef](https://github.com/ferg-cod3s/codeflow/commit/6d6e9ef73e2599fb69856350290c728f1e637545))
-* standardize command descriptions across directories ([9019bee](https://github.com/ferg-cod3s/codeflow/commit/9019bee34bb07675875857705eba3ee1fa01cfe7))
+* implement comprehensive CLI error handling improvements ([5358b7d](https://github.com/ferg-cod3s/codeflow/commit/5358b7d47a7d7617320280e713b6badf28dd9792))
+* major release v1.2.0 - migrate thoughts to docs, add comprehensive testing ([d37b17b](https://github.com/ferg-cod3s/codeflow/commit/d37b17b7d1229c20d233084fb570197793f06954))
+* reorganize OpenCode structure and publish v0.10.7 ([a28b197](https://github.com/ferg-cod3s/codeflow/commit/a28b19768855f672ace2548ec616e1a5ba4af425))
 
 
 

@@ -6,6 +6,7 @@ import CatalogIndexBuilder, { CatalogIndex, CatalogItem } from '../catalog/index
 import { ImportPipeline } from '../catalog/import-pipeline.js';
 import { FormatConverter } from '../conversion/format-converter.js';
 import { AgentValidator } from '../conversion/validator.js';
+import { ModelFixer } from '../catalog/model-fixer.js';
 import CLIErrorHandler from './error-handler.js';
 
 export class CatalogCLI {
@@ -13,11 +14,13 @@ export class CatalogCLI {
   private catalogIndex: CatalogIndex | null = null;
   private converter: FormatConverter;
   private validator: AgentValidator;
+  private modelFixer: ModelFixer;
 
   constructor(projectRoot: string) {
     this.projectRoot = projectRoot;
     this.converter = new FormatConverter();
     this.validator = new AgentValidator();
+    this.modelFixer = new ModelFixer(projectRoot);
   }
 
   async loadCatalog(): Promise<CatalogIndex> {
@@ -308,6 +311,8 @@ export class CatalogCLI {
         const targetFormat = target === 'claude-code' ? 'claude-code' : 'opencode';
         // The content is already in base format, so convert to target
         convertedContent = await this.converter.convert(content, 'base', targetFormat);
+        // Fix model configuration for the target
+        convertedContent = this.modelFixer.fixModel(convertedContent, targetFormat, item.kind as 'agent' | 'command');
       } catch (error) {
         // If conversion fails, use original content
         console.warn(`⚠️  Conversion failed for ${target}, using original format`);

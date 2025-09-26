@@ -10,7 +10,7 @@ This document explains the slash commands available in the codeflow workflow sys
 
 **Purpose**: Conduct comprehensive research across codebase and documentation
 **Usage**: `/research [research query or ticket path]`
-**Model**: GPT-5 (OpenCode), Claude Sonnet-4 (Claude Code)
+**Model**: anthropic/claude-sonnet-4-20250514 (OpenCode), claude-sonnet-4-20250514 (Claude Code)
 **Process**:
 
 - Spawns specialized locator and analyzer agents in parallel
@@ -22,7 +22,7 @@ This document explains the slash commands available in the codeflow workflow sys
 
 **Purpose**: Create detailed implementation plans from tickets and research
 **Usage**: `/plan [ticket path and research documents]`
-**Model**: GPT-5
+**Model**: anthropic/claude-sonnet-4-20250514
 **Process**:
 
 - Interactive, iterative planning process
@@ -34,7 +34,7 @@ This document explains the slash commands available in the codeflow workflow sys
 
 **Purpose**: Execute implementation plans systematically
 **Usage**: `/execute [plan file path]`
-**Model**: Claude Sonnet-4
+**Model**: claude-sonnet-4-20250514
 **Process**:
 
 - Phase-by-phase implementation following plan specifications
@@ -46,7 +46,7 @@ This document explains the slash commands available in the codeflow workflow sys
 
 **Purpose**: Create git commits with proper messaging
 **Usage**: `/commit`
-**Model**: GPT-5
+**Model**: anthropic/claude-sonnet-4-20250514
 **Process**:
 
 - Analyzes current staged and unstaged changes
@@ -58,7 +58,7 @@ This document explains the slash commands available in the codeflow workflow sys
 
 **Purpose**: Generate comprehensive tests for implemented features
 **Usage**: `/test [plan file path or feature description]`
-**Model**: Claude Sonnet-4
+**Model**: claude-sonnet-4-20250514
 **Process**:
 
 - Analyzes implementation and identifies testing needs
@@ -70,7 +70,7 @@ This document explains the slash commands available in the codeflow workflow sys
 
 **Purpose**: Create comprehensive documentation for features
 **Usage**: `/document [plan file path or feature description]`
-**Model**: GPT-5
+**Model**: anthropic/claude-sonnet-4-20250514
 **Process**:
 
 - Generates user guides, API docs, and technical documentation
@@ -82,26 +82,25 @@ This document explains the slash commands available in the codeflow workflow sys
 
 **Purpose**: Review implementations against original plans
 **Usage**: `/review [plan file path]`
-**Model**: Claude Sonnet-4
+**Model**: claude-sonnet-4-20250514
 **Process**:
 
 - Validates implementation adherence to plan specifications
 - Tests all automated and manual success criteria
 - Identifies deviations and categorizes their severity
 - Generates comprehensive review report with recommendations
+
 #### `/project-docs`
 
 **Purpose**: Generate comprehensive project documentation including PRD, security docs, user flows, and more
 **Usage**: `/project-docs [project prompt or --analyze-existing]`
-**Model**: GPT-5
+**Model**: anthropic/claude-sonnet-4-20250514
 **Process**:
 
 - Orchestrates multiple specialized agents to generate complete project documentation
 - Creates PRD, security documentation, user flows, API docs, architecture docs, and deployment guides
 - Analyzes project prompts or existing project structure
 - Generates structured documentation with consistent formatting
-
-
 
 ## Platform-Specific Formats
 
@@ -178,7 +177,7 @@ Command prompt content with {{variable}} placeholder and !shell commands support
 
 ### Review Command
 
-```bash
+````bash
 # Both platforms
 /review thoughts/plans/oauth-integration-plan.md
 ### Project Documentation Command
@@ -189,8 +188,9 @@ Command prompt content with {{variable}} placeholder and !shell commands support
 
 # Generate documentation by analyzing existing project structure
 /project-docs --analyze-existing
-```
-```
+````
+
+````
 
 ## Agent Integration
 
@@ -211,7 +211,7 @@ Commands automatically select appropriate specialized agents:
 
 - Uses domain-appropriate agents based on implementation scope
 - Follows agent handoff patterns for complex scenarios
-- Respects model tier routing (GPT-5 for strategy, Claude Sonnet-4 for technical work)
+- Respects model tier routing (anthropic/claude-sonnet-4-20250514 for strategy, claude-sonnet-4-20250514 for technical work)
 
 ## Installation & Management
 
@@ -223,7 +223,7 @@ codeflow sync --project ~/path/to/project
 
 # Check sync status
 codeflow status ~/path/to/project
-```
+````
 
 ### Directory Structure After Installation
 
@@ -250,7 +250,7 @@ your-project/
 ## Best Practices
 
 1. **Follow the Complete Workflow Order**: research → plan → execute → test → document → commit → review
-2. **Use Appropriate Models**: Research & documentation use GPT-5, technical work uses Claude Sonnet-4
+2. **Use Appropriate Models**: Research & documentation use anthropic/claude-sonnet-4-20250514, technical work uses claude-sonnet-4-20250514
 3. **Run Fresh Research**: Always start with current codebase analysis
 4. **Test Before Committing**: Generate comprehensive tests to prevent regressions
 5. **Document Everything**: Create user guides and technical docs for maintainability
@@ -261,7 +261,7 @@ your-project/
 
 **Commands Not Found**: Run `codeflow sync --project` to install commands to your project
 **Agent Errors**: Check that agents are properly installed with `codeflow status`
-**Model Access**: Ensure you have access to the required models (GPT-5, Claude Sonnet-4)
+**Model Access**: Ensure you have access to the required models (anthropic/claude-sonnet-4-20250514, claude-sonnet-4-20250514)
 **Permission Issues**: Verify write access to project directories
 
 ## Extending Commands
