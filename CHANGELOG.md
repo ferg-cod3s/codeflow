@@ -1,3 +1,12 @@
+## [0.10.10](https://github.com/ferg-cod3s/codeflow/compare/v0.10.9...v0.10.10) (2025-09-27)
+
+
+### Features
+
+* add automated release script with version tagging ([2d118c3](https://github.com/ferg-cod3s/codeflow/commit/2d118c3b092ff9e078e8fd7fd461a627fa7ce58f))
+
+
+
 ## [0.10.9](https://github.com/ferg-cod3s/codeflow/compare/v1.2.0...v0.10.9) (2025-09-26)
 
 
