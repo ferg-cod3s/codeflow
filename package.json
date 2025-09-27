@@ -79,6 +79,8 @@
     "validate:agents": "node scripts/validate-agent-models.js",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
     "changelog:first": "conventional-changelog -p angular -i CHANGELOG.md -s",
+    "release": "./scripts/release.sh",
+    "release:publish": "./scripts/release.sh --publish",
     "prepublishOnly": "bun run typecheck && bun run test && bun run lint || echo \"Lint warnings found but continuing with publish\"",
     "prepack": "bun run typecheck",
     "build:cli": "bun build src/cli/index.ts --target bun",
