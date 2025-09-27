@@ -1,16 +1,23 @@
 {
   "version": "1.0.0",
-  "updated": "2025-09-24T11:25:05.853Z",
+  "updated": "2025-09-27T03:25:37.505Z",
   "sources": {
     "codeflow-core": {
       "name": "Codeflow Core",
       "description": "Official Codeflow agents and commands",
       "url": "https://github.com/ferg-cod3s/codeflow",
       "type": "local"
+    },
+    "claude-templates": {
+      "name": "claude-templates",
+      "description": "Adapter for davila7/claude-code-templates repository",
+      "url": "https://github.com/davila7/claude-code-templates",
+      "type": "external",
+      "adapter": "claude-templates"
     }
   },
   "stats": {
-    "total_items": 41,
+    "total_items": 49,
     "agents": 33,
     "commands": 8,
     "templates": 0,
@@ -1297,6 +1304,326 @@
         "sha": "d490229",
         "license": "MIT",
         "attribution": "Codeflow Team"
+      }
+    },
+    {
+      "id": "claude-templates/mcp-expert",
+      "kind": "agent",
+      "name": "mcp-expert",
+      "version": "1.0.0",
+      "description": "---",
+      "tags": [
+        "template",
+        "claude",
+        "agents"
+      ],
+      "license": "Apache-2.0",
+      "source": "claude-templates",
+      "dependencies": [],
+      "install_targets": [
+        "claude-code",
+        "opencode"
+      ],
+      "conversion_rules": {
+        "base_path": "imported/claude-templates/.claude/agents/mcp-expert.md",
+        "supports_all_formats": true,
+        "supports_formats": [
+          "claude-code",
+          "opencode"
+        ],
+        "lossy_fields": [
+          "model",
+          "temperature",
+          "max_tokens"
+        ]
+      },
+      "provenance": {
+        "repo": "davila7/claude-code-templates",
+        "path": ".claude/agents/mcp-expert.md",
+        "sha": "9d3dfaa",
+        "license": "Apache-2.0",
+        "attribution": "davila7",
+        "import_date": "2025-09-27T03:25:37.451Z"
+      }
+    },
+    {
+      "id": "claude-templates/cli-ui-designer",
+      "kind": "agent",
+      "name": "cli-ui-designer",
+      "version": "1.0.0",
+      "description": "CLI interface design specialist. Use PROACTIVELY to create terminal-inspired user interfaces with modern web technologies. Expert in CLI aesthetics, terminal themes, and command-line UX patterns.",
+      "tags": [
+        "template",
+        "claude",
+        "agents"
+      ],
+      "license": "Apache-2.0",
+      "source": "claude-templates",
+      "dependencies": [],
+      "install_targets": [
+        "claude-code",
+        "opencode"
+      ],
+      "conversion_rules": {
+        "base_path": "imported/claude-templates/.claude/agents/cli-ui-designer.md",
+        "supports_all_formats": true,
+        "supports_formats": [
+          "claude-code",
+          "opencode"
+        ],
+        "lossy_fields": [
+          "model",
+          "temperature",
+          "max_tokens"
+        ]
+      },
+      "provenance": {
+        "repo": "davila7/claude-code-templates",
+        "path": ".claude/agents/cli-ui-designer.md",
+        "sha": "930fc94",
+        "license": "Apache-2.0",
+        "attribution": "davila7",
+        "import_date": "2025-09-27T03:25:37.453Z"
+      }
+    },
+    {
+      "id": "claude-templates/command-expert",
+      "kind": "agent",
+      "name": "command-expert",
+      "version": "1.0.0",
+      "description": "---",
+      "tags": [
+        "template",
+        "claude",
+        "agents"
+      ],
+      "license": "Apache-2.0",
+      "source": "claude-templates",
+      "dependencies": [],
+      "install_targets": [
+        "claude-code",
+        "opencode"
+      ],
+      "conversion_rules": {
+        "base_path": "imported/claude-templates/.claude/agents/command-expert.md",
+        "supports_all_formats": true,
+        "supports_formats": [
+          "claude-code",
+          "opencode"
+        ],
+        "lossy_fields": [
+          "model",
+          "temperature",
+          "max_tokens"
+        ]
+      },
+      "provenance": {
+        "repo": "davila7/claude-code-templates",
+        "path": ".claude/agents/command-expert.md",
+        "sha": "e58f14d",
+        "license": "Apache-2.0",
+        "attribution": "davila7",
+        "import_date": "2025-09-27T03:25:37.453Z"
+      }
+    },
+    {
+      "id": "claude-templates/docusaurus-expert",
+      "kind": "agent",
+      "name": "docusaurus-expert",
+      "version": "1.0.0",
+      "description": "Docusaurus documentation specialist. Use PROACTIVELY when working with Docusaurus documentation in the docs_to_claude folder for site configuration, content management, theming, build troubleshooting,",
+      "tags": [
+        "template",
+        "claude",
+        "agents"
+      ],
+      "license": "Apache-2.0",
+      "source": "claude-templates",
+      "dependencies": [],
+      "install_targets": [
+        "claude-code",
+        "opencode"
+      ],
+      "conversion_rules": {
+        "base_path": "imported/claude-templates/.claude/agents/docusaurus-expert.md",
+        "supports_all_formats": true,
+        "supports_formats": [
+          "claude-code",
+          "opencode"
+        ],
+        "lossy_fields": [
+          "model",
+          "temperature",
+          "max_tokens"
+        ]
+      },
+      "provenance": {
+        "repo": "davila7/claude-code-templates",
+        "path": ".claude/agents/docusaurus-expert.md",
+        "sha": "4c81500",
+        "license": "Apache-2.0",
+        "attribution": "davila7",
+        "import_date": "2025-09-27T03:25:37.454Z"
+      }
+    },
+    {
+      "id": "claude-templates/frontend-developer",
+      "kind": "agent",
+      "name": "frontend-developer",
+      "version": "1.0.0",
+      "description": "Frontend development specialist for React applications and responsive design. Use PROACTIVELY for UI components, state management, performance optimization, accessibility implementation, and modern fr",
+      "tags": [
+        "template",
+        "claude",
+        "agents"
+      ],
+      "license": "Apache-2.0",
+      "source": "claude-templates",
+      "dependencies": [],
+      "install_targets": [
+        "claude-code",
+        "opencode"
+      ],
+      "conversion_rules": {
+        "base_path": "imported/claude-templates/.claude/agents/frontend-developer.md",
+        "supports_all_formats": true,
+        "supports_formats": [
+          "claude-code",
+          "opencode"
+        ],
+        "lossy_fields": [
+          "model",
+          "temperature",
+          "max_tokens"
+        ]
+      },
+      "provenance": {
+        "repo": "davila7/claude-code-templates",
+        "path": ".claude/agents/frontend-developer.md",
+        "sha": "7247ea7",
+        "license": "Apache-2.0",
+        "attribution": "davila7",
+        "import_date": "2025-09-27T03:25:37.454Z"
+      }
+    },
+    {
+      "id": "claude-templates/agent-expert",
+      "kind": "agent",
+      "name": "agent-expert",
+      "version": "1.0.0",
+      "description": "---",
+      "tags": [
+        "template",
+        "claude",
+        "agents"
+      ],
+      "license": "Apache-2.0",
+      "source": "claude-templates",
+      "dependencies": [],
+      "install_targets": [
+        "claude-code",
+        "opencode"
+      ],
+      "conversion_rules": {
+        "base_path": "imported/claude-templates/.claude/agents/agent-expert.md",
+        "supports_all_formats": true,
+        "supports_formats": [
+          "claude-code",
+          "opencode"
+        ],
+        "lossy_fields": [
+          "model",
+          "temperature",
+          "max_tokens"
+        ]
+      },
+      "provenance": {
+        "repo": "davila7/claude-code-templates",
+        "path": ".claude/agents/agent-expert.md",
+        "sha": "05fb26b",
+        "license": "Apache-2.0",
+        "attribution": "davila7",
+        "import_date": "2025-09-27T03:25:37.455Z"
+      }
+    },
+    {
+      "id": "claude-templates/lint",
+      "kind": "command",
+      "name": "lint",
+      "version": "1.0.0",
+      "description": "Run Python code linting and formatting tools.",
+      "tags": [
+        "template",
+        "claude",
+        "commands"
+      ],
+      "license": "Apache-2.0",
+      "source": "claude-templates",
+      "dependencies": [],
+      "install_targets": [
+        "claude-code",
+        "opencode"
+      ],
+      "conversion_rules": {
+        "base_path": "imported/claude-templates/.claude/commands/lint.md",
+        "supports_all_formats": true,
+        "supports_formats": [
+          "claude-code",
+          "opencode"
+        ],
+        "lossy_fields": [
+          "model",
+          "temperature",
+          "max_tokens"
+        ]
+      },
+      "provenance": {
+        "repo": "davila7/claude-code-templates",
+        "path": ".claude/commands/lint.md",
+        "sha": "571456f",
+        "license": "Apache-2.0",
+        "attribution": "davila7",
+        "import_date": "2025-09-27T03:25:37.455Z"
+      }
+    },
+    {
+      "id": "claude-templates/test",
+      "kind": "command",
+      "name": "test",
+      "version": "1.0.0",
+      "description": "Run Python tests with pytest, unittest, or other testing frameworks.",
+      "tags": [
+        "template",
+        "claude",
+        "commands"
+      ],
+      "license": "Apache-2.0",
+      "source": "claude-templates",
+      "dependencies": [],
+      "install_targets": [
+        "claude-code",
+        "opencode"
+      ],
+      "conversion_rules": {
+        "base_path": "imported/claude-templates/.claude/commands/test.md",
+        "supports_all_formats": true,
+        "supports_formats": [
+          "claude-code",
+          "opencode"
+        ],
+        "lossy_fields": [
+          "model",
+          "temperature",
+          "max_tokens"
+        ]
+      },
+      "provenance": {
+        "repo": "davila7/claude-code-templates",
+        "path": ".claude/commands/test.md",
+        "sha": "17a43d1",
+        "license": "Apache-2.0",
+        "attribution": "davila7",
+        "import_date": "2025-09-27T03:25:37.456Z"
       }
     }
   ]

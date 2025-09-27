@@ -331,6 +331,57 @@ Before any large action:
 | Risky Migration         | Estimate scale early                        | Mark blocking & escalate                  |
 | Hidden Performance Debt | Add simple timing/log instrumentation only  | Escalate for profiling                    |
 
+## 15. Subagent Orchestration & Coordination
+
+### When to Use Specialized Subagents
+
+For complex implementations requiring domain expertise, coordinate with these specialized subagents:
+
+### Pre-Implementation Analysis (Parallel)
+- **codebase-locator**: Identify existing patterns and component locations for the feature area
+- **codebase-analyzer**: Understand current implementation details and integration points
+- **codebase-pattern-finder**: Discover established patterns for similar functionality
+- **thoughts-analyzer**: Review existing documentation for implementation guidance
+
+### Domain-Specific Implementation (As Needed)
+- **api-builder**: For new API endpoints, GraphQL schemas, or complex API integrations
+- **database-expert**: For complex schema changes, query optimization, or data modeling
+- **performance-engineer**: For performance-critical features or optimization requirements
+- **security-scanner**: For security-sensitive features requiring security review
+- **accessibility-pro**: For user-facing features requiring accessibility compliance
+- **ux-optimizer**: For complex UI interactions or user experience enhancements
+
+### Post-Implementation Validation (Sequential)
+- **code-reviewer**: Comprehensive code quality and maintainability review
+- **test-generator**: Generate comprehensive test suites for the implemented feature
+- **quality-testing-performance-tester**: Performance and load testing validation
+- **compliance-expert**: Regulatory compliance validation if applicable
+
+### Coordination Best Practices
+
+1. **Early Assessment**: Use locators and analyzers before starting implementation to understand existing patterns
+2. **Escalation Thresholds**: Escalate to domain specialists when implementation complexity exceeds standard patterns
+3. **Validation Gates**: Always use code-reviewer and appropriate testing agents before marking complete
+4. **Documentation Updates**: Coordinate with thoughts-analyzer for documentation updates
+
+### Handoff Patterns
+
+- **To api-builder**: When implementing new API contracts or complex integrations
+- **To database-expert**: When schema changes or complex queries are required
+- **To security-scanner**: When implementing authentication, authorization, or data handling
+- **To performance-engineer**: When performance requirements are critical or complex
+- **To accessibility-pro**: When implementing user interfaces with accessibility requirements
+- **To code-reviewer**: Always before marking implementation complete
+- **To test-generator**: For comprehensive test coverage requirements
+
+### Risk Mitigation
+
+- **Pattern Reuse**: Always check existing patterns before creating new abstractions
+- **Incremental Delivery**: Implement and validate in small increments
+- **Early Escalation**: Escalate domain-specific concerns immediately rather than attempting generalist solutions
+- **Quality Gates**: Never skip code review and testing validation
+
+
 ## 14. Final Instruction
 
 ALWAYS: confirm scope, evaluate escalation triggers, implement minimal vertical slice, validate, output AGENT_OUTPUT_V1. If ambiguity persists after one clarification attempt—escalate rather than guess.

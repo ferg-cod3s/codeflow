@@ -296,6 +296,72 @@ Create comprehensive, actionable implementation plans by thoroughly researching 
 
 ## Caching Guidelines
 
+## Enhanced Subagent Orchestration for Planning
+
+### Comprehensive Planning Workflow
+
+For complex feature planning requiring architectural and technical expertise:
+
+#### Phase 1: Research Integration & Context Building (Parallel)
+- **codebase-locator**: Maps existing component locations and architectural boundaries
+- **thoughts-locator**: Discovers existing plans, architectural decisions, and technical constraints
+- **codebase-pattern-finder**: Identifies established implementation patterns for similar features
+- **thoughts-analyzer**: Extracts insights from past planning decisions and outcomes
+
+#### Phase 2: Technical Feasibility Analysis (Sequential)
+- **codebase-analyzer**: Validates technical assumptions and identifies integration points
+- **system-architect**: Evaluates architectural impact and design trade-offs
+- **database-expert**: Assesses data model changes and migration requirements
+- **api-builder**: Evaluates API design implications and contract changes
+- **performance-engineer**: Analyzes performance impact and optimization needs
+
+#### Phase 3: Risk & Constraint Assessment (Parallel)
+- **security-scanner**: Identifies security implications and requirements
+- **compliance-expert**: Evaluates regulatory compliance constraints
+- **cost-optimizer**: Analyzes operational cost implications
+- **infrastructure-builder**: Assesses infrastructure and deployment requirements
+- **monitoring-expert**: Evaluates observability and monitoring needs
+
+#### Phase 4: Implementation Strategy Development (Sequential)
+- **full-stack-developer**: Validates technical feasibility of proposed approaches
+- **test-generator**: Identifies testing strategy and coverage requirements
+- **quality-testing-performance-tester**: Defines performance testing approach
+- **development-migrations-specialist**: Plans database migration and data transformation strategy
+- **code-reviewer**: Establishes code quality and review standards for the implementation
+
+#### Phase 5: Validation & Documentation (Parallel)
+- **accessibility-pro**: Ensures accessibility requirements are addressed (if applicable)
+- **ux-optimizer**: Validates user experience implications
+- **content-localization-coordinator**: Assesses internationalization requirements
+- **deployment-wizard**: Plans deployment and rollback strategies
+
+### Planning Orchestration Best Practices
+
+1. **Research-First Approach**: Always begin with comprehensive research before planning
+2. **Parallel Assessment**: Use multiple domain experts simultaneously for risk assessment
+3. **Architectural Validation**: Engage system-architect early for design validation
+4. **Technical Feasibility**: Validate with full-stack-developer before finalizing plans
+5. **Risk Mitigation**: Address all identified risks with specific mitigation strategies
+6. **Iterative Refinement**: Re-engage subagents as plan details evolve
+
+### Quality Assurance Gates
+
+- **Technical Feasibility**: Validated by domain experts and full-stack-developer
+- **Architectural Alignment**: Reviewed by system-architect for consistency
+- **Security & Compliance**: Cleared by security-scanner and compliance-expert
+- **Performance Impact**: Analyzed by performance-engineer
+- **Testing Strategy**: Comprehensive coverage defined by test-generator
+- **Operational Readiness**: Infrastructure and deployment plans validated
+
+### Plan Optimization Strategies
+
+- **Modular Planning**: Break complex features into independently plannable components
+- **Risk-First Ordering**: Address high-risk elements early in the plan
+- **Dependency Management**: Clearly define inter-component dependencies
+- **Success Metrics**: Define measurable success criteria for each phase
+- **Rollback Planning**: Include rollback strategies for each major change
+
+
 ### Cache Usage Patterns
 
 - **Research patterns**: Store successful investigation approaches for similar features

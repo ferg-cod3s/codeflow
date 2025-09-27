@@ -1,6 +1,14 @@
 # MCP Integration Documentation
 
 ## Overview
+### Platform Compatibility
+
+**Claude Code (.claude.ai/code)**: Native agent system - MCP not needed
+**OpenCode (opencode.ai)**: Native agent system - MCP not needed
+**Cursor, VS Code, etc.**: MCP provides agent capabilities
+
+For complete OpenCode documentation, see: https://opencode.ai/docs
+
 
 The Codeflow CLI includes **Model Context Protocol (MCP)** integration specifically for **coding assistants that lack native agent systems**, such as Cursor, VS Code extensions, and other development tools.
 

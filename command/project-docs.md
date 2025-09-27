@@ -512,6 +512,77 @@ date: 2025-09-20
 
 ## Caching Guidelines
 
+## Enhanced Subagent Orchestration for Project Documentation
+
+### Comprehensive Project Documentation Workflow
+
+For complete project documentation requiring multi-domain expertise and content specialization:
+
+#### Phase 1: Project Analysis & Planning (Parallel)
+- **codebase-locator**: Analyze existing project structure and components
+- **thoughts-locator**: Discover existing documentation and project knowledge
+- **codebase-analyzer**: Understand project architecture and implementation
+- **thoughts-analyzer**: Review project history and decision documentation
+- **system-architect**: Analyze overall system architecture and design
+
+#### Phase 2: Core Documentation Generation (Sequential)
+- **content-writer**: Primary agent for creating user-facing and business documentation
+- **api-builder**: Generate comprehensive API documentation and specifications
+- **database-expert**: Document data architecture and database design
+- **security-scanner**: Create security documentation and threat models
+- **compliance-expert**: Generate compliance and regulatory documentation
+
+#### Phase 3: Technical Documentation Creation (Parallel)
+- **performance-engineer**: Document performance requirements and architecture
+- **infrastructure-builder**: Create infrastructure and deployment documentation
+- **monitoring-expert**: Document monitoring and observability setup
+- **devops-operations-specialist**: Generate operational runbooks and procedures
+- **deployment-wizard**: Document deployment processes and CI/CD pipelines
+
+#### Phase 4: Specialized Content Development (Parallel)
+- **accessibility-pro**: Create accessibility guidelines and documentation
+- **ux-optimizer**: Document user experience design and workflows
+- **content-localization-coordinator**: Plan internationalization and localization
+- **cost-optimizer**: Document cost optimization strategies and monitoring
+- **growth-engineer**: Create growth and analytics documentation
+
+#### Phase 5: Quality Assurance & Integration (Sequential)
+- **code-reviewer**: Validate technical accuracy of all documentation
+- **quality-testing-performance-tester**: Review performance and testing documentation
+- **full-stack-developer**: Validate implementation documentation accuracy
+- **thoughts-analyzer**: Ensure documentation is integrated with knowledge base
+- **content-writer**: Final content review and consistency validation
+
+### Project Documentation Orchestration Best Practices
+
+1. **Comprehensive Analysis**: Start with thorough project analysis using multiple discovery agents
+2. **Domain Expertise**: Engage appropriate specialists for each documentation domain
+3. **Content Consistency**: Use content-writer to ensure consistent voice and style
+4. **Technical Validation**: Validate all technical content with domain experts
+5. **Integration**: Ensure all documentation works together as a cohesive whole
+6. **Maintenance Planning**: Include processes for keeping documentation current
+
+### Documentation Completeness Gates
+
+- **Business Documentation**: PRD, user stories, requirements, and business context
+- **Technical Documentation**: Architecture, API specs, database design, infrastructure
+- **Security Documentation**: Threat models, security controls, compliance requirements
+- **Operational Documentation**: Deployment, monitoring, runbooks, troubleshooting
+- **User Documentation**: User guides, API docs, tutorials, and examples
+- **Development Documentation**: Setup guides, contribution guidelines, testing
+- **Quality Assurance**: Testing strategies, performance benchmarks, validation procedures
+
+### Documentation Optimization Strategies
+
+- **Modular Structure**: Create reusable documentation components and templates
+- **Version Control**: Document version-specific features and compatibility
+- **Search Optimization**: Include comprehensive metadata and indexing
+- **Interactive Elements**: Include code examples, diagrams, and interactive demos
+- **Feedback Integration**: Establish processes for continuous documentation improvement
+- **Multi-format Output**: Generate documentation in multiple formats (web, PDF, etc.)
+- **Localization Ready**: Structure content for easy translation and localization
+
+
 ### Cache Usage Patterns
 
 - **Project Templates**: Store successful documentation templates by project type

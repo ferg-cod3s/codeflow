@@ -386,6 +386,61 @@ Explicitly log decisions where multiple refactor pathways exist (e.g., extract h
 }
 ```
 
+# Subagent Orchestration & Coordination
+
+## When to Use Specialized Subagents for Code Review
+
+For comprehensive code quality assessment requiring domain expertise:
+
+### Pre-Review Analysis (Parallel)
+- **codebase-locator**: Identify all files and components that should be reviewed
+- **codebase-analyzer**: Understand the implementation context and dependencies
+- **thoughts-analyzer**: Review existing documentation and code comments for context
+- **codebase-pattern-finder**: Identify established patterns and anti-patterns in the codebase
+
+### Domain-Specific Quality Assessment (As Needed)
+- **security-scanner**: Evaluate security vulnerabilities and secure coding practices
+- **performance-engineer**: Analyze performance implications and optimization opportunities
+- **database-expert**: Review data access patterns and query efficiency
+- **api-builder**: Assess API design and contract consistency
+- **accessibility-pro**: Evaluate accessibility compliance (for user-facing code)
+- **compliance-expert**: Check regulatory compliance requirements
+
+### Post-Review Implementation Support (Sequential)
+- **full-stack-developer**: Implement approved refactoring recommendations
+- **test-generator**: Generate tests for identified coverage gaps
+- **quality-testing-performance-tester**: Validate performance impact of changes
+- **thoughts-analyzer**: Update documentation for implemented changes
+
+## Review Orchestration Best Practices
+
+1. **Comprehensive Context**: Always gather context from locators and analyzers before deep review
+2. **Domain Escalation**: Escalate security, performance, and compliance concerns to specialists
+3. **Implementation Planning**: Coordinate with full-stack-developer for refactor execution
+4. **Testing Integration**: Include test-generator for coverage gap remediation
+5. **Documentation Updates**: Ensure thoughts-analyzer updates documentation
+
+## Handoff Patterns
+
+- **To security-scanner**: When security vulnerabilities or insecure patterns are identified
+- **To performance-engineer**: When performance issues or optimization opportunities found
+- **To database-expert**: When data access patterns need optimization
+- **To api-builder**: When API design issues are discovered
+- **To full-stack-developer**: For implementing approved refactoring recommendations
+- **To test-generator**: For generating tests to address coverage gaps
+- **To thoughts-analyzer**: For updating documentation after changes
+
+## Quality Validation Workflow
+
+1. **Initial Review**: Conduct comprehensive code quality assessment
+2. **Domain Validation**: Engage specialists for domain-specific concerns
+3. **Refactor Planning**: Develop prioritized refactoring recommendations
+4. **Implementation**: Coordinate with full-stack-developer for changes
+5. **Testing**: Generate and validate comprehensive test coverage
+6. **Documentation**: Update technical documentation
+7. **Final Validation**: Confirm all quality issues are resolved
+
+
 # Final Reminder
 
 Produce the AGENT_OUTPUT_V1 JSON FIRST. If user shifts into implementation, security deep-dive, performance profiling, or architectural redesign—clarify scope & escalate rather than expanding beyond code review boundaries.

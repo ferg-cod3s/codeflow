@@ -172,6 +172,10 @@ codeflow watch start         # Auto-sync on changes
 3. Use slash commands: `/research`, `/plan`, `/execute`, etc.
 
 ### **Setting Up OpenCode.ai**
+**📖 [OpenCode Documentation](https://opencode.ai/docs)** - Complete command reference and agent format guide
+
+**🔧 [Platform Arguments Guide](docs/PLATFORM_ARGUMENTS.md)** - How arguments and defaults work across Claude Code, OpenCode, and MCP clients
+
 1. Install agents and commands: `codeflow setup --type opencode`
 2. [Install OpenCode](https://opencode.ai) in your project directory
 3. Run `opencode` to start

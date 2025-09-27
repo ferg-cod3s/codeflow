@@ -271,6 +271,74 @@ When the actual codebase differs from the plan:
 
 ## Caching Guidelines
 
+## Enhanced Subagent Orchestration for Execution
+
+### Comprehensive Implementation Workflow
+
+For complex feature implementation requiring coordinated expertise across domains:
+
+#### Phase 1: Pre-Implementation Validation (Parallel)
+- **codebase-locator**: Verify all referenced components and files exist
+- **codebase-analyzer**: Understand current implementation state and integration points
+- **thoughts-analyzer**: Review existing documentation and implementation notes
+- **codebase-pattern-finder**: Identify established patterns for the implementation approach
+
+#### Phase 2: Domain-Specific Implementation (Sequential by Phase)
+- **full-stack-developer**: Primary implementation agent for feature development
+- **api-builder**: Handle API endpoint creation and contract implementation
+- **database-expert**: Manage schema changes and data migration implementation
+- **performance-engineer**: Optimize performance-critical implementation aspects
+- **security-scanner**: Ensure security requirements are properly implemented
+- **accessibility-pro**: Implement accessibility features for user interfaces
+- **ux-optimizer**: Optimize user experience implementation details
+
+#### Phase 3: Quality Assurance & Validation (Parallel)
+- **code-reviewer**: Comprehensive code quality and maintainability review
+- **test-generator**: Generate and implement comprehensive test suites
+- **quality-testing-performance-tester**: Execute performance and load testing
+- **compliance-expert**: Validate regulatory compliance implementation
+- **monitoring-expert**: Implement monitoring and observability features
+
+#### Phase 4: Infrastructure & Deployment (Sequential)
+- **infrastructure-builder**: Prepare infrastructure changes and configurations
+- **deployment-wizard**: Implement deployment automation and rollback procedures
+- **devops-operations-specialist**: Coordinate deployment and operational handoff
+- **cost-optimizer**: Validate cost implications of infrastructure changes
+
+#### Phase 5: Documentation & Knowledge Transfer (Parallel)
+- **content-writer**: Create user documentation and release notes
+- **thoughts-analyzer**: Update technical documentation and implementation notes
+- **content-localization-coordinator**: Handle internationalization updates
+
+### Execution Orchestration Best Practices
+
+1. **Phase-by-Phase Validation**: Validate each implementation phase before proceeding
+2. **Domain Expert Coordination**: Engage appropriate specialists for each technical domain
+3. **Quality Gates**: Never proceed without code-reviewer validation
+4. **Testing Integration**: Include test-generator and quality-testing-performance-tester early
+5. **Infrastructure Readiness**: Prepare deployment infrastructure before implementation completion
+6. **Documentation Updates**: Keep documentation current throughout implementation
+
+### Implementation Quality Gates
+
+- **Code Quality**: Reviewed by code-reviewer with all issues resolved
+- **Test Coverage**: Comprehensive tests generated and passing
+- **Performance**: Validated by quality-testing-performance-tester
+- **Security**: Cleared by security-scanner
+- **Compliance**: Approved by compliance-expert (if applicable)
+- **Accessibility**: Validated by accessibility-pro (if applicable)
+- **Documentation**: Updated by thoughts-analyzer and content-writer
+
+### Risk Mitigation Strategies
+
+- **Incremental Implementation**: Implement and validate in small, reversible increments
+- **Automated Testing**: Generate comprehensive tests before marking phases complete
+- **Performance Monitoring**: Include performance validation in each phase
+- **Security Reviews**: Conduct security validation at key implementation milestones
+- **Rollback Planning**: Ensure rollback capabilities exist before deployment
+- **Monitoring Setup**: Implement observability before production deployment
+
+
 ### Cache Usage Patterns
 
 - **Execution patterns**: Store successful implementation approaches for similar features

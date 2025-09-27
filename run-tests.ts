@@ -124,7 +124,7 @@ class TestRunner {
       }
       
       // Run tests
-      const result = 
+      const result = await $`${cmd}`;
       
       // Parse results
       const output = result.stdout.toString();

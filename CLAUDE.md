@@ -94,6 +94,60 @@ The system emphasizes **context compression** and **fresh analysis** over cachin
 - See `AGENT_REGISTRY.md` for complete agent capabilities and usage guidelines
 
 ## Subagent Usage Guidelines
+## Argument Handling & Defaults
+
+### Platform-Specific Argument Patterns
+
+#### Claude Code (.claude.ai/code)
+Claude Code uses native argument parsing and provides defaults automatically:
+
+```bash
+# Arguments are passed directly to commands
+/research "Analyze authentication system" --scope=codebase --depth=deep
+/plan --files="docs/tickets/auth-ticket.md,docs/research/auth-research.md" --scope=feature
+/execute --plan_path="docs/plans/oauth-implementation.md" --start_phase=1
+```
+
+**Default Values**:
+- `scope`: `"codebase"` (for research), `"feature"` (for plan)
+- `depth`: `"medium"` (for research)
+- `start_phase`: `1` (for execute)
+- `strictness`: `"standard"` (for review)
+
+#### OpenCode (opencode.ai)
+OpenCode requires explicit argument specification with YAML frontmatter:
+
+```yaml
+---
+name: research
+mode: command
+scope: codebase
+depth: deep
+---
+Research query here...
+```
+
+**Default Values**:
+- `scope`: `"both"` (codebase + thoughts)
+- `depth`: `"medium"`
+- `model`: `"anthropic/claude-sonnet-4"`
+- `temperature`: `0.1`
+
+### Date Formatting
+
+Both platforms use current date for research documents:
+- **Format**: `YYYY-MM-DDTHH:MM:SSZ` (ISO 8601)
+- **Source**: Current system time when command executes
+- **Example**: `2025-09-27T12:00:00Z` (not `2025-01-26T...`)
+
+### OpenCode Documentation Reference
+
+For complete OpenCode command syntax and options, see:
+- **Official Docs**: https://opencode.ai/docs/commands
+- **Agent Format**: https://opencode.ai/docs/agents
+- **YAML Frontmatter**: https://opencode.ai/docs/yaml-format
+
+
 
 **ALWAYS use the appropriate specialized subagents** for complex tasks instead of attempting to handle everything directly. This ensures thorough, accurate, and efficient execution.
 
