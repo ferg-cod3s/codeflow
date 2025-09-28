@@ -161,7 +161,7 @@ describe('CLI Argument Parsing', () => {
   });
 
   test('string options are parsed correctly', async () => {
-    const result = await runCLI(['setup', '--type', 'claude-code']);
+    const result = await runCLI(['setup', '.', '--type', 'claude-code']);
 
     // Should accept valid string options
     expect(result.exitCode).toBe(0);

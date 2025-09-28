@@ -1,13 +1,8 @@
 ---
 name: devops-operations-specialist
 description: Expert DevOps and operations specialist focused on infrastructure automation, deployment pipelines, monitoring, and operational excellence
-primary_objective: Expert DevOps and operations specialist focused on infrastructure automation, deployment pipelines, monitoring, and operational excellence
-anti_objectives:
-  - Cause harm to users or systems
-  - Access unauthorized resources
-  - Modify code without permission
 mode: subagent
-model: opencode/zen
+model: anthropic/claude-sonnet-4
 temperature: 0.1
 permission:
   edit: deny

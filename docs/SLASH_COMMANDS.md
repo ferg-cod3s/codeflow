@@ -2,6 +2,26 @@
 
 This document explains the slash commands available in the codeflow workflow system for both Claude Code and OpenCode platforms.
 
+## Setup Commands
+
+### `codeflow setup`
+
+**Purpose**: Install all agents and commands to your project
+**Usage**: `codeflow setup [project-path]`
+**Options**:
+- `--type claude-code`: Install for Claude Code (.claude/commands)
+- `--type opencode`: Install for OpenCode (.opencode/command)
+- `--global`: Install to global directories
+- `--force`: Force overwrite existing setup
+
+**Examples**:
+```bash
+codeflow setup .                    # Setup current directory
+codeflow setup --type opencode      # Setup for OpenCode
+codeflow setup --type claude-code   # Setup for Claude Code
+codeflow setup --global             # Setup global directories
+```
+
 ## Available Commands
 
 ### Core Workflow Commands

@@ -1,7 +1,8 @@
-import { readdir, mkdir, copyFile, writeFile, readFile } from 'node:fs/promises';
-import { join, basename } from 'node:path';
+import { join, basename, dirname } from 'node:path';
 import { existsSync } from 'node:fs';
-import { parseAgentsFromDirectory, serializeAgent } from '../conversion/agent-parser.js';
+import { readdir, mkdir, copyFile, writeFile } from 'node:fs/promises';
+import { readdir, mkdir, copyFile, writeFile, readFile } from 'node:fs/promises';
+import { parseAgentsFromDirectory, serializeAgent, parseCommandFile, serializeCommand, Command, BaseCommand, OpenCodeCommand } from '../conversion/agent-parser.js';
 import { FormatConverter } from '../conversion/format-converter.js';
 
 export type SupportedFormat = 'claude-code' | 'opencode';
@@ -49,38 +50,8 @@ function getCommandSourceDirs(sourcePath: string, targetDir: string): string[] {
   return sourceDirs;
 }
 
-export function getAgentSourceDirs(sourcePath: string, targetFormat: SupportedFormat): string[] {
-  const sourceDirs: string[] = [];
-
-  // Primary source: codeflow-agents/ directory (base format) - check current working directory first
-  const cwdCodeflowAgentsDir = join(process.cwd(), 'codeflow-agents');
-  if (existsSync(cwdCodeflowAgentsDir)) {
-    sourceDirs.push(cwdCodeflowAgentsDir);
-  } else {
-    sourceDirs.push(join(sourcePath, 'codeflow-agents'));
-  }
-
-  // Format-specific fallbacks
-  if (targetFormat === 'claude-code') {
-    const cwdClaudeAgentsDir = join(process.cwd(), 'claude-agents');
-    if (existsSync(cwdClaudeAgentsDir)) {
-      sourceDirs.push(cwdClaudeAgentsDir);
-    } else {
-      sourceDirs.push(join(sourcePath, 'claude-agents'));
-    }
-  } else if (targetFormat === 'opencode') {
-    const cwdOpenCodeAgentsDir = join(process.cwd(), 'opencode-agents');
-    if (existsSync(cwdOpenCodeAgentsDir)) {
-      sourceDirs.push(cwdOpenCodeAgentsDir);
-    } else {
-      sourceDirs.push(join(sourcePath, 'opencode-agents'));
-    }
-  }
-
-  return sourceDirs;
-}
-
 async function copyCommands(
+  converter: FormatConverter,
   sourcePath: string,
   targetPath: string,
   setupDirs: string[]
@@ -100,6 +71,7 @@ async function copyCommands(
     if (setupDir.includes('command')) {
       console.log(`📋 Copying commands to ${setupDir}...`);
       const sourceDirs = getCommandSourceDirs(sourcePath, setupDir);
+      console.log(`Source dirs: ${sourceDirs.join(", ")}`);
       let commandsCopied = 0;
       let copyErrors = 0;
 
@@ -107,397 +79,221 @@ async function copyCommands(
         if (existsSync(sourceDir)) {
           try {
             const files = await readdir(sourceDir, { withFileTypes: true });
+            console.log(`Found ${files.length} files in ${sourceDir}`);
             for (const file of files) {
               if (file.isFile() && file.name.endsWith('.md')) {
                 try {
                   const sourceFile = join(sourceDir, file.name);
                   const targetFile = join(targetDir, file.name);
-                  await copyFile(sourceFile, targetFile);
+                  
+                  // Convert command if target is OpenCode
+                  if (targetDir.includes('.opencode')) {
+                    try {
+                      const command = await parseCommandFile(sourceFile, 'base');
+                      const convertedCommand = converter.baseToOpenCodeCommand(command);
+                      const serialized = serializeCommand(convertedCommand);
+                      await writeFile(targetFile, serialized);
+                    } catch (error: any) {
+                      console.error(`❌ Failed to convert command ${file.name}: ${error.message}`);
+                      copyErrors++;
+                      continue;
+                    }
+                  } else {
+                    await copyFile(sourceFile, targetFile);
+                  }
                   commandsCopied++;
-                  fileCount++;
                 } catch (error: any) {
-                  console.error(`❌ Failed to copy ${file.name}: ${error.message}`);
+                  console.error(`❌ Failed to copy command ${file.name}: ${error.message}`);
                   copyErrors++;
                 }
               }
             }
           } catch (error: any) {
             console.error(`❌ Failed to read source directory ${sourceDir}: ${error.message}`);
+            copyErrors++;
           }
         }
       }
 
-      if (commandsCopied === 0) {
+      if (commandsCopied > 0) {
+        console.log(`✅ Copied ${commandsCopied} commands`);
+      } else {
         console.log(`⚠️  No command files found for ${setupDir}`);
         console.log(`   Searched: ${sourceDirs.join(', ')}`);
-      } else {
-        if (copyErrors > 0) {
-          console.log(`⚠️  Copied ${commandsCopied} commands, ${copyErrors} failed`);
-        } else {
-          console.log(`✅ Copied ${commandsCopied} commands`);
-        }
       }
-    }
-
-    // Copy and convert agents with format-aware source resolution
-    if (setupDir.includes('agent')) {
-      const targetFormat = getTargetFormat(setupDir);
-      if (targetFormat) {
-        const count = await copyAgentsWithConversion(sourcePath, targetDir, targetFormat);
-        fileCount += count;
-      }
+      fileCount += commandsCopied;
     }
   }
 
   return fileCount;
 }
 
-export async function copyAgentsWithConversion(
-  sourcePath: string,
-  targetDir: string,
-  targetFormat: SupportedFormat
-): Promise<number> {
-  console.log(`🔄 Converting agents to ${targetFormat} format...`);
-
-  // Try multiple source directories with format-aware fallbacks
-  const sourceDirs = getAgentSourceDirs(sourcePath, targetFormat);
-  let sourceDir = null;
-
-  for (const dir of sourceDirs) {
-    if (existsSync(dir)) {
-      sourceDir = dir;
-      console.log(`📂 Using agent source: ${dir}`);
-      break;
-    }
-  }
-
-  if (!sourceDir) {
-    console.log(`⚠️  No agent source directory found. Searched: ${sourceDirs.join(', ')}`);
-    console.log(`   This is normal if no agents are available for this format.`);
-    return 0;
-  }
-
-  try {
-    // Parse base format agents
-    console.log(`📖 Parsing agents from ${sourceDir}...`);
-    const { agents, errors: parseErrors } = await parseAgentsFromDirectory(sourceDir, 'base');
-
-    if (parseErrors.length > 0) {
-      console.error(`❌ Agent parsing errors (${parseErrors.length}):`);
-      parseErrors.forEach((error, index) => {
-        console.error(`   ${index + 1}. ${error.message || error}`);
-      });
-      console.log(`⚠️  Continuing with ${agents.length} successfully parsed agents...`);
-    }
-
-    if (agents.length === 0) {
-      console.log(`⚠️  No valid agents found in ${sourceDir}`);
-      return 0;
-    }
-
-    console.log(`✅ Found ${agents.length} agents to convert`);
-
-    // Convert to target format
-    console.log(`🔄 Converting ${agents.length} agents to ${targetFormat} format...`);
-    const converter = new FormatConverter();
-    const convertedAgents = converter.convertBatch(agents, targetFormat);
-
-    if (convertedAgents.length === 0) {
-      console.log(`⚠️  No agents were successfully converted`);
-      return 0;
-    }
-
-    console.log(`✅ Successfully converted ${convertedAgents.length} agents`);
-
-    // Write converted agents
-    console.log(`💾 Writing converted agents to ${targetDir}...`);
-    let writeCount = 0;
-    let writeErrors = 0;
-
-    for (const agent of convertedAgents) {
-      try {
-        const filename = `${agent.frontmatter.name}.md`;
-        const targetFile = join(targetDir, filename);
-        const serialized = serializeAgent(agent);
-        await writeFile(targetFile, serialized);
-        writeCount++;
-      } catch (error: any) {
-        console.error(`❌ Failed to write ${agent.frontmatter.name}: ${error.message}`);
-        writeErrors++;
-      }
-    }
-
-    if (writeErrors > 0) {
-      console.log(`⚠️  ${writeErrors} agents failed to write, ${writeCount} succeeded`);
-    } else {
-      console.log(`✅ Successfully wrote ${writeCount} agents`);
-    }
-
-    return writeCount;
-  } catch (error: any) {
-    console.error(`❌ Unexpected error during agent conversion: ${error.message}`);
-    console.error(`   Source: ${sourceDir}`);
-    console.error(`   Target: ${targetDir}`);
-    console.error(`   Format: ${targetFormat}`);
-    return 0;
-  }
-}
-
-async function createMultiFormatReadme(projectPath: string, projectTypes: string[]): Promise<void> {
-  const readmePath = join(projectPath, 'README.md');
-  let readmeContent = '';
-
-  if (existsSync(readmePath)) {
-    const existingContent = await readFile(readmePath, 'utf-8');
-    if (existingContent.includes('## Codeflow Workflow')) {
-      return;
-    }
-    readmeContent = existingContent + '\n\n';
-  } else {
-    readmeContent = `# ${basename(projectPath)}\n\n`;
-  }
-
-  readmeContent += `## Codeflow Workflow
-
-This project supports multiple AI workflow integrations.
-
-`;
-
-  // Add each project type section
-  for (const projectType of projectTypes) {
-    if (projectType === 'claude-code') {
-      readmeContent += `### Claude Code Integration
-
-This project is set up for Claude Code with native slash commands.
-
-#### Available Commands
-
-- \`/research\` - Comprehensive codebase and documentation analysis
-- \`/plan\` - Create detailed implementation plans
-- \`/execute\` - Implement plans with verification
-- \`/test\` - Generate comprehensive test suites
-- \`/document\` - Create user guides and API documentation
-- \`/commit\` - Create structured git commits
-- \`/review\` - Validate implementations against plans
-
-Commands are located in \`.claude/commands/\`.
-
-`;
-    } else if (projectType === 'opencode') {
-      readmeContent += `### OpenCode Integration
-
-This project is set up with OpenCode agents and commands for AI-assisted development.
-
-#### Getting Started
-
-1. Install OpenCode from [opencode.ai](https://opencode.ai)
-2. Navigate to this project directory
-3. Run \`opencode\` to start the AI assistant
-4. Use \`/init\` to analyze the project and create \`AGENTS.md\`
-
-#### Available Commands
-
-- \`/research\` - Comprehensive codebase and documentation analysis
-- \`/plan\` - Create detailed implementation plans
-- \`/execute\` - Implement plans with verification
-- \`/test\` - Generate comprehensive test suites
-- \`/document\` - Create user guides and API documentation
-- \`/commit\` - Create structured git commits
-- \`/review\` - Validate implementations against plans
-
-#### OpenCode Features
-
-- Use \`@\` key to fuzzy search project files
-- Drag and drop images for visual references
-- Use Tab key to switch between "Plan mode" and "Build mode"
-- Use \`/share\` to create shareable conversation links
-
-Agents are located in \`.opencode/agent/\` and commands in \`.opencode/command/\`.
-
-`;
-    }
-  }
-
-  await writeFile(readmePath, readmeContent);
-  console.log(`  ✓ Updated README.md with ${projectTypes.join(' and ')} usage instructions`);
-}
-
-async function createProjectReadme(projectPath: string, projectType: string): Promise<void> {
-  const readmePath = join(projectPath, 'README.md');
-  let readmeContent = '';
-
-  if (existsSync(readmePath)) {
-    const existingContent = await readFile(readmePath, 'utf-8');
-    if (existingContent.includes('## Codeflow Workflow')) {
-      return;
-    }
-    readmeContent = existingContent + '\n\n';
-  } else {
-    readmeContent = `# ${basename(projectPath)}\n\n`;
-  }
-
-  readmeContent += `## Codeflow Workflow
-
-This project supports multiple AI workflow integrations.
-
-`;
-
-  if (projectType === 'claude-code') {
-    readmeContent += `### Claude Code Integration
-
-This project is set up for Claude Code with native slash commands.
-
-#### Available Commands
-
-- \`/research\` - Comprehensive codebase and documentation analysis
-- \`/plan\` - Create detailed implementation plans
-- \`/execute\` - Implement plans with verification
-- \`/test\` - Generate comprehensive test suites
-- \`/document\` - Create user guides and API documentation
-- \`/commit\` - Create structured git commits
-- \`/review\` - Validate implementations against plans
-
-Commands are located in \`.claude/commands/\`.
-
-`;
-  } else if (projectType === 'opencode') {
-    readmeContent += `### OpenCode Integration
-
-This project is set up with OpenCode agents and commands for AI-assisted development.
-
-#### Getting Started
-
-1. Install OpenCode from [opencode.ai](https://opencode.ai)
-2. Navigate to this project directory
-3. Run \`opencode\` to start the AI assistant
-4. Use \`/init\` to analyze the project and create \`AGENTS.md\`
-
-#### Available Commands
-
-- \`/research\` - Comprehensive codebase and documentation analysis
-- \`/plan\` - Create detailed implementation plans
-- \`/execute\` - Implement plans with verification
-- \`/test\` - Generate comprehensive test suites
-- \`/document\` - Create user guides and API documentation
-- \`/commit\` - Create structured git commits
-- \`/review\` - Validate implementations against plans
-
-#### OpenCode Features
-
-- Use \`@\` key to fuzzy search project files
-- Drag and drop images for visual references
-- Use Tab key to switch between "Plan mode" and "Build mode"
-- Use \`/share\` to create shareable conversation links
-
-Agents are located in \`.opencode/agent/\` and commands in \`.opencode/command/\`.
-
-`;
-  }
-
-  await writeFile(readmePath, readmeContent);
-  console.log(`  ✓ Updated README.md with ${projectType} usage instructions`);
-}
-
 export async function setup(
-  projectPath?: string,
-  options: { force?: boolean; type?: string; global?: boolean } = {}
-) {
-  const inputPath = projectPath || process.cwd();
-
-  if (!existsSync(inputPath)) {
-    console.error(`❌ Directory does not exist: ${inputPath}`);
-    process.exit(1);
+  inputPath: string,
+  options: {
+    global?: boolean;
+    force?: boolean;
+    type?: string;
   }
+): Promise<void> {
+  // Determine project types based on options
+  const projectTypes: SupportedFormat[] = [];
 
-  console.log(`🔍 Setting up project: ${inputPath}`);
-
-  // Determine project type and setup directories
-  let projectTypes: string[] = [];
-  let setupDirs: string[] = [];
-
-  if (options.type) {
-    // Explicit type specified
-    if (options.type === 'claude-code') {
-      projectTypes = ['claude-code'];
-      setupDirs = ['.claude/commands', '.claude/agents'];
-    } else if (options.type === 'opencode') {
-      projectTypes = ['opencode'];
-      setupDirs = ['.opencode/command', '.opencode/agent'];
-    } else if (options.type === 'general') {
-      projectTypes = ['claude-code', 'opencode'];
-      setupDirs = ['.claude/commands', '.claude/agents', '.opencode/command', '.opencode/agent'];
+  if (options && options.type) {
+    if (options.type === 'claude-code' || options.type === 'opencode') {
+      projectTypes.push(options.type);
     } else {
-      console.error(`❌ Invalid type: ${options.type}`);
-      console.error('Valid types: claude-code, opencode, general');
+      console.error(`❌ Unknown project type: ${options.type}`);
       process.exit(1);
     }
   } else {
-    // No type specified - detect existing or create both
-    const hasClaude = existsSync(join(inputPath, '.claude'));
-    const hasOpenCode = existsSync(join(inputPath, '.opencode'));
-
-    if (hasClaude && hasOpenCode) {
-      projectTypes = ['claude-code', 'opencode'];
-      setupDirs = ['.claude/commands', '.claude/agents', '.opencode/command', '.opencode/agent'];
-    } else if (hasClaude) {
-      projectTypes = ['claude-code'];
-      setupDirs = ['.claude/commands', '.claude/agents'];
-    } else if (hasOpenCode) {
-      projectTypes = ['opencode'];
-      setupDirs = ['.opencode/command', '.opencode/agent'];
-    } else {
-      // No existing setup - create both
-      projectTypes = ['claude-code', 'opencode'];
-      setupDirs = ['.claude/commands', '.claude/agents', '.opencode/command', '.opencode/agent'];
-    }
+    // Default to both if no type specified
+    projectTypes.push('claude-code', 'opencode');
   }
 
-  // Check if already set up (unless force is specified)
-  if (!options.force) {
-    const hasExistingSetup = setupDirs.some((dir) => existsSync(join(inputPath, dir)));
-    if (hasExistingSetup) {
-      console.log('⚠️  Project appears to already have codeflow setup.');
-      console.log('   Use --force to overwrite existing files.');
-      return;
+  const setupDirs = projectTypes.map(type => {
+    switch (type) {
+      case "claude-code": return ".claude/commands";
+      case "opencode": return ".opencode/command";
+      default: return "./command";
     }
-  }
+  });
 
-  const codeflowDir = join(import.meta.dir, '../..');
-  const typeDescription = projectTypes.length > 1 ? 'multi-format' : projectTypes[0];
-  console.log(`📦 Setting up ${typeDescription} configuration...\n`);
+  const sourcePath = join(process.cwd(), 'command');
+  const targetPath = inputPath;
 
   try {
-    // Copy commands and agents
-    const fileCount = await copyCommands(codeflowDir, inputPath, setupDirs);
+    console.log(`🚀 Setting up Codeflow for ${projectTypes.join(' and ')}...`);
+    console.log(`📁 Source: ${sourcePath}`);
+    console.log(`📁 Target: ${targetPath}`);
 
-    // Create/update README for project types
-    if (projectTypes.length === 1) {
-      // Single format - use existing function
-      await createProjectReadme(inputPath, projectTypes[0]);
-    } else {
-      // Multi-format - create combined README
-      await createMultiFormatReadme(inputPath, projectTypes);
+    // Initialize converter
+    const converter = new FormatConverter();
+
+    // Copy commands
+    const fileCount = await copyCommands(converter, sourcePath, targetPath, setupDirs);
+
+    // Create agent directories for each platform
+    for (const type of projectTypes) {
+      const agentDir = type === 'claude-code' ? '.claude/agents' : '.opencode/agent';
+      const fullAgentDir = join(targetPath, agentDir);
+      if (!existsSync(fullAgentDir)) {
+        await mkdir(fullAgentDir, { recursive: true });
+        console.log(`  ✓ Created directory: ${agentDir}`);
+      }
     }
 
-    console.log(`\n✅ Successfully set up ${typeDescription} project!`);
+
+// Create or update README
+const readmePath = join(targetPath, 'README.md');
+const typeDescription = projectTypes.length > 1 ? 'multi-platform' : projectTypes[0];
+let readmeContent = '';
+
+if (existsSync(readmePath)) {
+  readmeContent = await readFile(readmePath, 'utf-8');
+  if (readmeContent.includes('Generated by Codeflow CLI')) {
+    // Already updated, skip
+  } else {
+    readmeContent += '\n\n';
+  }
+} else {
+  readmeContent = `# ${typeDescription.charAt(0).toUpperCase() + typeDescription.slice(1)} Project\n\n`;
+}
+
+readmeContent += '## Codeflow Workflow\n\n';
+readmeContent += '### Available Commands\n\n';
+readmeContent += '- `/research` - Comprehensive codebase and documentation analysis\n';
+readmeContent += '- `/plan` - Create detailed implementation plans\n';
+readmeContent += '- `/execute` - Implement plans with verification\n';
+readmeContent += '- `/test` - Generate comprehensive test suites\n';
+readmeContent += '- `/document` - Create user guides and API documentation\n';
+readmeContent += '- `/commit` - Create structured git commits\n';
+readmeContent += '- `/review` - Validate implementations against plans\n';
+readmeContent += '- `/project-docs` - Generate complete project documentation\n\n';
+
+if (projectTypes.includes('claude-code')) {
+  readmeContent += '### Claude Code Integration\n\n' +
+    'Commands are located in `.claude/commands/`.\n\n';
+}
+
+if (projectTypes.includes('opencode')) {
+  readmeContent += '### OpenCode Integration\n\n' +
+    'Commands are located in `.opencode/command/`.\n';
+}
+
+readmeContent += '\nGenerated by Codeflow CLI\n';
+
+await writeFile(readmePath, readmeContent);
+console.log(`  ✓ Created/updated README.md with ${typeDescription} usage instructions`);
+
+    console.log(`\n✅ Successfully set up ${projectTypes.length > 1 ? 'multi-platform' : projectTypes[0]} project!`);
     console.log(`📁 Installed ${fileCount} files`);
-
-    if (projectTypes.includes('claude-code')) {
-      console.log('\n📋 Claude Code setup:');
-      console.log('  1. Open this project in Claude Code');
-      console.log('  2. Use slash commands: /research, /plan, /execute, etc.');
-    }
-
-    if (projectTypes.includes('opencode')) {
-      console.log('\n📋 OpenCode setup:');
-      console.log('  1. Install OpenCode from https://opencode.ai');
-      console.log('  2. Run `opencode` in this project directory');
-      console.log('  3. Use `/init` to analyze project and create AGENTS.md');
-      console.log('  4. Use commands: /research, /plan, /execute, etc.');
-      console.log('  5. Press @ to search files, Tab to switch Plan/Build mode');
-    }
   } catch (error: any) {
     console.error(`❌ Setup failed: ${error.message}`);
-    process.exit(1);
+    throw error;
   }
+}
+
+export function getAgentSourceDirs(sourcePath: string, targetFormat: SupportedFormat): string[] {
+  const sourceDirs: string[] = [];
+
+  // Primary source: codeflow-agents directory (check in current working directory first)
+  const cwdAgentsDir = join(process.cwd(), 'codeflow-agents');
+  if (existsSync(cwdAgentsDir)) {
+    sourceDirs.push(cwdAgentsDir);
+  } else {
+    sourceDirs.push(join(sourcePath, 'codeflow-agents'));
+  }
+
+  // Fallback sources based on target format
+  if (targetFormat === 'claude-code') {
+    const cwdClaudeAgentsDir = join(process.cwd(), 'claude-agents');
+    if (existsSync(cwdClaudeAgentsDir)) {
+      sourceDirs.push(cwdClaudeAgentsDir);
+    } else {
+      sourceDirs.push(join(sourcePath, 'claude-agents'));
+    }
+  } else if (targetFormat === 'opencode') {
+    const cwdOpenCodeAgentsDir = join(process.cwd(), 'opencode-agents');
+    if (existsSync(cwdOpenCodeAgentsDir)) {
+      sourceDirs.push(cwdOpenCodeAgentsDir);
+    } else {
+      sourceDirs.push(join(sourcePath, 'opencode-agents'));
+    }
+  }
+
+  return sourceDirs;
+}
+
+export async function copyAgentsWithConversion(
+  sourcePath: string,
+  targetPath: string,
+  targetFormat: SupportedFormat
+): Promise<number> {
+  const converter = new FormatConverter();
+  const sourceDirs = getAgentSourceDirs(sourcePath, targetFormat);
+  let agentsConverted = 0;
+
+  for (const sourceDir of sourceDirs) {
+    if (existsSync(sourceDir)) {
+      try {
+        const { agents } = await parseAgentsFromDirectory(sourceDir, 'base');
+        for (const agent of agents) {
+          try {
+            const convertedAgent = converter.convert(agent, targetFormat);
+            const serialized = serializeAgent(convertedAgent);
+            const targetFile = join(targetPath, `${agent.name}.md`);
+            await writeFile(targetFile, serialized);
+            agentsConverted++;
+          } catch (error: any) {
+            console.error(`❌ Failed to convert agent ${agent.name}: ${error.message}`);
+          }
+        }
+      } catch (error: any) {
+        console.error(`❌ Failed to parse agents from ${sourceDir}: ${error.message}`);
+      }
+    }
+  }
+
+  return agentsConverted;
 }

@@ -1,13 +1,8 @@
 ---
 name: smart-subagent-orchestrator
 description: Reference documentation for the advanced orchestration agent that coordinates existing, independently configured specialized subagents for complex multi-domain projects. This file documents capabilities and coordination patterns (it is NOT a registry and does NOT control which subagents are available).
-primary_objective: Reference documentation for the advanced orchestration agent that coordinates existing, independently configured specialized subagents for complex multi-domain projects. This file documents capabilities and coordination patterns (it is NOT a registry and does NOT control which subagents are available).
-anti_objectives:
-  - Cause harm to users or systems
-  - Access unauthorized resources
-  - Modify code without permission
 mode: primary
-model: opencode/zen
+model: anthropic/claude-sonnet-4
 temperature: 0.3
 permission:
   edit: deny
