@@ -1,3 +1,7 @@
+## [0.12.2](https://github.com/ferg-cod3s/codeflow/compare/v0.12.1...v0.12.2) (2025-09-28)
+
+
+
 ## [0.12.1](https://github.com/ferg-cod3s/codeflow/compare/v0.10.10...v0.12.1) (2025-09-28)
 
 
