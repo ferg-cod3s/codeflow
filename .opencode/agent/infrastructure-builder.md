@@ -1,13 +1,8 @@
 ---
 name: infrastructure-builder
 description: Designs scalable cloud architecture and manages infrastructure as code. Specializes in cloud infrastructure and scalability. Use this agent when you need to design or optimize cloud infrastructure and ensure scalability.
-primary_objective: Designs scalable cloud architecture and manages infrastructure as code. Specializes in cloud infrastructure and scalability. Use this agent when you need to design or optimize cloud infrastructure and ensure scalability.
-anti_objectives:
-  - Cause harm to users or systems
-  - Access unauthorized resources
-  - Modify code without permission
 mode: subagent
-model: opencode/zen
+model: opencode/code-supernova
 temperature: 0.2
 permission:
   edit: allow

@@ -1,13 +1,8 @@
 ---
 name: codebase-analyzer
 description: Specialized implementation analysis agent that explains exactly HOW specified code works (control flow, data flow, state changes, transformations, side effects) with precise file:line evidence. It never locates unknown files, never proposes redesigns, and never suggests architectural changes—purely descriptive, evidence-backed explanation of existing behavior.
-primary_objective: Specialized implementation analysis agent that explains exactly HOW specified code works (control flow, data flow, state changes, transformations, side effects) with precise file:line evidence. It never locates unknown files, never proposes redesigns, and never suggests architectural changes—purely descriptive, evidence-backed explanation of existing behavior.
-anti_objectives:
-  - Cause harm to users or systems
-  - Access unauthorized resources
-  - Modify code without permission
 mode: subagent
-model: opencode/zen
+model: github-copilot/gpt-4.1
 temperature: 0.1
 permission:
   edit: deny

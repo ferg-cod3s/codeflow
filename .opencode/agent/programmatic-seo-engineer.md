@@ -1,13 +1,8 @@
 ---
 name: programmatic-seo-engineer
 description: "Design and implement programmatic SEO systems at scale: data-driven page generation, internal linking, sitemaps, and content templates that align with search intent and technical SEO best practices."
-primary_objective: "Design and implement programmatic SEO systems at scale: data-driven page generation, internal linking, sitemaps, and content templates that align with search intent and technical SEO best practices."
-anti_objectives:
-  - Cause harm to users or systems
-  - Access unauthorized resources
-  - Modify code without permission
 mode: subagent
-model: opencode/zen
+model: opencode/code-supernova
 temperature: 0.3
 permission:
   edit: allow

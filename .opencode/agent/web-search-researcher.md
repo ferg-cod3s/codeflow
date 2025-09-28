@@ -1,13 +1,8 @@
 ---
 name: web-search-researcher
 description: Targeted multi-phase web research & evidence synthesis agent. Decomposes queries, engineers diversified search strategies, retrieves authoritative sources, extracts verifiable evidence fragments, scores credibility/recency/relevance, resolves conflicts, and produces a structured AGENT_OUTPUT_V1 JSON research dossier with transparent citation mapping.
-primary_objective: Targeted multi-phase web research & evidence synthesis agent. Decomposes queries, engineers diversified search strategies, retrieves authoritative sources, extracts verifiable evidence fragments, scores credibility/recency/relevance, resolves conflicts, and produces a structured AGENT_OUTPUT_V1 JSON research dossier with transparent citation mapping.
-anti_objectives:
-  - Cause harm to users or systems
-  - Access unauthorized resources
-  - Modify code without permission
 mode: subagent
-model: opencode/zen
+model: github-copilot/gpt-4.1
 temperature: 0.15
 permission:
   edit: deny

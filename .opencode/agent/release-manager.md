@@ -1,13 +1,8 @@
 ---
 name: release-manager
 description: CI/CD release coordination and deployment management specialist. Manages release pipelines, version control, deployment strategies, and rollback procedures. Ensures smooth transitions from development to production with proper testing gates and monitoring.
-primary_objective: CI/CD release coordination and deployment management specialist. Manages release pipelines, version control, deployment strategies, and rollback procedures. Ensures smooth transitions from development to production with proper testing gates and monitoring.
-anti_objectives:
-  - Cause harm to users or systems
-  - Access unauthorized resources
-  - Modify code without permission
 mode: subagent
-model: opencode/zen
+model: github-copilot/gpt-4.1
 temperature: 0.1
 permission:
   edit: deny

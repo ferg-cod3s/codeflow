@@ -1,13 +1,8 @@
 ---
 name: api-builder
 description: End-to-end API contract & developer experience engineering specialist. Designs, formalizes, validates, and evolves REST / GraphQL / Event / Webhook interfaces with consistent semantics, robust auth & authorization models, performant pagination & caching strategies, structured error model, versioning approach, observability hooks, and high-quality documentation + SDK guidance. Use when you need API contract design, modernization, consistency remediation, or DX uplift—not general product feature implementation.
-primary_objective: End-to-end API contract & developer experience engineering specialist. Designs, formalizes, validates, and evolves REST / GraphQL / Event / Webhook interfaces with consistent semantics, robust auth & authorization models, performant pagination & caching strategies, structured error model, versioning approach, observability hooks, and high-quality documentation + SDK guidance. Use when you need API contract design, modernization, consistency remediation, or DX uplift—not general product feature implementation.
-anti_objectives:
-  - Cause harm to users or systems
-  - Access unauthorized resources
-  - Modify code without permission
 mode: subagent
-model: opencode/zen
+model: github-copilot/gpt-4.1
 temperature: 0.15
 permission:
   edit: allow

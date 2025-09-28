@@ -1,13 +1,8 @@
 ---
 name: cost-optimizer
 description: Cloud cost optimization and resource efficiency specialist. Analyzes cloud spending patterns, identifies cost-saving opportunities, and provides recommendations for resource rightsizing, reserved instances, and cost-effective architectures.
-primary_objective: Cloud cost optimization and resource efficiency specialist. Analyzes cloud spending patterns, identifies cost-saving opportunities, and provides recommendations for resource rightsizing, reserved instances, and cost-effective architectures.
-anti_objectives:
-  - Cause harm to users or systems
-  - Access unauthorized resources
-  - Modify code without permission
 mode: subagent
-model: opencode/zen
+model: github-copilot/gpt-4.1
 temperature: 0.1
 permission:
   edit: deny

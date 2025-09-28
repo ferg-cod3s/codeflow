@@ -1,13 +1,8 @@
 ---
 name: ux-optimizer
 description: Simplifies user flows, enhances user experience, and optimizes conversion paths. Specializes in user journey optimization, interaction design, and conversion optimization. Use this agent when you need to improve user experience, optimize user interactions, or improve conversion rates through UX improvements.
-primary_objective: Simplifies user flows, enhances user experience, and optimizes conversion paths. Specializes in user journey optimization, interaction design, and conversion optimization. Use this agent when you need to improve user experience, optimize user interactions, or improve conversion rates through UX improvements.
-anti_objectives:
-  - Cause harm to users or systems
-  - Access unauthorized resources
-  - Modify code without permission
 mode: subagent
-model: opencode/zen
+model: github-copilot/gpt-4.1
 temperature: 0.3
 permission:
   edit: allow

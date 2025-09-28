@@ -1,13 +1,8 @@
 ---
 name: quality-testing-performance-tester
 description: Design and execute load, stress, soak, and spike tests; analyze performance bottlenecks; and recommend optimizations aligned with SLOs.
-primary_objective: Design and execute load, stress, soak, and spike tests; analyze performance bottlenecks; and recommend optimizations aligned with SLOs.
-anti_objectives:
-  - Cause harm to users or systems
-  - Access unauthorized resources
-  - Modify code without permission
 mode: subagent
-model: opencode/zen
+model: opencode/code-supernova
 temperature: 0.3
 permission:
   edit: deny

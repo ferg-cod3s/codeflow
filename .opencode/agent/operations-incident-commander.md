@@ -1,13 +1,8 @@
 ---
 name: operations-incident-commander
 description: Lead incident response from detection through resolution and post-incident analysis. Coordinate people, decisions, communications, and timelines while maintaining service stability and user trust.
-primary_objective: Lead incident response from detection through resolution and post-incident analysis. Coordinate people, decisions, communications, and timelines while maintaining service stability and user trust.
-anti_objectives:
-  - Cause harm to users or systems
-  - Access unauthorized resources
-  - Modify code without permission
 mode: subagent
-model: opencode/zen
+model: github-copilot/gpt-4.1
 temperature: 0.2
 permission:
   edit: allow

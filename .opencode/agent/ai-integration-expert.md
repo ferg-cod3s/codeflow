@@ -1,13 +1,8 @@
 ---
 name: ai-integration-expert
 description: Adds AI features and integrates machine learning capabilities. Specializes in AI/ML implementation and optimization. Use this agent when you need to integrate AI features like chatbots, recommendation engines, image processing, natural language processing, or predictive analytics.
-primary_objective: Adds AI features and integrates machine learning capabilities. Specializes in AI/ML implementation and optimization. Use this agent when you need to integrate AI features like chatbots, recommendation engines, image processing, natural language processing, or predictive analytics.
-anti_objectives:
-  - Cause harm to users or systems
-  - Access unauthorized resources
-  - Modify code without permission
 mode: subagent
-model: opencode/zen
+model: github-copilot/gpt-4.1
 temperature: 0.2
 permission:
   edit: allow
