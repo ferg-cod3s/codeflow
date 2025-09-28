@@ -1,39 +1,19 @@
 ---
 name: commit
-mode: command
 description: Commits the local changes in multiple atomic commits
-version: 2.0.0-internal
-last_updated: 2025-09-13
-command_schema_version: 1.0
-inputs:
-  - name: git_status
-    type: string
-    required: true
-    description: Current git status output
-  - name: git_diff
-    type: string
-    required: true
-    description: Git diff of changes to be committed
-outputs:
-  - name: commit_plan
-    type: structured
-    format: JSON with commit messages and file groupings
-    description: Structured plan of commits to be created
-cache_strategy:
-  type: agent_specific
-  ttl: 300
-  invalidation: content_based
-  scope: command
-success_signals:
-  - 'Successfully created N commit(s)'
-  - 'All changes committed atomically'
-  - 'Commit messages follow conventional format'
-failure_modes:
-  - 'Git repository not clean'
-  - 'No changes to commit'
-  - 'Commit message validation failed'
+temperature: 0.1
+category: git
+params:
+  required:
+    - name: git_status
+      description: Current git status output
+      type: string
+    - name: git_diff
+      description: Git diff of changes to be committed
+      type: string
+  optional:
+    []
 ---
-
 # Commit Changes
 
 You are tasked with creating git commits for the changes made during this session. This command uses intelligent caching to optimize performance and maintain consistency across similar commit operations.

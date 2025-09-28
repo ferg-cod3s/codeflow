@@ -1,6 +1,6 @@
 import { parse as parseYaml, stringify as stringifyYaml } from 'yaml';
 import { mkdir } from 'node:fs/promises';
-import { Agent } from '../conversion/agent-parser';
+import { Agent, ParsedEntity } from '../conversion/agent-parser';
 import { ValidationEngine, ValidationResult, AgentFormat } from './validation-engine';
 import { ArrayParser } from './array-parser';
 
@@ -106,10 +106,10 @@ export class YamlProcessor {
   /**
    * Serialize agent to YAML string
    */
-  serialize(agent: Agent): Result<string, YamlError> {
+  serialize(entity: ParsedEntity): Result<string, YamlError> {
     try {
       // Clean frontmatter by removing null/undefined values
-      const cleanFrontmatter = this.cleanFrontmatter(agent.frontmatter);
+      const cleanFrontmatter = this.cleanFrontmatter(entity.frontmatter);
 
       // Convert frontmatter to YAML with proper formatting options
       const yamlOptions = {
@@ -122,7 +122,7 @@ export class YamlProcessor {
         skipInvalid: false,
       };
 
-      const yamlContent = `---\n${stringifyYaml(cleanFrontmatter, yamlOptions)}---\n${agent.content}`;
+      const yamlContent = `---\n${stringifyYaml(cleanFrontmatter, yamlOptions)}---\n${entity.content}`;
 
       return {
         success: true,

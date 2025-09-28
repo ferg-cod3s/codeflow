@@ -75,11 +75,14 @@ export class CommandValidator {
   }
 
   /**
-   * Validates all command files in a directory
+   * Validates all command files in a directory with format-specific validation
    */
-  async validateDirectory(directoryPath: string): Promise<CommandValidationResult> {
+  async validateDirectory(
+    directoryPath: string,
+    format: 'claude-code' | 'opencode' = 'opencode'
+  ): Promise<CommandValidationResult> {
     const startTime = performance.now();
-    
+
     if (!existsSync(directoryPath)) {
       throw new Error(`Directory does not exist: ${directoryPath}`);
     }
@@ -90,10 +93,10 @@ export class CommandValidator {
 
     try {
       const files = await this.findCommandFiles(directoryPath);
-      
+
       for (const file of files) {
         try {
-          const result = await this.validateFile(file);
+          const result = await this.validateFile(file, format);
           if (!result.valid) {
             errors.push(...result.errors);
           }
@@ -104,7 +107,7 @@ export class CommandValidator {
             file,
             message: `Failed to validate command file: ${(error as Error).message}`,
             code: 'FILE_VALIDATION_ERROR',
-            severity: 'error'
+            severity: 'error',
           });
         }
       }
@@ -113,12 +116,12 @@ export class CommandValidator {
         file: directoryPath,
         message: `Failed to read directory: ${(error as Error).message}`,
         code: 'DIRECTORY_READ_ERROR',
-        severity: 'error'
+        severity: 'error',
       });
     }
 
     const processingTime = performance.now() - startTime;
-    
+
     return {
       valid: errors.length === 0,
       errors,
@@ -126,15 +129,18 @@ export class CommandValidator {
       metadata: {
         fileCount: await this.countFiles(directoryPath),
         totalCommands,
-        processingTime
-      }
+        processingTime,
+      },
     };
   }
 
   /**
-   * Validates a single command file
+   * Validates a single command file with format-specific validation
    */
-  async validateFile(filePath: string): Promise<CommandValidationResult> {
+  async validateFile(
+    filePath: string,
+    format: 'claude-code' | 'opencode' = 'opencode'
+  ): Promise<CommandValidationResult> {
     const errors: ValidationError[] = [];
     const warnings: ValidationWarning[] = [];
 
@@ -146,24 +152,24 @@ export class CommandValidator {
           file: filePath,
           message: `YAML parsing failed: ${parseResult.error.message}`,
           code: 'YAML_PARSE_ERROR',
-          severity: 'error'
+          severity: 'error',
         });
         return { valid: false, errors, warnings };
       }
       const parsed = parseResult.data;
-      
+
       if (!parsed.frontmatter) {
         errors.push({
           file: filePath,
           message: 'Command file must have YAML frontmatter',
           code: 'MISSING_FRONTMATTER',
-          severity: 'error'
+          severity: 'error',
         });
         return { valid: false, errors, warnings };
       }
 
       // Validate schema structure
-      const schemaValidation = this.validateSchema(parsed.frontmatter);
+      const schemaValidation = this.validateSchema(parsed.frontmatter, format);
       if (!schemaValidation.valid) {
         errors.push(...schemaValidation.errors);
       }
@@ -177,36 +183,52 @@ export class CommandValidator {
       const yamlValidation = await this.validateYamlSyntax(content);
       errors.push(...yamlValidation.errors);
       warnings.push(...yamlValidation.warnings);
-
     } catch (error) {
       errors.push({
         file: filePath,
         message: `Failed to parse command file: ${(error as Error).message}`,
         code: 'PARSE_ERROR',
-        severity: 'error'
+        severity: 'error',
       });
     }
 
     return {
       valid: errors.length === 0,
       errors,
-      warnings
+      warnings,
     };
   }
 
   /**
-   * Validates command schema against expected structure
+   * Validates command schema against expected structure for the given format
    */
-  private validateSchema(frontmatter: any): { valid: boolean; errors: ValidationError[] } {
+  private validateSchema(
+    frontmatter: any,
+    format: 'claude-code' | 'opencode'
+  ): { valid: boolean; errors: ValidationError[] } {
     const errors: ValidationError[] = [];
 
-    // Required fields
+    if (format === 'opencode') {
+      return this.validateOpenCodeSchema(frontmatter, errors);
+    } else {
+      return this.validateClaudeCodeSchema(frontmatter, errors);
+    }
+  }
+
+  /**
+   * Validate OpenCode command schema
+   */
+  private validateOpenCodeSchema(
+    frontmatter: any,
+    errors: ValidationError[]
+  ): { valid: boolean; errors: ValidationError[] } {
+    // Required fields for OpenCode
     if (!frontmatter.name || typeof frontmatter.name !== 'string') {
       errors.push({
         file: 'frontmatter',
         message: 'Command must have a name field',
         code: 'MISSING_NAME',
-        severity: 'error'
+        severity: 'error',
       });
     }
 
@@ -215,16 +237,16 @@ export class CommandValidator {
         file: 'frontmatter',
         message: 'Command must have a description field',
         code: 'MISSING_DESCRIPTION',
-        severity: 'error'
+        severity: 'error',
       });
     }
 
-    if (frontmatter.mode && frontmatter.mode !== 'command') {
+    if (!frontmatter.mode || frontmatter.mode !== 'command') {
       errors.push({
         file: 'frontmatter',
-        message: 'Command mode must be "command"',
+        message: 'OpenCode commands must have mode: "command"',
         code: 'INVALID_MODE',
-        severity: 'error'
+        severity: 'error',
       });
     }
 
@@ -235,7 +257,7 @@ export class CommandValidator {
           file: 'frontmatter',
           message: 'inputs must be an array',
           code: 'INVALID_INPUTS_FORMAT',
-          severity: 'error'
+          severity: 'error',
         });
       } else {
         frontmatter.inputs.forEach((input: any, index: number) => {
@@ -244,7 +266,7 @@ export class CommandValidator {
               file: 'frontmatter',
               message: `Input at index ${index} must have name and type`,
               code: 'INVALID_INPUT_SCHEMA',
-              severity: 'error'
+              severity: 'error',
             });
           }
           if (typeof input.required !== 'boolean') {
@@ -252,7 +274,7 @@ export class CommandValidator {
               file: 'frontmatter',
               message: `Input "${input.name}" must specify required as boolean`,
               code: 'INVALID_INPUT_REQUIRED',
-              severity: 'error'
+              severity: 'error',
             });
           }
         });
@@ -266,7 +288,7 @@ export class CommandValidator {
           file: 'frontmatter',
           message: 'outputs must be an array',
           code: 'INVALID_OUTPUTS_FORMAT',
-          severity: 'error'
+          severity: 'error',
         });
       }
     }
@@ -279,51 +301,172 @@ export class CommandValidator {
           file: 'frontmatter',
           message: `Cache strategy type must be one of: ${validTypes.join(', ')}`,
           code: 'INVALID_CACHE_TYPE',
-          severity: 'error'
+          severity: 'error',
         });
       }
-      if (typeof frontmatter.cache_strategy.ttl !== 'number') {
+      if (
+        frontmatter.cache_strategy.ttl !== undefined &&
+        typeof frontmatter.cache_strategy.ttl !== 'number'
+      ) {
         errors.push({
           file: 'frontmatter',
           message: 'Cache strategy ttl must be a number',
           code: 'INVALID_CACHE_TTL',
-          severity: 'error'
+          severity: 'error',
         });
       }
     }
 
     return {
       valid: errors.length === 0,
-      errors
+      errors,
+    };
+  }
+
+  /**
+   * Validate Claude Code command schema
+   */
+  private validateClaudeCodeSchema(
+    frontmatter: any,
+    errors: ValidationError[]
+  ): { valid: boolean; errors: ValidationError[] } {
+    // Required fields for Claude Code
+    if (!frontmatter.name || typeof frontmatter.name !== 'string') {
+      errors.push({
+        file: 'frontmatter',
+        message: 'Command must have a name field',
+        code: 'MISSING_NAME',
+        severity: 'error',
+      });
+    }
+
+    if (!frontmatter.description || typeof frontmatter.description !== 'string') {
+      errors.push({
+        file: 'frontmatter',
+        message: 'Command must have a description field',
+        code: 'MISSING_DESCRIPTION',
+        severity: 'error',
+      });
+    }
+
+    // Claude Code commands should have model field
+    if (!frontmatter.model || typeof frontmatter.model !== 'string') {
+      errors.push({
+        file: 'frontmatter',
+        message: 'Claude Code commands must have a model field',
+        code: 'MISSING_MODEL',
+        severity: 'error',
+      });
+    }
+
+    // Validate model format (should be Claude model)
+    if (frontmatter.model && !frontmatter.model.includes('claude')) {
+      errors.push({
+        file: 'frontmatter',
+        message: 'Claude Code commands should use Claude models',
+        code: 'INVALID_MODEL',
+        severity: 'warning',
+      });
+    }
+
+    // Temperature should be reasonable for commands
+    if (frontmatter.temperature !== undefined) {
+      if (
+        typeof frontmatter.temperature !== 'number' ||
+        frontmatter.temperature < 0 ||
+        frontmatter.temperature > 1
+      ) {
+        errors.push({
+          file: 'frontmatter',
+          message: 'Temperature must be a number between 0 and 1',
+          code: 'INVALID_TEMPERATURE',
+          severity: 'error',
+        });
+      } else if (frontmatter.temperature > 0.5) {
+        errors.push({
+          file: 'frontmatter',
+          message: 'Commands should use lower temperature (<= 0.5) for consistency',
+          code: 'HIGH_TEMPERATURE',
+          severity: 'warning',
+        });
+      }
+    }
+
+    // Category is recommended for Claude Code
+    if (!frontmatter.category) {
+      errors.push({
+        file: 'frontmatter',
+        message: 'Claude Code commands should have a category',
+        code: 'MISSING_CATEGORY',
+        severity: 'warning',
+      });
+    }
+
+    // Validate params structure if present
+    if (frontmatter.params) {
+      if (typeof frontmatter.params !== 'object') {
+        errors.push({
+          file: 'frontmatter',
+          message: 'params must be an object',
+          code: 'INVALID_PARAMS_FORMAT',
+          severity: 'error',
+        });
+      } else {
+        // Validate required params
+        if (frontmatter.params.required && !Array.isArray(frontmatter.params.required)) {
+          errors.push({
+            file: 'frontmatter',
+            message: 'params.required must be an array',
+            code: 'INVALID_REQUIRED_PARAMS',
+            severity: 'error',
+          });
+        }
+
+        // Validate optional params
+        if (frontmatter.params.optional && !Array.isArray(frontmatter.params.optional)) {
+          errors.push({
+            file: 'frontmatter',
+            message: 'params.optional must be an array',
+            code: 'INVALID_OPTIONAL_PARAMS',
+            severity: 'error',
+          });
+        }
+      }
+    }
+
+    return {
+      valid: errors.length === 0,
+      errors,
     };
   }
 
   /**
    * Validates variable references in command content
    */
-  private validateVariableReferences(content: string, frontmatter: any): { errors: ValidationError[]; warnings: ValidationWarning[] } {
+  private validateVariableReferences(
+    content: string,
+    frontmatter: any
+  ): { errors: ValidationError[]; warnings: ValidationWarning[] } {
     const errors: ValidationError[] = [];
     const warnings: ValidationWarning[] = [];
-    
+
     // Extract all variable references from content
     const variableMatches = content.match(this.variablePattern);
     if (variableMatches) {
-      const referencedVariables = variableMatches.map(match => 
-        match.replace(/\{\{|\}\}/g, '')
-      );
+      const referencedVariables = variableMatches.map((match) => match.replace(/\{\{|\}\}/g, ''));
 
       // Check if variables are defined in inputs
       const definedInputs = frontmatter.inputs || [];
       const inputNames = definedInputs.map((input: any) => input.name);
 
-      referencedVariables.forEach(variable => {
+      referencedVariables.forEach((variable) => {
         if (!inputNames.includes(variable)) {
           errors.push({
             file: 'content',
             message: `Variable "{{${variable}}}" is not defined in inputs`,
             code: 'UNDEFINED_VARIABLE',
             severity: 'error',
-            suggestion: `Add "${variable}" to the inputs array or remove the reference`
+            suggestion: `Add "${variable}" to the inputs array or remove the reference`,
           });
         }
       });
@@ -332,15 +475,16 @@ export class CommandValidator {
     // Check for unused inputs
     if (frontmatter.inputs && frontmatter.inputs.length > 0) {
       const definedInputs = frontmatter.inputs.map((input: any) => input.name);
-      const referencedVariables = (content.match(this.variablePattern) || [])
-        .map(match => match.replace(/\{\{|\}\}/g, ''));
+      const referencedVariables = (content.match(this.variablePattern) || []).map((match) =>
+        match.replace(/\{\{|\}\}/g, '')
+      );
 
       definedInputs.forEach((inputName: string) => {
         if (!referencedVariables.includes(inputName)) {
           warnings.push({
             file: 'frontmatter',
             message: `Input "${inputName}" is defined but not used in content`,
-            suggestion: `Remove unused input or add {{${inputName}}} reference to content`
+            suggestion: `Remove unused input or add {{${inputName}}} reference to content`,
           });
         }
       });
@@ -352,7 +496,9 @@ export class CommandValidator {
   /**
    * Validates YAML syntax
    */
-  private async validateYamlSyntax(content: string): Promise<{ errors: ValidationError[]; warnings: ValidationWarning[] }> {
+  private async validateYamlSyntax(
+    content: string
+  ): Promise<{ errors: ValidationError[]; warnings: ValidationWarning[] }> {
     const errors: ValidationError[] = [];
     const warnings: ValidationWarning[] = [];
 
@@ -363,7 +509,7 @@ export class CommandValidator {
           file: 'yaml',
           message: `YAML syntax error: ${parseResult.error.message}`,
           code: 'YAML_SYNTAX_ERROR',
-          severity: 'error'
+          severity: 'error',
         });
         return { errors, warnings };
       }
@@ -372,7 +518,7 @@ export class CommandValidator {
         file: 'yaml',
         message: `YAML syntax error: ${(error as Error).message}`,
         code: 'YAML_SYNTAX_ERROR',
-        severity: 'error'
+        severity: 'error',
       });
     }
 
@@ -387,10 +533,10 @@ export class CommandValidator {
 
     async function scanDirectory(dir: string) {
       const entries = await readdir(dir, { withFileTypes: true });
-      
+
       for (const entry of entries) {
         const fullPath = join(dir, entry.name);
-        
+
         if (entry.isDirectory()) {
           await scanDirectory(fullPath);
         } else if (entry.isFile() && entry.name.endsWith('.md')) {
@@ -398,7 +544,11 @@ export class CommandValidator {
           try {
             const content = await readFile(fullPath, 'utf-8');
             const parseResult = new YamlProcessor().parse(content);
-            if (parseResult.success && parseResult.data.frontmatter && parseResult.data.frontmatter.mode === 'command') {
+            if (
+              parseResult.success &&
+              parseResult.data.frontmatter &&
+              parseResult.data.frontmatter.mode === 'command'
+            ) {
               files.push(fullPath);
             }
           } catch {
@@ -420,10 +570,10 @@ export class CommandValidator {
 
     async function scanDirectory(dir: string) {
       const entries = await readdir(dir, { withFileTypes: true });
-      
+
       for (const entry of entries) {
         const fullPath = join(dir, entry.name);
-        
+
         if (entry.isDirectory()) {
           await scanDirectory(fullPath);
         } else {
@@ -446,7 +596,7 @@ export class CommandValidator {
       '## Summary',
       `${errors.length} validation errors found`,
       '',
-      '## Fixes'
+      '## Fixes',
     ];
 
     errors.forEach((error, index) => {

@@ -1,47 +1,24 @@
 ---
 name: document
-mode: command
 description: Produce high-quality documentation for implemented features
-version: 2.0.0-internal
-last_updated: 2025-09-13
-command_schema_version: 1.0
-inputs:
-  - name: audience
-    type: string
-    required: true
-    description: Target audience (user | api | developer | mixed)
-  - name: plan
-    type: string
-    required: false
-    description: Path to implementation plan file
-  - name: files
-    type: array
-    required: true
-    description: Key code files for documentation reference
-  - name: changelog
-    type: array
-    required: false
-    description: List of notable changes for documentation
-outputs:
-  - name: documentation_files
-    type: structured
-    format: JSON with file paths and metadata
-    description: Generated documentation files with metadata
-cache_strategy:
-  type: content_based
-  ttl: 3600
-  invalidation: manual
-  scope: command
-success_signals:
-  - 'Documentation files created successfully'
-  - 'All audience types documented'
-  - 'Files saved to docs/'
-failure_modes:
-  - 'Invalid audience specification'
-  - 'Missing required code files'
-  - 'Documentation directory not accessible'
+temperature: 0.1
+category: documentation
+params:
+  required:
+    - name: audience
+      description: Target audience (user | api | developer | mixed)
+      type: string
+    - name: files
+      description: Key code files for documentation reference
+      type: array
+  optional:
+    - name: plan
+      description: Path to implementation plan file
+      type: string
+    - name: changelog
+      description: List of notable changes for documentation
+      type: array
 ---
-
 # Document Feature
 
 You are tasked with producing high-quality documentation based on the implemented feature, its plan, and the code. This command uses intelligent caching to optimize documentation generation and maintain consistency across similar features.

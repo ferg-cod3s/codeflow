@@ -329,8 +329,8 @@ export async function validateCommands(options: CommandValidationOptions = {}) {
   try {
     // Determine directories to search based on format
     const directories = {
-      'opencode': ['.opencode/command', 'opencode-commands'],
-      'claude-code': ['.claude/commands', 'claude-commands']
+      opencode: ['.opencode/command', 'opencode-commands'],
+      'claude-code': ['.claude/commands', 'claude-commands'],
     };
 
     const dirsToSearch = directories[format] || directories.opencode;
@@ -338,10 +338,10 @@ export async function validateCommands(options: CommandValidationOptions = {}) {
 
     for (const dir of dirsToSearch) {
       const fullPath = path.isAbsolute(dir) ? dir : path.join(searchPath, dir);
-      
+
       if (existsSync(fullPath)) {
         CLIErrorHandler.displayProgress(`Searching directory: ${fullPath}`);
-        const result = await commandValidator.validateDirectory(fullPath);
+        const result = await commandValidator.validateDirectory(fullPath, format);
         allResults.push(result);
       } else {
         CLIErrorHandler.displayProgress(`Directory not found: ${fullPath}`);
@@ -400,13 +400,15 @@ export async function validateCommands(options: CommandValidationOptions = {}) {
       console.log(`\n📝 Detailed Performance Metrics:`);
       allResults.forEach((result, index) => {
         if (result.metadata) {
-          console.log(`  Directory ${index + 1}: ${result.metadata.processingTime.toFixed(2)}ms for ${result.metadata.fileCount} files`);
+          console.log(
+            `  Directory ${index + 1}: ${result.metadata.processingTime.toFixed(2)}ms for ${result.metadata.fileCount} files`
+          );
         }
       });
     }
 
     if (options.fix && totalErrors > 0) {
-      const allErrors = allResults.flatMap(r => r.errors);
+      const allErrors = allResults.flatMap((r) => r.errors);
       const fixReport = commandValidator.generateFixes(allErrors);
       console.log(`\n🔧 Fix suggestions written to: command-validation-fixes.txt`);
       await Bun.write('command-validation-fixes.txt', fixReport);
@@ -458,7 +460,7 @@ export function generateCommandFixReport(
     '## Summary',
     `${results.length} files with validation issues`,
     '',
-    '## Fixes'
+    '## Fixes',
   ];
 
   results.forEach((item, index) => {

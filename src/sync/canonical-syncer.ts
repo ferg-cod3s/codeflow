@@ -13,7 +13,8 @@ import { findAgentManifest } from '../utils/manifest-discovery.js';
  */
 
 export interface SyncOptions {
-  projectPath?: string;  target: 'project' | 'global' | 'all';
+  projectPath?: string;
+  target: 'project' | 'global' | 'all';
   sourceFormat: 'base' | 'claude-code' | 'opencode';
   dryRun: boolean;
   force: boolean;
@@ -430,7 +431,7 @@ export class CanonicalSyncer {
   }
 
   /**
-   * Sync commands to global directories
+   * Sync commands to global directories with format conversion
    */
   private async syncCommands(options: SyncOptions): Promise<string[]> {
     const tempFiles: string[] = [];
@@ -441,6 +442,10 @@ export class CanonicalSyncer {
       return tempFiles; // No commands to sync
     }
 
+    // Import command converter
+    const { CommandConverter } = await import('../conversion/command-converter.js');
+    const converter = new CommandConverter();
+
     try {
       const files = await readdir(sourceCommandDir);
       const mdFiles = files.filter((f: string) => f.endsWith('.md'));
@@ -448,34 +453,46 @@ export class CanonicalSyncer {
       for (const file of mdFiles) {
         const sourceFile = path.join(sourceCommandDir, file);
         // Determine target paths based on sync target
-        const targetPaths: string[] = [];
-        
+        const targetPaths: Array<{ path: string; format: 'claude-code' | 'opencode' }> = [];
+
         if (options.target === 'global' || options.target === 'all') {
           targetPaths.push(
-            path.join(os.homedir(), '.claude', 'commands', file),
-            path.join(os.homedir(), '.config', 'opencode', 'command', file)
+            {
+              path: path.join(os.homedir(), '.claude', 'commands', file),
+              format: 'claude-code',
+            },
+            {
+              path: path.join(os.homedir(), '.config', 'opencode', 'command', file),
+              format: 'opencode',
+            }
           );
         }
-        
+
         if (options.target === 'project' || options.target === 'all') {
           const projectPath = options.projectPath || process.cwd();
           targetPaths.push(
-            path.join(projectPath, '.claude', 'commands', file),
-            path.join(projectPath, '.opencode', 'command', file)
+            {
+              path: path.join(projectPath, '.claude', 'commands', file),
+              format: 'claude-code',
+            },
+            {
+              path: path.join(projectPath, '.opencode', 'command', file),
+              format: 'opencode',
+            }
           );
-        
         }
-        
-        for (const targetPath of targetPaths) {
-          const tempPath = `${targetPath}.tmp`;
+
+        for (const target of targetPaths) {
+          const tempPath = `${target.path}.tmp`;
 
           try {
             // Ensure target directory exists
-            const targetDir = path.dirname(targetPath);
+            const targetDir = path.dirname(target.path);
             await mkdir(targetDir, { recursive: true });
 
-            // Copy command file directly (no format conversion needed for commands)
-            await copyFile(sourceFile, tempPath);
+            // Convert command format based on target
+            const convertedContent = await converter.convertFile(sourceFile, target.format);
+            await Bun.write(tempPath, convertedContent);
             tempFiles.push(tempPath);
           } catch (error) {
             console.error(`Failed to sync command ${file}: ${(error as Error).message}`);

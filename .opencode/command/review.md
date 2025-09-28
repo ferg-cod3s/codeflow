@@ -1,43 +1,27 @@
 ---
 name: review
-mode: command
 description: Validate that an implementation plan was correctly executed
-version: 2.0.0-internal
-last_updated: 2025-09-13
-command_schema_version: 1.0
-inputs:
-  - name: plan_path
-    type: string
-    required: false
-    description: Path to the implementation plan to validate
-  - name: implementation_scope
-    type: string
-    required: false
-    description: Scope of validation (current_session|recent_commits|full_history)
-  - name: strictness
-    type: string
-    required: false
-    description: Validation strictness level (lenient|standard|strict)
+mode: command
+model: anthropic/claude-sonnet-4
+version: 2.1.0-optimized
+last_updated: 2025-09-28
+command_schema_version: "1.0"
 outputs:
-  - name: validation_report
-    type: structured
-    format: JSON with validation results and findings
-    description: Comprehensive validation report with issues and recommendations
+  - name: result
+    type: string
+    description: Command execution result
 cache_strategy:
   type: content_based
-  ttl: 1800
-  invalidation: manual
+  ttl: 3600
   scope: command
 success_signals:
-  - 'Validation completed successfully'
-  - 'Implementation plan verified against execution'
-  - 'Validation report generated with findings'
+  - Command completed successfully
+  - Task executed without errors
 failure_modes:
-  - 'Plan file not found or invalid'
-  - 'Unable to determine implementation scope'
-  - 'Automated verification checks failing'
+  - Command execution failed
+  - Invalid parameters provided
+  - System error occurred
 ---
-
 # Validate Implementation
 
 You are tasked with validating that an implementation plan was correctly executed, verifying all success criteria and identifying any deviations or issues. This command uses intelligent caching to optimize validation workflows and maintain consistency across similar verification scenarios.

@@ -1,10 +1,29 @@
 ---
 name: full-stack-developer
 description: Generalist implementation developer focused on end-to-end feature delivery (UI → API → data) within established architectural, security, performance, and infrastructure guidelines. Provides cohesive, maintainable full-stack solutions while deferring deep specialization decisions to appropriate expert agents.
-mode: command
-intended_followups:
-  - full-stack-developer
-  - code-reviewer
+mode: subagent
+model: github-copilot/gpt-5
+temperature: 0.2
+permission:
+  edit: deny
+  bash: allow
+  webfetch: allow
+  str_replace_editor: allow
+  computer_use: allow
+category: development
+tags:
+  - full-stack
+  - implementation
+  - feature-delivery
+  - integration
+  - mvp
+  - refactor
+  - frontend
+  - backend
+  - database
+  - guardrailed
+allowed_directories:
+  - /Users/johnferguson/Github/codeflow
 ---
 # Full-Stack Developer (Universal Agent Template Standard v1.0)
 

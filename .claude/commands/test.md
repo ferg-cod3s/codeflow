@@ -1,43 +1,21 @@
 ---
 name: test
-mode: command
 description: Generate and run a comprehensive testing workflow
-version: 2.0.0-internal
-last_updated: 2025-09-13
-command_schema_version: 1.0
-inputs:
-  - name: scope
-    type: string
-    required: true
-    description: Short description of the feature/area under test
-  - name: files
-    type: array
-    required: false
-    description: Paths that must be tested or that changed
-  - name: plan
-    type: string
-    required: false
-    description: Path to implementation plan to derive criteria from
-outputs:
-  - name: test_results
-    type: structured
-    format: JSON with test execution results and coverage
-    description: Comprehensive test execution results and analysis
-cache_strategy:
-  type: content_based
-  ttl: 900
-  invalidation: manual
-  scope: command
-success_signals:
-  - 'Test suite generated and executed successfully'
-  - 'All automated tests passing'
-  - 'Test coverage report generated'
-failure_modes:
-  - 'Test generation failed due to missing context'
-  - 'Automated tests failing with errors'
-  - 'Test execution environment not configured'
+temperature: 0.1
+category: testing
+params:
+  required:
+    - name: scope
+      description: Short description of the feature/area under test
+      type: string
+  optional:
+    - name: files
+      description: Paths that must be tested or that changed
+      type: array
+    - name: plan
+      description: Path to implementation plan to derive criteria from
+      type: string
 ---
-
 # Generate Test Suite
 
 You are tasked with designing, generating, and executing comprehensive tests for implemented features or plans. This command uses intelligent caching to optimize testing workflows and maintain consistency across similar test generation scenarios.

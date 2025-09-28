@@ -3,6 +3,17 @@ import { globalPerformanceMonitor, globalFileReader } from '../optimization/perf
 import { YamlProcessor } from '../yaml/yaml-processor';
 
 /**
+ * Common interface for parsed entities (agents and commands)
+ */
+export interface ParsedEntity {
+  name: string;
+  format: string;
+  frontmatter: Record<string, any>;
+  content: string;
+  filePath: string;
+}
+
+/**
  * Base agent format - the single source of truth for all agents
  * This format contains all possible fields and gets converted to platform-specific formats
  */
@@ -74,12 +85,9 @@ export interface OpenCodeAgent {
 /**
  * Generic agent interface that can represent any format
  */
-export interface Agent {
-  name: string;
+export interface Agent extends ParsedEntity {
   format: 'base' | 'claude-code' | 'opencode';
   frontmatter: BaseAgent | ClaudeCodeAgent | OpenCodeAgent;
-  content: string;
-  filePath: string;
 }
 
 /**
@@ -489,12 +497,9 @@ export interface CacheStrategy {
 /**
  * Generic command interface that can represent any format
  */
-export interface Command {
-  name: string;
+export interface Command extends ParsedEntity {
   format: 'base' | 'opencode';
   frontmatter: BaseCommand | OpenCodeCommand;
-  content: string;
-  filePath: string;
 }
 
 /**
@@ -504,19 +509,7 @@ export async function parseCommandFile(
   filePath: string,
   format: 'base' | 'opencode'
 ): Promise<Command> {
-  const parseCache = globalPerformanceMonitor.getParseCache();
-
-  // Check cache first
-  const cached = await parseCache.get(filePath);
-  if (cached) {
-    if ('frontmatter' in cached) {
-      // Cached successful parse
-      return cached as Command;
-    } else {
-      // Cached error
-      throw new Error(cached.message);
-    }
-  }
+  // Note: Commands are not cached due to different frontmatter types from agents
 
   const parseStart = performance.now();
   const content = await globalFileReader.readFile(filePath);
@@ -547,8 +540,7 @@ export async function parseCommandFile(
       filePath,
     };
 
-    // Cache successful parse
-    await parseCache.set(filePath, command);
+    // Commands are not cached (different frontmatter types from agents)
 
     const parseTime = performance.now() - parseStart;
     globalPerformanceMonitor.updateMetrics({ agentParseTime: parseTime });
@@ -582,22 +574,12 @@ export async function parseCommandFile(
         return command;
       }
     } catch (fallbackError) {
-      // Fallback also failed, cache the error
-      const parseError: ParseError = {
-        message: `Failed to parse command file ${filePath}: ${error.message}`,
-        filePath,
-      };
-      await parseCache.setError(filePath, parseError);
-      throw new Error(parseError.message);
+      // Fallback also failed
+      throw new Error(`Failed to parse command file ${filePath}: ${error.message}`);
     }
 
     // If we get here, both YAML parsing and fallback failed
-    const parseError: ParseError = {
-      message: `Failed to parse command file ${filePath}: ${error.message}`,
-      filePath,
-    };
-    await parseCache.setError(filePath, parseError);
-    throw new Error(parseError.message);
+    throw new Error(`Failed to parse command file ${filePath}: ${error.message}`);
   }
 }
 

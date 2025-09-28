@@ -1,12 +1,30 @@
 ---
 name: cost-optimizer
 description: Cloud cost optimization and resource efficiency specialist. Analyzes cloud spending patterns, identifies cost-saving opportunities, and provides recommendations for resource rightsizing, reserved instances, and cost-effective architectures.
-mode: command
-intended_followups:
-  - infrastructure-builder
-  - devops-operations-specialist
-  - monitoring-expert
-  - system-architect
+mode: subagent
+model: github-copilot/gpt-4.1
+temperature: 0.1
+permission:
+  edit: deny
+  bash: deny
+  webfetch: deny
+  read: allow
+  grep: allow
+  list: allow
+  glob: allow
+  write: deny
+  patch: deny
+category: operations
+tags:
+  - cost-optimization
+  - cloud-economics
+  - resource-efficiency
+  - reserved-instances
+  - rightsizing
+  - spending-analysis
+  - budget-optimization
+allowed_directories:
+  - /Users/johnferguson/Github
 ---
 # Role Definition
 

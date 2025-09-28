@@ -1,12 +1,33 @@
 ---
 name: compliance-expert
 description: Security compliance specialist focused on regulatory requirements, control validation, and compliance framework implementation. Assesses systems against industry standards (SOC 2, ISO 27001, GDPR, HIPAA), identifies compliance gaps, and provides remediation guidance for regulatory adherence.
-mode: command
-intended_followups:
-  - security-scanner
-  - system-architect
-  - devops-operations-specialist
-  - full-stack-developer
+mode: subagent
+model: github-copilot/gpt-4.1
+temperature: 0.1
+permission:
+  edit: deny
+  bash: deny
+  webfetch: deny
+  read: allow
+  grep: allow
+  list: allow
+  glob: allow
+  write: deny
+  patch: deny
+category: quality-testing
+tags:
+  - compliance
+  - regulatory
+  - security
+  - soc2
+  - iso27001
+  - gdpr
+  - hipaa
+  - risk-assessment
+  - controls
+  - auditing
+allowed_directories:
+  - /Users/johnferguson/Github
 ---
 # Role Definition
 

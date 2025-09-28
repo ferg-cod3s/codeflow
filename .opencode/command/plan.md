@@ -1,43 +1,27 @@
 ---
 name: plan
-mode: command
 description: Create an implementation plan from a ticket and research
-version: 2.0.0-internal
-last_updated: 2025-09-13
-command_schema_version: 1.0
-inputs:
-  - name: files
-    type: array
-    required: true
-    description: Array of ticket and research files to analyze
-  - name: scope
-    type: string
-    required: false
-    description: Scope hint for the implementation (feature|refactor|bugfix)
-  - name: complexity
-    type: string
-    required: false
-    description: Complexity estimate (simple|medium|complex)
+mode: command
+model: anthropic/claude-sonnet-4
+version: 2.1.0-optimized
+last_updated: 2025-09-28
+command_schema_version: "1.0"
 outputs:
-  - name: plan_document
-    type: structured
-    format: JSON with plan metadata and file path
-    description: Generated implementation plan with metadata
+  - name: result
+    type: string
+    description: Command execution result
 cache_strategy:
   type: content_based
-  ttl: 7200
-  invalidation: manual
+  ttl: 3600
   scope: command
 success_signals:
-  - 'Implementation plan created successfully'
-  - 'Plan saved to docs/plans/ directory'
-  - 'All research questions resolved'
+  - Command completed successfully
+  - Task executed without errors
 failure_modes:
-  - 'Required files not found or invalid'
-  - 'Unresolved research questions remain'
-  - 'Technical feasibility concerns'
+  - Command execution failed
+  - Invalid parameters provided
+  - System error occurred
 ---
-
 # Create Implementation Plan
 
 You are tasked with creating detailed implementation plans through an interactive, iterative process. This command uses intelligent caching to optimize research workflows and maintain consistency across similar planning scenarios.

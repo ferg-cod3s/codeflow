@@ -1,47 +1,24 @@
 ---
 name: project-docs
-mode: command
 description: Generate comprehensive project documentation including PRD, security docs, user flows, and more
-version: 1.0.0
-last_updated: 2025-09-20
-command_schema_version: 1.0
-inputs:
-  - name: prompt
-    type: string
-    required: true
-    description: Project description or prompt to generate documentation from
-  - name: analyze_existing
-    type: boolean
-    required: false
-    description: Analyze existing project structure instead of using prompt
-  - name: include_security
-    type: boolean
-    required: false
-    description: 'Include security documentation (default: true)'
-  - name: include_api_docs
-    type: boolean
-    required: false
-    description: 'Include API documentation (default: true)'
-outputs:
-  - name: documentation_files
-    type: structured
-    format: JSON with file paths and metadata
-    description: Generated documentation files with metadata
-cache_strategy:
-  type: content_based
-  ttl: 7200
-  invalidation: manual
-  scope: command
-success_signals:
-  - 'All documentation files created successfully'
-  - 'Files saved to docs/'
-  - 'Documentation structure validated'
-failure_modes:
-  - 'Invalid project prompt or description'
-  - 'Missing required agents for documentation generation'
-  - 'Documentation directory not accessible'
+temperature: 0.1
+category: utility
+params:
+  required:
+    - name: prompt
+      description: Project description or prompt to generate documentation from
+      type: string
+  optional:
+    - name: analyze_existing
+      description: Analyze existing project structure instead of using prompt
+      type: boolean
+    - name: include_security
+      description: "Include security documentation (default: true)"
+      type: boolean
+    - name: include_api_docs
+      description: "Include API documentation (default: true)"
+      type: boolean
 ---
-
 # Generate Project Documentation
 
 You are tasked with generating comprehensive project documentation based on a project prompt or existing project structure. This command orchestrates multiple specialized agents to create all essential documentation for a project.

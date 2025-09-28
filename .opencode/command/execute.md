@@ -1,43 +1,27 @@
 ---
 name: execute
-mode: command
 description: Execute a specific implementation plan from docs/plans/
-version: 2.0.0-internal
-last_updated: 2025-09-13
-command_schema_version: 1.0
-inputs:
-  - name: plan_path
-    type: string
-    required: true
-    description: Path to the implementation plan in docs/plans/
-  - name: ticket_reference
-    type: string
-    required: false
-    description: Reference to original ticket or issue
-  - name: start_phase
-    type: number
-    required: false
-    description: "Phase number to start execution from (default: first unchecked)"
+mode: command
+model: anthropic/claude-sonnet-4
+version: 2.1.0-optimized
+last_updated: 2025-09-28
+command_schema_version: "1.0"
 outputs:
-  - name: execution_status
-    type: structured
-    format: JSON with phase completion and issues
-    description: Detailed execution status and progress tracking
+  - name: result
+    type: string
+    description: Command execution result
 cache_strategy:
   type: content_based
-  ttl: 1800
-  invalidation: manual
+  ttl: 3600
   scope: command
 success_signals:
-  - 'Plan execution completed successfully'
-  - 'All phases implemented and verified'
-  - 'Plan file updated with completion status'
+  - Command completed successfully
+  - Task executed without errors
 failure_modes:
-  - 'Plan file not found or invalid'
-  - 'Implementation blocked by technical issues'
-  - 'Verification checks failing'
+  - Command execution failed
+  - Invalid parameters provided
+  - System error occurred
 ---
-
 # Execute Implementation Plan
 
 You are tasked with implementing an approved technical plan from `docs/plans/`. This command uses intelligent caching to optimize implementation workflows and maintain consistency across similar execution patterns.

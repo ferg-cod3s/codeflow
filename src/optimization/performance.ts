@@ -1,6 +1,6 @@
-import { readFile, stat } from "node:fs/promises";
-import { join } from "node:path";
-import type { Agent, ParseError } from "../conversion/agent-parser.js";
+import { readFile, stat } from 'node:fs/promises';
+import { join } from 'node:path';
+import type { Agent, Command, ParsedEntity, ParseError } from '../conversion/agent-parser.js';
 
 /**
  * Performance optimization utilities for the codeflow system
@@ -19,7 +19,6 @@ interface PerformanceMetrics {
   syncOperationTime: number;
   cacheHitRate: number;
 }
-
 /**
  * Agent parsing cache with file modification time tracking
  */
@@ -37,14 +36,13 @@ class AgentParseCache {
     try {
       const stats = await stat(filePath);
       const mtime = stats.mtime.getTime();
-      
+
       // Check successful parse cache
       const cachedEntry = this.cache.get(filePath);
       if (cachedEntry) {
-        const isValid = 
-          Date.now() - cachedEntry.timestamp < this.maxAge &&
-          cachedEntry.mtime === mtime;
-        
+        const isValid =
+          Date.now() - cachedEntry.timestamp < this.maxAge && cachedEntry.mtime === mtime;
+
         if (isValid) {
           this.hits++;
           return cachedEntry.data;
@@ -56,10 +54,9 @@ class AgentParseCache {
       // Check error cache
       const cachedError = this.errorCache.get(filePath);
       if (cachedError) {
-        const isValid = 
-          Date.now() - cachedError.timestamp < this.maxAge &&
-          cachedError.mtime === mtime;
-        
+        const isValid =
+          Date.now() - cachedError.timestamp < this.maxAge && cachedError.mtime === mtime;
+
         if (isValid) {
           this.hits++;
           return cachedError.data;
@@ -84,17 +81,16 @@ class AgentParseCache {
     try {
       const stats = await stat(filePath);
       const mtime = stats.mtime.getTime();
-      
+
       this.cache.set(filePath, {
         data: agent,
         timestamp: Date.now(),
-        mtime
+        mtime,
       });
     } catch {
       // Ignore if file doesn't exist
     }
   }
-
   /**
    * Cache parse error
    */
@@ -102,11 +98,11 @@ class AgentParseCache {
     try {
       const stats = await stat(filePath);
       const mtime = stats.mtime.getTime();
-      
+
       this.errorCache.set(filePath, {
         data: error,
         timestamp: Date.now(),
-        mtime
+        mtime,
       });
     } catch {
       // Ignore if file doesn't exist
@@ -119,12 +115,12 @@ class AgentParseCache {
   getStats() {
     const total = this.hits + this.misses;
     const hitRate = total > 0 ? (this.hits / total) * 100 : 0;
-    
+
     return {
       hits: this.hits,
       misses: this.misses,
       hitRate: Math.round(hitRate * 100) / 100,
-      cacheSize: this.cache.size + this.errorCache.size
+      cacheSize: this.cache.size + this.errorCache.size,
     };
   }
 
@@ -155,7 +151,7 @@ class SyncBatcher {
    */
   add(filePath: string): void {
     this.pending.add(filePath);
-    
+
     // If batch is full, process immediately
     if (this.pending.size >= this.maxBatchSize) {
       this.flush();
@@ -166,7 +162,7 @@ class SyncBatcher {
     if (this.timer) {
       clearTimeout(this.timer);
     }
-    
+
     this.timer = setTimeout(() => {
       this.flush();
     }, this.batchDelay);
@@ -187,9 +183,9 @@ class SyncBatcher {
 
     const filePaths = Array.from(this.pending);
     this.pending.clear();
-    
+
     // Process batch asynchronously
-    this.onBatch(filePaths).catch(error => {
+    this.onBatch(filePaths).catch((error) => {
       console.error('Batch processing error:', error);
     });
   }
@@ -210,9 +206,9 @@ class PerformanceMonitor {
     fileWatchLatency: 0,
     agentParseTime: 0,
     syncOperationTime: 0,
-    cacheHitRate: 0
+    cacheHitRate: 0,
   };
-  
+
   private parseCache = new AgentParseCache();
   private syncBatcher: SyncBatcher;
 
@@ -254,10 +250,12 @@ class PerformanceMonitor {
   /**
    * Get current performance metrics
    */
-  getMetrics(): PerformanceMetrics & { cache: ReturnType<AgentParseCache['getStats']> } {
+  getMetrics(): PerformanceMetrics & {
+    cache: ReturnType<AgentParseCache['getStats']>;
+  } {
     return {
       ...this.metrics,
-      cache: this.parseCache.getStats()
+      cache: this.parseCache.getStats(),
     };
   }
 
@@ -271,28 +269,28 @@ class PerformanceMonitor {
     cacheHitRate: { target: number; current: number; passing: boolean };
   } {
     const cacheStats = this.parseCache.getStats();
-    
+
     return {
       fileWatchLatency: {
         target: 1000, // < 1 second
         current: this.metrics.fileWatchLatency,
-        passing: this.metrics.fileWatchLatency < 1000
+        passing: this.metrics.fileWatchLatency < 1000,
       },
       agentParseTime: {
         target: 100, // < 100ms per agent
         current: this.metrics.agentParseTime,
-        passing: this.metrics.agentParseTime < 100
+        passing: this.metrics.agentParseTime < 100,
       },
       syncOperationTime: {
         target: 5000, // < 5 seconds
         current: this.metrics.syncOperationTime,
-        passing: this.metrics.syncOperationTime < 5000
+        passing: this.metrics.syncOperationTime < 5000,
       },
       cacheHitRate: {
         target: 70, // > 70% cache hit rate
         current: cacheStats.hitRate,
-        passing: cacheStats.hitRate > 70
-      }
+        passing: cacheStats.hitRate > 70,
+      },
     };
   }
 
@@ -304,7 +302,7 @@ class PerformanceMonitor {
       fileWatchLatency: 0,
       agentParseTime: 0,
       syncOperationTime: 0,
-      cacheHitRate: 0
+      cacheHitRate: 0,
     };
     this.parseCache.clear();
   }
@@ -321,13 +319,11 @@ class OptimizedFileReader {
     try {
       const stats = await stat(filePath);
       const mtime = stats.mtime.getTime();
-      
+
       const cached = this.cache.get(filePath);
       if (cached) {
-        const isValid = 
-          Date.now() - cached.timestamp < this.maxAge &&
-          cached.mtime === mtime;
-        
+        const isValid = Date.now() - cached.timestamp < this.maxAge && cached.mtime === mtime;
+
         if (isValid) {
           return cached.data;
         } else {
@@ -336,11 +332,11 @@ class OptimizedFileReader {
       }
 
       const content = await readFile(filePath, 'utf-8');
-      
+
       this.cache.set(filePath, {
         data: content,
         timestamp: Date.now(),
-        mtime
+        mtime,
       });
 
       return content;
@@ -374,10 +370,7 @@ export {
   SyncBatcher,
   OptimizedFileReader,
   globalPerformanceMonitor,
-  globalFileReader
+  globalFileReader,
 };
 
-export type {
-  PerformanceMetrics,
-  CacheEntry
-};
+export type { PerformanceMetrics, CacheEntry };

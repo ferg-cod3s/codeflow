@@ -121,57 +121,58 @@ if (values.version) {
 // Handle help (both --help flag and help command)
 if (values.help || command === 'help' || !command) {
   console.log(`
-codeflow - Intelligent AI workflow management
+ codeflow - Intelligent AI workflow management
 
-Usage:
-  codeflow <command> [options]
+ Usage:
+   codeflow <command> [options]
 
-Commands:
-  setup [project-path]       Smart setup for Claude Code or OpenCode integration (use --global for global directories)
-  status [project-path]      Check which files are up-to-date or outdated
-  sync [options]             Sync agents and commands across formats
-  fix-models [options]       Fix model configurations (default: global, use --local for project)
-  convert <source> <target> <format>  Convert agents between formats
-  watch start [options]      Start automatic file synchronization daemon
-  catalog <subcommand>       Browse, search, and install catalog items
-  discover [query]           Find agents by use case (e.g., "build API", "fix performance")
+ Commands:
+   setup [project-path]       Set up codeflow directory structure and copy agents/commands
+   status [project-path]      Check which files are up-to-date or outdated
+   sync [project-path]        Synchronize agents and commands with global configuration
+   fix-models [options]       Fix model configurations (default: global, use --local for project)
+   convert <source> <target> <format>  Convert agents between formats
+   watch start [options]      Start automatic file synchronization daemon
+   catalog <subcommand>       Browse, search, and install catalog items
+   discover [query]           Find agents by use case (e.g., "build API", "fix performance")
 
-Catalog Subcommands:
-  catalog list [type] [source]     List catalog items (optional: filter by type or source)
-  catalog search <term> [options]  Search catalog items
-  catalog info <item-id>           Show detailed information about an item
-  catalog install <item-id> [targets]  Install item to specified targets
-  catalog import <source> [options]    Import items from external source
-  catalog update [item-ids]        Update catalog items
-  catalog remove <item-id>         Remove item from catalog
-  catalog health-check             Check catalog health and integrity
-  catalog sync [options]           Sync catalog with external sources
+ Catalog Subcommands:
+   catalog list [type] [source]     List catalog items (optional: filter by type or source)
+   catalog search <term> [options]  Search catalog items
+   catalog info <item-id>           Show detailed information about an item
+   catalog install <item-id> [targets]  Install item to specified targets
+   catalog import <source> [options]    Import items from external source
+   catalog update [item-ids]        Update catalog items
+   catalog remove <item-id>         Remove item from catalog
+   catalog health-check             Check catalog health and integrity
+   catalog sync [options]           Sync catalog with external sources
 
-Options:
-  -f, --force               Force overwrite existing setup
-  -t, --type <type>         Project type: claude-code, opencode, general
-  --validate                Validate agents during operations (default: true)
-  --dry-run                 Show what would be changed without writing files
-  -g, --global              Sync to global directories (~/.claude, ~/.config/opencode)
-  --project <path>          Project directory for operations
-  --source <format>         Source format: base, claude-code, opencode
-  --target <format>         Target format: base, claude-code, opencode
-  --source-format <format>  Source format for sync (default: base)
+ Options:
+   -f, --force               Force overwrite existing setup
+   -t, --type <type>         Project type: claude-code, opencode, general
+   --validate                Validate agents during operations (default: true)
+   --dry-run                 Show what would be changed without writing files
+   -g, --global              Sync to global directories (~/.claude, ~/.config/opencode)
+   --project <path>          Project directory for operations
+   --source <format>         Source format: base, claude-code, opencode
+   --target <format>         Target format: base, claude-code, opencode
+   --source-format <format>  Source format for sync (default: base)
+   --local                   Fix models in current project (for fix-models command)
 
-Examples:
-  codeflow setup ~/my-project
-  codeflow status .
-  codeflow sync                        # Sync to project directories
-  codeflow sync --global               # Sync to global directories (~/.claude, ~/.config/opencode)
-  codeflow sync --global --dry-run     # Preview global sync changes
-  codeflow fix-models                  # Fix model IDs globally
-  codeflow fix-models --local          # Fix model IDs in current project
-  codeflow convert ./codeflow-agents ./claude-agents claude-code
-  codeflow watch start --global
-  codeflow catalog list agent          # List all agents
-  codeflow catalog search "code review"  # Search for code review items
-  codeflow catalog install claude-templates/blog-writer --target claude-code
-`);
+ Examples:
+   codeflow setup ~/my-project
+   codeflow status .
+   codeflow sync                        # Sync to project directories
+   codeflow sync --global               # Sync to global directories (~/.claude, ~/.config/opencode)
+   codeflow sync --global --dry-run     # Preview global sync changes
+   codeflow fix-models                  # Fix model IDs globally
+   codeflow fix-models --local          # Fix model IDs in current project
+   codeflow convert ./codeflow-agents ./claude-agents claude-code
+   codeflow watch start --global
+   codeflow catalog list agent          # List all agents
+   codeflow catalog search "code review"  # Search for code review items
+   codeflow catalog install claude-templates/blog-writer --target claude-code
+ `);
   process.exit(0);
 }
 
@@ -203,7 +204,7 @@ switch (command) {
     await fixModels({
       dryRun: values['dry-run'],
       verbose: values.help || false,
-      global: !hasLocalFlag  // Default to global unless --local is specified
+      global: !hasLocalFlag, // Default to global unless --local is specified
     });
     break;
   case 'convert':
@@ -277,7 +278,7 @@ switch (command) {
       id: args[2],
       adapter: values.adapter,
       filter: values.filter ? values.filter.split(',') : undefined,
-      exclude: values.exclude ? values.exclude.split(',') : undefined
+      exclude: values.exclude ? values.exclude.split(',') : undefined,
     };
     await catalog(catalogSubcommand, catalogOptions);
     break;
@@ -287,7 +288,7 @@ switch (command) {
     await discover(discoverQuery, {
       complexity: values.complexity,
       useCase: values['use-case'],
-      domain: values.domain
+      domain: values.domain,
     });
     break;
 

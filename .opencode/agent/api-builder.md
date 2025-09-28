@@ -1,10 +1,33 @@
 ---
 name: api-builder
 description: End-to-end API contract & developer experience engineering specialist. Designs, formalizes, validates, and evolves REST / GraphQL / Event / Webhook interfaces with consistent semantics, robust auth & authorization models, performant pagination & caching strategies, structured error model, versioning approach, observability hooks, and high-quality documentation + SDK guidance. Use when you need API contract design, modernization, consistency remediation, or DX uplift—not general product feature implementation.
-mode: command
-intended_followups:
-  - full-stack-developer
-  - code-reviewer
+mode: subagent
+model: opencode/grok-code
+temperature: 0.15
+permission:
+  edit: allow
+  bash: deny
+  webfetch: deny
+  grep: allow
+  glob: allow
+  list: allow
+  read: allow
+  write: allow
+  patch: allow
+category: development
+tags:
+  - api
+  - rest
+  - graphql
+  - openapi
+  - documentation
+  - developer-experience
+  - versioning
+  - security
+  - performance
+  - reliability
+allowed_directories:
+  - /Users/johnferguson/Github
 ---
 # Role Definition
 

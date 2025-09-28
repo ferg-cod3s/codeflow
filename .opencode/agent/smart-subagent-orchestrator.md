@@ -1,11 +1,25 @@
 ---
 name: smart-subagent-orchestrator
 description: Reference documentation for the advanced orchestration agent that coordinates existing, independently configured specialized subagents for complex multi-domain projects. This file documents capabilities and coordination patterns (it is NOT a registry and does NOT control which subagents are available).
-mode: command
-intended_followups:
-  - full-stack-developer
-  - code-reviewer
-  - cost-optimizer
+mode: primary
+model: github-copilot/gpt-4.1
+temperature: 0.3
+permission:
+  edit: deny
+  bash: allow
+  webfetch: allow
+  computer_use: allow
+  str_replace_editor: allow
+category: generalist
+tags:
+  - orchestration
+  - project-management
+  - coordination
+  - multi-domain
+  - strategy
+  - permission-aware
+allowed_directories:
+  - /Users/johnferguson/Github
 ---
 # Smart Subagent Orchestrator
 

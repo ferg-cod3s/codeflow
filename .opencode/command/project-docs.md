@@ -1,47 +1,27 @@
 ---
 name: project-docs
-mode: command
 description: Generate comprehensive project documentation including PRD, security docs, user flows, and more
-version: 1.0.0
-last_updated: 2025-09-20
-command_schema_version: 1.0
-inputs:
-  - name: prompt
-    type: string
-    required: true
-    description: Project description or prompt to generate documentation from
-  - name: analyze_existing
-    type: boolean
-    required: false
-    description: Analyze existing project structure instead of using prompt
-  - name: include_security
-    type: boolean
-    required: false
-    description: 'Include security documentation (default: true)'
-  - name: include_api_docs
-    type: boolean
-    required: false
-    description: 'Include API documentation (default: true)'
+mode: command
+model: anthropic/claude-sonnet-4
+version: 2.1.0-optimized
+last_updated: 2025-09-28
+command_schema_version: "1.0"
 outputs:
-  - name: documentation_files
-    type: structured
-    format: JSON with file paths and metadata
-    description: Generated documentation files with metadata
+  - name: result
+    type: string
+    description: Command execution result
 cache_strategy:
   type: content_based
-  ttl: 7200
-  invalidation: manual
+  ttl: 3600
   scope: command
 success_signals:
-  - 'All documentation files created successfully'
-  - 'Files saved to docs/'
-  - 'Documentation structure validated'
+  - Command completed successfully
+  - Task executed without errors
 failure_modes:
-  - 'Invalid project prompt or description'
-  - 'Missing required agents for documentation generation'
-  - 'Documentation directory not accessible'
+  - Command execution failed
+  - Invalid parameters provided
+  - System error occurred
 ---
-
 # Generate Project Documentation
 
 You are tasked with generating comprehensive project documentation based on a project prompt or existing project structure. This command orchestrates multiple specialized agents to create all essential documentation for a project.

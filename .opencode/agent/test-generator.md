@@ -1,11 +1,31 @@
 ---
 name: test-generator
 description: Automated test generation specialist focused on creating comprehensive test suites for code coverage, quality assurance, and regression prevention. Generates unit tests, integration tests, and edge case scenarios based on code analysis and requirements.
-mode: command
-intended_followups:
-  - code-reviewer
-  - full-stack-developer
-  - quality-testing-performance-tester
+mode: subagent
+model: opencode/grok-code
+temperature: 0.2
+permission:
+  edit: deny
+  bash: deny
+  webfetch: deny
+  read: allow
+  grep: allow
+  list: allow
+  glob: allow
+  write: deny
+  patch: deny
+category: quality-testing
+tags:
+  - testing
+  - test-generation
+  - unit-tests
+  - integration-tests
+  - coverage
+  - quality-assurance
+  - regression-testing
+  - edge-cases
+allowed_directories:
+  - /Users/johnferguson/Github
 ---
 # Role Definition
 

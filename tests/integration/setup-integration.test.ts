@@ -34,7 +34,7 @@ describe('Setup Integration', () => {
     );
 
     // Run setup
-    await setup(projectDir);
+    await setup(projectDir, {});
 
     // Verify commands directory was created
     expect(existsSync(join(projectDir, '.claude', 'commands'))).toBe(true);
@@ -61,7 +61,7 @@ describe('Setup Integration', () => {
     await mkdir(opencodeDir, { recursive: true });
 
     // Run setup
-    await setup(projectDir);
+    await setup(projectDir, {});
 
     // Verify directories were created
     expect(existsSync(join(projectDir, '.opencode', 'command'))).toBe(true);
@@ -78,7 +78,7 @@ describe('Setup Integration', () => {
 
   test('should setup general project with opencode format', async () => {
     // Run setup without specific type (should detect as general)
-    await setup(projectDir);
+    await setup(projectDir, {});
 
     // Verify OpenCode directories were created (general projects default to opencode)
     expect(existsSync(join(projectDir, '.opencode', 'command'))).toBe(true);
@@ -100,7 +100,7 @@ describe('Setup Integration', () => {
     );
 
     // Run setup
-    await setup(projectDir);
+    await setup(projectDir, {});
 
     // Verify README was created/updated
     const readmePath = join(projectDir, 'README.md');
@@ -122,7 +122,7 @@ describe('Setup Integration', () => {
     );
 
     // Run setup first time to create the setup directories
-    await setup(projectDir);
+    await setup(projectDir, {});
 
     // Verify setup was created
     expect(existsSync(join(projectDir, '.claude', 'commands'))).toBe(true);
@@ -130,7 +130,7 @@ describe('Setup Integration', () => {
 
     // Run setup second time without force (should detect existing setup and return early)
     // This should complete successfully
-    expect(setup(projectDir)).resolves.toBeUndefined();
+    expect(setup(projectDir, {})).resolves.toBeUndefined();
 
     // Verify directories still exist after second run
     expect(existsSync(join(projectDir, '.claude', 'commands'))).toBe(true);
@@ -152,7 +152,7 @@ describe('Setup Integration', () => {
     await writeFile(join(commandsDir, 'existing.md'), '# Existing command');
 
     // Run setup without force (should skip)
-    await setup(projectDir);
+    await setup(projectDir, {});
 
     // Verify existing file is still there
     expect(existsSync(join(commandsDir, 'existing.md'))).toBe(true);
