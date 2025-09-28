@@ -6,11 +6,11 @@ version: 2.1.0-optimized
 last_updated: 2025-09-17
 command_schema_version: 1.0
 inputs:
-   - name: current_date
-     type: string
-     required: false
-     description: Current date for research document (auto-generated)
-     default: auto
+  - name: current_date
+    type: string
+    required: false
+    description: Current date for research document (auto-generated)
+    default: auto
   - name: ticket
     type: string
     required: true

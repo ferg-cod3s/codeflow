@@ -290,7 +290,7 @@ tools:
       };
       
       // Attempt conversion
-      const convertedAgent = converter.convert(invalidAgent, 'opencode');
+      const convertedAgent = converter.convert(invalidAgent as any, 'opencode');
       
       // Validate the result
       const validation = validator.validate(convertedAgent);
@@ -315,7 +315,7 @@ tools:
         filePath: '/test/valid.md'
       };
       
-      const convertedAgent = converter.convert(validAgent, 'claude-code');
+      const convertedAgent = converter.convert(validAgent as any, 'claude-code');
       const validation = validator.validate(convertedAgent);
       
       expect(validation.valid).toBe(true);

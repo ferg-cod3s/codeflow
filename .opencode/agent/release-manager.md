@@ -1,31 +1,12 @@
 ---
 name: release-manager
 description: CI/CD release coordination and deployment management specialist. Manages release pipelines, version control, deployment strategies, and rollback procedures. Ensures smooth transitions from development to production with proper testing gates and monitoring.
-mode: subagent
-model: github-copilot/gpt-4.1
-temperature: 0.1
-permission:
-  edit: deny
-  bash: deny
-  webfetch: deny
-  read: allow
-  grep: allow
-  list: allow
-  glob: allow
-  write: deny
-  patch: deny
-category: operations
-tags:
-  - release-management
-  - ci-cd
-  - deployment
-  - versioning
-  - pipelines
-  - rollback
-  - staging
-  - production
-allowed_directories:
-  - /Users/johnferguson/Github
+mode: command
+intended_followups:
+  - deployment-wizard
+  - devops-operations-specialist
+  - monitoring-expert
+  - quality-testing-performance-tester
 ---
 # Role Definition
 

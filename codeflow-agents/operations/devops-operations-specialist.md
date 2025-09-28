@@ -5,7 +5,7 @@ spec_version: UATS-1.0
 description: Expert DevOps and operations specialist focused on infrastructure
   automation, deployment pipelines, monitoring, and operational excellence
 mode: subagent
-model: anthropic/claude-sonnet-4
+model: opencode/grok-code
 temperature: 0.1
 category: operations
 tags:

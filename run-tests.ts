@@ -127,6 +127,7 @@ class TestRunner {
       const result = await $`${cmd}`;
       
       // Parse results
+      await $`bun test tests/unit/ --reporter json`;
       const output = result.stdout.toString();
       const passed = (output.match(/✓/g) || []).length;
       const failed = (output.match(/✗/g) || []).length;

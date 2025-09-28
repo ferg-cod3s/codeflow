@@ -320,6 +320,72 @@ version: <semver or commit>
 
 ## Caching Guidelines
 
+## Enhanced Subagent Orchestration for Documentation
+
+### Comprehensive Documentation Workflow
+
+For multi-audience documentation requiring domain expertise and content specialization:
+
+#### Phase 1: Content Analysis & Planning (Parallel)
+- **codebase-locator**: Identify all components and files requiring documentation
+- **codebase-analyzer**: Understand implementation details for technical accuracy
+- **thoughts-analyzer**: Review existing documentation patterns and standards
+- **codebase-pattern-finder**: Identify established documentation patterns
+- **content-writer**: Primary agent for content creation and audience adaptation
+
+#### Phase 2: Technical Documentation Generation (Sequential)
+- **api-builder**: Generate API documentation and contract specifications
+- **database-expert**: Document data models, schemas, and database interactions
+- **system-architect**: Provide architectural context and design decisions
+- **performance-engineer**: Document performance characteristics and limitations
+- **security-scanner**: Include security considerations and best practices
+
+#### Phase 3: Specialized Content Creation (Parallel)
+- **accessibility-pro**: Create accessibility documentation and guidelines
+- **compliance-expert**: Document regulatory compliance requirements and procedures
+- **ux-optimizer**: Provide user experience documentation and workflows
+- **content-localization-coordinator**: Plan internationalization and localization documentation
+- **deployment-wizard**: Document deployment procedures and operational requirements
+
+#### Phase 4: Content Review & Validation (Sequential)
+- **code-reviewer**: Validate technical accuracy and code references
+- **quality-testing-performance-tester**: Review performance-related documentation
+- **monitoring-expert**: Validate monitoring and alerting documentation
+- **full-stack-developer**: Confirm implementation details are accurately represented
+
+#### Phase 5: Content Publishing & Maintenance (Parallel)
+- **thoughts-analyzer**: Update internal documentation and knowledge base
+- **content-localization-coordinator**: Coordinate translation and localization efforts
+- **devops-operations-specialist**: Document operational procedures and runbooks
+- **infrastructure-builder**: Document infrastructure requirements and configurations
+
+### Documentation Orchestration Best Practices
+
+1. **Audience Analysis**: Use content-writer for audience-specific content adaptation
+2. **Technical Accuracy**: Coordinate with domain experts for technical content validation
+3. **Comprehensive Coverage**: Include all relevant technical and operational aspects
+4. **Quality Validation**: Use code-reviewer and domain specialists for accuracy verification
+5. **Maintenance Planning**: Establish processes for keeping documentation current
+
+### Documentation Quality Gates
+
+- **Technical Accuracy**: All code references and implementation details validated
+- **Audience Appropriateness**: Content tailored for specified audience types
+- **Completeness**: All features, APIs, and functionality documented
+- **Consistency**: Documentation follows established patterns and standards
+- **Accessibility**: Documentation accessible to all intended users
+- **Maintenance**: Processes established for keeping documentation current
+
+### Content Optimization Strategies
+
+- **Modular Documentation**: Create reusable content components
+- **Version Control**: Document version-specific features and changes
+- **Search Optimization**: Include metadata and keywords for discoverability
+- **Interactive Elements**: Include code examples, tutorials, and interactive demos
+- **Feedback Integration**: Establish processes for documentation improvement
+- **Localization Planning**: Plan for international audience requirements
+
+
 ### Cache Usage Patterns
 
 - **Template caching**: Store successful documentation templates by audience type

@@ -4,7 +4,7 @@ import { readdir, stat } from 'fs/promises';
 import { existsSync } from 'fs';
 import path from 'path';
 import { readFile } from 'fs/promises';
-import { CommandValidator } from '../yaml/command-validator.js';
+import { CommandValidator, ValidationError, ValidationWarning } from '../yaml/command-validator.js';
 import CLIErrorHandler from './error-handler.js';
 
 /**
@@ -371,7 +371,7 @@ export async function validateCommands(options: CommandValidationOptions = {}) {
       allResults.forEach((result, index) => {
         if (result.errors.length > 0) {
           console.log(`\nDirectory ${index + 1}:`);
-          result.errors.forEach((error, errorIndex) => {
+          result.errors.forEach((error: ValidationError, errorIndex: number) => {
             console.log(`  ${errorIndex + 1}. ${error.file}: ${error.message}`);
             if (error.suggestion) {
               console.log(`     💡 ${error.suggestion}`);
@@ -386,7 +386,7 @@ export async function validateCommands(options: CommandValidationOptions = {}) {
       allResults.forEach((result, index) => {
         if (result.warnings.length > 0) {
           console.log(`\nDirectory ${index + 1}:`);
-          result.warnings.forEach((warning, warningIndex) => {
+          result.warnings.forEach((warning: ValidationWarning, warningIndex: number) => {
             console.log(`  ${warningIndex + 1}. ${warning.message}`);
             if (warning.suggestion) {
               console.log(`     💡 ${warning.suggestion}`);
@@ -464,7 +464,7 @@ export function generateCommandFixReport(
   results.forEach((item, index) => {
     fixes.push(`\n### File ${index + 1}: ${item.file}`);
     if (item.result.errors) {
-      item.result.errors.forEach((error: any, errorIndex: number) => {
+      item.result.errors.forEach((error: ValidationError, errorIndex: number) => {
         fixes.push(`  Error ${errorIndex + 1}: ${error.message}`);
         if (error.suggestion) {
           fixes.push(`    Suggestion: ${error.suggestion}`);

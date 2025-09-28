@@ -197,6 +197,74 @@ Create atomic, well-structured git commits that follow conventional commit stand
 - **Message templates**: Cache conventional commit message structures
 - **File grouping**: Remember successful file grouping strategies
 
+## Enhanced Subagent Orchestration for Commit Management
+
+### Comprehensive Commit Workflow
+
+For structured commit creation requiring change analysis and validation:
+
+#### Phase 1: Change Analysis & Validation (Parallel)
+- **codebase-locator**: Identify all changed files and their relationships
+- **codebase-analyzer**: Understand the nature and impact of code changes
+- **thoughts-analyzer**: Review change documentation and implementation notes
+- **codebase-pattern-finder**: Identify change patterns and grouping opportunities
+- **code-reviewer**: Validate code quality before committing
+
+#### Phase 2: Commit Planning & Organization (Sequential)
+- **full-stack-developer**: Validate technical correctness of changes
+- **system-architect**: Assess architectural impact of changes
+- **api-builder**: Verify API contract changes are properly documented
+- **database-expert**: Validate database schema and migration changes
+- **security-scanner**: Ensure security changes are properly implemented
+
+#### Phase 3: Quality Assurance Validation (Parallel)
+- **test-generator**: Verify test changes are included and comprehensive
+- **quality-testing-performance-tester**: Validate performance impact of changes
+- **compliance-expert**: Ensure regulatory compliance changes are complete
+- **accessibility-pro**: Verify accessibility changes are properly implemented
+- **monitoring-expert**: Validate monitoring and alerting changes
+
+#### Phase 4: Documentation & Communication (Sequential)
+- **thoughts-analyzer**: Ensure documentation changes are included
+- **content-writer**: Validate user-facing documentation updates
+- **content-localization-coordinator**: Verify internationalization changes
+- **deployment-wizard**: Ensure deployment-related changes are complete
+
+#### Phase 5: Final Validation & Commit (Parallel)
+- **infrastructure-builder**: Validate infrastructure changes are complete
+- **devops-operations-specialist**: Verify operational changes are ready
+- **cost-optimizer**: Validate cost-related changes are appropriate
+- **code-reviewer**: Final comprehensive quality assessment
+
+### Commit Orchestration Best Practices
+
+1. **Change Analysis**: Always analyze the scope and impact of changes before committing
+2. **Quality Validation**: Use code-reviewer and domain experts to validate changes
+3. **Atomic Commits**: Group related changes into logical, independent commits
+4. **Documentation Updates**: Ensure all documentation changes are included
+5. **Testing Validation**: Verify test changes are comprehensive and passing
+6. **Security Review**: Validate security implications of changes
+
+### Commit Quality Gates
+
+- **Code Quality**: All changes pass code review standards
+- **Test Coverage**: Adequate tests included for all changes
+- **Documentation**: Documentation updated for all user-facing changes
+- **Security**: Security implications reviewed and addressed
+- **Performance**: Performance impact assessed and acceptable
+- **Compliance**: Regulatory requirements properly addressed
+- **Atomicity**: Each commit represents a single, coherent change
+
+### Commit Optimization Strategies
+
+- **Logical Grouping**: Group related changes into atomic commits
+- **Conventional Messages**: Use standardized commit message formats
+- **Change Validation**: Validate each commit meets quality standards
+- **Incremental Commits**: Commit frequently with small, focused changes
+- **Revert Readiness**: Ensure each commit can be safely reverted if needed
+- **Branch Strategy**: Follow established branching and merging practices
+
+
 ### Cache Invalidation Triggers
 
 - **Manual**: Clear cache when commit conventions change

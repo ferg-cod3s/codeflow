@@ -351,6 +351,75 @@ Systematically validate implementation correctness by comparing executed changes
 
 ## Caching Guidelines
 
+## Enhanced Subagent Orchestration for Review & Validation
+
+### Comprehensive Validation Workflow
+
+For thorough implementation validation requiring multi-domain expertise:
+
+#### Phase 1: Implementation Analysis (Parallel)
+- **codebase-locator**: Identify all implemented components and changed files
+- **codebase-analyzer**: Understand implementation details and code changes
+- **thoughts-analyzer**: Review implementation documentation and notes
+- **codebase-pattern-finder**: Validate adherence to established patterns
+- **code-reviewer**: Primary agent for comprehensive code quality validation
+
+#### Phase 2: Domain-Specific Validation (Sequential)
+- **full-stack-developer**: Validate technical implementation correctness
+- **api-builder**: Verify API contracts and integration implementations
+- **database-expert**: Validate database changes and data integrity
+- **security-scanner**: Assess security implementation and vulnerability mitigation
+- **performance-engineer**: Validate performance requirements and optimizations
+- **accessibility-pro**: Verify accessibility compliance implementation
+- **compliance-expert**: Validate regulatory compliance requirements
+
+#### Phase 3: Quality Assurance Validation (Parallel)
+- **test-generator**: Verify test coverage and quality of test implementations
+- **quality-testing-performance-tester**: Validate performance testing and benchmarks
+- **monitoring-expert**: Verify monitoring and alerting implementations
+- **infrastructure-builder**: Validate infrastructure and deployment changes
+- **deployment-wizard**: Verify deployment procedures and rollback capabilities
+
+#### Phase 4: Integration & System Validation (Sequential)
+- **system-architect**: Validate architectural compliance and design integrity
+- **devops-operations-specialist**: Verify operational readiness and procedures
+- **cost-optimizer**: Validate cost implications and optimizations
+- **content-localization-coordinator**: Verify internationalization implementations
+
+#### Phase 5: Documentation & Reporting (Parallel)
+- **thoughts-analyzer**: Validate documentation updates and completeness
+- **content-writer**: Review user-facing documentation accuracy
+- **code-reviewer**: Final comprehensive quality assessment
+
+### Review Orchestration Best Practices
+
+1. **Comprehensive Analysis**: Use multiple domain experts for thorough validation
+2. **Code Quality First**: Always include code-reviewer for fundamental quality assessment
+3. **Domain Validation**: Engage appropriate specialists for domain-specific requirements
+4. **Integration Testing**: Validate system-level integration and interactions
+5. **Documentation Verification**: Ensure all documentation is accurate and complete
+6. **Risk Assessment**: Identify and prioritize any remaining issues or gaps
+
+### Validation Quality Gates
+
+- **Code Quality**: Comprehensive code review with all issues addressed
+- **Functional Correctness**: All planned features implemented and working
+- **Security Compliance**: Security requirements properly implemented
+- **Performance Standards**: Performance requirements met and validated
+- **Test Coverage**: Adequate test coverage with passing tests
+- **Documentation**: Complete and accurate documentation provided
+- **Operational Readiness**: Deployment and operational procedures validated
+
+### Review Optimization Strategies
+
+- **Automated Validation**: Leverage automated checks and testing frameworks
+- **Parallel Assessment**: Use multiple reviewers simultaneously for efficiency
+- **Incremental Validation**: Validate implementation phases as they complete
+- **Risk-Based Prioritization**: Focus validation efforts on high-risk areas
+- **Continuous Feedback**: Provide ongoing feedback during implementation
+- **Comprehensive Reporting**: Generate detailed reports with actionable recommendations
+
+
 ### Cache Usage Patterns
 
 - **Validation approaches**: Store successful validation methodologies for similar plans

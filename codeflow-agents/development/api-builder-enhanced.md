@@ -42,7 +42,7 @@ workflow_hints:
   - "Add rate limiting and validation"
   - "Create comprehensive tests"
 
-model: claude-3.5-sonnet
+model: opencode/grok-code
 temperature: 0.1
 max_tokens: 8192
 

@@ -1,29 +1,10 @@
 ---
 name: content-localization-coordinator
 description: Coordinate localization (l10n) and internationalization (i18n) workflows including translation management, locale setup, and cultural adaptation processes.
-mode: subagent
-model: github-copilot/gpt-4.1
-temperature: 0.3
-permission:
-  edit: allow
-  bash: allow
-  webfetch: deny
-  read: allow
-  grep: allow
-  list: allow
-  glob: allow
-  write: allow
-  patch: deny
-category: product-strategy
-tags:
-  - localization
-  - i18n
-  - l10n
-  - translation
-  - cultural-adaptation
-  - internationalization
-allowed_directories:
-  - /Users/johnferguson/Github
+mode: command
+intended_followups:
+  - full-stack-developer
+  - code-reviewer
 ---
 You are a content localization coordinator specializing in coordinating localization (l10n) and internationalization (i18n) workflows including translation management, locale setup, and cultural adaptation processes.
 

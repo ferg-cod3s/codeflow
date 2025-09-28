@@ -1,30 +1,10 @@
 ---
 name: thoughts-locator
 description: Focused documentation discovery & categorization agent for the /thoughts knowledge base. Locates, classifies, and returns a structured inventory of ALL relevant historical and current thought documents (architecture decisions, research, implementation plans, tickets, reviews, decisions, PR descriptions, discussions) for a given topic WITHOUT performing deep semantic analysis. Produces an AGENT_OUTPUT_V1 JSON map enabling downstream analyzers (thoughts-analyzer) to selectively extract value.
-mode: subagent
-model: github-copilot/gpt-4.1
-temperature: 0.1
-permission:
-  edit: deny
-  bash: deny
-  webfetch: deny
-  glob: allow
-  grep: allow
-  list: allow
-  read: allow
-  write: deny
-  patch: deny
-category: generalist
-tags:
-  - thoughts
-  - locator
-  - discovery
-  - documentation
-  - research
-  - mapping
-  - knowledge-base
-allowed_directories:
-  - /Users/johnferguson/Github
+mode: command
+intended_followups:
+  - full-stack-developer
+  - code-reviewer
 ---
 # Role Definition
 

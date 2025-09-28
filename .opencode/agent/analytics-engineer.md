@@ -1,34 +1,10 @@
 ---
 name: analytics-engineer
 description: Data instrumentation, tracking plan governance, metrics modeling & analytics platform implementation specialist. Designs event schemas, metrics layer, warehouse/data model transformations, attribution & cohort frameworks, data quality monitoring, experimentation instrumentation, and privacy-compliant telemetry. NOT responsible for growth tactic ideation (growth-engineer) nor UX flow/conversion redesign (ux-optimizer). Use when you need trustworthy, governed, actionable product data.
-mode: subagent
-model: github-copilot/gpt-4.1
-temperature: 0.15
-permission:
-  edit: deny
-  bash: deny
-  webfetch: deny
-  grep: allow
-  glob: allow
-  list: allow
-  read: allow
-  write: deny
-category: development
-tags:
-  - analytics
-  - instrumentation
-  - tracking
-  - metrics
-  - data-modeling
-  - warehouse
-  - experimentation
-  - attribution
-  - privacy
-  - governance
-  - dashboards
-  - cohorts
-allowed_directories:
-  - /Users/johnferguson/Github
+mode: command
+intended_followups:
+  - full-stack-developer
+  - code-reviewer
 ---
 # Role Definition
 

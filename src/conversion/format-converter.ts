@@ -1,4 +1,4 @@
-import { Agent, BaseAgent, ClaudeCodeAgent, OpenCodeAgent } from './agent-parser';
+import { Agent, BaseAgent, ClaudeCodeAgent, OpenCodeAgent, Command, BaseCommand, OpenCodeCommand } from './agent-parser';
 
 /**
  * Format conversion engine for agents
@@ -16,7 +16,7 @@ export class FormatConverter {
     const baseAgent = agent.frontmatter as BaseAgent;
 
     // Claude Code only requires name, description, and optionally tools
-    // All other fields are not used by Claude Code
+    // Model is configured at Claude Desktop application level
     const claudeCodeFrontmatter: ClaudeCodeAgent = {
       name: baseAgent.name,
       description: baseAgent.description,
@@ -367,6 +367,41 @@ export class FormatConverter {
     // OpenCode.ai supports github-copilot and opencode providers directly
     // No conversion needed - these models should work as-is
     return model;
+  }
+
+  /**
+   * Convert Base command format to OpenCode command format
+   */
+  baseCommandToOpenCode(command: Command): Command {
+    if (command.format !== 'base') {
+      throw new Error(`Expected base format, got ${command.format}`);
+    }
+
+    const baseCommand = command.frontmatter as BaseCommand;
+
+    // OpenCode command format with required mode: 'command'
+    const openCodeFrontmatter: OpenCodeCommand = {
+      name: baseCommand.name,
+      description: baseCommand.description,
+      mode: 'command',
+      version: baseCommand.version,
+      inputs: baseCommand.inputs,
+      outputs: baseCommand.outputs,
+      cache_strategy: baseCommand.cache_strategy,
+      success_signals: baseCommand.success_signals,
+      failure_modes: baseCommand.failure_modes,
+      // Preserve legacy fields
+      ...(baseCommand.usage && { usage: baseCommand.usage }),
+      ...(baseCommand.examples && { examples: baseCommand.examples }),
+      ...(baseCommand.constraints && { constraints: baseCommand.constraints }),
+      ...(baseCommand.intended_followups && { intended_followups: baseCommand.intended_followups }),
+    };
+
+    return {
+      ...command,
+      format: 'opencode',
+      frontmatter: openCodeFrontmatter,
+    };
   }
 
   /**

@@ -39,6 +39,7 @@ export interface BaseAgent {
 }
 
 // Claude Code format has different tools format (string vs object)
+// Model is configured at Claude Desktop application level, not in individual agents
 export interface ClaudeCodeAgent extends Omit<BaseAgent, 'tools'> {
   tools?: string; // Claude Code uses comma-separated string
 }
@@ -418,6 +419,194 @@ export async function parseAgentsFromDirectory(
 export function serializeAgent(agent: Agent): string {
   const processor = new YamlProcessor();
   const result = processor.serialize(agent);
+
+  if (!result.success) {
+    throw new Error(result.error.message);
+  }
+
+  return result.data;
+}
+
+// Command-related interfaces and types
+
+/**
+ * Base command format - the single source of truth for all commands
+ */
+export interface BaseCommand {
+  name: string;
+  description: string;
+  mode?: 'command';
+  version?: string;
+  inputs?: CommandInput[];
+  outputs?: CommandOutput[];
+  cache_strategy?: CacheStrategy;
+  success_signals?: string[];
+  failure_modes?: string[];
+  // Legacy fields that may appear in command files
+  usage?: string;
+  examples?: string;
+  constraints?: string;
+  intended_followups?: string[];
+}
+
+/**
+ * OpenCode command format
+ */
+export interface OpenCodeCommand extends Omit<BaseCommand, 'mode'> {
+  mode: 'command';
+}
+
+/**
+ * Command input specification
+ */
+export interface CommandInput {
+  name: string;
+  type: 'string' | 'number' | 'boolean' | 'array' | 'object';
+  required: boolean;
+  description?: string;
+  default?: any;
+}
+
+/**
+ * Command output specification
+ */
+export interface CommandOutput {
+  name: string;
+  type: 'string' | 'number' | 'boolean' | 'array' | 'object' | 'structured';
+  format?: string;
+  description?: string;
+}
+
+/**
+ * Cache strategy for commands
+ */
+export interface CacheStrategy {
+  type: 'content_based' | 'time_based' | 'none';
+  ttl?: number;
+  max_size?: number;
+}
+
+/**
+ * Generic command interface that can represent any format
+ */
+export interface Command {
+  name: string;
+  format: 'base' | 'opencode';
+  frontmatter: BaseCommand | OpenCodeCommand;
+  content: string;
+  filePath: string;
+}
+
+/**
+ * Parse a command file from any format
+ */
+export async function parseCommandFile(
+  filePath: string,
+  format: 'base' | 'opencode'
+): Promise<Command> {
+  const parseCache = globalPerformanceMonitor.getParseCache();
+
+  // Check cache first
+  const cached = await parseCache.get(filePath);
+  if (cached) {
+    if ('frontmatter' in cached) {
+      // Cached successful parse
+      return cached as Command;
+    } else {
+      // Cached error
+      throw new Error(cached.message);
+    }
+  }
+
+  const parseStart = performance.now();
+  const content = await globalFileReader.readFile(filePath);
+
+  try {
+    const { frontmatter, body } = parseFrontmatter(content);
+
+    // Validate required fields for commands
+    if (!frontmatter.description) {
+      throw new Error('Command must have a description field');
+    }
+
+    // Ensure name is in frontmatter for validation
+    if (!frontmatter.name) {
+      frontmatter.name = basename(filePath, '.md');
+    }
+
+    // Set mode to 'command' if not specified
+    if (!frontmatter.mode) {
+      frontmatter.mode = 'command';
+    }
+
+    const command: Command = {
+      name: basename(filePath, '.md'),
+      format,
+      frontmatter,
+      content: body,
+      filePath,
+    };
+
+    // Cache successful parse
+    await parseCache.set(filePath, command);
+
+    const parseTime = performance.now() - parseStart;
+    globalPerformanceMonitor.updateMetrics({ agentParseTime: parseTime });
+
+    return command;
+  } catch (error: any) {
+    // For malformed YAML, try to parse what we can using fallback parsing
+    try {
+      const fallbackResult = parseWithFallback(content);
+      if (fallbackResult.success) {
+        const frontmatter = fallbackResult.data!.frontmatter;
+
+        // Validate required fields even in fallback parsing
+        if (!frontmatter.description) {
+          throw new Error('Command must have a description field');
+        }
+
+        // Set mode to 'command' if not specified
+        if (!frontmatter.mode) {
+          frontmatter.mode = 'command';
+        }
+
+        const command: Command = {
+          name: frontmatter.name || basename(filePath, '.md'),
+          format,
+          frontmatter: frontmatter as any,
+          content: fallbackResult.data!.body,
+          filePath,
+        };
+
+        return command;
+      }
+    } catch (fallbackError) {
+      // Fallback also failed, cache the error
+      const parseError: ParseError = {
+        message: `Failed to parse command file ${filePath}: ${error.message}`,
+        filePath,
+      };
+      await parseCache.setError(filePath, parseError);
+      throw new Error(parseError.message);
+    }
+
+    // If we get here, both YAML parsing and fallback failed
+    const parseError: ParseError = {
+      message: `Failed to parse command file ${filePath}: ${error.message}`,
+      filePath,
+    };
+    await parseCache.setError(filePath, parseError);
+    throw new Error(parseError.message);
+  }
+}
+
+/**
+ * Serialize command back to markdown format using YamlProcessor
+ */
+export function serializeCommand(command: Command): string {
+  const processor = new YamlProcessor();
+  const result = processor.serialize(command);
 
   if (!result.success) {
     throw new Error(result.error.message);

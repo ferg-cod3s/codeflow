@@ -65,11 +65,12 @@ function convertOpenCodeToClaude(openCodeContent: string): string {
   };
   
   // Remove OpenCode-specific fields
-  delete claudeMetadata['mode'];
-  delete claudeMetadata['primary_objective'];
-  delete claudeMetadata['anti_objectives'];
-  delete claudeMetadata['tools'];
-  delete claudeMetadata['permission'];
+    const metadataAny = claudeMetadata as any;
+  delete metadataAny['mode'];
+    delete metadataAny['primary_objective'];
+    delete metadataAny['anti_objectives'];
+    delete metadataAny['tools'];
+    delete metadataAny['permission'];
   
   return `---\n${yaml.stringify(claudeMetadata)}---\n${content}`;
 }

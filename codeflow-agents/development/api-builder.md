@@ -10,7 +10,7 @@ description: End-to-end API contract & developer experience engineering
   guidance. Use when you need API contract design, modernization, consistency
   remediation, or DX uplift—not general product feature implementation.
 mode: subagent
-model: github-copilot/gpt-4.1
+model: opencode/grok-code
 temperature: 0.15
 category: development
 tags:

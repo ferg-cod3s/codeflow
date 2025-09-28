@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'bun:test';
-import { CommandValidator } from '../../src/yaml/command-validator';
+import { CommandValidator, ValidationError, ValidationWarning } from '../../src/yaml/command-validator';
 
 describe('OpenCode Command Syntax Validation', () => {
   const validator = new CommandValidator();
@@ -34,17 +34,17 @@ describe('OpenCode Command Syntax Validation', () => {
 
   test('rejects missing name field', async () => {
     const invalid = { ...validCommandStructure };
-    delete invalid.name;
+     (invalid as any).name = undefined;
     const schemaResult = (validator as any).validateSchema(invalid);
     expect(schemaResult.valid).toBe(false);
-    expect(schemaResult.errors.some(e => e.code === 'MISSING_NAME')).toBe(true);
+    expect(schemaResult.errors.some((e: ValidationError) => e.code === 'MISSING_NAME')).toBe(true);
   });
 
   test('validates mode must be command', async () => {
     const invalid = { ...validCommandStructure, mode: 'agent' };
     const schemaResult = (validator as any).validateSchema(invalid);
     expect(schemaResult.valid).toBe(false);
-    expect(schemaResult.errors.some(e => e.code === 'INVALID_MODE')).toBe(true);
+    expect(schemaResult.errors.some((e: ValidationError) => e.code === 'INVALID_MODE')).toBe(true);
   });
 
   test('validates input structure', async () => {
@@ -54,7 +54,7 @@ describe('OpenCode Command Syntax Validation', () => {
     };
     const schemaResult = (validator as any).validateSchema(invalid);
     expect(schemaResult.valid).toBe(false);
-    expect(schemaResult.errors.some(e => e.code === 'INVALID_INPUT_SCHEMA')).toBe(true);
+    expect(schemaResult.errors.some((e: ValidationError) => e.code === 'INVALID_INPUT_SCHEMA')).toBe(true);
   });
 
   test('validates cache strategy format', async () => {
@@ -64,7 +64,7 @@ describe('OpenCode Command Syntax Validation', () => {
     };
     const schemaResult = (validator as any).validateSchema(invalid);
     expect(schemaResult.valid).toBe(false);
-    expect(schemaResult.errors.some(e => e.code === 'INVALID_CACHE_TYPE')).toBe(true);
+    expect(schemaResult.errors.some((e: ValidationError) => e.code === 'INVALID_CACHE_TYPE')).toBe(true);
   });
 
   test('validates variable references', async () => {
@@ -82,8 +82,8 @@ Ticket: {{ticket}}`;
     };
 
     const variableResult = (validator as any).validateVariableReferences(content, frontmatter);
-    expect(variableResult.errors.some(e => e.code === 'UNDEFINED_VARIABLE')).toBe(true); // 'plan' and 'ticket' not defined
-    expect(variableResult.warnings.some(w => w.message.includes('unused'))).toBe(false); // All inputs are used
+    expect(variableResult.errors.some((e: ValidationError) => e.code === 'UNDEFINED_VARIABLE')).toBe(true); // 'plan' and 'ticket' not defined
+    expect(variableResult.warnings.some((w: ValidationWarning) => w.message.includes('unused'))).toBe(false); // All inputs are used
   });
 
   test('warns about unused inputs', async () => {
@@ -99,7 +99,7 @@ Ticket: {{ticket}}`;
     };
 
     const variableResult = (validator as any).validateVariableReferences(content, frontmatter);
-    expect(variableResult.warnings.some(w => w.message.includes('files'))).toBe(true);
-    expect(variableResult.warnings.some(w => w.message.includes('plan'))).toBe(true);
+    expect(variableResult.warnings.some((w: ValidationWarning) => w.message.includes('files'))).toBe(true);
+    expect(variableResult.warnings.some((w: ValidationWarning) => w.message.includes('plan'))).toBe(true);
   });
 });

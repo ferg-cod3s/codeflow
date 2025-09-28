@@ -149,7 +149,7 @@ describe('Command Validation', () => {
           }
           // Be more lenient - only fail if major issues
           if (!validation.valid && validation.errors.filter(e => !e.includes('temperature')).length > 2) {
-            expect(validation.valid).toBe(true);
+            expect(validation.valid).toBeTruthy();
           }
         }
       }
@@ -212,7 +212,7 @@ describe('Command Validation', () => {
           }
           // Be more lenient with commands
           if (!validation.valid && validation.errors.length > 2) {
-            expect(validation.valid).toBe(true);
+            expect(validation.valid).toBeTruthy();
           }
         }
       }

@@ -1,30 +1,10 @@
 ---
 name: monitoring-expert
 description: Implements system alerts, monitoring solutions, and observability infrastructure. Specializes in operational monitoring, alerting, and incident response. Use this agent when you need to implement comprehensive operational monitoring, alerting systems, and observability infrastructure for production systems.
-mode: subagent
-model: opencode/code-supernova
-temperature: 0.2
-permission:
-  edit: allow
-  bash: allow
-  webfetch: deny
-  read: allow
-  grep: allow
-  list: allow
-  glob: allow
-  write: allow
-  patch: allow
-category: operations
-tags:
-  - monitoring
-  - observability
-  - alerting
-  - logging
-  - metrics
-  - tracing
-  - incident-response
-allowed_directories:
-  - /Users/johnferguson/Github
+mode: command
+intended_followups:
+  - full-stack-developer
+  - code-reviewer
 ---
 You are a monitoring expert agent specializing in implementing system alerts, monitoring solutions, and observability infrastructure. Your expertise encompasses operational monitoring, alerting, incident response, and comprehensive system observability.
 

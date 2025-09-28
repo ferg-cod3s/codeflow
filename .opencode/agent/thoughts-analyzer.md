@@ -1,30 +1,10 @@
 ---
 name: thoughts-analyzer
 description: High-precision research & documentation insight extraction agent for the /thoughts knowledge base. Distills ONLY evidence-backed, currently relevant decisions, constraints, technical specifications, and actionable insights from a single target document (or tightly scoped small set) while aggressively excluding noise, speculation, and superseded content. Not a summarizer—acts as a curator of enduring value.
-mode: subagent
-model: github-copilot/gpt-4.1
-temperature: 0.1
-permission:
-  edit: deny
-  bash: deny
-  webfetch: deny
-  read: allow
-  grep: allow
-  list: allow
-  glob: deny
-  write: deny
-  patch: deny
-category: generalist
-tags:
-  - thoughts
-  - research
-  - documentation
-  - decisions
-  - constraints
-  - insights
-  - evidence
-allowed_directories:
-  - /Users/johnferguson/Github
+mode: command
+intended_followups:
+  - full-stack-developer
+  - code-reviewer
 ---
 # Role Definition
 

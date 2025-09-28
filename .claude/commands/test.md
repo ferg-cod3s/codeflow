@@ -353,6 +353,73 @@ Create complete test coverage including automated unit/integration tests, manual
 
 ## Caching Guidelines
 
+## Enhanced Subagent Orchestration for Testing
+
+### Comprehensive Testing Workflow
+
+For thorough test generation and validation requiring multiple testing domains:
+
+#### Phase 1: Test Strategy Development (Parallel)
+- **codebase-locator**: Identify all components and files that need testing
+- **codebase-analyzer**: Understand implementation details and dependencies
+- **thoughts-analyzer**: Review existing test documentation and testing patterns
+- **codebase-pattern-finder**: Identify established testing patterns in the codebase
+- **test-generator**: Primary agent for comprehensive test suite generation
+
+#### Phase 2: Domain-Specific Test Generation (Sequential)
+- **api-builder**: Generate API contract and integration tests
+- **database-expert**: Create database interaction and migration tests
+- **security-scanner**: Develop security-focused test cases
+- **performance-engineer**: Design performance and load testing scenarios
+- **accessibility-pro**: Generate accessibility compliance tests
+- **compliance-expert**: Create regulatory compliance validation tests
+
+#### Phase 3: Test Execution & Validation (Parallel)
+- **quality-testing-performance-tester**: Execute performance, load, and stress tests
+- **full-stack-developer**: Validate test implementation and fix issues
+- **code-reviewer**: Review test code quality and coverage completeness
+- **monitoring-expert**: Validate monitoring and alerting test scenarios
+
+#### Phase 4: Integration & System Testing (Sequential)
+- **infrastructure-builder**: Test infrastructure and deployment scenarios
+- **deployment-wizard**: Validate deployment and rollback testing
+- **devops-operations-specialist**: Test operational procedures and monitoring
+- **cost-optimizer**: Validate cost-related test scenarios
+
+#### Phase 5: Documentation & Reporting (Parallel)
+- **content-writer**: Document test scenarios and procedures
+- **thoughts-analyzer**: Update testing documentation and best practices
+- **content-localization-coordinator**: Test internationalization scenarios
+
+### Testing Orchestration Best Practices
+
+1. **Comprehensive Coverage**: Use multiple domain experts to ensure complete test coverage
+2. **Test-First Generation**: Leverage test-generator for systematic test creation
+3. **Domain Validation**: Include security, performance, and compliance testing
+4. **Quality Assurance**: Use code-reviewer to validate test quality
+5. **Integration Testing**: Include infrastructure and deployment validation
+6. **Documentation Updates**: Keep testing documentation current
+
+### Test Quality Gates
+
+- **Unit Test Coverage**: Comprehensive unit tests for all functions and methods
+- **Integration Testing**: API, database, and component interaction tests
+- **Security Testing**: Vulnerability and security control validation
+- **Performance Testing**: Load, stress, and performance benchmark tests
+- **Accessibility Testing**: WCAG compliance and usability validation
+- **Compliance Testing**: Regulatory requirement validation
+- **Infrastructure Testing**: Deployment and operational scenario testing
+
+### Test Optimization Strategies
+
+- **Automated Generation**: Use test-generator for systematic test creation
+- **Parallel Execution**: Run independent test suites simultaneously
+- **Incremental Testing**: Test and validate in small increments
+- **Regression Prevention**: Include comprehensive regression test suites
+- **Performance Benchmarking**: Establish performance baselines and thresholds
+- **Monitoring Integration**: Include monitoring and alerting validation
+
+
 ### Cache Usage Patterns
 
 - **Test structures**: Store successful test organization patterns for similar features

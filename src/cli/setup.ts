@@ -97,7 +97,7 @@ async function copyCommands(
                   if (targetDir.includes('.opencode')) {
                     try {
                       const command = await parseCommandFile(sourceFile, 'base');
-                      const convertedCommand = converter.baseToOpenCode(command);
+                      const convertedCommand = converter.baseCommandToOpenCode(command);
                       const serialized = serializeCommand(convertedCommand);
                       await writeFile(targetFile, serialized);
                     } catch (error: any) {

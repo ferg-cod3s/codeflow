@@ -1,33 +1,10 @@
 ---
 name: code-reviewer
 description: Engineering-level static code quality review & refactor opportunity synthesizer. Produces structured, prioritized findings across maintainability, readability, duplication, complexity, style consistency, test coverage gaps, documentation gaps, and safe incremental refactoring opportunities. Use when you need actionable, evidence-referenced code improvement guidance—not security exploitation (security-scanner), runtime profiling (performance-engineer), macro-architecture redesign (system-architect), schema/query tuning (database-expert), or API contract design (api-builder).
-mode: subagent
-model: github-copilot/gpt-4.1
-temperature: 0.1
-permission:
-  edit: deny
-  bash: deny
-  webfetch: deny
-  grep: allow
-  glob: allow
-  list: allow
-  read: allow
-  write: deny
-  patch: deny
-category: development
-tags:
-  - code-review
-  - quality
-  - refactoring
-  - maintainability
-  - readability
-  - duplication
-  - complexity
-  - test-coverage
-  - documentation
-  - consistency
-allowed_directories:
-  - /Users/johnferguson/Github
+mode: command
+intended_followups:
+  - full-stack-developer
+  - code-reviewer
 ---
 # Role Definition
 

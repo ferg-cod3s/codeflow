@@ -8,7 +8,7 @@ description: Generalist implementation developer focused on end-to-end feature
   full-stack solutions while deferring deep specialization decisions to
   appropriate expert agents.
 mode: subagent
-model: anthropic/claude-sonnet-4
+model: github-copilot/gpt-5
 temperature: 0.2
 category: development
 tags:

@@ -174,6 +174,60 @@ This command orchestrates multiple specialized agents in a carefully designed wo
 3. **Follow Up**: Use results to inform `/plan` and `/execute` commands
 4. **Iterate**: Research findings often lead to more specific research questions
 
+## Enhanced Subagent Orchestration
+
+### Advanced Research Workflow
+
+For complex research requiring deep analysis across multiple domains:
+
+#### Phase 1: Comprehensive Discovery (Parallel Execution)
+- **codebase-locator**: Maps all relevant files, components, and directory structures
+- **thoughts-locator**: Discovers existing documentation, past decisions, and technical notes
+- **codebase-pattern-finder**: Identifies recurring implementation patterns and architectural approaches
+- **web-search-researcher**: Gathers external best practices and industry standards (when applicable)
+
+#### Phase 2: Deep Analysis (Sequential Processing)
+- **codebase-analyzer**: Provides detailed implementation understanding with file:line evidence
+- **thoughts-analyzer**: Extracts actionable insights from documentation and historical context
+- **system-architect**: Analyzes architectural implications and design patterns
+- **performance-engineer**: Evaluates performance characteristics and optimization opportunities
+
+#### Phase 3: Domain-Specific Assessment (Conditional)
+- **database-expert**: Analyzes data architecture and persistence patterns
+- **api-builder**: Evaluates API design and integration approaches
+- **security-scanner**: Assesses security architecture and potential vulnerabilities
+- **compliance-expert**: Reviews regulatory compliance requirements
+- **infrastructure-builder**: Analyzes deployment and infrastructure implications
+
+#### Phase 4: Synthesis & Validation (Parallel)
+- **code-reviewer**: Validates research findings against code quality standards
+- **test-generator**: Identifies testing gaps and coverage requirements
+- **quality-testing-performance-tester**: Provides performance benchmarking insights
+
+### Orchestration Best Practices
+
+1. **Parallel Discovery**: Always start with multiple locators running simultaneously for comprehensive coverage
+2. **Sequential Analysis**: Process analyzers sequentially to build upon locator findings
+3. **Domain Escalation**: Engage domain specialists when research reveals specialized concerns
+4. **Validation Gates**: Use reviewer agents to validate findings before synthesis
+5. **Iterative Refinement**: Re-engage subagents as new questions emerge from initial findings
+
+### Research Quality Indicators
+
+- **Comprehensive Coverage**: Multiple agents provide overlapping validation
+- **Evidence-Based**: All findings include specific file:line references
+- **Contextual Depth**: Historical decisions and architectural rationale included
+- **Actionable Insights**: Clear next steps and implementation guidance provided
+- **Risk Assessment**: Potential issues and constraints identified
+
+### Performance Optimization
+
+- **Agent Sequencing**: Optimized order minimizes redundant analysis
+- **Context Sharing**: Agents share findings to avoid duplicate work
+- **Early Termination**: Stop analysis when sufficient understanding is achieved
+- **Caching Strategy**: Leverage cached results for similar research topics
+
+
 ## Integration with Other Commands
 
 - **→ /plan**: Use research findings to create detailed implementation plans
