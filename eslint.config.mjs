@@ -9,8 +9,11 @@ export default [
       '**/node_modules/**',
       '**/dist/**',
       '**/build/**',
-      '**/coverage/**'
-    ]
+      '**/coverage/**',
+      'codeflow-*.js',
+      'debug-path.js',
+      'temp_test_fix.ts',
+    ],
   },
 
   // Base recommended rules for JS
@@ -31,13 +34,13 @@ export default [
         clearTimeout: 'readonly',
         setInterval: 'readonly',
         clearInterval: 'readonly',
-        performance: 'readonly'
-      }
+        performance: 'readonly',
+      },
     },
     rules: {
       'no-unused-vars': 'warn',
-      'no-empty': 'warn'
-    }
+      'no-empty': 'warn',
+    },
   },
 
   // TypeScript files
@@ -47,7 +50,7 @@ export default [
       parser: tsParser,
       parserOptions: {
         ecmaVersion: 'latest',
-        sourceType: 'module'
+        sourceType: 'module',
       },
       globals: {
         // Node/Bun + test globals used throughout the project
@@ -66,11 +69,11 @@ export default [
         beforeAll: 'readonly',
         afterAll: 'readonly',
         beforeEach: 'readonly',
-        afterEach: 'readonly'
-      }
+        afterEach: 'readonly',
+      },
     },
     plugins: {
-      '@typescript-eslint': tsPlugin
+      '@typescript-eslint': tsPlugin,
     },
     rules: {
       // Let TypeScript handle undefined symbols
@@ -80,20 +83,19 @@ export default [
       'no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': [
         'warn',
-        { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }
+        { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
       ],
 
       // Triage rule to reduce noise from switch/case lexical declarations
       'no-case-declarations': 'warn',
 
       // Avoid failing on intentionally empty blocks in WIP areas
-      'no-empty': 'warn'
-    }
+      'no-empty': 'warn',
+    },
   },
 
   // Prettier compatibility handled via eslint-config-prettier when installed
   {
-    rules: {}
-  }
+    rules: {},
+  },
 ];
-

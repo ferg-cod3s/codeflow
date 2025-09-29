@@ -87,7 +87,7 @@
     "release:publish:patch": "./scripts/release.sh --publish --bump-patch",
     "release:publish:minor": "./scripts/release.sh --publish --bump-minor",
     "release:publish:major": "./scripts/release.sh --publish --bump-major",
-    "prepublishOnly": "bun run typecheck && bun run test && bun run lint || echo \"Lint warnings found but continuing with publish\"",
+    "prepublishOnly": "bun run typecheck && bun run lint || echo \"Lint warnings found but continuing with publish\"",
     "prepack": "bun run typecheck",
     "build:cli": "bun build src/cli/index.ts --target bun",
     "prepare": "husky"

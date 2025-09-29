@@ -202,7 +202,7 @@ export class CommandValidator {
   /**
    * Validates command schema against expected structure for the given format
    */
-  private validateSchema(
+  public validateSchema(
     frontmatter: any,
     format: 'claude-code' | 'opencode'
   ): { valid: boolean; errors: ValidationError[] } {

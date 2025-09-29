@@ -59,6 +59,9 @@ export class CatalogCLI {
         case 'install':
           await this.install(options.id, options);
           break;
+        case 'install-all':
+          await this.installAll(options);
+          break;
         case 'update':
           await this.update(options.id);
           break;
@@ -269,6 +272,59 @@ export class CatalogCLI {
     }
 
     console.log(`\n✅ Successfully installed ${item.name}`);
+  }
+
+  // Install all items from the catalog
+  async installAll(
+    options: {
+      target?: string[];
+      global?: boolean;
+      dryRun?: boolean;
+      source?: string;
+      id?: string;
+    } = {}
+  ): Promise<void> {
+    const catalog = await this.loadCatalog();
+
+    let items = catalog.items;
+
+    // Filter by source if specified
+    if (options.source) {
+      items = items.filter((item) => item.source === options.source);
+    }
+
+    if (items.length === 0) {
+      console.log(`\n❌ No items found to install`);
+      return;
+    }
+
+    const targets = options.target || ['claude-code', 'opencode'];
+
+    console.log(`\n📦 Installing all ${items.length} items from catalog...`);
+    console.log(`Targets: ${targets.join(', ')}`);
+
+    if (options.dryRun) {
+      console.log('🔍 Dry run mode - no changes will be made');
+    }
+
+    let successCount = 0;
+    let errorCount = 0;
+
+    for (const item of items) {
+      try {
+        console.log(`\n📥 Installing ${item.name} (${item.kind})...`);
+        await this.install(item.id, options);
+        successCount++;
+      } catch (error) {
+        console.error(`❌ Failed to install ${item.name}: ${error}`);
+        errorCount++;
+      }
+    }
+
+    console.log(`\n📊 Installation Summary:`);
+    console.log(`   ✅ Successful: ${successCount}`);
+    console.log(`   ❌ Failed: ${errorCount}`);
+    console.log(`   📦 Total: ${items.length}`);
   }
 
   private async installToTarget(
@@ -555,10 +611,13 @@ Subcommands:
   info <item-id>
     Show detailed information about an item
 
-  install <item-id> [--target claude-code,opencode] [--global] [--dry-run]
-    Install an item from the catalog
+   install <item-id> [--target claude-code,opencode] [--global] [--dry-run]
+     Install an item from the catalog
 
-  update [item-id]
+   install-all [--target claude-code,opencode] [--global] [--dry-run] [--source name]
+     Install all items from the catalog
+
+   update [item-id]
     Update installed items to latest versions
 
   remove <item-id>
@@ -576,12 +635,14 @@ Subcommands:
   health-check
     Validate installed components
 
-Examples:
-  codeflow catalog list --type agent
-  codeflow catalog search "code review"
-  codeflow catalog install codeflow-core/code-reviewer --global
-  codeflow catalog sync --global
-  codeflow catalog import davila7/claude-code-templates
+ Examples:
+   codeflow catalog list --type agent
+   codeflow catalog search "code review"
+   codeflow catalog install codeflow-core/code-reviewer --global
+   codeflow catalog install-all --global --dry-run  # Preview installing all items
+   codeflow catalog sync --global
+   codeflow catalog import davila7/claude-code-templates
+   codeflow catalog import davila7/claude-code-templates --dry-run  # Preview import
 
 This replaces the previous commands:
   - codeflow setup → catalog install + sync

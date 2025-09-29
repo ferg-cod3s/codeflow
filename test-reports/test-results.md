@@ -1,12 +1,12 @@
 # Test Results Report
 
-**Generated:** 2025-09-28T22:35:33.396Z
+**Generated:** 2025-09-29T00:00:05.834Z
 
 ## Summary
 
-- **Total Tests:** 0
+- **Total Tests:** 8
 - **Passed:** 0 ✅
-- **Failed:** 0 ❌
+- **Failed:** 8 ❌
 - **Skipped:** 0 ⏭️
 - **Duration:** 0.00s
 
@@ -14,3 +14,11 @@
 
 | Suite | Passed | Failed | Skipped | Duration |
 |-------|--------|--------|---------|----------|
+| ❌ CLI Commands | 0 | 1 | 0 | 0.00s |
+| ❌ Format Conversion | 0 | 1 | 0 | 0.00s |
+| ❌ Agent Validation | 0 | 1 | 0 | 0.00s |
+| ❌ Command Validation | 0 | 1 | 0 | 0.00s |
+| ❌ OpenCode Syntax Validation | 0 | 1 | 0 | 0.00s |
+| ❌ OpenCode Variable Substitution | 0 | 1 | 0 | 0.00s |
+| ❌ OpenCode Integration | 0 | 1 | 0 | 0.00s |
+| ❌ End-to-End | 0 | 1 | 0 | 0.00s |

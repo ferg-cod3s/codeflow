@@ -1,5 +1,9 @@
 import { describe, test, expect } from 'bun:test';
-import { CommandValidator, ValidationError, ValidationWarning } from '../../src/yaml/command-validator';
+import {
+  CommandValidator,
+  ValidationError,
+  ValidationWarning,
+} from '../../src/yaml/command-validator';
 
 describe('OpenCode Command Syntax Validation', () => {
   const validator = new CommandValidator();
@@ -11,38 +15,36 @@ describe('OpenCode Command Syntax Validation', () => {
     version: '2.0.0',
     inputs: [
       { name: 'scope', type: 'string', required: true },
-      { name: 'files', type: 'array', required: false }
+      { name: 'files', type: 'array', required: false },
     ],
-    outputs: [
-      { name: 'test_results', type: 'structured', format: 'JSON' }
-    ],
+    outputs: [{ name: 'test_results', type: 'structured', format: 'JSON' }],
     cache_strategy: {
       type: 'content_based',
-      ttl: 900
+      ttl: 900,
     },
     success_signals: ['Test suite generated successfully'],
-    failure_modes: ['Test generation failed']
+    failure_modes: ['Test generation failed'],
   };
 
   test('validates required fields', async () => {
     const result = await validator.validateFile('/dev/null'); // We'll test with actual file later
     // For now, test the schema validation directly
-    const schemaResult = (validator as any).validateSchema(validCommandStructure);
+    const schemaResult = (validator as any).validateSchema(validCommandStructure, 'opencode');
     expect(schemaResult.valid).toBe(true);
     expect(schemaResult.errors).toHaveLength(0);
   });
 
   test('rejects missing name field', async () => {
     const invalid = { ...validCommandStructure };
-     (invalid as any).name = undefined;
-    const schemaResult = (validator as any).validateSchema(invalid);
+    (invalid as any).name = undefined;
+    const schemaResult = (validator as any).validateSchema(invalid, 'opencode');
     expect(schemaResult.valid).toBe(false);
     expect(schemaResult.errors.some((e: ValidationError) => e.code === 'MISSING_NAME')).toBe(true);
   });
 
   test('validates mode must be command', async () => {
     const invalid = { ...validCommandStructure, mode: 'agent' };
-    const schemaResult = (validator as any).validateSchema(invalid);
+    const schemaResult = validator.validateSchema(invalid, 'opencode');
     expect(schemaResult.valid).toBe(false);
     expect(schemaResult.errors.some((e: ValidationError) => e.code === 'INVALID_MODE')).toBe(true);
   });
@@ -50,21 +52,25 @@ describe('OpenCode Command Syntax Validation', () => {
   test('validates input structure', async () => {
     const invalid = {
       ...validCommandStructure,
-      inputs: [{ name: 'test' }] // missing type and required
+      inputs: [{ name: 'test' }], // missing type and required
     };
-    const schemaResult = (validator as any).validateSchema(invalid);
+    const schemaResult = (validator as any).validateSchema(invalid, 'opencode');
     expect(schemaResult.valid).toBe(false);
-    expect(schemaResult.errors.some((e: ValidationError) => e.code === 'INVALID_INPUT_SCHEMA')).toBe(true);
+    expect(
+      schemaResult.errors.some((e: ValidationError) => e.code === 'INVALID_INPUT_SCHEMA')
+    ).toBe(true);
   });
 
   test('validates cache strategy format', async () => {
     const invalid = {
       ...validCommandStructure,
-      cache_strategy: { type: 'invalid_type' }
+      cache_strategy: { type: 'invalid_type' },
     };
-    const schemaResult = (validator as any).validateSchema(invalid);
+    const schemaResult = (validator as any).validateSchema(invalid, 'opencode');
     expect(schemaResult.valid).toBe(false);
-    expect(schemaResult.errors.some((e: ValidationError) => e.code === 'INVALID_CACHE_TYPE')).toBe(true);
+    expect(schemaResult.errors.some((e: ValidationError) => e.code === 'INVALID_CACHE_TYPE')).toBe(
+      true
+    );
   });
 
   test('validates variable references', async () => {
@@ -72,34 +78,42 @@ describe('OpenCode Command Syntax Validation', () => {
 Files: {{files}}
 Plan: {{plan}}
 Ticket: {{ticket}}`;
-    
+
     const frontmatter = {
       ...validCommandStructure,
       inputs: [
         { name: 'scope', type: 'string', required: true },
-        { name: 'files', type: 'array', required: true }
-      ]
+        { name: 'files', type: 'array', required: true },
+      ],
     };
 
     const variableResult = (validator as any).validateVariableReferences(content, frontmatter);
-    expect(variableResult.errors.some((e: ValidationError) => e.code === 'UNDEFINED_VARIABLE')).toBe(true); // 'plan' and 'ticket' not defined
-    expect(variableResult.warnings.some((w: ValidationWarning) => w.message.includes('unused'))).toBe(false); // All inputs are used
+    expect(
+      variableResult.errors.some((e: ValidationError) => e.code === 'UNDEFINED_VARIABLE')
+    ).toBe(true); // 'plan' and 'ticket' not defined
+    expect(
+      variableResult.warnings.some((w: ValidationWarning) => w.message.includes('unused'))
+    ).toBe(false); // All inputs are used
   });
 
   test('warns about unused inputs', async () => {
     const content = `Generate tests for {{scope}}`;
-    
+
     const frontmatter = {
       ...validCommandStructure,
       inputs: [
         { name: 'scope', type: 'string', required: true },
         { name: 'files', type: 'array', required: false }, // This input is not used
-        { name: 'plan', type: 'string', required: false }   // This input is not used
-      ]
+        { name: 'plan', type: 'string', required: false }, // This input is not used
+      ],
     };
 
     const variableResult = (validator as any).validateVariableReferences(content, frontmatter);
-    expect(variableResult.warnings.some((w: ValidationWarning) => w.message.includes('files'))).toBe(true);
-    expect(variableResult.warnings.some((w: ValidationWarning) => w.message.includes('plan'))).toBe(true);
+    expect(
+      variableResult.warnings.some((w: ValidationWarning) => w.message.includes('files'))
+    ).toBe(true);
+    expect(variableResult.warnings.some((w: ValidationWarning) => w.message.includes('plan'))).toBe(
+      true
+    );
   });
 });

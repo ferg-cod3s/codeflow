@@ -4,7 +4,7 @@ description: Comprehensive codebase and documentation analysis using specialized
 mode: command
 model: anthropic/claude-sonnet-4
 version: 2.1.0-optimized
-last_updated: 2025-09-28
+last_updated: 2025-09-29
 command_schema_version: "1.0"
 outputs:
   - name: result

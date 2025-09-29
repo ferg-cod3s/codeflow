@@ -1,27 +1,20 @@
 {
   "version": "1.0.0",
-  "updated": "2025-09-27T03:25:37.505Z",
+  "updated": "2025-09-29T02:02:31.258Z",
   "sources": {
     "codeflow-core": {
       "name": "Codeflow Core",
       "description": "Official Codeflow agents and commands",
       "url": "https://github.com/ferg-cod3s/codeflow",
       "type": "local"
-    },
-    "claude-templates": {
-      "name": "claude-templates",
-      "description": "Adapter for davila7/claude-code-templates repository",
-      "url": "https://github.com/davila7/claude-code-templates",
-      "type": "external",
-      "adapter": "claude-templates"
     }
   },
   "stats": {
-    "total_items": 49,
-    "agents": 33,
-    "commands": 8,
+    "total_items": 47,
+    "agents": 34,
+    "commands": 9,
     "templates": 0,
-    "mcps": 0
+    "mcps": 4
   },
   "items": [
     {
@@ -50,7 +43,7 @@
       "provenance": {
         "repo": "ferg-cod3s/codeflow",
         "path": "codeflow-agents/development/codebase-locator.md",
-        "sha": "4538821",
+        "sha": "ac6702d",
         "license": "MIT",
         "attribution": "Codeflow Team"
       }
@@ -143,7 +136,7 @@
       "provenance": {
         "repo": "ferg-cod3s/codeflow",
         "path": "codeflow-agents/development/codebase-analyzer.md",
-        "sha": "e39e0c3",
+        "sha": "9a52fce",
         "license": "MIT",
         "attribution": "Codeflow Team"
       }
@@ -174,7 +167,7 @@
       "provenance": {
         "repo": "ferg-cod3s/codeflow",
         "path": "codeflow-agents/development/full-stack-developer.md",
-        "sha": "bf3bffd",
+        "sha": "e16986b",
         "license": "MIT",
         "attribution": "Codeflow Team"
       }
@@ -236,7 +229,7 @@
       "provenance": {
         "repo": "ferg-cod3s/codeflow",
         "path": "codeflow-agents/development/api-builder.md",
-        "sha": "2d1bc9f",
+        "sha": "a73da1e",
         "license": "MIT",
         "attribution": "Codeflow Team"
       }
@@ -267,7 +260,7 @@
       "provenance": {
         "repo": "ferg-cod3s/codeflow",
         "path": "codeflow-agents/development/code-reviewer.md",
-        "sha": "1c0174b",
+        "sha": "24ab23d",
         "license": "MIT",
         "attribution": "Codeflow Team"
       }
@@ -298,7 +291,7 @@
       "provenance": {
         "repo": "ferg-cod3s/codeflow",
         "path": "codeflow-agents/development/codebase-pattern-finder.md",
-        "sha": "4008239",
+        "sha": "1b7d30b",
         "license": "MIT",
         "attribution": "Codeflow Team"
       }
@@ -360,7 +353,36 @@
       "provenance": {
         "repo": "ferg-cod3s/codeflow",
         "path": "codeflow-agents/development/system-architect.md",
-        "sha": "864ff3a",
+        "sha": "18b5ac3",
+        "license": "MIT",
+        "attribution": "Codeflow Team"
+      }
+    },
+    {
+      "id": "codeflow-core/api-builder-enhanced",
+      "kind": "agent",
+      "name": "api-builder-enhanced",
+      "version": "1.0.0",
+      "description": "Expert at building robust, scalable APIs with proper authentication, validation, rate limiting, and comprehensive documentation",
+      "tags": [
+        "development",
+        "\"development\""
+      ],
+      "license": "MIT",
+      "source": "codeflow-core",
+      "dependencies": [],
+      "install_targets": [
+        "claude-code",
+        "opencode"
+      ],
+      "conversion_rules": {
+        "base_path": "codeflow-agents/development/api-builder-enhanced.md",
+        "supports_all_formats": true
+      },
+      "provenance": {
+        "repo": "ferg-cod3s/codeflow",
+        "path": "codeflow-agents/development/api-builder-enhanced.md",
+        "sha": "e522fa0",
         "license": "MIT",
         "attribution": "Codeflow Team"
       }
@@ -616,7 +638,7 @@
       "provenance": {
         "repo": "ferg-cod3s/codeflow",
         "path": "codeflow-agents/generalist/smart-subagent-orchestrator.md",
-        "sha": "462820e",
+        "sha": "9a43874",
         "license": "MIT",
         "attribution": "Codeflow Team"
       }
@@ -647,7 +669,7 @@
       "provenance": {
         "repo": "ferg-cod3s/codeflow",
         "path": "codeflow-agents/operations/devops-operations-specialist.md",
-        "sha": "b0ec4ce",
+        "sha": "a63475c",
         "license": "MIT",
         "attribution": "Codeflow Team"
       }
@@ -1000,7 +1022,7 @@
       "provenance": {
         "repo": "ferg-cod3s/codeflow",
         "path": "codeflow-agents/quality-testing/test-generator.md",
-        "sha": "db7f8c6",
+        "sha": "fadbce2",
         "license": "MIT",
         "attribution": "Codeflow Team"
       }
@@ -1098,7 +1120,7 @@
       "provenance": {
         "repo": "ferg-cod3s/codeflow",
         "path": "command/project-docs.md",
-        "sha": "695bda9",
+        "sha": "94edec1",
         "license": "MIT",
         "attribution": "Codeflow Team"
       }
@@ -1127,7 +1149,7 @@
       "provenance": {
         "repo": "ferg-cod3s/codeflow",
         "path": "command/research.md",
-        "sha": "e35fbe2",
+        "sha": "379bceb",
         "license": "MIT",
         "attribution": "Codeflow Team"
       }
@@ -1156,7 +1178,7 @@
       "provenance": {
         "repo": "ferg-cod3s/codeflow",
         "path": "command/plan.md",
-        "sha": "ea32f24",
+        "sha": "cd6c8ff",
         "license": "MIT",
         "attribution": "Codeflow Team"
       }
@@ -1185,7 +1207,36 @@
       "provenance": {
         "repo": "ferg-cod3s/codeflow",
         "path": "command/document.md",
-        "sha": "0b8fb74",
+        "sha": "8059738",
+        "license": "MIT",
+        "attribution": "Codeflow Team"
+      }
+    },
+    {
+      "id": "codeflow-core/cmd-research-enhanced",
+      "kind": "command",
+      "name": "/research-enhanced",
+      "version": "1.0.0",
+      "description": "Comprehensive codebase and documentation analysis using specialized agents to gather context and insights",
+      "tags": [
+        "command",
+        "workflow"
+      ],
+      "license": "MIT",
+      "source": "codeflow-core",
+      "dependencies": [],
+      "install_targets": [
+        "claude-code",
+        "opencode"
+      ],
+      "conversion_rules": {
+        "base_path": "command/research-enhanced.md",
+        "supports_all_formats": true
+      },
+      "provenance": {
+        "repo": "ferg-cod3s/codeflow",
+        "path": "command/research-enhanced.md",
+        "sha": "75b1eee",
         "license": "MIT",
         "attribution": "Codeflow Team"
       }
@@ -1214,7 +1265,7 @@
       "provenance": {
         "repo": "ferg-cod3s/codeflow",
         "path": "command/commit.md",
-        "sha": "e7ab1ee",
+        "sha": "0e96127",
         "license": "MIT",
         "attribution": "Codeflow Team"
       }
@@ -1243,7 +1294,7 @@
       "provenance": {
         "repo": "ferg-cod3s/codeflow",
         "path": "command/test.md",
-        "sha": "ad35988",
+        "sha": "6a1ea04",
         "license": "MIT",
         "attribution": "Codeflow Team"
       }
@@ -1272,7 +1323,7 @@
       "provenance": {
         "repo": "ferg-cod3s/codeflow",
         "path": "command/review.md",
-        "sha": "7f8cb3d",
+        "sha": "ef6447b",
         "license": "MIT",
         "attribution": "Codeflow Team"
       }
@@ -1282,7 +1333,7 @@
       "kind": "command",
       "name": "/execute",
       "version": "1.0.0",
-      "description": "Execute a specific implementation plan from thoughts/plans/",
+      "description": "Execute a specific implementation plan from docs/plans/",
       "tags": [
         "command",
         "workflow"
@@ -1301,329 +1352,133 @@
       "provenance": {
         "repo": "ferg-cod3s/codeflow",
         "path": "command/execute.md",
-        "sha": "d490229",
+        "sha": "900600d",
         "license": "MIT",
         "attribution": "Codeflow Team"
       }
     },
     {
-      "id": "claude-templates/mcp-expert",
-      "kind": "agent",
-      "name": "mcp-expert",
+      "id": "codeflow-core/mcp-agent-registry",
+      "kind": "mcp",
+      "name": "agent-registry",
       "version": "1.0.0",
-      "description": "---",
+      "description": "Convert OpenCode string format to boolean for MCP use",
       "tags": [
-        "template",
-        "claude",
-        "agents"
+        "mcp",
+        "server"
       ],
-      "license": "Apache-2.0",
-      "source": "claude-templates",
+      "license": "MIT",
+      "source": "codeflow-core",
       "dependencies": [],
       "install_targets": [
-        "claude-code",
-        "opencode"
+        "mcp"
       ],
       "conversion_rules": {
-        "base_path": "imported/claude-templates/.claude/agents/mcp-expert.md",
-        "supports_all_formats": true,
+        "base_path": "mcp/agent-registry.mjs",
+        "supports_all_formats": false,
         "supports_formats": [
-          "claude-code",
-          "opencode"
-        ],
-        "lossy_fields": [
-          "model",
-          "temperature",
-          "max_tokens"
+          "mcp"
         ]
       },
       "provenance": {
-        "repo": "davila7/claude-code-templates",
-        "path": ".claude/agents/mcp-expert.md",
-        "sha": "9d3dfaa",
-        "license": "Apache-2.0",
-        "attribution": "davila7",
-        "import_date": "2025-09-27T03:25:37.451Z"
+        "repo": "ferg-cod3s/codeflow",
+        "path": "mcp/agent-registry.mjs",
+        "sha": "cb4d577",
+        "license": "MIT",
+        "attribution": "Codeflow Team"
       }
     },
     {
-      "id": "claude-templates/cli-ui-designer",
-      "kind": "agent",
-      "name": "cli-ui-designer",
+      "id": "codeflow-core/mcp-agent-spawner",
+      "kind": "mcp",
+      "name": "agent-spawner",
       "version": "1.0.0",
-      "description": "CLI interface design specialist. Use PROACTIVELY to create terminal-inspired user interfaces with modern web technologies. Expert in CLI aesthetics, terminal themes, and command-line UX patterns.",
+      "description": "Known legacy underscore names → kebab-case",
       "tags": [
-        "template",
-        "claude",
-        "agents"
+        "mcp",
+        "server"
       ],
-      "license": "Apache-2.0",
-      "source": "claude-templates",
+      "license": "MIT",
+      "source": "codeflow-core",
       "dependencies": [],
       "install_targets": [
-        "claude-code",
-        "opencode"
+        "mcp"
       ],
       "conversion_rules": {
-        "base_path": "imported/claude-templates/.claude/agents/cli-ui-designer.md",
-        "supports_all_formats": true,
+        "base_path": "mcp/agent-spawner.mjs",
+        "supports_all_formats": false,
         "supports_formats": [
-          "claude-code",
-          "opencode"
-        ],
-        "lossy_fields": [
-          "model",
-          "temperature",
-          "max_tokens"
+          "mcp"
         ]
       },
       "provenance": {
-        "repo": "davila7/claude-code-templates",
-        "path": ".claude/agents/cli-ui-designer.md",
-        "sha": "930fc94",
-        "license": "Apache-2.0",
-        "attribution": "davila7",
-        "import_date": "2025-09-27T03:25:37.453Z"
+        "repo": "ferg-cod3s/codeflow",
+        "path": "mcp/agent-spawner.mjs",
+        "sha": "12ea9bc",
+        "license": "MIT",
+        "attribution": "Codeflow Team"
       }
     },
     {
-      "id": "claude-templates/command-expert",
-      "kind": "agent",
-      "name": "command-expert",
+      "id": "codeflow-core/mcp-codeflow-server",
+      "kind": "mcp",
+      "name": "codeflow-server",
       "version": "1.0.0",
-      "description": "---",
+      "description": "Function to find codeflow installation or use fallback paths",
       "tags": [
-        "template",
-        "claude",
-        "agents"
+        "mcp",
+        "server"
       ],
-      "license": "Apache-2.0",
-      "source": "claude-templates",
+      "license": "MIT",
+      "source": "codeflow-core",
       "dependencies": [],
       "install_targets": [
-        "claude-code",
-        "opencode"
+        "mcp"
       ],
       "conversion_rules": {
-        "base_path": "imported/claude-templates/.claude/agents/command-expert.md",
-        "supports_all_formats": true,
+        "base_path": "mcp/codeflow-server.mjs",
+        "supports_all_formats": false,
         "supports_formats": [
-          "claude-code",
-          "opencode"
-        ],
-        "lossy_fields": [
-          "model",
-          "temperature",
-          "max_tokens"
+          "mcp"
         ]
       },
       "provenance": {
-        "repo": "davila7/claude-code-templates",
-        "path": ".claude/agents/command-expert.md",
-        "sha": "e58f14d",
-        "license": "Apache-2.0",
-        "attribution": "davila7",
-        "import_date": "2025-09-27T03:25:37.453Z"
+        "repo": "ferg-cod3s/codeflow",
+        "path": "mcp/codeflow-server.mjs",
+        "sha": "aa6a285",
+        "license": "MIT",
+        "attribution": "Codeflow Team"
       }
     },
     {
-      "id": "claude-templates/docusaurus-expert",
-      "kind": "agent",
-      "name": "docusaurus-expert",
+      "id": "codeflow-core/mcp-mcp-agent-registry",
+      "kind": "mcp",
+      "name": "mcp-agent-registry",
       "version": "1.0.0",
-      "description": "Docusaurus documentation specialist. Use PROACTIVELY when working with Docusaurus documentation in the docs_to_claude folder for site configuration, content management, theming, build troubleshooting,",
+      "description": "Check if file starts with frontmatter delimiter",
       "tags": [
-        "template",
-        "claude",
-        "agents"
+        "mcp",
+        "server"
       ],
-      "license": "Apache-2.0",
-      "source": "claude-templates",
+      "license": "MIT",
+      "source": "codeflow-core",
       "dependencies": [],
       "install_targets": [
-        "claude-code",
-        "opencode"
+        "mcp"
       ],
       "conversion_rules": {
-        "base_path": "imported/claude-templates/.claude/agents/docusaurus-expert.md",
-        "supports_all_formats": true,
+        "base_path": "mcp/mcp-agent-registry.mjs",
+        "supports_all_formats": false,
         "supports_formats": [
-          "claude-code",
-          "opencode"
-        ],
-        "lossy_fields": [
-          "model",
-          "temperature",
-          "max_tokens"
+          "mcp"
         ]
       },
       "provenance": {
-        "repo": "davila7/claude-code-templates",
-        "path": ".claude/agents/docusaurus-expert.md",
-        "sha": "4c81500",
-        "license": "Apache-2.0",
-        "attribution": "davila7",
-        "import_date": "2025-09-27T03:25:37.454Z"
-      }
-    },
-    {
-      "id": "claude-templates/frontend-developer",
-      "kind": "agent",
-      "name": "frontend-developer",
-      "version": "1.0.0",
-      "description": "Frontend development specialist for React applications and responsive design. Use PROACTIVELY for UI components, state management, performance optimization, accessibility implementation, and modern fr",
-      "tags": [
-        "template",
-        "claude",
-        "agents"
-      ],
-      "license": "Apache-2.0",
-      "source": "claude-templates",
-      "dependencies": [],
-      "install_targets": [
-        "claude-code",
-        "opencode"
-      ],
-      "conversion_rules": {
-        "base_path": "imported/claude-templates/.claude/agents/frontend-developer.md",
-        "supports_all_formats": true,
-        "supports_formats": [
-          "claude-code",
-          "opencode"
-        ],
-        "lossy_fields": [
-          "model",
-          "temperature",
-          "max_tokens"
-        ]
-      },
-      "provenance": {
-        "repo": "davila7/claude-code-templates",
-        "path": ".claude/agents/frontend-developer.md",
-        "sha": "7247ea7",
-        "license": "Apache-2.0",
-        "attribution": "davila7",
-        "import_date": "2025-09-27T03:25:37.454Z"
-      }
-    },
-    {
-      "id": "claude-templates/agent-expert",
-      "kind": "agent",
-      "name": "agent-expert",
-      "version": "1.0.0",
-      "description": "---",
-      "tags": [
-        "template",
-        "claude",
-        "agents"
-      ],
-      "license": "Apache-2.0",
-      "source": "claude-templates",
-      "dependencies": [],
-      "install_targets": [
-        "claude-code",
-        "opencode"
-      ],
-      "conversion_rules": {
-        "base_path": "imported/claude-templates/.claude/agents/agent-expert.md",
-        "supports_all_formats": true,
-        "supports_formats": [
-          "claude-code",
-          "opencode"
-        ],
-        "lossy_fields": [
-          "model",
-          "temperature",
-          "max_tokens"
-        ]
-      },
-      "provenance": {
-        "repo": "davila7/claude-code-templates",
-        "path": ".claude/agents/agent-expert.md",
-        "sha": "05fb26b",
-        "license": "Apache-2.0",
-        "attribution": "davila7",
-        "import_date": "2025-09-27T03:25:37.455Z"
-      }
-    },
-    {
-      "id": "claude-templates/lint",
-      "kind": "command",
-      "name": "lint",
-      "version": "1.0.0",
-      "description": "Run Python code linting and formatting tools.",
-      "tags": [
-        "template",
-        "claude",
-        "commands"
-      ],
-      "license": "Apache-2.0",
-      "source": "claude-templates",
-      "dependencies": [],
-      "install_targets": [
-        "claude-code",
-        "opencode"
-      ],
-      "conversion_rules": {
-        "base_path": "imported/claude-templates/.claude/commands/lint.md",
-        "supports_all_formats": true,
-        "supports_formats": [
-          "claude-code",
-          "opencode"
-        ],
-        "lossy_fields": [
-          "model",
-          "temperature",
-          "max_tokens"
-        ]
-      },
-      "provenance": {
-        "repo": "davila7/claude-code-templates",
-        "path": ".claude/commands/lint.md",
-        "sha": "571456f",
-        "license": "Apache-2.0",
-        "attribution": "davila7",
-        "import_date": "2025-09-27T03:25:37.455Z"
-      }
-    },
-    {
-      "id": "claude-templates/test",
-      "kind": "command",
-      "name": "test",
-      "version": "1.0.0",
-      "description": "Run Python tests with pytest, unittest, or other testing frameworks.",
-      "tags": [
-        "template",
-        "claude",
-        "commands"
-      ],
-      "license": "Apache-2.0",
-      "source": "claude-templates",
-      "dependencies": [],
-      "install_targets": [
-        "claude-code",
-        "opencode"
-      ],
-      "conversion_rules": {
-        "base_path": "imported/claude-templates/.claude/commands/test.md",
-        "supports_all_formats": true,
-        "supports_formats": [
-          "claude-code",
-          "opencode"
-        ],
-        "lossy_fields": [
-          "model",
-          "temperature",
-          "max_tokens"
-        ]
-      },
-      "provenance": {
-        "repo": "davila7/claude-code-templates",
-        "path": ".claude/commands/test.md",
-        "sha": "17a43d1",
-        "license": "Apache-2.0",
-        "attribution": "davila7",
-        "import_date": "2025-09-27T03:25:37.456Z"
+        "repo": "ferg-cod3s/codeflow",
+        "path": "mcp/mcp-agent-registry.mjs",
+        "sha": "a714e2c",
+        "license": "MIT",
+        "attribution": "Codeflow Team"
       }
     }
   ]
