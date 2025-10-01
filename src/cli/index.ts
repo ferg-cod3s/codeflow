@@ -9,6 +9,12 @@ import { startWatch } from './watch';
 import { catalog } from './catalog.js';
 import { discover } from './discover.js';
 import { fixModels } from './fix-models.js';
+import { validate } from './validate';
+import { list } from './list';
+import { info } from './info';
+import { update } from './update';
+import { clean } from './clean';
+import { exportProject } from './export';
 import packageJson from '../../package.json';
 import { join } from 'node:path';
 import { existsSync } from 'node:fs';
@@ -129,14 +135,20 @@ Usage:
   codeflow <command> [options]
 
 Commands:
-  setup [project-path]       Set up codeflow directory structure and copy agents/commands
-  status [project-path]      Check which files are up-to-date or outdated
-  sync [project-path]        Synchronize agents and commands with global configuration
-  fix-models [options]       Fix model configurations (default: global, use --local for project)
-  convert <source> <target> <format>  Convert agents between formats
-  watch start [options]      Start automatic file synchronization daemon
-  catalog <subcommand>       Browse, search, and install catalog items
-  discover [query]           Find agents by use case (e.g., "build API", "fix performance")
+   setup [project-path]       Set up codeflow directory structure and copy agents/commands
+   status [project-path]      Check which files are up-to-date or outdated
+   sync [project-path]        Synchronize agents and commands with global configuration
+   fix-models [options]       Fix model configurations (default: global, use --local for project)
+   convert <source> <target> <format>  Convert agents between formats
+   watch start [options]      Start automatic file synchronization daemon
+   catalog <subcommand>       Browse, search, and install catalog items
+   discover [query]           Find agents by use case (e.g., "build API", "fix performance")
+   validate [path]            Validate agents and commands for integrity issues
+   list [path]                List installed agents and commands
+   info <item-name> [path]    Show detailed information about an agent or command
+   update                     Check for and install CLI updates
+   clean [path]               Clean up cache, temp, and orphaned files
+   export [path]              Export project setup to a file
 
 Catalog Subcommands:
   catalog list [type] [source] [--tags tag1,tag2]    List catalog items (filter by type/source/tags)
@@ -334,6 +346,70 @@ switch (command) {
       complexity: values.complexity,
       useCase: values['use-case'],
       domain: values.domain,
+    });
+    break;
+
+  case 'validate':
+    await validate({
+      format: values.format || 'all',
+      path: args[1],
+      checkDuplicates: values['check-duplicates'],
+      canonicalCheck: values['canonical-check'],
+      fix: values.fix,
+      verbose: values.verbose,
+    });
+    break;
+
+  case 'list':
+    const listPath = args[1];
+    await list(listPath, {
+      type: values.type || 'all',
+      platform: values.platform || 'all',
+      format: values.format || 'table',
+      verbose: values.verbose,
+    });
+    break;
+
+  case 'info':
+    const itemName = args[1];
+    if (!itemName) {
+      console.error('Error: info requires an item name');
+      console.error('Usage: codeflow info <item-name>');
+      process.exit(1);
+    }
+    const infoPath = args[2];
+    await info(itemName, infoPath, {
+      format: values.format || 'detailed',
+      showContent: values['show-content'],
+    });
+    break;
+
+  case 'update':
+    const updateAction = args[1];
+    await update({
+      check: updateAction === 'check' || values.check,
+      force: values.force,
+      verbose: values.verbose,
+    });
+    break;
+
+  case 'clean':
+    const cleanPath = args[1];
+    await clean(cleanPath, {
+      dryRun: values['dry-run'],
+      force: values.force,
+      verbose: values.verbose,
+      type: values.type || 'all',
+    });
+    break;
+
+  case 'export':
+    const exportPath = args[1];
+    await exportProject(exportPath, {
+      format: values.format || 'json',
+      output: values.output,
+      includeContent: values['include-content'],
+      verbose: values.verbose,
     });
     break;
 

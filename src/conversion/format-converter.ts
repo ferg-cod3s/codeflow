@@ -5,8 +5,8 @@ import { Agent, BaseAgent, ClaudeCodeAgent, OpenCodeAgent, Command, BaseCommand,
  */
 export class FormatConverter {
   /**
-   * Convert Base format to Claude Code format
-   * Claude Code only requires name, description, and optionally tools
+   * Convert Base format to Claude Code format (v2.x.x specification)
+   * Only allowed fields: name, description, tools (string), model (inherit|sonnet|opus|haiku)
    */
   baseToClaudeCode(agent: Agent): Agent {
     if (agent.format !== 'base') {
@@ -15,19 +15,39 @@ export class FormatConverter {
 
     const baseAgent = agent.frontmatter as BaseAgent;
 
-    // Claude Code only requires name, description, and optionally tools
-    // Model is configured at Claude Desktop application level
+    // Convert tools from object or permission to comma-separated string
+    let toolsString: string | undefined;
+
+    if (baseAgent.tools && typeof baseAgent.tools === 'object') {
+      // Convert tools object to comma-separated string
+      const enabledTools = Object.entries(baseAgent.tools)
+        .filter(([, enabled]) => enabled)
+        .map(([tool]) => tool);
+      toolsString = enabledTools.length > 0 ? enabledTools.join(', ') : undefined;
+    } else if ((baseAgent as any).permission && typeof (baseAgent as any).permission === 'object') {
+      // Convert permission object to tools string
+      const permissions = (baseAgent as any).permission;
+      const allowedTools = Object.entries(permissions)
+        .filter(([, value]) => value === 'allow')
+        .map(([tool]) => tool);
+      toolsString = allowedTools.length > 0 ? allowedTools.join(', ') : undefined;
+    }
+
+    // Validate and convert model to Claude Code format
+    let model: string | undefined;
+    if (baseAgent.model) {
+      model = this.convertModelForClaudeCode(baseAgent.model);
+    }
+
+    // STRICT: Only include Claude Code v2.x.x allowed fields
     const claudeCodeFrontmatter: ClaudeCodeAgent = {
       name: baseAgent.name,
       description: baseAgent.description,
-      // Convert tools object to comma-separated string for Claude Code format
-      tools: baseAgent.tools
-        ? Object.entries(baseAgent.tools)
-            .filter(([, enabled]) => enabled)
-            .map(([tool]) => tool)
-            .join(', ')
-        : undefined,
+      ...(toolsString && { tools: toolsString }),
+      ...(model && { model }),
     };
+
+    // Explicitly strips: mode, temperature, capabilities, permission, tags, category, etc.
 
     return {
       ...agent,
@@ -361,11 +381,63 @@ export class FormatConverter {
   }
 
   /**
-   * Convert model format for OpenCode (if needed)
+   * Convert model format for Claude Code (v2.x.x: inherit|sonnet|opus|haiku)
+   */
+  private convertModelForClaudeCode(model: string): string | undefined {
+    // Map common model names to Claude Code format
+    const modelMap: Record<string, string> = {
+      'claude-sonnet': 'sonnet',
+      'claude-opus': 'opus',
+      'claude-haiku': 'haiku',
+      'anthropic/claude-sonnet-4': 'sonnet',
+      'anthropic/claude-opus-4': 'opus',
+      'anthropic/claude-haiku-4': 'haiku',
+      'inherit': 'inherit',
+      'sonnet': 'sonnet',
+      'opus': 'opus',
+      'haiku': 'haiku',
+    };
+
+    // Check if model is already in valid format
+    if (['inherit', 'sonnet', 'opus', 'haiku'].includes(model)) {
+      return model;
+    }
+
+    // Try to map the model
+    const mapped = modelMap[model.toLowerCase()];
+    if (mapped) {
+      return mapped;
+    }
+
+    // If we can't map it, default to inherit
+    console.warn(`Unknown model '${model}', defaulting to 'inherit' for Claude Code`);
+    return 'inherit';
+  }
+
+  /**
+   * Convert model format for OpenCode (provider/model format)
    */
   private convertModelForOpenCode(model: string): string {
-    // OpenCode.ai supports github-copilot and opencode providers directly
-    // No conversion needed - these models should work as-is
+    // Map Claude Code models to OpenCode format
+    const modelMap: Record<string, string> = {
+      'sonnet': 'anthropic/claude-sonnet-4',
+      'opus': 'anthropic/claude-opus-4',
+      'haiku': 'anthropic/claude-haiku-4',
+      'inherit': 'anthropic/claude-sonnet-4', // Default to sonnet
+    };
+
+    // If already in provider/model format, return as-is
+    if (model.includes('/')) {
+      return model;
+    }
+
+    // Try to map from Claude Code format
+    const mapped = modelMap[model.toLowerCase()];
+    if (mapped) {
+      return mapped;
+    }
+
+    // If we can't map it, return as-is (might be valid OpenCode format already)
     return model;
   }
 

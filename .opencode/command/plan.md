@@ -4,7 +4,7 @@ description: Create an implementation plan from a ticket and research
 mode: command
 model: anthropic/claude-sonnet-4
 version: 2.1.0-optimized
-last_updated: 2025-09-29
+last_updated: 2025-10-01
 command_schema_version: "1.0"
 outputs:
   - name: result

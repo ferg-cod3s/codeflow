@@ -2,7 +2,7 @@ import { Agent, BaseAgent, ClaudeCodeAgent, OpenCodeAgent } from '../conversion/
 
 /**
  * Unified validation engine for all agent formats
- * Provides consistent validation rules and error handling
+ * Enforces Claude Code v2.x.x and OpenCode specifications
  */
 
 export interface ValidationResult {
@@ -23,6 +23,32 @@ export interface ValidationWarning {
 }
 
 export type AgentFormat = 'base' | 'claude-code' | 'opencode';
+
+// Claude Code v2.x.x Specifications
+const CLAUDE_CODE_AGENT_FIELDS = ['name', 'description', 'tools', 'model'] as const;
+const CLAUDE_CODE_MODELS = ['inherit', 'sonnet', 'opus', 'haiku'] as const;
+const CLAUDE_CODE_COMMAND_FIELDS = [
+  'description',
+  'allowed-tools',
+  'argument-hint',
+  'model',
+  'disable-model-invocation',
+] as const;
+
+// OpenCode Specifications
+const OPENCODE_AGENT_REQUIRED = ['name', 'description', 'mode'] as const;
+const OPENCODE_AGENT_OPTIONAL = [
+  'model',
+  'temperature',
+  'tools',
+  'permission',
+  'tags',
+  'category',
+  'allowed_directories',
+] as const;
+const OPENCODE_MODES = ['primary', 'subagent', 'all'] as const;
+const OPENCODE_PERMISSIONS = ['edit', 'bash', 'webfetch'] as const;
+const OPENCODE_PERMISSION_VALUES = ['allow', 'ask', 'deny'] as const;
 
 export class ValidationEngine {
   /**
@@ -97,11 +123,24 @@ export class ValidationEngine {
   }
 
   /**
-   * Validate Claude Code agent format
+   * Validate Claude Code agent format (v2.x.x specification)
    */
   validateClaudeCode(agent: ClaudeCodeAgent): ValidationResult {
     const errors: ValidationError[] = [];
     const warnings: ValidationWarning[] = [];
+
+    // Check for invalid fields (Claude Code v2.x.x only allows specific fields)
+    const agentKeys = Object.keys(agent) as string[];
+    const invalidFields = agentKeys.filter(
+      (key) => !CLAUDE_CODE_AGENT_FIELDS.includes(key as any)
+    );
+
+    if (invalidFields.length > 0) {
+      errors.push({
+        message: `Invalid fields for Claude Code v2.x.x: ${invalidFields.join(', ')}. Only allowed: ${CLAUDE_CODE_AGENT_FIELDS.join(', ')}`,
+        severity: 'error',
+      });
+    }
 
     // Required fields
     this.validateRequiredField(agent.name, 'name', 'Name is required and cannot be empty', errors);
@@ -123,8 +162,16 @@ export class ValidationEngine {
     // Description length validation
     this.validateDescriptionLength(agent.description, warnings);
 
-    // Model validation
-    this.validateModel(agent.model, warnings);
+    // Model validation (Claude Code v2.x.x specific values)
+    if (agent.model) {
+      if (!CLAUDE_CODE_MODELS.includes(agent.model as any)) {
+        errors.push({
+          field: 'model',
+          message: `Invalid model '${agent.model}'. Must be one of: ${CLAUDE_CODE_MODELS.join(', ')}`,
+          severity: 'error',
+        });
+      }
+    }
 
     // Tools validation (string format for Claude Code)
     if (agent.tools !== undefined) {
@@ -150,13 +197,24 @@ export class ValidationEngine {
   }
 
   /**
-   * Validate OpenCode agent format
+   * Validate OpenCode agent format (official OpenCode.ai specification)
    */
   validateOpenCode(agent: OpenCodeAgent): ValidationResult {
     const errors: ValidationError[] = [];
     const warnings: ValidationWarning[] = [];
 
-    // Required fields - CRITICAL FIX: Add name validation
+    // Check for valid fields (OpenCode allows required + optional fields only)
+    const validFields = [...OPENCODE_AGENT_REQUIRED, ...OPENCODE_AGENT_OPTIONAL];
+    const agentKeys = Object.keys(agent) as string[];
+    const invalidFields = agentKeys.filter((key) => !validFields.includes(key as any));
+
+    if (invalidFields.length > 0) {
+      warnings.push({
+        message: `Non-standard fields for OpenCode: ${invalidFields.join(', ')}. May cause compatibility issues.`,
+      });
+    }
+
+    // Required fields
     this.validateRequiredField(agent.name, 'name', 'Name is required for OpenCode format', errors);
     this.validateRequiredField(
       agent.description,
@@ -182,23 +240,69 @@ export class ValidationEngine {
     // Description length validation
     this.validateDescriptionLength(agent.description, warnings);
 
-    // Mode validation
-    this.validateMode(agent.mode, errors);
+    // Mode validation (OpenCode specific values)
+    if (agent.mode && !OPENCODE_MODES.includes(agent.mode as any)) {
+      errors.push({
+        field: 'mode',
+        message: `Invalid mode '${agent.mode}'. Must be one of: ${OPENCODE_MODES.join(', ')}`,
+        severity: 'error',
+      });
+    }
 
-    // Model validation
-    this.validateModel(agent.model, warnings);
+    // Model validation (OpenCode uses provider/model format)
+    if (agent.model) {
+      if (typeof agent.model !== 'string') {
+        errors.push({
+          field: 'model',
+          message: 'Model must be a string',
+          severity: 'error',
+        });
+      } else if (!agent.model.includes('/') && !agent.model.includes('-')) {
+        warnings.push({
+          field: 'model',
+          message: 'Model should use provider/model format (e.g., anthropic/claude-sonnet-4)',
+        });
+      }
+    }
 
-    // Temperature validation (unified range: 0-2, not 0.0-1.0)
-    this.validateTemperature(agent.temperature, 0, 2, errors);
+    // Temperature validation (OpenCode range: 0-2)
+    if (agent.temperature !== undefined) {
+      if (typeof agent.temperature !== 'number') {
+        errors.push({
+          field: 'temperature',
+          message: 'Temperature must be a number',
+          severity: 'error',
+        });
+      } else if (agent.temperature < 0 || agent.temperature > 2) {
+        errors.push({
+          field: 'temperature',
+          message: 'Temperature must be between 0 and 2',
+          severity: 'error',
+        });
+      }
+    }
 
-    // Tools validation
-    this.validateToolsObject(agent.tools, errors, warnings);
+    // Tools validation (object format)
+    if (agent.tools !== undefined) {
+      this.validateToolsObject(agent.tools, errors, warnings);
+    }
 
-    // Permission validation
-    this.validatePermissions(agent.permission, errors);
+    // Permission validation (OpenCode specific: edit, bash, webfetch)
+    if (agent.permission !== undefined) {
+      this.validateOpenCodePermissions(agent.permission, errors);
+    }
+
+    // Either tools OR permission must be defined
+    if (!agent.tools && !agent.permission) {
+      warnings.push({
+        message: 'Neither tools nor permission specified, agent may have limited functionality',
+      });
+    }
 
     // Tags validation
-    this.validateTagsArray(agent.tags, errors);
+    if (agent.tags !== undefined) {
+      this.validateTagsArray(agent.tags, errors);
+    }
 
     // Category validation
     if (agent.category && typeof agent.category !== 'string') {
@@ -380,7 +484,10 @@ export class ValidationEngine {
     }
   }
 
-  private validatePermissions(
+  /**
+   * Validate OpenCode permissions (official spec: edit, bash, webfetch)
+   */
+  private validateOpenCodePermissions(
     permission: Record<string, any> | undefined,
     errors: ValidationError[]
   ): void {
@@ -397,51 +504,24 @@ export class ValidationEngine {
 
     // Validate each permission value
     for (const [action, permValue] of Object.entries(permission)) {
-      if (!['allow', 'ask', 'deny'].includes(permValue as string)) {
+      if (!OPENCODE_PERMISSION_VALUES.includes(permValue as any)) {
         errors.push({
           field: `permission.${action}`,
-          message: `Permission for '${action}' must be one of: allow, ask, deny`,
+          message: `Permission for '${action}' must be one of: ${OPENCODE_PERMISSION_VALUES.join(', ')}`,
           severity: 'error',
         });
       }
     }
 
-    // Ensure required permissions are present
-    this.validateRequiredPermissions(permission, errors);
-
-    // Validate permission consistency (e.g., if write is allowed, read should be too)
-    this.validatePermissionConsistency(permission, errors);
-  }
-
-  /**
-   * Validate that required permissions are present
-   */
-  private validateRequiredPermissions(
-    permission: Record<string, any>,
-    errors: ValidationError[]
-  ): void {
-    const requiredPermissions = ['edit', 'bash', 'webfetch'];
-
-    for (const requiredPerm of requiredPermissions) {
-      if (!(requiredPerm in permission)) {
-        errors.push({
-          field: 'permission',
-          message: `Required permission '${requiredPerm}' is missing`,
-          severity: 'error',
-        });
-      }
+    // Check for required OpenCode permissions (edit, bash, webfetch)
+    const missingPermissions = OPENCODE_PERMISSIONS.filter((perm) => !(perm in permission));
+    if (missingPermissions.length > 0) {
+      errors.push({
+        field: 'permission',
+        message: `Missing required OpenCode permissions: ${missingPermissions.join(', ')}`,
+        severity: 'error',
+      });
     }
-  }
-
-  /**
-   * Validate permission consistency for official OpenCode permissions
-   */
-  private validatePermissionConsistency(
-    permission: Record<string, any>,
-    errors: ValidationError[]
-  ): void {
-    // OpenCode only has edit, bash, and webfetch permissions
-    // No additional consistency checks needed since all permissions are independent
   }
 
   private validateTagsArray(tags: string[] | undefined, errors: ValidationError[]): void {

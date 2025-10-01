@@ -3,7 +3,6 @@ import { parseAgentFile } from '../conversion/agent-parser.js';
 import { readdir, stat } from 'fs/promises';
 import { existsSync } from 'fs';
 import path from 'path';
-import { readFile } from 'fs/promises';
 import { CommandValidator, ValidationError, ValidationWarning } from '../yaml/command-validator.js';
 import CLIErrorHandler from './error-handler.js';
 
