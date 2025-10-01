@@ -1,3 +1,13 @@
+## [0.12.4](https://github.com/ferg-cod3s/codeflow/compare/v0.12.3...v0.12.4) (2025-10-01)
+
+
+### Features
+
+* add comprehensive CLI commands - validate, list, info, update, clean, export ([610eadb](https://github.com/ferg-cod3s/codeflow/commit/610eadb82538cb148534df2c7b2aa766445447fd))
+* add help commands and update command metadata ([b53d309](https://github.com/ferg-cod3s/codeflow/commit/b53d30924218abd38734245e7db9be8c349a8076))
+
+
+
 ## [0.12.3](https://github.com/ferg-cod3s/codeflow/compare/v0.12.2...v0.12.3) (2025-09-28)
 
 
