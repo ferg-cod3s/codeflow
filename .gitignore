@@ -76,3 +76,8 @@ pnpm-debug.log*
 *.temp
 temp/
 tmp/
+bin/
+
+# Environment files
+.env
+.env.local

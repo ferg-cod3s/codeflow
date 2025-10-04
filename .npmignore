@@ -83,3 +83,6 @@ CATALOG_INDEX.json
 .github/
 CONTRIBUTING.md
 CODE_OF_CONDUCT.md
+
+# Local config
+config.json
