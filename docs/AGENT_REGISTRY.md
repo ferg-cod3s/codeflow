@@ -4,18 +4,26 @@
 
 ## Canonical Agent Directory Policy
 
-- `/codeflow-agents/` is the ONLY agent directory that should exist in the repository and is the single source of truth for all agent definitions.
+- `/codeflow-agents/` is the ONLY source-of-truth agent directory for base agent definitions.
 - All agent configuration, schema, and updates must be made exclusively in this directory.
-- Platform-specific agent directories such as `.claude/agents/`, `opencode-agents/`, etc. are NOT maintained in the repository. They are automatically generated as build artifacts during the `codeflow sync` CLI process and should not be manually edited or committed.
-- Only `/codeflow-agents/` should be tracked in version control. Platform-specific agent directories should be listed in `.gitignore` to prevent accidental commits.
+- Platform-specific agent directories (`.claude/agents/`, `.opencode/agent/`) are now tracked in version control to ensure proper conversion and consistency across formats.
+- Agent conversions are validated and committed to ensure all platforms have synchronized, up-to-date agents.
 
-**Example `.gitignore` Entries:**
+**Tracked Agent Directories:**
 
 ```
-# Ignore generated agent directories (do not commit these)
-.claude/agents/
-opencode-agents/
+# Source of truth (base format)
+/codeflow-agents/
+
+# Platform-specific converted formats (tracked)
+/.claude/agents/         # Claude Code format agents
+/.opencode/agent/        # OpenCode format agents
 ```
+
+**Directory Structure:**
+- Base agents in `/codeflow-agents/` use the full BaseAgent format with all fields
+- Claude Code agents in `/.claude/agents/` use minimal format (name, description, tools, model only)
+- OpenCode agents in `/.opencode/agent/` use OpenCode specification format with permissions
 
 ---
 
@@ -198,13 +206,37 @@ Additional agents available in the unified format:
 - **full-stack-developer**: Cross-functional development tasks
 - **growth-engineer**: User acquisition and retention optimization
 - **security-scanner**: Vulnerability assessment and security best practices
-- **smart-subagent-orchestrator**: Complex multi-domain project coordination
+- **smart-subagent-orchestrator**: Complex multi-domain project coordination with advanced orchestration patterns
 - **ux-optimizer**: User experience and conversion optimization (consolidated from mobile-optimizer and integration-master)
 - **system-architect**: System design and architecture planning
 - **monitoring-expert**: Observability and monitoring systems
 - **devops-operations-specialist**: DevOps and infrastructure automation
 - **infrastructure-builder**: Infrastructure as code and cloud architecture
 - **deployment-wizard**: Deployment strategies and CI/CD optimization
+
+### **smart-subagent-orchestrator (Enhanced)**
+
+**Major Enhancement**: Now includes 6 comprehensive orchestration patterns and 6 advanced coordination strategies.
+
+- **Model**: github-copilot/gpt-4.1
+- **Purpose**: Advanced orchestration agent that coordinates existing specialized subagents for complex multi-domain projects
+- **New Orchestration Patterns**:
+  1. **Research-Driven Development**: Parallel discovery → analysis → architecture → implementation → quality gates → documentation
+  2. **Production Incident Response**: Immediate assessment → root cause → fix → verification → post-mortem
+  3. **Database Schema Evolution**: Analysis → migration design → implementation → testing → deployment
+  4. **Large-Scale Refactoring**: Discovery → pattern analysis → incremental refactoring → validation → documentation
+  5. **Growth & Analytics Implementation**: Strategy → planning → implementation → validation → monitoring
+  6. **Security Remediation**: Assessment → impact analysis → remediation → verification → compliance
+- **Advanced Coordination Strategies**:
+  1. **Parallel vs Sequential Decision Framework**: When to parallelize vs sequence agent execution
+  2. **Context Window Management**: Staged context reduction, hierarchical summarization, selective rehydration
+  3. **Error Recovery & Adaptive Re-planning**: Gap assessment, recovery patterns, clarification loops
+  4. **Risk-Based Quality Gates**: Critical path blocking, high-priority tracking, decision frameworks
+  5. **Agent Selection by Complexity & Permissions**: Complexity assessment, permission-based routing
+  6. **Specialized Domain Coordination**: Operations, security, performance, data, internationalization
+- **Selection Heuristics**: Extended table with 10 common scenarios and recommended agent sequences
+- **When to use**: Complex projects requiring coordination across multiple domains, large-scale implementations
+- **Format**: BaseAgent (auto-converted to all platforms with enhanced content)
 
 ### **ux-optimizer**
 

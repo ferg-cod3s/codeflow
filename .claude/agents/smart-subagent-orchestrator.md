@@ -4,23 +4,8 @@ description: Reference documentation for the advanced orchestration agent that c
   existing, independently configured specialized subagents for complex multi-domain
   projects. This file documents capabilities and coordination patterns (it is NOT
   a registry and does NOT control which subagents are available).
-mode: primary
+tools: computer_use, str_replace_editor, bash
 model: github-copilot/gpt-4.1
-temperature: 0.3
-permission:
-  computer_use: allow
-  str_replace_editor: allow
-  bash: allow
-category: generalist
-tags:
-- orchestration
-- project-management
-- coordination
-- multi-domain
-- strategy
-- permission-aware
-allowed_directories:
-- /Users/johnferguson/Github
 ---
 # Smart Subagent Orchestrator
 
