@@ -3,7 +3,7 @@
 node_modules/
 bun.lockb
 .DS_Store
-.claude/agents/
+# .claude/agents/ - Now tracked to ensure proper conversion
 opencode-agents/
 !.opencode/
 !.claude/
