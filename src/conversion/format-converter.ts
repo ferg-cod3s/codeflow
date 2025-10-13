@@ -8,7 +8,7 @@ export class FormatConverter {
    * Convert Base format to Claude Code format (v2.x.x specification)
    * Only allowed fields: name, description, tools (string), model (inherit|sonnet|opus|haiku)
    */
-  baseToClaudeCode(agent: Agent): Agent {
+  private baseToClaudeCode(agent: Agent): Agent {
     if (agent.format !== 'base') {
       throw new Error(`Expected base format, got ${agent.format}`);
     }
@@ -46,7 +46,6 @@ export class FormatConverter {
       ...(toolsString && { tools: toolsString }),
       ...(model && { model }),
     };
-
     // Explicitly strips: mode, temperature, capabilities, permission, tags, category, etc.
 
     return {
@@ -60,7 +59,7 @@ export class FormatConverter {
    * Convert Base format to OpenCode format
    * OpenCode uses official OpenCode.ai specification: description, mode, model, temperature, tools, permission, disable
    */
-  baseToOpenCode(agent: Agent): Agent {
+  private baseToOpenCode(agent: Agent): Agent {
     if (agent.format !== 'base') {
       throw new Error(`Expected base format, got ${agent.format}`);
     }
@@ -118,7 +117,7 @@ export class FormatConverter {
   /**
    * Convert Claude Code format to Base format
    */
-  claudeCodeToBase(agent: Agent): Agent {
+  private claudeCodeToBase(agent: Agent): Agent {
     if (agent.format !== 'claude-code') {
       throw new Error(`Expected claude-code format, got ${agent.format}`);
     }
@@ -150,7 +149,7 @@ export class FormatConverter {
   /**
    * Convert Claude Code format to OpenCode format
    */
-  claudeCodeToOpenCode(agent: Agent): Agent {
+  private claudeCodeToOpenCode(agent: Agent): Agent {
     if (agent.format !== 'claude-code') {
       throw new Error(`Expected claude-code format, got ${agent.format}`);
     }
@@ -184,7 +183,7 @@ export class FormatConverter {
   /**
    * Convert OpenCode format to Base format
    */
-  openCodeToBase(agent: Agent): Agent {
+  private openCodeToBase(agent: Agent): Agent {
     if (agent.format !== 'opencode') {
       throw new Error(`Expected opencode format, got ${agent.format}`);
     }
@@ -219,7 +218,7 @@ export class FormatConverter {
   /**
    * Convert OpenCode format to Claude Code format
    */
-  openCodeToClaudeCode(agent: Agent): Agent {
+  private openCodeToClaudeCode(agent: Agent): Agent {
     if (agent.format !== 'opencode') {
       throw new Error(`Expected opencode format, got ${agent.format}`);
     }
@@ -232,7 +231,7 @@ export class FormatConverter {
   /**
    * Convert agent to target format
    */
-  convert(agent: Agent, targetFormat: 'base' | 'claude-code' | 'opencode'): Agent {
+  public convert(agent: Agent, targetFormat: 'base' | 'claude-code' | 'opencode'): Agent {
     if (agent.format === targetFormat) {
       return agent;
     }
@@ -270,7 +269,7 @@ export class FormatConverter {
   /**
    * Convert all agents in a directory to target format
    */
-  convertAll(
+  private convertAll(
     sourceDir: string,
     targetFormat: 'base' | 'claude-code' | 'opencode',
     outputDir: string
@@ -281,14 +280,14 @@ export class FormatConverter {
   /**
    * Convert a batch of agents to target format
    */
-  convertBatch(agents: Agent[], targetFormat: 'base' | 'claude-code' | 'opencode'): Agent[] {
+  public convertBatch(agents: Agent[], targetFormat: 'base' | 'claude-code' | 'opencode'): Agent[] {
     return agents.map((agent) => this.convert(agent, targetFormat));
   }
 
   /**
    * Test round-trip conversion for data integrity
    */
-  testRoundTrip(agent: Agent): { success: boolean; errors: string[] } {
+  private testRoundTrip(agent: Agent): { success: boolean; errors: string[] } {
     const errors: string[] = [];
 
     try {
@@ -444,7 +443,7 @@ export class FormatConverter {
   /**
    * Convert Base command format to OpenCode command format
    */
-  baseCommandToOpenCode(command: Command): Command {
+  public baseCommandToOpenCode(command: Command): Command {
     if (command.format !== 'base') {
       throw new Error(`Expected base format, got ${command.format}`);
     }

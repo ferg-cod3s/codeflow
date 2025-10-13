@@ -5,8 +5,6 @@ bun.lockb
 .DS_Store
 .claude/agents/
 opencode-agents/
-!.opencode/
-!.claude/
 
 # Build artifacts
 dist/
@@ -98,3 +96,5 @@ Pods/
 
 # TypeScript
 tsconfig.tsbuildinfo
+.opencode/
+.claude/
