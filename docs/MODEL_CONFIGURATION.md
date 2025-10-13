@@ -67,14 +67,18 @@ bun run fix:models       # Fix models without syncing
 
 ### Manual Model Fixes
 
-If you need to fix models manually:
+If you need to fix models manually, use the CLI-based fixer:
 
 ```bash
-# Fix OpenCode command models
-./scripts/fix-opencode-models.sh
+# Global (default)
+bun run src/cli/fix-models.ts
 
-# Fix OpenCode agent models
-./scripts/fix-opencode-agent-models.sh
+# Local project directories
+bun run src/cli/fix-models.ts --local
+
+# Verbose or dry-run
+bun run src/cli/fix-models.ts --verbose
+bun run src/cli/fix-models.ts --dry-run
 ```
 
 ### Catalog Integration

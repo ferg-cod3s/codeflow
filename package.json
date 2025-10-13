@@ -66,7 +66,7 @@
     "sync:claude": "./sync-claude-global.sh",
     "sync:smart": "./scripts/sync-with-model-config.sh",
     "sync:opencode": "./scripts/sync-with-model-config.sh",
-    "fix:models": "./scripts/fix-opencode-models.sh && ./scripts/fix-opencode-agent-models.sh",
+    "fix:models": "bun run src/cli/fix-models.ts",
     "yaml:validate": "bun run src/utils/yaml-validator.ts",
     "yaml:fix": "bun run src/utils/yaml-validator.ts --fix",
     "mcp:server": "bun run mcp/codeflow-server.mjs",
