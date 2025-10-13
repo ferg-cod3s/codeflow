@@ -1,13 +1,23 @@
+# Source files
+src/
+*.ts
+
+# Configuration files
+tsconfig.json
+tsconfig.tsbuildinfo
+bun.lock
+.gitignore
+
 # Development files
 .env*
-.git*
-.vscode/
-.idea/
 *.log
 *.tmp
 *.temp
 .editorconfig
 bunfig.toml
+node_modules/
+.pnpm-store/
+bun.lockb
 
 # Test files and directories
 tests/
@@ -21,17 +31,12 @@ test-reports/
 test-output/
 run-tests.ts
 
-# Development dependencies
-node_modules/
-.pnpm-store/
-bun.lockb
-bun.lock
-
 # Build artifacts
 dist/
 build/
 .next/
 .nuxt/
+*.map
 
 # OS generated files
 .DS_Store
@@ -43,6 +48,8 @@ ehthumbs.db
 Thumbs.db
 
 # IDE files
+.vscode/
+.idea/
 *.swp
 *.swo
 *~
@@ -60,9 +67,11 @@ docs/2025-*
 thoughts/
 TEST_REPORT.md
 DEPLOYMENT_GUIDE.md
+*.template.md
+TODO.md
+THOUGHTS.md
 
 # TypeScript cache
-tsconfig.tsbuildinfo
 *.tsbuildinfo
 
 # Backup files
@@ -80,6 +89,10 @@ mcp/
 CATALOG_INDEX.json
 
 # GitHub specific
+.git/
 .github/
 CONTRIBUTING.md
 CODE_OF_CONDUCT.md
+
+# Local config
+config.json

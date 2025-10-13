@@ -8,7 +8,9 @@ opencode-agents/
 !.opencode/
 !.claude/
 
-# Standard ignore patterns
+# Build artifacts
+dist/
+bin/
 target/
 */target/
 **/target/
@@ -18,22 +20,10 @@ build/
 .build/
 */.build/
 **/.build/
-dist/
-*/dist/
-**/dist/
+
+# Node.js / JavaScript
 */node_modules/
 **/node_modules/
-vendor/
-*/vendor/
-**/vendor/
-Cargo.lock
-*.rs.bk
-*.rlib
-*.rmeta
-*.dll
-*.dylib
-*.so
-*.o
 package-lock.json
 yarn.lock
 pnpm-lock.yaml
@@ -44,35 +34,67 @@ pnpm-lock.yaml
 .next/
 .nuxt/
 .vite/
-*.xcodeproj/xcuserdata/
-*.xcworkspace/xcuserdata/
-*.xcuserstate
-*.dSYM.zip
-*.dSYM/
-DerivedData/
-.build/
-Pods/
+
+# Rust
+Cargo.lock
+*.rs.bk
+*.rlib
+*.rmeta
+*.dll
+*.dylib
+*.so
+*.o
+vendor/
+*/vendor/
+**/vendor/
+
+# Environment files
+.env
+.env.local
+
+# IDE
 .idea/
 .vscode/
 *.swp
 *.swo
 *~
+
+# OS files
+.DS_Store
 .AppleDouble
 .LSOverride
 Thumbs.db
 Desktop.ini
+
+# Testing & Coverage
 coverage/
 .nyc_output/
 test-results/
 playwright-report/
 cypress/videos/
 cypress/screenshots/
+
+# Logs
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+
+# Temporary files
 *.tmp
 *.temp
 temp/
 tmp/
+
+# Xcode
+*.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/
+*.xcuserstate
+*.dSYM.zip
+*.dSYM/
+DerivedData/
+Pods/
+
+# TypeScript
+tsconfig.tsbuildinfo
