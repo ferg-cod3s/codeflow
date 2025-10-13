@@ -33,8 +33,15 @@ export async function validate(options: {
     const directories = {
       'claude-code': ['claude-agents', '.claude/agents'],
       opencode: ['opencode-agents', '.opencode/agent'],
-      base: ['agent'],
-      all: ['agent', 'claude-agents', 'opencode-agents', '.claude/agents', '.opencode/agent'],
+      base: ['agent', 'codeflow-agents'],
+      all: [
+        'agent',
+        'codeflow-agents',
+        'claude-agents',
+        'opencode-agents',
+        '.claude/agents',
+        '.opencode/agent',
+      ],
     };
 
     const dirsToSearch = directories[format] || directories.all;
@@ -218,12 +225,15 @@ export async function validate(options: {
             ? 'claude-code'
             : file.includes('opencode-agents') || file.includes('.opencode/')
               ? 'opencode'
-              : 'base';
+              : file.includes('codeflow-agents') || file.includes('/agent/')
+                ? 'base'
+                : 'base';
         const agent = await parseAgentFile(file, formatType);
         if (agent) {
           agents.push(agent);
         }
       } catch (error) {
+        console.log(`❌ DEBUG: Parse error for ${file}: ${(error as Error).message}`);
         parseErrors.push({ file, error: (error as Error).message });
       }
     }

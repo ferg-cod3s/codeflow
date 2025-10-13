@@ -204,6 +204,7 @@ Create atomic, well-structured git commits that follow conventional commit stand
 For structured commit creation requiring change analysis and validation:
 
 #### Phase 1: Change Analysis & Validation (Parallel)
+
 - **codebase-locator**: Identify all changed files and their relationships
 - **codebase-analyzer**: Understand the nature and impact of code changes
 - **thoughts-analyzer**: Review change documentation and implementation notes
@@ -211,6 +212,7 @@ For structured commit creation requiring change analysis and validation:
 - **code-reviewer**: Validate code quality before committing
 
 #### Phase 2: Commit Planning & Organization (Sequential)
+
 - **full-stack-developer**: Validate technical correctness of changes
 - **system-architect**: Assess architectural impact of changes
 - **api-builder**: Verify API contract changes are properly documented
@@ -218,6 +220,7 @@ For structured commit creation requiring change analysis and validation:
 - **security-scanner**: Ensure security changes are properly implemented
 
 #### Phase 3: Quality Assurance Validation (Parallel)
+
 - **test-generator**: Verify test changes are included and comprehensive
 - **quality-testing-performance-tester**: Validate performance impact of changes
 - **compliance-expert**: Ensure regulatory compliance changes are complete
@@ -225,12 +228,14 @@ For structured commit creation requiring change analysis and validation:
 - **monitoring-expert**: Validate monitoring and alerting changes
 
 #### Phase 4: Documentation & Communication (Sequential)
+
 - **thoughts-analyzer**: Ensure documentation changes are included
 - **content-writer**: Validate user-facing documentation updates
 - **content-localization-coordinator**: Verify internationalization changes
 - **deployment-wizard**: Ensure deployment-related changes are complete
 
 #### Phase 5: Final Validation & Commit (Parallel)
+
 - **infrastructure-builder**: Validate infrastructure changes are complete
 - **devops-operations-specialist**: Verify operational changes are ready
 - **cost-optimizer**: Validate cost-related changes are appropriate
@@ -263,7 +268,6 @@ For structured commit creation requiring change analysis and validation:
 - **Incremental Commits**: Commit frequently with small, focused changes
 - **Revert Readiness**: Ensure each commit can be safely reverted if needed
 - **Branch Strategy**: Follow established branching and merging practices
-
 
 ### Cache Invalidation Triggers
 

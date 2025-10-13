@@ -81,3 +81,25 @@ bin/
 # Environment files
 .env
 .env.local
+
+# Build artifacts
+bun
+codeflow-*.js
+agentic-*.tgz
+*.tgz
+
+# Export files
+codeflow-export-*.json
+
+# Temporary/debug files
+debug-*.js
+temp_*.ts
+test-*.ts
+demo-*.ts
+
+# Test output directories
+test-output/
+
+# Backup files
+*.backup
+*.bak

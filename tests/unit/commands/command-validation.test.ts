@@ -356,4 +356,87 @@ describe('Command Validation', () => {
       }
     });
   });
+
+  describe('Continue command validation', () => {
+    test('continue command should exist in both formats', () => {
+      expect(claudeCommands).toContain('continue.md');
+      expect(openCodeCommands).toContain('continue.md');
+    });
+
+    test('continue command should have correct metadata', async () => {
+      // Test Claude format
+      const claudePath = join(testPaths.commands.claude, 'continue.md');
+      if (existsSync(claudePath)) {
+        const claudeMeta = await loadCommandMetadata(claudePath);
+        expect(claudeMeta).toBeTruthy();
+        expect(claudeMeta.name).toBe('continue');
+        expect(claudeMeta.description).toContain('Resume execution');
+        expect(claudeMeta.model).toContain('claude');
+        expect(claudeMeta.temperature).toBeLessThanOrEqual(0.5);
+      }
+
+      // Test OpenCode format
+      const openCodePath = join(testPaths.commands.opencode, 'continue.md');
+      if (existsSync(openCodePath)) {
+        const openCodeMeta = await loadCommandMetadata(openCodePath);
+        expect(openCodeMeta).toBeTruthy();
+        expect(openCodeMeta.name).toBe('continue');
+        expect(openCodeMeta.description).toContain('Resume execution');
+        expect(openCodeMeta.mode).toBe('command');
+        expect(openCodeMeta.model).toContain('anthropic/');
+      }
+    });
+
+    test('continue command should have comprehensive documentation', async () => {
+      const commands = [
+        { path: join(testPaths.commands.claude, 'continue.md'), format: 'claude' },
+        { path: join(testPaths.commands.opencode, 'continue.md'), format: 'opencode' }
+      ];
+
+      for (const { path, format } of commands) {
+        if (existsSync(path)) {
+          const content = await readFile(path, 'utf-8');
+          const body = content.replace(/^---\n[\s\S]*?\n---\n/, '');
+
+          // Should have usage examples
+          expect(body.toLowerCase()).toContain('usage');
+
+          // Should have process phases
+          expect(body.toLowerCase()).toContain('phase');
+
+          // Should have error handling
+          expect(body.toLowerCase()).toContain('error');
+
+          // Should have examples
+          expect(body.toLowerCase()).toContain('example');
+
+          // Should document both OpenCode and Claude Code if Claude format
+          if (format === 'claude') {
+            expect(body.toLowerCase()).toContain('opencode');
+            expect(body.toLowerCase()).toContain('claude code');
+          }
+        }
+      }
+    });
+
+    test('continue command should define proper success criteria', async () => {
+      const openCodePath = join(testPaths.commands.opencode, 'continue.md');
+      if (existsSync(openCodePath)) {
+        const content = await readFile(openCodePath, 'utf-8');
+        const body = content.replace(/^---\n[\s\S]*?\n---\n/, '');
+
+        // Should have success criteria section
+        expect(body.toLowerCase()).toContain('success criteria');
+
+        // Should have error handling section
+        expect(body.toLowerCase()).toContain('error handling');
+
+        // Should have validation criteria
+        expect(body.toLowerCase()).toContain('validation');
+
+        // Should have structured output specification
+        expect(body.toLowerCase()).toContain('structured output');
+      }
+    });
+  });
 });

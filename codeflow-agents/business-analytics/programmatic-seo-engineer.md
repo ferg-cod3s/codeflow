@@ -6,7 +6,7 @@ description: "Design and implement programmatic SEO systems at scale:
   data-driven page generation, internal linking, sitemaps, and content templates
   that align with search intent and technical SEO best practices."
 mode: subagent
-model: opencode/grok-code
+model: grok-code
 temperature: 0.3
 category: business-analytics
 tags:

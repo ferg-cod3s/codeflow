@@ -337,6 +337,7 @@ Systematically validate implementation correctness by comparing executed changes
 For thorough implementation validation requiring multi-domain expertise:
 
 #### Phase 1: Implementation Analysis (Parallel)
+
 - **codebase-locator**: Identify all implemented components and changed files
 - **codebase-analyzer**: Understand implementation details and code changes
 - **thoughts-analyzer**: Review implementation documentation and notes
@@ -344,6 +345,7 @@ For thorough implementation validation requiring multi-domain expertise:
 - **code-reviewer**: Primary agent for comprehensive code quality validation
 
 #### Phase 2: Domain-Specific Validation (Sequential)
+
 - **full-stack-developer**: Validate technical implementation correctness
 - **api-builder**: Verify API contracts and integration implementations
 - **database-expert**: Validate database changes and data integrity
@@ -353,6 +355,7 @@ For thorough implementation validation requiring multi-domain expertise:
 - **compliance-expert**: Validate regulatory compliance requirements
 
 #### Phase 3: Quality Assurance Validation (Parallel)
+
 - **test-generator**: Verify test coverage and quality of test implementations
 - **quality-testing-performance-tester**: Validate performance testing and benchmarks
 - **monitoring-expert**: Verify monitoring and alerting implementations
@@ -360,12 +363,14 @@ For thorough implementation validation requiring multi-domain expertise:
 - **deployment-wizard**: Verify deployment procedures and rollback capabilities
 
 #### Phase 4: Integration & System Validation (Sequential)
+
 - **system-architect**: Validate architectural compliance and design integrity
 - **devops-operations-specialist**: Verify operational readiness and procedures
 - **cost-optimizer**: Validate cost implications and optimizations
 - **content-localization-coordinator**: Verify internationalization implementations
 
 #### Phase 5: Documentation & Reporting (Parallel)
+
 - **thoughts-analyzer**: Validate documentation updates and completeness
 - **content-writer**: Review user-facing documentation accuracy
 - **code-reviewer**: Final comprehensive quality assessment
@@ -397,7 +402,6 @@ For thorough implementation validation requiring multi-domain expertise:
 - **Risk-Based Prioritization**: Focus validation efforts on high-risk areas
 - **Continuous Feedback**: Provide ongoing feedback during implementation
 - **Comprehensive Reporting**: Generate detailed reports with actionable recommendations
-
 
 ### Cache Usage Patterns
 

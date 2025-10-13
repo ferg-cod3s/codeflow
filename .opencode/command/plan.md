@@ -1,26 +1,41 @@
 ---
 name: plan
-description: Create an implementation plan from a ticket and research
 mode: command
-model: anthropic/claude-sonnet-4
-version: 2.1.0-optimized
-last_updated: 2025-10-01
-command_schema_version: "1.0"
-outputs:
-  - name: result
+description: Create an implementation plan from a ticket and research
+version: 2.0.0-internal
+last_updated: 2025-09-13
+command_schema_version: 1
+inputs:
+  - name: files
+    type: array
+    required: true
+    description: Array of ticket and research files to analyze
+  - name: scope
     type: string
-    description: Command execution result
+    required: false
+    description: Scope hint for the implementation (feature|refactor|bugfix)
+  - name: complexity
+    type: string
+    required: false
+    description: Complexity estimate (simple|medium|complex)
+outputs:
+  - name: plan_document
+    type: structured
+    format: JSON with plan metadata and file path
+    description: Generated implementation plan with metadata
 cache_strategy:
   type: content_based
-  ttl: 3600
+  ttl: 7200
+  invalidation: manual
   scope: command
 success_signals:
-  - Command completed successfully
-  - Task executed without errors
+  - Implementation plan created successfully
+  - Plan saved to docs/plans/ directory
+  - All research questions resolved
 failure_modes:
-  - Command execution failed
-  - Invalid parameters provided
-  - System error occurred
+  - Required files not found or invalid
+  - Unresolved research questions remain
+  - Technical feasibility concerns
 ---
 # Create Implementation Plan
 
@@ -287,12 +302,14 @@ Create comprehensive, actionable implementation plans by thoroughly researching 
 For complex feature planning requiring architectural and technical expertise:
 
 #### Phase 1: Research Integration & Context Building (Parallel)
+
 - **codebase-locator**: Maps existing component locations and architectural boundaries
 - **thoughts-locator**: Discovers existing plans, architectural decisions, and technical constraints
 - **codebase-pattern-finder**: Identifies established implementation patterns for similar features
 - **thoughts-analyzer**: Extracts insights from past planning decisions and outcomes
 
 #### Phase 2: Technical Feasibility Analysis (Sequential)
+
 - **codebase-analyzer**: Validates technical assumptions and identifies integration points
 - **system-architect**: Evaluates architectural impact and design trade-offs
 - **database-expert**: Assesses data model changes and migration requirements
@@ -300,6 +317,7 @@ For complex feature planning requiring architectural and technical expertise:
 - **performance-engineer**: Analyzes performance impact and optimization needs
 
 #### Phase 3: Risk & Constraint Assessment (Parallel)
+
 - **security-scanner**: Identifies security implications and requirements
 - **compliance-expert**: Evaluates regulatory compliance constraints
 - **cost-optimizer**: Analyzes operational cost implications
@@ -307,6 +325,7 @@ For complex feature planning requiring architectural and technical expertise:
 - **monitoring-expert**: Evaluates observability and monitoring needs
 
 #### Phase 4: Implementation Strategy Development (Sequential)
+
 - **full-stack-developer**: Validates technical feasibility of proposed approaches
 - **test-generator**: Identifies testing strategy and coverage requirements
 - **quality-testing-performance-tester**: Defines performance testing approach
@@ -314,6 +333,7 @@ For complex feature planning requiring architectural and technical expertise:
 - **code-reviewer**: Establishes code quality and review standards for the implementation
 
 #### Phase 5: Validation & Documentation (Parallel)
+
 - **accessibility-pro**: Ensures accessibility requirements are addressed (if applicable)
 - **ux-optimizer**: Validates user experience implications
 - **content-localization-coordinator**: Assesses internationalization requirements
@@ -344,7 +364,6 @@ For complex feature planning requiring architectural and technical expertise:
 - **Dependency Management**: Clearly define inter-component dependencies
 - **Success Metrics**: Define measurable success criteria for each phase
 - **Rollback Planning**: Include rollback strategies for each major change
-
 
 ### Cache Usage Patterns
 

@@ -256,12 +256,14 @@ When the actual codebase differs from the plan:
 For complex feature implementation requiring coordinated expertise across domains:
 
 #### Phase 1: Pre-Implementation Validation (Parallel)
+
 - **codebase-locator**: Verify all referenced components and files exist
 - **codebase-analyzer**: Understand current implementation state and integration points
 - **thoughts-analyzer**: Review existing documentation and implementation notes
 - **codebase-pattern-finder**: Identify established patterns for the implementation approach
 
 #### Phase 2: Domain-Specific Implementation (Sequential by Phase)
+
 - **full-stack-developer**: Primary implementation agent for feature development
 - **api-builder**: Handle API endpoint creation and contract implementation
 - **database-expert**: Manage schema changes and data migration implementation
@@ -271,6 +273,7 @@ For complex feature implementation requiring coordinated expertise across domain
 - **ux-optimizer**: Optimize user experience implementation details
 
 #### Phase 3: Quality Assurance & Validation (Parallel)
+
 - **code-reviewer**: Comprehensive code quality and maintainability review
 - **test-generator**: Generate and implement comprehensive test suites
 - **quality-testing-performance-tester**: Execute performance and load testing
@@ -278,12 +281,14 @@ For complex feature implementation requiring coordinated expertise across domain
 - **monitoring-expert**: Implement monitoring and observability features
 
 #### Phase 4: Infrastructure & Deployment (Sequential)
+
 - **infrastructure-builder**: Prepare infrastructure changes and configurations
 - **deployment-wizard**: Implement deployment automation and rollback procedures
 - **devops-operations-specialist**: Coordinate deployment and operational handoff
 - **cost-optimizer**: Validate cost implications of infrastructure changes
 
 #### Phase 5: Documentation & Knowledge Transfer (Parallel)
+
 - **content-writer**: Create user documentation and release notes
 - **thoughts-analyzer**: Update technical documentation and implementation notes
 - **content-localization-coordinator**: Handle internationalization updates
@@ -315,7 +320,6 @@ For complex feature implementation requiring coordinated expertise across domain
 - **Security Reviews**: Conduct security validation at key implementation milestones
 - **Rollback Planning**: Ensure rollback capabilities exist before deployment
 - **Monitoring Setup**: Implement observability before production deployment
-
 
 ### Cache Usage Patterns
 

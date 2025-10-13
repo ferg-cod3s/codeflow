@@ -2,7 +2,7 @@
 name: compliance-expert
 description: Security compliance specialist focused on regulatory requirements, control validation, and compliance framework implementation. Assesses systems against industry standards (SOC 2, ISO 27001, GDPR, HIPAA), identifies compliance gaps, and provides remediation guidance for regulatory adherence.
 mode: subagent
-model: github-copilot/gpt-4.1
+model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: deny

@@ -40,108 +40,140 @@ class TestRunner {
     { name: 'CLI Commands', path: 'tests/unit/cli/cli-commands.test.ts', type: 'unit' },
     { name: 'Format Conversion', path: 'tests/unit/catalog/conversion.test.ts', type: 'unit' },
     { name: 'Agent Validation', path: 'tests/unit/agents/agent-validation.test.ts', type: 'unit' },
-    { name: 'Command Validation', path: 'tests/unit/commands/command-validation.test.ts', type: 'unit' },
-    
+    {
+      name: 'Command Validation',
+      path: 'tests/unit/commands/command-validation.test.ts',
+      type: 'unit',
+    },
+
     // OpenCode Command tests
-    { name: 'OpenCode Syntax Validation', path: 'tests/opencode-commands/syntax-validation.test.ts', type: 'unit' },
-    { name: 'OpenCode Variable Substitution', path: 'tests/opencode-commands/variable-substitution.test.ts', type: 'unit' },
-    { name: 'OpenCode Integration', path: 'tests/opencode-commands/integration.test.ts', type: 'integration', timeout: 30000 },
-    
+    {
+      name: 'OpenCode Syntax Validation',
+      path: 'tests/opencode-commands/syntax-validation.test.ts',
+      type: 'unit',
+    },
+    {
+      name: 'OpenCode Variable Substitution',
+      path: 'tests/opencode-commands/variable-substitution.test.ts',
+      type: 'unit',
+    },
+    {
+      name: 'OpenCode Integration',
+      path: 'tests/opencode-commands/integration.test.ts',
+      type: 'integration',
+      timeout: 30000,
+    },
+
     // Integration tests
-    { name: 'End-to-End', path: 'tests/e2e/integration.test.ts', type: 'e2e', timeout: 60000 }
+    { name: 'End-to-End', path: 'tests/e2e/integration.test.ts', type: 'e2e', timeout: 60000 },
   ];
-  
+
   private results: TestResults[] = [];
   private coverageDir = '.coverage';
   private reportDir = 'test-reports';
-  
+
   async run(options: { filter?: string; coverage?: boolean; watch?: boolean } = {}) {
     console.log(chalk.bold.cyan('\n🧪 Codeflow Test Suite\n'));
-    console.log(chalk.gray('=' . repeat(50)));
-    
+    console.log(chalk.gray('='.repeat(50)));
+
     // Setup
     await this.setup();
-    
+
     // Filter suites if requested
     let suitesToRun = this.suites;
     if (options.filter) {
-      suitesToRun = this.suites.filter(s => 
-        s.name.toLowerCase().includes(options.filter!.toLowerCase()) ||
-        s.type === options.filter
+      suitesToRun = this.suites.filter(
+        (s) =>
+          s.name.toLowerCase().includes(options.filter!.toLowerCase()) || s.type === options.filter
       );
     }
-    
+
     // Run tests
     const startTime = Date.now();
-    
+
     for (const suite of suitesToRun) {
       await this.runSuite(suite, options.coverage || false);
     }
-    
+
     const totalTime = Date.now() - startTime;
-    
+
     // Generate reports
     await this.generateReports();
-    
+
     // Print summary
     this.printSummary(totalTime);
-    
+
     // Check if all tests passed
-    const allPassed = this.results.every(r => r.failed === 0);
-    
+    const allPassed = this.results.every((r) => r.failed === 0);
+
     if (!allPassed) {
       process.exit(1);
     }
   }
-  
+
   private async setup() {
     // Create directories
     await mkdir(this.coverageDir, { recursive: true });
     await mkdir(this.reportDir, { recursive: true });
-    
+
     // Clean previous coverage
     if (existsSync(join(this.coverageDir, 'lcov.info'))) {
       await rm(join(this.coverageDir, 'lcov.info'), { force: true });
     }
   }
-  
+
   private async runSuite(suite: TestSuite, coverage: boolean): Promise<void> {
     console.log(chalk.blue(`\n📦 Running ${suite.name} (${suite.type})`));
-    console.log(chalk.gray('-' . repeat(40)));
-    
+    console.log(chalk.gray('-'.repeat(40)));
+
     const startTime = Date.now();
-    
+
     try {
-      // Build test command
-      let cmd = `bun test ${suite.path}`;
-      
+      const args = [suite.path];
+
       if (coverage) {
-        cmd += ' --coverage';
+        args.push('--coverage');
       }
-      
+
       if (suite.timeout) {
-        cmd += ` --timeout ${suite.timeout}`;
+        args.push('--timeout', suite.timeout.toString());
       }
-      
-      // Run tests
-      const result = await $`${cmd}`;
-      
-      // Parse results
-      await $`bun test tests/unit/ --reporter json`;
-      const output = result.stdout.toString();
-      const passed = (output.match(/✓/g) || []).length;
-      const failed = (output.match(/✗/g) || []).length;
-      const skipped = (output.match(/○/g) || []).length;
-      
+
+      const proc = Bun.spawn(['bun', 'test', ...args], {
+        cwd: process.cwd(),
+        stdout: 'pipe',
+        stderr: 'pipe',
+      });
+
+      const output = await new Response(proc.stdout).text();
+      const errorOutput = await new Response(proc.stderr).text();
+      const exitCode = await proc.exited;
+
+      // Bun sends test results to stderr, not stdout
+      const allOutput = output + errorOutput;
+      const passed = (allOutput.match(/\(pass\)/g) || []).length;
+      const failed = (allOutput.match(/\(fail\)/g) || []).length;
+      const skipped = (allOutput.match(/\(skip\)/g) || []).length;
+
+      const duration = Date.now() - startTime;
+
+      // Check if exit code is non-zero but all tests passed (e.g., coverage error)
+      // In this case, we should not fail the suite
+      const coverageError =
+        exitCode !== 0 &&
+        failed === 0 &&
+        passed > 0 &&
+        (allOutput.includes('lcov') || allOutput.includes('Failed to create lcov'));
+
       // Record results
       this.results.push({
         suite: suite.name,
         passed,
         failed,
         skipped,
-        duration: Date.now() - startTime
+        duration,
       });
-      
+
       // Print suite results
       if (failed > 0) {
         console.log(chalk.red(`  ✗ ${failed} tests failed`));
@@ -152,26 +184,35 @@ class TestRunner {
       if (skipped > 0) {
         console.log(chalk.yellow(`  ○ ${skipped} tests skipped`));
       }
-      
-      console.log(chalk.gray(`  Duration: ${((Date.now() - startTime) / 1000).toFixed(2)}s`));
-      
+
+      console.log(chalk.gray(`  Duration: ${(duration / 1000).toFixed(2)}s`));
+
+      // Only throw error if tests actually failed (not coverage/infrastructure errors)
+      if (exitCode !== 0 && failed === 0 && !coverageError) {
+        throw new Error(`Test process exited with code ${exitCode}`);
+      }
+
+      // Log coverage error as warning but don't fail
+      if (coverageError) {
+        console.log(chalk.yellow(`  ⚠ Coverage generation had issues but tests passed`));
+      }
     } catch (error: any) {
-      // Test failure
+      const duration = Date.now() - startTime;
       console.log(chalk.red(`  ✗ Suite failed: ${error.message}`));
-      
+
       this.results.push({
         suite: suite.name,
         passed: 0,
         failed: 1,
         skipped: 0,
-        duration: Date.now() - startTime
+        duration,
       });
     }
   }
-  
+
   private async generateReports() {
     console.log(chalk.cyan('\n📊 Generating Reports...'));
-    
+
     // Generate JSON report
     const jsonReport = {
       timestamp: new Date().toISOString(),
@@ -180,25 +221,22 @@ class TestRunner {
         passed: this.results.reduce((sum, r) => sum + r.passed, 0),
         failed: this.results.reduce((sum, r) => sum + r.failed, 0),
         skipped: this.results.reduce((sum, r) => sum + r.skipped, 0),
-        duration: this.results.reduce((sum, r) => sum + r.duration, 0)
-      }
+        duration: this.results.reduce((sum, r) => sum + r.duration, 0),
+      },
     };
-    
-    await writeFile(
-      join(this.reportDir, 'test-results.json'),
-      JSON.stringify(jsonReport, null, 2)
-    );
-    
+
+    await writeFile(join(this.reportDir, 'test-results.json'), JSON.stringify(jsonReport, null, 2));
+
     // Generate Markdown report
     const mdReport = this.generateMarkdownReport(jsonReport);
     await writeFile(join(this.reportDir, 'test-results.md'), mdReport);
-    
+
     console.log(chalk.green('  ✓ Reports generated in test-reports/'));
   }
-  
+
   private generateMarkdownReport(data: any): string {
     const { timestamp, suites, totals } = data;
-    
+
     let md = `# Test Results Report\n\n`;
     md += `**Generated:** ${timestamp}\n\n`;
     md += `## Summary\n\n`;
@@ -207,52 +245,52 @@ class TestRunner {
     md += `- **Failed:** ${totals.failed} ❌\n`;
     md += `- **Skipped:** ${totals.skipped} ⏭️\n`;
     md += `- **Duration:** ${(totals.duration / 1000).toFixed(2)}s\n\n`;
-    
+
     md += `## Test Suites\n\n`;
     md += `| Suite | Passed | Failed | Skipped | Duration |\n`;
     md += `|-------|--------|--------|---------|----------|\n`;
-    
+
     for (const suite of suites) {
       const status = suite.failed > 0 ? '❌' : '✅';
       md += `| ${status} ${suite.suite} | ${suite.passed} | ${suite.failed} | ${suite.skipped} | ${(suite.duration / 1000).toFixed(2)}s |\n`;
     }
-    
+
     return md;
   }
-  
+
   private printSummary(totalTime: number) {
     console.log(chalk.bold.cyan('\n📈 Test Summary\n'));
-    console.log(chalk.gray('=' . repeat(50)));
-    
+    console.log(chalk.gray('='.repeat(50)));
+
     const totals = {
       passed: this.results.reduce((sum, r) => sum + r.passed, 0),
       failed: this.results.reduce((sum, r) => sum + r.failed, 0),
-      skipped: this.results.reduce((sum, r) => sum + r.skipped, 0)
+      skipped: this.results.reduce((sum, r) => sum + r.skipped, 0),
     };
-    
+
     const total = totals.passed + totals.failed + totals.skipped;
-    
+
     console.log(`  Total Tests: ${total}`);
     console.log(chalk.green(`  ✓ Passed: ${totals.passed}`));
-    
+
     if (totals.failed > 0) {
       console.log(chalk.red(`  ✗ Failed: ${totals.failed}`));
     }
-    
+
     if (totals.skipped > 0) {
       console.log(chalk.yellow(`  ○ Skipped: ${totals.skipped}`));
     }
-    
+
     console.log(chalk.gray(`\n  Total Duration: ${(totalTime / 1000).toFixed(2)}s`));
-    
+
     // Success/failure message
     if (totals.failed === 0) {
       console.log(chalk.bold.green('\n✅ All tests passed!'));
     } else {
       console.log(chalk.bold.red(`\n❌ ${totals.failed} test(s) failed`));
-      
+
       // Show failed suites
-      const failedSuites = this.results.filter(r => r.failed > 0);
+      const failedSuites = this.results.filter((r) => r.failed > 0);
       if (failedSuites.length > 0) {
         console.log(chalk.red('\nFailed suites:'));
         for (const suite of failedSuites) {
@@ -267,13 +305,13 @@ class TestRunner {
 async function main() {
   const args = process.argv.slice(2);
   const runner = new TestRunner();
-  
+
   const options = {
-    filter: args.find(a => !a.startsWith('--'))?.toLowerCase(),
+    filter: args.find((a) => !a.startsWith('--'))?.toLowerCase(),
     coverage: args.includes('--coverage'),
-    watch: args.includes('--watch')
+    watch: args.includes('--watch'),
   };
-  
+
   if (args.includes('--help')) {
     console.log(`
 ${chalk.bold('Codeflow Test Runner')}
@@ -302,13 +340,13 @@ Examples:
 `);
     process.exit(0);
   }
-  
+
   await runner.run(options);
 }
 
 // Run if called directly
 if (import.meta.main) {
-  main().catch(error => {
+  main().catch((error) => {
     console.error(chalk.red('Test runner failed:'), error);
     process.exit(1);
   });

@@ -1,4 +1,12 @@
-import { Agent, BaseAgent, ClaudeCodeAgent, OpenCodeAgent, Command, BaseCommand, OpenCodeCommand } from './agent-parser';
+import {
+  Agent,
+  BaseAgent,
+  ClaudeCodeAgent,
+  OpenCodeAgent,
+  Command,
+  BaseCommand,
+  OpenCodeCommand,
+} from './agent-parser';
 
 /**
  * Format conversion engine for agents
@@ -392,10 +400,10 @@ export class FormatConverter {
       'anthropic/claude-sonnet-4': 'sonnet',
       'anthropic/claude-opus-4': 'opus',
       'anthropic/claude-haiku-4': 'haiku',
-      'inherit': 'inherit',
-      'sonnet': 'sonnet',
-      'opus': 'opus',
-      'haiku': 'haiku',
+      inherit: 'inherit',
+      sonnet: 'sonnet',
+      opus: 'opus',
+      haiku: 'haiku',
     };
 
     // Check if model is already in valid format
@@ -416,29 +424,45 @@ export class FormatConverter {
 
   /**
    * Convert model format for OpenCode (provider/model format)
+   * Uses free OpenCode models from models.dev by default
    */
   private convertModelForOpenCode(model: string): string {
-    // Map Claude Code models to OpenCode format
+    // Map Claude Code models to free OpenCode models from models.json
     const modelMap: Record<string, string> = {
-      'sonnet': 'anthropic/claude-sonnet-4',
-      'opus': 'anthropic/claude-opus-4',
-      'haiku': 'anthropic/claude-haiku-4',
-      'inherit': 'anthropic/claude-sonnet-4', // Default to sonnet
+      sonnet: 'opencode/grok-code', // Free OpenCode model (default)
+      opus: 'opencode/code-supernova', // More capable free model
+      haiku: 'opencode/grok-code', // Fast free model
+      inherit: 'opencode/grok-code', // Default to free model
+      'anthropic/claude-sonnet-4': 'opencode/grok-code',
+      'anthropic/claude-opus-4': 'opencode/code-supernova',
+      'anthropic/claude-haiku-4': 'opencode/grok-code',
     };
 
-    // If already in provider/model format, return as-is
-    if (model.includes('/')) {
-      return model;
+    // If already in OpenCode format, validate it exists
+    if (model.startsWith('opencode/')) {
+      // Validate against models.json
+      const validModels = [
+        'opencode/grok-code',
+        'opencode/code-supernova',
+        'opencode/grok-code-fast-1',
+      ];
+      if (validModels.includes(model)) {
+        return model;
+      }
+      // If invalid OpenCode model, default to grok-code
+      console.warn(`Unknown OpenCode model '${model}', defaulting to 'opencode/grok-code'`);
+      return 'opencode/grok-code';
     }
 
-    // Try to map from Claude Code format
+    // Try to map from Claude Code or Anthropic format
     const mapped = modelMap[model.toLowerCase()];
     if (mapped) {
       return mapped;
     }
 
-    // If we can't map it, return as-is (might be valid OpenCode format already)
-    return model;
+    // If we can't map it, default to free OpenCode grok-code model
+    console.warn(`Unknown model '${model}', defaulting to 'opencode/grok-code' for OpenCode`);
+    return 'opencode/grok-code';
   }
 
   /**

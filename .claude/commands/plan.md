@@ -281,12 +281,14 @@ Create comprehensive, actionable implementation plans by thoroughly researching 
 For complex feature planning requiring architectural and technical expertise:
 
 #### Phase 1: Research Integration & Context Building (Parallel)
+
 - **codebase-locator**: Maps existing component locations and architectural boundaries
 - **thoughts-locator**: Discovers existing plans, architectural decisions, and technical constraints
 - **codebase-pattern-finder**: Identifies established implementation patterns for similar features
 - **thoughts-analyzer**: Extracts insights from past planning decisions and outcomes
 
 #### Phase 2: Technical Feasibility Analysis (Sequential)
+
 - **codebase-analyzer**: Validates technical assumptions and identifies integration points
 - **system-architect**: Evaluates architectural impact and design trade-offs
 - **database-expert**: Assesses data model changes and migration requirements
@@ -294,6 +296,7 @@ For complex feature planning requiring architectural and technical expertise:
 - **performance-engineer**: Analyzes performance impact and optimization needs
 
 #### Phase 3: Risk & Constraint Assessment (Parallel)
+
 - **security-scanner**: Identifies security implications and requirements
 - **compliance-expert**: Evaluates regulatory compliance constraints
 - **cost-optimizer**: Analyzes operational cost implications
@@ -301,6 +304,7 @@ For complex feature planning requiring architectural and technical expertise:
 - **monitoring-expert**: Evaluates observability and monitoring needs
 
 #### Phase 4: Implementation Strategy Development (Sequential)
+
 - **full-stack-developer**: Validates technical feasibility of proposed approaches
 - **test-generator**: Identifies testing strategy and coverage requirements
 - **quality-testing-performance-tester**: Defines performance testing approach
@@ -308,6 +312,7 @@ For complex feature planning requiring architectural and technical expertise:
 - **code-reviewer**: Establishes code quality and review standards for the implementation
 
 #### Phase 5: Validation & Documentation (Parallel)
+
 - **accessibility-pro**: Ensures accessibility requirements are addressed (if applicable)
 - **ux-optimizer**: Validates user experience implications
 - **content-localization-coordinator**: Assesses internationalization requirements
@@ -338,7 +343,6 @@ For complex feature planning requiring architectural and technical expertise:
 - **Dependency Management**: Clearly define inter-component dependencies
 - **Success Metrics**: Define measurable success criteria for each phase
 - **Rollback Planning**: Include rollback strategies for each major change
-
 
 ### Cache Usage Patterns
 

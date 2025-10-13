@@ -2,9 +2,8 @@
 name: help
 description: Get help with using opencode and codeflow development workflows
 mode: command
-model: anthropic/claude-sonnet-4
 version: 2.1.0-optimized
-last_updated: 2025-10-01
+last_updated: 2025-10-13
 command_schema_version: "1.0"
 outputs:
   - name: result
@@ -91,6 +90,7 @@ This is a **Codeflow Automation Enhancement CLI** built with **Bun** and **TypeS
 - `/document` - Creates user guides, API docs, and technical documentation
 - `/commit` - Creates commits with structured messages
 - `/review` - Validates implementations against original plans
+- `/continue` - Resume execution from the last completed step
 
 **Slash Commands Available**:
 

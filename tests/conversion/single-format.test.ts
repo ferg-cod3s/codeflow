@@ -202,15 +202,16 @@ describe('Single Format Architecture', () => {
       const backToBase = converter.claudeCodeToBase(toClaude);
 
       // Claude Code format only preserves name, description, and tools
-      // Other fields (mode, model, temperature) are expected to be lost
+      // Other fields (mode, temperature) are expected to be lost
       expect(backToBase.frontmatter.name).toBe(originalAgent.frontmatter.name);
       expect(backToBase.frontmatter.description).toBe(originalAgent.frontmatter.description);
       expect(backToBase.frontmatter.tools).toEqual(originalAgent.frontmatter.tools);
 
       // These fields are not preserved in Claude Code format
       expect(backToBase.frontmatter.mode).toBeUndefined();
-      expect(backToBase.frontmatter.model).toBeUndefined();
       expect(backToBase.frontmatter.temperature).toBeUndefined();
+      // Model is converted to 'inherit' if not recognized by Claude Code
+      expect(backToBase.frontmatter.model).toBe('inherit');
     });
 
     it('should handle Claude Code format limitation with disabled tools', () => {
@@ -280,7 +281,6 @@ describe('Single Format Architecture', () => {
       const claudeCodeAgent: ClaudeCodeAgent = {
         name: 'validation-test',
         description: 'Test agent for validation consistency',
-        mode: 'subagent' as const,
         tools: 'read, write',
       };
 

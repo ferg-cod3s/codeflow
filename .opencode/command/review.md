@@ -1,26 +1,41 @@
 ---
 name: review
-description: Validate that an implementation plan was correctly executed
 mode: command
-model: anthropic/claude-sonnet-4
-version: 2.1.0-optimized
-last_updated: 2025-10-01
-command_schema_version: "1.0"
-outputs:
-  - name: result
+description: Validate that an implementation plan was correctly executed
+version: 2.0.0-internal
+last_updated: 2025-09-13
+command_schema_version: 1
+inputs:
+  - name: plan_path
     type: string
-    description: Command execution result
+    required: false
+    description: Path to the implementation plan to validate
+  - name: implementation_scope
+    type: string
+    required: false
+    description: Scope of validation (current_session|recent_commits|full_history)
+  - name: strictness
+    type: string
+    required: false
+    description: Validation strictness level (lenient|standard|strict)
+outputs:
+  - name: validation_report
+    type: structured
+    format: JSON with validation results and findings
+    description: Comprehensive validation report with issues and recommendations
 cache_strategy:
   type: content_based
-  ttl: 3600
+  ttl: 1800
+  invalidation: manual
   scope: command
 success_signals:
-  - Command completed successfully
-  - Task executed without errors
+  - Validation completed successfully
+  - Implementation plan verified against execution
+  - Validation report generated with findings
 failure_modes:
-  - Command execution failed
-  - Invalid parameters provided
-  - System error occurred
+  - Plan file not found or invalid
+  - Unable to determine implementation scope
+  - Automated verification checks failing
 ---
 # Validate Implementation
 
@@ -342,6 +357,7 @@ Systematically validate implementation correctness by comparing executed changes
 For thorough implementation validation requiring multi-domain expertise:
 
 #### Phase 1: Implementation Analysis (Parallel)
+
 - **codebase-locator**: Identify all implemented components and changed files
 - **codebase-analyzer**: Understand implementation details and code changes
 - **thoughts-analyzer**: Review implementation documentation and notes
@@ -349,6 +365,7 @@ For thorough implementation validation requiring multi-domain expertise:
 - **code-reviewer**: Primary agent for comprehensive code quality validation
 
 #### Phase 2: Domain-Specific Validation (Sequential)
+
 - **full-stack-developer**: Validate technical implementation correctness
 - **api-builder**: Verify API contracts and integration implementations
 - **database-expert**: Validate database changes and data integrity
@@ -358,6 +375,7 @@ For thorough implementation validation requiring multi-domain expertise:
 - **compliance-expert**: Validate regulatory compliance requirements
 
 #### Phase 3: Quality Assurance Validation (Parallel)
+
 - **test-generator**: Verify test coverage and quality of test implementations
 - **quality-testing-performance-tester**: Validate performance testing and benchmarks
 - **monitoring-expert**: Verify monitoring and alerting implementations
@@ -365,12 +383,14 @@ For thorough implementation validation requiring multi-domain expertise:
 - **deployment-wizard**: Verify deployment procedures and rollback capabilities
 
 #### Phase 4: Integration & System Validation (Sequential)
+
 - **system-architect**: Validate architectural compliance and design integrity
 - **devops-operations-specialist**: Verify operational readiness and procedures
 - **cost-optimizer**: Validate cost implications and optimizations
 - **content-localization-coordinator**: Verify internationalization implementations
 
 #### Phase 5: Documentation & Reporting (Parallel)
+
 - **thoughts-analyzer**: Validate documentation updates and completeness
 - **content-writer**: Review user-facing documentation accuracy
 - **code-reviewer**: Final comprehensive quality assessment
@@ -402,7 +422,6 @@ For thorough implementation validation requiring multi-domain expertise:
 - **Risk-Based Prioritization**: Focus validation efforts on high-risk areas
 - **Continuous Feedback**: Provide ongoing feedback during implementation
 - **Comprehensive Reporting**: Generate detailed reports with actionable recommendations
-
 
 ### Cache Usage Patterns
 

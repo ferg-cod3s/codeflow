@@ -21,6 +21,16 @@
       }
     },
     {
+      "name": "ai-engineer",
+      "description": "Build production-ready LLM applications, advanced RAG systems, and intelligent agents.",
+      "category": "ai-innovation",
+      "sources": {
+        "base": "codeflow-agents/ai-innovation/ai-engineer.md",
+        "claude-code": ".claude/agents/ai-engineer.md",
+        "opencode": ".opencode/agent/ai-engineer.md"
+      }
+    },
+    {
       "name": "ai-integration-expert",
       "description": "Adds AI features and integrates machine learning capabilities.",
       "category": "ai-innovation",
@@ -51,11 +61,111 @@
       }
     },
     {
-      "name": "code-reviewer",
-      "description": "Engineering-level static code quality review & refactor opportunity synthesizer.",
+      "name": "api-builder-enhanced",
+      "description": "Expert at building robust, scalable APIs with proper authentication, validation, rate limiting, and comprehensive documentation.",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/code-reviewer.md",
+        "base": "codeflow-agents/development/api-builder-enhanced.md",
+        "claude-code": ".claude/agents/api-builder-enhanced.md",
+        "opencode": ".opencode/agent/api-builder-enhanced.md"
+      }
+    },
+    {
+      "name": "api-documenter",
+      "description": "Master API documentation with OpenAPI 3.",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/api-documenter.md",
+        "claude-code": ".claude/agents/api-documenter.md",
+        "opencode": ".opencode/agent/api-documenter.md"
+      }
+    },
+    {
+      "name": "architect-review",
+      "description": "Master software architect specializing in modern architecture patterns, clean architecture, microservices, event-driven systems, and DDD.",
+      "category": "quality-testing",
+      "sources": {
+        "base": "codeflow-agents/quality-testing/architect-review.md",
+        "claude-code": ".claude/agents/architect-review.md",
+        "opencode": ".opencode/agent/architect-review.md"
+      }
+    },
+    {
+      "name": "astro-pro",
+      "description": "Master Astro 4+ with content collections, islands architecture, and static site generation.",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/astro-pro.md",
+        "claude-code": ".claude/agents/astro-pro.md",
+        "opencode": ".opencode/agent/astro-pro.md"
+      }
+    },
+    {
+      "name": "backend-architect",
+      "description": "Design RESTful APIs, microservice boundaries, and database schemas.",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/backend-architect.md",
+        "claude-code": ".claude/agents/backend-architect.md",
+        "opencode": ".opencode/agent/backend-architect.md"
+      }
+    },
+    {
+      "name": "backend-security-coder",
+      "description": "Expert in secure backend coding practices specializing in input validation, authentication, and API security.",
+      "category": "quality-testing",
+      "sources": {
+        "base": "codeflow-agents/quality-testing/backend-security-coder.md",
+        "claude-code": ".claude/agents/backend-security-coder.md",
+        "opencode": ".opencode/agent/backend-security-coder.md"
+      }
+    },
+    {
+      "name": "blockchain-developer",
+      "description": "Build production-ready Web3 applications, smart contracts, and decentralized systems.",
+      "category": "business-analytics",
+      "sources": {
+        "base": "codeflow-agents/business-analytics/blockchain-developer.md",
+        "claude-code": ".claude/agents/blockchain-developer.md",
+        "opencode": ".opencode/agent/blockchain-developer.md"
+      }
+    },
+    {
+      "name": "business-analyst",
+      "description": "Master modern business analysis with AI-powered analytics, real-time dashboards, and data-driven insights.",
+      "category": "business-analytics",
+      "sources": {
+        "base": "codeflow-agents/business-analytics/business-analyst.md",
+        "claude-code": ".claude/agents/business-analyst.md",
+        "opencode": ".opencode/agent/business-analyst.md"
+      }
+    },
+    {
+      "name": "c-pro",
+      "description": "Write efficient C code with proper memory management, pointer arithmetic, and system calls.",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/c-pro.md",
+        "claude-code": ".claude/agents/c-pro.md",
+        "opencode": ".opencode/agent/c-pro.md"
+      }
+    },
+    {
+      "name": "cloud-architect",
+      "description": "Expert cloud architect specializing in AWS/Azure/GCP multi-cloud infrastructure design, advanced IaC (Terraform/OpenTofu/CDK), FinOps cost optimization, and modern architectural patterns.",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/cloud-architect.md",
+        "claude-code": ".claude/agents/cloud-architect.md",
+        "opencode": ".opencode/agent/cloud-architect.md"
+      }
+    },
+    {
+      "name": "code-reviewer",
+      "description": "Elite code review expert specializing in modern AI-powered code analysis, security vulnerabilities, performance optimization, and production reliability.",
+      "category": "quality-testing",
+      "sources": {
+        "base": "codeflow-agents/quality-testing/code-reviewer.md",
         "claude-code": ".claude/agents/code-reviewer.md",
         "opencode": ".opencode/agent/code-reviewer.md"
       }
@@ -111,6 +221,26 @@
       }
     },
     {
+      "name": "content-marketer",
+      "description": "Elite content marketing strategist specializing in AI-powered content creation, omnichannel distribution, SEO optimization, and data-driven performance marketing.",
+      "category": "business-analytics",
+      "sources": {
+        "base": "codeflow-agents/business-analytics/content-marketer.md",
+        "claude-code": ".claude/agents/content-marketer.md",
+        "opencode": ".opencode/agent/content-marketer.md"
+      }
+    },
+    {
+      "name": "context-manager",
+      "description": "Elite AI context engineering specialist mastering dynamic context management, vector databases, knowledge graphs, and intelligent memory systems.",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/context-manager.md",
+        "claude-code": ".claude/agents/context-manager.md",
+        "opencode": ".opencode/agent/context-manager.md"
+      }
+    },
+    {
       "name": "cost-optimizer",
       "description": "Cloud cost optimization and resource efficiency specialist.",
       "category": "operations",
@@ -121,6 +251,66 @@
       }
     },
     {
+      "name": "cpp-pro",
+      "description": "Write idiomatic C++ code with modern features, RAII, smart pointers, and STL algorithms.",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/cpp-pro.md",
+        "claude-code": ".claude/agents/cpp-pro.md",
+        "opencode": ".opencode/agent/cpp-pro.md"
+      }
+    },
+    {
+      "name": "csharp-pro",
+      "description": "Write modern C# code with advanced features like records, pattern matching, and async/await.",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/csharp-pro.md",
+        "claude-code": ".claude/agents/csharp-pro.md",
+        "opencode": ".opencode/agent/csharp-pro.md"
+      }
+    },
+    {
+      "name": "customer-support",
+      "description": "Elite AI-powered customer support specialist mastering conversational AI, automated ticketing, sentiment analysis, and omnichannel support experiences.",
+      "category": "business-analytics",
+      "sources": {
+        "base": "codeflow-agents/business-analytics/customer-support.md",
+        "claude-code": ".claude/agents/customer-support.md",
+        "opencode": ".opencode/agent/customer-support.md"
+      }
+    },
+    {
+      "name": "data-engineer",
+      "description": "Build scalable data pipelines, modern data warehouses, and real-time streaming architectures.",
+      "category": "ai-innovation",
+      "sources": {
+        "base": "codeflow-agents/ai-innovation/data-engineer.md",
+        "claude-code": ".claude/agents/data-engineer.md",
+        "opencode": ".opencode/agent/data-engineer.md"
+      }
+    },
+    {
+      "name": "data-scientist",
+      "description": "Expert data scientist for advanced analytics, machine learning, and statistical modeling.",
+      "category": "ai-innovation",
+      "sources": {
+        "base": "codeflow-agents/ai-innovation/data-scientist.md",
+        "claude-code": ".claude/agents/data-scientist.md",
+        "opencode": ".opencode/agent/data-scientist.md"
+      }
+    },
+    {
+      "name": "database-admin",
+      "description": "Expert database administrator specializing in modern cloud databases, automation, and reliability engineering.",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/database-admin.md",
+        "claude-code": ".claude/agents/database-admin.md",
+        "opencode": ".opencode/agent/database-admin.md"
+      }
+    },
+    {
       "name": "database-expert",
       "description": "Optimizes database queries and designs efficient data models.",
       "category": "development",
@@ -128,6 +318,36 @@
         "base": "codeflow-agents/development/database-expert.md",
         "claude-code": ".claude/agents/database-expert.md",
         "opencode": ".opencode/agent/database-expert.md"
+      }
+    },
+    {
+      "name": "database-optimizer",
+      "description": "Expert database optimizer specializing in modern performance tuning, query optimization, and scalable architectures.",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/database-optimizer.md",
+        "claude-code": ".claude/agents/database-optimizer.md",
+        "opencode": ".opencode/agent/database-optimizer.md"
+      }
+    },
+    {
+      "name": "debugger",
+      "description": "Debugging specialist for errors, test failures, and unexpected behavior.",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/debugger.md",
+        "claude-code": ".claude/agents/debugger.md",
+        "opencode": ".opencode/agent/debugger.md"
+      }
+    },
+    {
+      "name": "deployment-engineer",
+      "description": "Expert deployment engineer specializing in modern CI/CD pipelines, GitOps workflows, and advanced deployment automation.",
+      "category": "operations",
+      "sources": {
+        "base": "codeflow-agents/operations/deployment-engineer.md",
+        "claude-code": ".claude/agents/deployment-engineer.md",
+        "opencode": ".opencode/agent/deployment-engineer.md"
       }
     },
     {
@@ -161,6 +381,116 @@
       }
     },
     {
+      "name": "devops-troubleshooter",
+      "description": "Expert DevOps troubleshooter specializing in rapid incident response, advanced debugging, and modern observability.",
+      "category": "operations",
+      "sources": {
+        "base": "codeflow-agents/operations/devops-troubleshooter.md",
+        "claude-code": ".claude/agents/devops-troubleshooter.md",
+        "opencode": ".opencode/agent/devops-troubleshooter.md"
+      }
+    },
+    {
+      "name": "django-pro",
+      "description": "Master Django 5.",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/django-pro.md",
+        "claude-code": ".claude/agents/django-pro.md",
+        "opencode": ".opencode/agent/django-pro.md"
+      }
+    },
+    {
+      "name": "docs-architect",
+      "description": "Creates comprehensive technical documentation from existing codebases.",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/docs-architect.md",
+        "claude-code": ".claude/agents/docs-architect.md",
+        "opencode": ".opencode/agent/docs-architect.md"
+      }
+    },
+    {
+      "name": "dx-optimizer",
+      "description": "Developer Experience specialist.",
+      "category": "operations",
+      "sources": {
+        "base": "codeflow-agents/operations/dx-optimizer.md",
+        "claude-code": ".claude/agents/dx-optimizer.md",
+        "opencode": ".opencode/agent/dx-optimizer.md"
+      }
+    },
+    {
+      "name": "elixir-pro",
+      "description": "Write idiomatic Elixir code with OTP patterns, supervision trees, and Phoenix LiveView.",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/elixir-pro.md",
+        "claude-code": ".claude/agents/elixir-pro.md",
+        "opencode": ".opencode/agent/elixir-pro.md"
+      }
+    },
+    {
+      "name": "error-detective",
+      "description": "Search logs and codebases for error patterns, stack traces, and anomalies.",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/error-detective.md",
+        "claude-code": ".claude/agents/error-detective.md",
+        "opencode": ".opencode/agent/error-detective.md"
+      }
+    },
+    {
+      "name": "error-monitoring-specialist",
+      "description": "Expert in error tracking, crash reporting, and real-time error management.",
+      "category": "operations",
+      "sources": {
+        "base": "codeflow-agents/operations/error-monitoring-specialist.md",
+        "claude-code": ".claude/agents/error-monitoring-specialist.md",
+        "opencode": ".opencode/agent/error-monitoring-specialist.md"
+      }
+    },
+    {
+      "name": "fastapi-pro",
+      "description": "Build high-performance async APIs with FastAPI, SQLAlchemy 2.",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/fastapi-pro.md",
+        "claude-code": ".claude/agents/fastapi-pro.md",
+        "opencode": ".opencode/agent/fastapi-pro.md"
+      }
+    },
+    {
+      "name": "flutter-expert",
+      "description": "Master Flutter development with Dart 3, advanced widgets, and multi-platform deployment.",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/flutter-expert.md",
+        "claude-code": ".claude/agents/flutter-expert.md",
+        "opencode": ".opencode/agent/flutter-expert.md"
+      }
+    },
+    {
+      "name": "frontend-developer",
+      "description": "Build React components, implement responsive layouts, and handle client-side state management.",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/frontend-developer.md",
+        "claude-code": ".claude/agents/frontend-developer.md",
+        "opencode": ".opencode/agent/frontend-developer.md"
+      }
+    },
+    {
+      "name": "frontend-security-coder",
+      "description": "Expert in secure frontend coding practices specializing in XSS prevention, output sanitization, and client-side security patterns.",
+      "category": "quality-testing",
+      "sources": {
+        "base": "codeflow-agents/quality-testing/frontend-security-coder.md",
+        "claude-code": ".claude/agents/frontend-security-coder.md",
+        "opencode": ".opencode/agent/frontend-security-coder.md"
+      }
+    },
+    {
       "name": "full-stack-developer",
       "description": "Generalist implementation developer focused on end-to-end feature delivery (UI → API → data) within established architectural, security, performance, and infrastructure guidelines.",
       "category": "development",
@@ -168,6 +498,26 @@
         "base": "codeflow-agents/development/full-stack-developer.md",
         "claude-code": ".claude/agents/full-stack-developer.md",
         "opencode": ".opencode/agent/full-stack-developer.md"
+      }
+    },
+    {
+      "name": "golang-pro",
+      "description": "Master Go 1.",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/golang-pro.md",
+        "claude-code": ".claude/agents/golang-pro.md",
+        "opencode": ".opencode/agent/golang-pro.md"
+      }
+    },
+    {
+      "name": "graphql-architect",
+      "description": "Master modern GraphQL with federation, performance optimization, and enterprise security.",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/graphql-architect.md",
+        "claude-code": ".claude/agents/graphql-architect.md",
+        "opencode": ".opencode/agent/graphql-architect.md"
       }
     },
     {
@@ -181,6 +531,36 @@
       }
     },
     {
+      "name": "hr-pro",
+      "description": "Professional, ethical HR partner for hiring, onboarding/offboarding, PTO and leave, performance, compliant policies, and employee relations.",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/hr-pro.md",
+        "claude-code": ".claude/agents/hr-pro.md",
+        "opencode": ".opencode/agent/hr-pro.md"
+      }
+    },
+    {
+      "name": "hybrid-cloud-architect",
+      "description": "Expert hybrid cloud architect specializing in complex multi-cloud solutions across AWS/Azure/GCP and private clouds (OpenStack/VMware).",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/hybrid-cloud-architect.md",
+        "claude-code": ".claude/agents/hybrid-cloud-architect.md",
+        "opencode": ".opencode/agent/hybrid-cloud-architect.md"
+      }
+    },
+    {
+      "name": "incident-responder",
+      "description": "Expert SRE incident responder specializing in rapid problem resolution, modern observability, and comprehensive incident management.",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/incident-responder.md",
+        "claude-code": ".claude/agents/incident-responder.md",
+        "opencode": ".opencode/agent/incident-responder.md"
+      }
+    },
+    {
       "name": "infrastructure-builder",
       "description": "Designs scalable cloud architecture and manages infrastructure as code.",
       "category": "operations",
@@ -188,6 +568,126 @@
         "base": "codeflow-agents/operations/infrastructure-builder.md",
         "claude-code": ".claude/agents/infrastructure-builder.md",
         "opencode": ".opencode/agent/infrastructure-builder.md"
+      }
+    },
+    {
+      "name": "ios-developer",
+      "description": "Develop native iOS applications with Swift/SwiftUI.",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/ios-developer.md",
+        "claude-code": ".claude/agents/ios-developer.md",
+        "opencode": ".opencode/agent/ios-developer.md"
+      }
+    },
+    {
+      "name": "java-pro",
+      "description": "Master Java 21+ with modern features like virtual threads, pattern matching, and Spring Boot 3.",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/java-pro.md",
+        "claude-code": ".claude/agents/java-pro.md",
+        "opencode": ".opencode/agent/java-pro.md"
+      }
+    },
+    {
+      "name": "javascript-pro",
+      "description": "Master modern JavaScript with ES6+, async patterns, and Node.",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/javascript-pro.md",
+        "claude-code": ".claude/agents/javascript-pro.md",
+        "opencode": ".opencode/agent/javascript-pro.md"
+      }
+    },
+    {
+      "name": "kubernetes-architect",
+      "description": "Expert Kubernetes architect specializing in cloud-native infrastructure, advanced GitOps workflows (ArgoCD/Flux), and enterprise container orchestration.",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/kubernetes-architect.md",
+        "claude-code": ".claude/agents/kubernetes-architect.md",
+        "opencode": ".opencode/agent/kubernetes-architect.md"
+      }
+    },
+    {
+      "name": "legacy-modernizer",
+      "description": "Refactor legacy codebases, migrate outdated frameworks, and implement gradual modernization.",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/legacy-modernizer.md",
+        "claude-code": ".claude/agents/legacy-modernizer.md",
+        "opencode": ".opencode/agent/legacy-modernizer.md"
+      }
+    },
+    {
+      "name": "legal-advisor",
+      "description": "Draft privacy policies, terms of service, disclaimers, and legal notices.",
+      "category": "business-analytics",
+      "sources": {
+        "base": "codeflow-agents/business-analytics/legal-advisor.md",
+        "claude-code": ".claude/agents/legal-advisor.md",
+        "opencode": ".opencode/agent/legal-advisor.md"
+      }
+    },
+    {
+      "name": "mermaid-expert",
+      "description": "Create Mermaid diagrams for flowcharts, sequences, ERDs, and architectures.",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/mermaid-expert.md",
+        "claude-code": ".claude/agents/mermaid-expert.md",
+        "opencode": ".opencode/agent/mermaid-expert.md"
+      }
+    },
+    {
+      "name": "minecraft-bukkit-pro",
+      "description": "Master Minecraft server plugin development with Bukkit, Spigot, and Paper APIs.",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/minecraft-bukkit-pro.md",
+        "claude-code": ".claude/agents/minecraft-bukkit-pro.md",
+        "opencode": ".opencode/agent/minecraft-bukkit-pro.md"
+      }
+    },
+    {
+      "name": "ml-engineer",
+      "description": "Build production ML systems with PyTorch 2.",
+      "category": "ai-innovation",
+      "sources": {
+        "base": "codeflow-agents/ai-innovation/ml-engineer.md",
+        "claude-code": ".claude/agents/ml-engineer.md",
+        "opencode": ".opencode/agent/ml-engineer.md"
+      }
+    },
+    {
+      "name": "mlops-engineer",
+      "description": "Build comprehensive ML pipelines, experiment tracking, and model registries with MLflow, Kubeflow, and modern MLOps tools.",
+      "category": "ai-innovation",
+      "sources": {
+        "base": "codeflow-agents/ai-innovation/mlops-engineer.md",
+        "claude-code": ".claude/agents/mlops-engineer.md",
+        "opencode": ".opencode/agent/mlops-engineer.md"
+      }
+    },
+    {
+      "name": "mobile-developer",
+      "description": "Develop React Native, Flutter, or native mobile apps with modern architecture patterns.",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/mobile-developer.md",
+        "claude-code": ".claude/agents/mobile-developer.md",
+        "opencode": ".opencode/agent/mobile-developer.md"
+      }
+    },
+    {
+      "name": "mobile-security-coder",
+      "description": "Expert in secure mobile coding practices specializing in input validation, WebView security, and mobile-specific security patterns.",
+      "category": "quality-testing",
+      "sources": {
+        "base": "codeflow-agents/quality-testing/mobile-security-coder.md",
+        "claude-code": ".claude/agents/mobile-security-coder.md",
+        "opencode": ".opencode/agent/mobile-security-coder.md"
       }
     },
     {
@@ -201,6 +701,26 @@
       }
     },
     {
+      "name": "network-engineer",
+      "description": "Expert network engineer specializing in modern cloud networking, security architectures, and performance optimization.",
+      "category": "operations",
+      "sources": {
+        "base": "codeflow-agents/operations/network-engineer.md",
+        "claude-code": ".claude/agents/network-engineer.md",
+        "opencode": ".opencode/agent/network-engineer.md"
+      }
+    },
+    {
+      "name": "observability-engineer",
+      "description": "Build production-ready monitoring, logging, and tracing systems.",
+      "category": "operations",
+      "sources": {
+        "base": "codeflow-agents/operations/observability-engineer.md",
+        "claude-code": ".claude/agents/observability-engineer.md",
+        "opencode": ".opencode/agent/observability-engineer.md"
+      }
+    },
+    {
       "name": "operations-incident-commander",
       "description": "Lead incident response from detection through resolution and post-incident analysis.",
       "category": "operations",
@@ -211,13 +731,33 @@
       }
     },
     {
-      "name": "performance-engineer",
-      "description": "Runtime performance diagnosis & optimization strategy specialist.",
-      "category": "development",
+      "name": "payment-integration",
+      "description": "Integrate Stripe, PayPal, and payment processors.",
+      "category": "business-analytics",
       "sources": {
-        "base": "codeflow-agents/development/performance-engineer.md",
+        "base": "codeflow-agents/business-analytics/payment-integration.md",
+        "claude-code": ".claude/agents/payment-integration.md",
+        "opencode": ".opencode/agent/payment-integration.md"
+      }
+    },
+    {
+      "name": "performance-engineer",
+      "description": "Expert performance engineer specializing in modern observability, application optimization, and scalable system performance.",
+      "category": "quality-testing",
+      "sources": {
+        "base": "codeflow-agents/quality-testing/performance-engineer.md",
         "claude-code": ".claude/agents/performance-engineer.md",
         "opencode": ".opencode/agent/performance-engineer.md"
+      }
+    },
+    {
+      "name": "php-pro",
+      "description": "Write idiomatic PHP code with generators, iterators, SPL data structures, and modern OOP features.",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/php-pro.md",
+        "claude-code": ".claude/agents/php-pro.md",
+        "opencode": ".opencode/agent/php-pro.md"
       }
     },
     {
@@ -231,6 +771,26 @@
       }
     },
     {
+      "name": "prompt-engineer",
+      "description": "Expert prompt engineer specializing in advanced prompting techniques, LLM optimization, and AI system design.",
+      "category": "ai-innovation",
+      "sources": {
+        "base": "codeflow-agents/ai-innovation/prompt-engineer.md",
+        "claude-code": ".claude/agents/prompt-engineer.md",
+        "opencode": ".opencode/agent/prompt-engineer.md"
+      }
+    },
+    {
+      "name": "python-pro",
+      "description": "Master Python 3.",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/python-pro.md",
+        "claude-code": ".claude/agents/python-pro.md",
+        "opencode": ".opencode/agent/python-pro.md"
+      }
+    },
+    {
       "name": "quality-testing-performance-tester",
       "description": "Design and execute load, stress, soak, and spike tests; analyze performance bottlenecks; and recommend optimizations aligned with SLOs.",
       "category": "quality-testing",
@@ -238,6 +798,26 @@
         "base": "codeflow-agents/quality-testing/quality-testing-performance-tester.md",
         "claude-code": ".claude/agents/quality-testing-performance-tester.md",
         "opencode": ".opencode/agent/quality-testing-performance-tester.md"
+      }
+    },
+    {
+      "name": "quant-analyst",
+      "description": "Build financial models, backtest trading strategies, and analyze market data.",
+      "category": "ai-innovation",
+      "sources": {
+        "base": "codeflow-agents/ai-innovation/quant-analyst.md",
+        "claude-code": ".claude/agents/quant-analyst.md",
+        "opencode": ".opencode/agent/quant-analyst.md"
+      }
+    },
+    {
+      "name": "reference-builder",
+      "description": "Creates exhaustive technical references and API documentation.",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/reference-builder.md",
+        "claude-code": ".claude/agents/reference-builder.md",
+        "opencode": ".opencode/agent/reference-builder.md"
       }
     },
     {
@@ -251,6 +831,76 @@
       }
     },
     {
+      "name": "risk-manager",
+      "description": "Monitor portfolio risk, R-multiples, and position limits.",
+      "category": "business-analytics",
+      "sources": {
+        "base": "codeflow-agents/business-analytics/risk-manager.md",
+        "claude-code": ".claude/agents/risk-manager.md",
+        "opencode": ".opencode/agent/risk-manager.md"
+      }
+    },
+    {
+      "name": "ruby-pro",
+      "description": "Write idiomatic Ruby code with metaprogramming, Rails patterns, and performance optimization.",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/ruby-pro.md",
+        "claude-code": ".claude/agents/ruby-pro.md",
+        "opencode": ".opencode/agent/ruby-pro.md"
+      }
+    },
+    {
+      "name": "rust-pro",
+      "description": "Master Rust 1.",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/rust-pro.md",
+        "claude-code": ".claude/agents/rust-pro.md",
+        "opencode": ".opencode/agent/rust-pro.md"
+      }
+    },
+    {
+      "name": "sales-automator",
+      "description": "Draft cold emails, follow-ups, and proposal templates.",
+      "category": "business-analytics",
+      "sources": {
+        "base": "codeflow-agents/business-analytics/sales-automator.md",
+        "claude-code": ".claude/agents/sales-automator.md",
+        "opencode": ".opencode/agent/sales-automator.md"
+      }
+    },
+    {
+      "name": "scala-pro",
+      "description": "Master enterprise-grade Scala development with functional programming, distributed systems, and big data processing.",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/scala-pro.md",
+        "claude-code": ".claude/agents/scala-pro.md",
+        "opencode": ".opencode/agent/scala-pro.md"
+      }
+    },
+    {
+      "name": "search-specialist",
+      "description": "Expert web researcher using advanced search techniques and synthesis.",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/search-specialist.md",
+        "claude-code": ".claude/agents/search-specialist.md",
+        "opencode": ".opencode/agent/search-specialist.md"
+      }
+    },
+    {
+      "name": "security-auditor",
+      "description": "Expert security auditor specializing in DevSecOps, comprehensive cybersecurity, and compliance frameworks.",
+      "category": "quality-testing",
+      "sources": {
+        "base": "codeflow-agents/quality-testing/security-auditor.md",
+        "claude-code": ".claude/agents/security-auditor.md",
+        "opencode": ".opencode/agent/security-auditor.md"
+      }
+    },
+    {
       "name": "security-scanner",
       "description": "Defensive application & platform security analysis agent.",
       "category": "quality-testing",
@@ -258,6 +908,106 @@
         "base": "codeflow-agents/quality-testing/security-scanner.md",
         "claude-code": ".claude/agents/security-scanner.md",
         "opencode": ".opencode/agent/security-scanner.md"
+      }
+    },
+    {
+      "name": "seo-authority-builder",
+      "description": "Analyzes content for E-E-A-T signals and suggests improvements to build authority and trust.",
+      "category": "design-ux",
+      "sources": {
+        "base": "codeflow-agents/design-ux/seo-authority-builder.md",
+        "claude-code": ".claude/agents/seo-authority-builder.md",
+        "opencode": ".opencode/agent/seo-authority-builder.md"
+      }
+    },
+    {
+      "name": "seo-cannibalization-detector",
+      "description": "Analyzes multiple provided pages to identify keyword overlap and potential cannibalization issues.",
+      "category": "business-analytics",
+      "sources": {
+        "base": "codeflow-agents/business-analytics/seo-cannibalization-detector.md",
+        "claude-code": ".claude/agents/seo-cannibalization-detector.md",
+        "opencode": ".opencode/agent/seo-cannibalization-detector.md"
+      }
+    },
+    {
+      "name": "seo-content-auditor",
+      "description": "Analyzes provided content for quality, E-E-A-T signals, and SEO best practices.",
+      "category": "business-analytics",
+      "sources": {
+        "base": "codeflow-agents/business-analytics/seo-content-auditor.md",
+        "claude-code": ".claude/agents/seo-content-auditor.md",
+        "opencode": ".opencode/agent/seo-content-auditor.md"
+      }
+    },
+    {
+      "name": "seo-content-planner",
+      "description": "Creates comprehensive content outlines and topic clusters for SEO.",
+      "category": "business-analytics",
+      "sources": {
+        "base": "codeflow-agents/business-analytics/seo-content-planner.md",
+        "claude-code": ".claude/agents/seo-content-planner.md",
+        "opencode": ".opencode/agent/seo-content-planner.md"
+      }
+    },
+    {
+      "name": "seo-content-refresher",
+      "description": "Identifies outdated elements in provided content and suggests updates to maintain freshness.",
+      "category": "business-analytics",
+      "sources": {
+        "base": "codeflow-agents/business-analytics/seo-content-refresher.md",
+        "claude-code": ".claude/agents/seo-content-refresher.md",
+        "opencode": ".opencode/agent/seo-content-refresher.md"
+      }
+    },
+    {
+      "name": "seo-content-writer",
+      "description": "Writes SEO-optimized content based on provided keywords and topic briefs.",
+      "category": "business-analytics",
+      "sources": {
+        "base": "codeflow-agents/business-analytics/seo-content-writer.md",
+        "claude-code": ".claude/agents/seo-content-writer.md",
+        "opencode": ".opencode/agent/seo-content-writer.md"
+      }
+    },
+    {
+      "name": "seo-keyword-strategist",
+      "description": "Analyzes keyword usage in provided content, calculates density, suggests semantic variations and LSI keywords based on the topic.",
+      "category": "business-analytics",
+      "sources": {
+        "base": "codeflow-agents/business-analytics/seo-keyword-strategist.md",
+        "claude-code": ".claude/agents/seo-keyword-strategist.md",
+        "opencode": ".opencode/agent/seo-keyword-strategist.md"
+      }
+    },
+    {
+      "name": "seo-meta-optimizer",
+      "description": "Creates optimized meta titles, descriptions, and URL suggestions based on character limits and best practices.",
+      "category": "business-analytics",
+      "sources": {
+        "base": "codeflow-agents/business-analytics/seo-meta-optimizer.md",
+        "claude-code": ".claude/agents/seo-meta-optimizer.md",
+        "opencode": ".opencode/agent/seo-meta-optimizer.md"
+      }
+    },
+    {
+      "name": "seo-snippet-hunter",
+      "description": "Formats content to be eligible for featured snippets and SERP features.",
+      "category": "business-analytics",
+      "sources": {
+        "base": "codeflow-agents/business-analytics/seo-snippet-hunter.md",
+        "claude-code": ".claude/agents/seo-snippet-hunter.md",
+        "opencode": ".opencode/agent/seo-snippet-hunter.md"
+      }
+    },
+    {
+      "name": "seo-structure-architect",
+      "description": "Analyzes and optimizes content structure including header hierarchy, suggests schema markup, and internal linking opportunities.",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/seo-structure-architect.md",
+        "claude-code": ".claude/agents/seo-structure-architect.md",
+        "opencode": ".opencode/agent/seo-structure-architect.md"
       }
     },
     {
@@ -271,6 +1021,26 @@
       }
     },
     {
+      "name": "sql-pro",
+      "description": "Master modern SQL with cloud-native databases, OLTP/OLAP optimization, and advanced query techniques.",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/sql-pro.md",
+        "claude-code": ".claude/agents/sql-pro.md",
+        "opencode": ".opencode/agent/sql-pro.md"
+      }
+    },
+    {
+      "name": "svelte-pro",
+      "description": "Master Svelte 5+ with runes, fine-grained reactivity, and SvelteKit 2+.",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/svelte-pro.md",
+        "claude-code": ".claude/agents/svelte-pro.md",
+        "opencode": ".opencode/agent/svelte-pro.md"
+      }
+    },
+    {
       "name": "system-architect",
       "description": "Macro-level architecture & large-scale transformation strategist.",
       "category": "development",
@@ -278,6 +1048,36 @@
         "base": "codeflow-agents/development/system-architect.md",
         "claude-code": ".claude/agents/system-architect.md",
         "opencode": ".opencode/agent/system-architect.md"
+      }
+    },
+    {
+      "name": "tdd-orchestrator",
+      "description": "Master TDD orchestrator specializing in red-green-refactor discipline, multi-agent workflow coordination, and comprehensive test-driven development practices.",
+      "category": "quality-testing",
+      "sources": {
+        "base": "codeflow-agents/quality-testing/tdd-orchestrator.md",
+        "claude-code": ".claude/agents/tdd-orchestrator.md",
+        "opencode": ".opencode/agent/tdd-orchestrator.md"
+      }
+    },
+    {
+      "name": "terraform-specialist",
+      "description": "Expert Terraform/OpenTofu specialist mastering advanced IaC automation, state management, and enterprise infrastructure patterns.",
+      "category": "operations",
+      "sources": {
+        "base": "codeflow-agents/operations/terraform-specialist.md",
+        "claude-code": ".claude/agents/terraform-specialist.md",
+        "opencode": ".opencode/agent/terraform-specialist.md"
+      }
+    },
+    {
+      "name": "test-automator",
+      "description": "Master AI-powered test automation with modern frameworks, self-healing tests, and comprehensive quality engineering.",
+      "category": "quality-testing",
+      "sources": {
+        "base": "codeflow-agents/quality-testing/test-automator.md",
+        "claude-code": ".claude/agents/test-automator.md",
+        "opencode": ".opencode/agent/test-automator.md"
       }
     },
     {
@@ -311,6 +1111,56 @@
       }
     },
     {
+      "name": "tutorial-engineer",
+      "description": "Creates step-by-step tutorials and educational content from code.",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/tutorial-engineer.md",
+        "claude-code": ".claude/agents/tutorial-engineer.md",
+        "opencode": ".opencode/agent/tutorial-engineer.md"
+      }
+    },
+    {
+      "name": "typescript-pro",
+      "description": "Master TypeScript with advanced types, generics, and strict type safety.",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/typescript-pro.md",
+        "claude-code": ".claude/agents/typescript-pro.md",
+        "opencode": ".opencode/agent/typescript-pro.md"
+      }
+    },
+    {
+      "name": "ui-ux-designer",
+      "description": "Create interface designs, wireframes, and design systems.",
+      "category": "design-ux",
+      "sources": {
+        "base": "codeflow-agents/design-ux/ui-ux-designer.md",
+        "claude-code": ".claude/agents/ui-ux-designer.md",
+        "opencode": ".opencode/agent/ui-ux-designer.md"
+      }
+    },
+    {
+      "name": "ui-visual-validator",
+      "description": "Rigorous visual validation expert specializing in UI testing, design system compliance, and accessibility verification.",
+      "category": "design-ux",
+      "sources": {
+        "base": "codeflow-agents/design-ux/ui-visual-validator.md",
+        "claude-code": ".claude/agents/ui-visual-validator.md",
+        "opencode": ".opencode/agent/ui-visual-validator.md"
+      }
+    },
+    {
+      "name": "unity-developer",
+      "description": "Build Unity games with optimized C# scripts, efficient rendering, and proper asset management.",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/unity-developer.md",
+        "claude-code": ".claude/agents/unity-developer.md",
+        "opencode": ".opencode/agent/unity-developer.md"
+      }
+    },
+    {
       "name": "ux-optimizer",
       "description": "Simplifies user flows, enhances user experience, and optimizes conversion paths.",
       "category": "design-ux",
@@ -331,6 +1181,6 @@
       }
     }
   ],
-  "total_agents": 33,
-  "last_updated": "2025-09-24T11:16:15.319Z"
+  "total_agents": 118,
+  "last_updated": "2025-10-04T04:46:07.603Z"
 }

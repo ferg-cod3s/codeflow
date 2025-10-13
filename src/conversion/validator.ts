@@ -371,9 +371,10 @@ export class AgentValidator {
           {
             agent: 'manifest',
             issue: 'AGENT_MANIFEST.json not found',
-            suggestion: 'Run setup from the codeflow repository or copy AGENT_MANIFEST.json manually',
-          }
-        ]
+            suggestion:
+              'Run setup from the codeflow repository or copy AGENT_MANIFEST.json manually',
+          },
+        ],
       };
     }
 

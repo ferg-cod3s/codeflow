@@ -100,9 +100,14 @@ export class CommandConverter {
     }
 
     const parsedYaml = parseResult.data;
-    const convertedFrontmatter = this.convertClaudeCodeToOpenCode(
-      parsedYaml.frontmatter as CommandMetadata
-    );
+    const frontmatter = parsedYaml.frontmatter as CommandMetadata;
+
+    // Check if already in OpenCode format (has mode: command and inputs)
+    const isAlreadyOpenCode = frontmatter.mode === 'command' && frontmatter.inputs;
+
+    const convertedFrontmatter = isAlreadyOpenCode
+      ? this.ensureOpenCodeDefaults(frontmatter)
+      : this.convertClaudeCodeToOpenCode(frontmatter);
 
     // Create ParsedEntity for serialization
     const entity: ParsedEntity = {
@@ -119,6 +124,69 @@ export class CommandConverter {
     }
 
     return yamlResult.data;
+  }
+
+  /**
+   * Ensure OpenCode format has all required defaults
+   * Used when source is already in OpenCode format
+   */
+  private ensureOpenCodeDefaults(frontmatter: CommandMetadata): CommandMetadata {
+    const converted: CommandMetadata = {
+      ...frontmatter,
+      mode: 'command',
+      version: frontmatter.version || '2.1.0-optimized',
+      last_updated: frontmatter.last_updated || new Date().toISOString().split('T')[0],
+      command_schema_version: frontmatter.command_schema_version || '1.0',
+    };
+
+    // Preserve inputs as-is
+    if (frontmatter.inputs) {
+      converted.inputs = frontmatter.inputs;
+    }
+
+    // Ensure outputs exist
+    if (!converted.outputs) {
+      converted.outputs = [
+        {
+          name: 'result',
+          type: 'string',
+          description: 'Command execution result',
+        },
+      ];
+    }
+
+    // Ensure cache strategy exists
+    if (!converted.cache_strategy) {
+      converted.cache_strategy = {
+        type: 'content_based',
+        ttl: 3600,
+        scope: 'command',
+      };
+    }
+
+    // Ensure success/failure signals exist
+    if (!converted.success_signals) {
+      converted.success_signals = [
+        'Command completed successfully',
+        'Task executed without errors',
+      ];
+    }
+
+    if (!converted.failure_modes) {
+      converted.failure_modes = [
+        'Command execution failed',
+        'Invalid parameters provided',
+        'System error occurred',
+      ];
+    }
+
+    // Remove Claude-specific fields
+    delete converted.temperature;
+    delete converted.category;
+    delete converted.params;
+    delete converted.model;
+
+    return converted;
   }
 
   /**
@@ -154,6 +222,7 @@ export class CommandConverter {
 
     // Remove OpenCode-specific fields
     delete converted.mode;
+    if (converted.model) delete converted.model;
     delete converted.inputs;
     delete converted.outputs;
     delete converted.cache_strategy;
@@ -173,12 +242,12 @@ export class CommandConverter {
       name: frontmatter.name,
       description: frontmatter.description,
       mode: 'command',
-      model: this.convertModelToOpenCode(frontmatter.model),
       version: '2.1.0-optimized',
       last_updated: new Date().toISOString().split('T')[0],
       command_schema_version: '1.0',
     };
 
+    // Commands should NOT have model fields - they use the agent's model
     // Convert params to OpenCode inputs if they exist
     if (frontmatter.params) {
       converted.inputs = [
@@ -249,8 +318,8 @@ export class CommandConverter {
   /**
    * Convert model name to OpenCode format
    */
-  private convertModelToOpenCode(model?: string): string {
-    if (!model) return 'anthropic/claude-sonnet-4';
+  private convertModelToOpenCode(model?: string): string | undefined {
+    if (!model) return undefined;
 
     // Convert Claude model names to OpenCode format
     const modelMap: Record<string, string> = {
@@ -258,7 +327,7 @@ export class CommandConverter {
       'claude-3-5-sonnet': 'anthropic/claude-sonnet-4',
     };
 
-    return modelMap[model] || 'anthropic/claude-sonnet-4';
+    return modelMap[model] || undefined;
   }
 
   /**

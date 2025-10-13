@@ -284,7 +284,7 @@ temperature: 5.0   # Temperature too high - should trigger validation error
 name: health-test
 description: Test agent for health monitoring
 mode: subagent
-model: gpt-4
+model: gpt-4o
 ---
 
 # Health Test Agent

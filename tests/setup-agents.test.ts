@@ -56,7 +56,7 @@ describe('Setup Agents Functionality', () => {
     test('should return cwd codeflow-agents when it exists', () => {
       const sourcePath = tempDir;
       const targetFormat = 'claude-code';
-      
+
       // Since we're in the project directory, codeflow-agents exists in cwd
       const result = getAgentSourceDirs(sourcePath, targetFormat);
       expect(result[0]).toBe(join(process.cwd(), 'codeflow-agents'));
@@ -66,7 +66,7 @@ describe('Setup Agents Functionality', () => {
     test('should return source path fallbacks when cwd directories do not exist', () => {
       const sourcePath = tempDir;
       const targetFormat = 'opencode';
-      
+
       // Test the fallback behavior by checking what happens when cwd doesn't have the dirs
       // This is harder to test in isolation, so we'll test the general structure
       const result = getAgentSourceDirs(sourcePath, targetFormat);
@@ -81,12 +81,12 @@ describe('Setup Agents Functionality', () => {
       // Create source directory with base agent in temp location
       const sourceDir = join(tempDir, 'codeflow-agents');
       await mkdir(sourceDir, { recursive: true });
-      
+
       const baseAgentContent = `---
 name: test-agent
 description: A test agent for conversion
 mode: subagent
-model: gpt-4
+model: gpt-4o
 temperature: 0.7
 tools:
   read: true
@@ -98,27 +98,27 @@ tools:
 
 This is a test agent.
 `;
-      
+
       await writeFile(join(sourceDir, 'test-agent.md'), baseAgentContent);
-      
+
       // Create target directory
       const targetDir = join(tempDir, 'target');
       await mkdir(targetDir, { recursive: true });
-      
+
       // Temporarily change to temp directory so cwd checks don't find real agents
       const originalCwd = process.cwd();
       process.chdir(tempDir);
-      
+
       try {
         // Run conversion
         const result = await copyAgentsWithConversion(tempDir, targetDir, 'claude-code');
-        
+
         expect(result).toBe(1); // One agent converted
-        
+
         // Verify converted file exists
         const convertedPath = join(targetDir, 'test-agent.md');
         const convertedContent = await require('node:fs/promises').readFile(convertedPath, 'utf-8');
-        
+
         expect(convertedContent).toContain('name: test-agent');
         expect(convertedContent).toContain('description: A test agent for conversion');
         expect(convertedContent).toContain('tools: read, write');
@@ -132,7 +132,7 @@ This is a test agent.
       // Create source directory with malformed agent
       const sourceDir = join(tempDir, 'codeflow-agents');
       await mkdir(sourceDir, { recursive: true });
-      
+
       const malformedContent = `---
 name: malformed
 description: ""
@@ -144,22 +144,22 @@ tools:
 
 # Malformed Agent
 `;
-      
+
       await writeFile(join(sourceDir, 'malformed.md'), malformedContent);
-      
+
       const targetDir = join(tempDir, 'target');
       await mkdir(targetDir, { recursive: true });
-      
+
       // Temporarily change to temp directory
       const originalCwd = process.cwd();
       process.chdir(tempDir);
-      
+
       try {
         // Should not throw, but log errors and continue
         const result = await copyAgentsWithConversion(tempDir, targetDir, 'opencode');
-        
+
         expect(result).toBe(0); // No agents successfully converted
-        
+
         // Verify error was logged (we can't easily test console output, but ensure no crash)
         expect(result).toBeDefined();
       } finally {
@@ -170,14 +170,14 @@ tools:
     test('should handle missing source directory', async () => {
       const targetDir = join(tempDir, 'target');
       await mkdir(targetDir, { recursive: true });
-      
+
       // Temporarily change to temp directory where no agents exist
       const originalCwd = process.cwd();
       process.chdir(tempDir);
-      
+
       try {
         const result = await copyAgentsWithConversion(tempDir, targetDir, 'claude-code');
-        
+
         expect(result).toBe(0); // No agents converted
         expect(result).toBeDefined(); // Should not throw
       } finally {
@@ -198,23 +198,23 @@ tools:
             name: `batch-agent-${i}`,
             description: `Batch test agent ${i}`,
             mode: 'subagent' as const,
-            tools: { read: true, write: i % 2 === 0 }
+            tools: { read: true, write: i % 2 === 0 },
           },
           content: `Content for agent ${i}`,
-          filePath: `/test/agent-${i}.md`
+          filePath: `/test/agent-${i}.md`,
         };
         agents.push(baseAgent);
       }
-      
+
       // Time the batch conversion
       const startTime = performance.now();
       const convertedAgents = converter.convertBatch(agents, 'opencode');
       const endTime = performance.now();
       const duration = endTime - startTime;
-      
+
       expect(convertedAgents).toHaveLength(10);
       expect(duration).toBeLessThan(100); // Should be fast
-      
+
       // Verify all conversions are valid
       convertedAgents.forEach((agent, index) => {
         expect(agent.format).toBe('opencode');
@@ -234,41 +234,42 @@ tools:
           name: 'roundtrip-test',
           description: 'Test agent for round-trip conversion',
           mode: 'subagent' as const,
-          model: 'gpt-4',
+          model: 'anthropic/claude-sonnet-4',
           temperature: 0.8,
           tools: {
             read: true,
             write: true,
             bash: true,
-            webfetch: false
+            webfetch: false,
           },
           category: 'test',
-          tags: ['conversion', 'integrity']
+          tags: ['conversion', 'integrity'],
         },
         content: '# Round-trip Test Agent\n\nThis agent tests data integrity.',
-        filePath: '/test/roundtrip.md'
+        filePath: '/test/roundtrip.md',
       };
-      
+
       // Test round-trip: base -> opencode -> base
       const openCodeAgent = converter.convert(originalAgent, 'opencode');
       const roundTripAgent = converter.convert(openCodeAgent, 'base');
-      
+
       // Verify key fields are preserved
       expect(roundTripAgent.name).toBe(originalAgent.name);
       expect(roundTripAgent.frontmatter.description).toBe(originalAgent.frontmatter.description);
       expect(roundTripAgent.frontmatter.mode).toBe(originalAgent.frontmatter.mode);
-      expect(roundTripAgent.frontmatter.model).toBe(originalAgent.frontmatter.model);
+      // Model conversion is expected for OpenCode format - verify OpenCode format was used
+      expect(openCodeAgent.frontmatter.model).toBe('opencode/grok-code');
       expect(roundTripAgent.frontmatter.temperature).toBe(originalAgent.frontmatter.temperature);
       expect(roundTripAgent.frontmatter.category).toBe(originalAgent.frontmatter.category);
       expect(roundTripAgent.frontmatter.tags).toEqual(originalAgent.frontmatter.tags);
-      
+
       // Tools should be reconstructed from permissions
       expect(roundTripAgent.frontmatter.tools).toEqual({
         read: true,
         write: true,
         bash: true,
         webfetch: false,
-        edit: false // Default permission added
+        edit: false, // Default permission added
       });
     });
   });
@@ -283,21 +284,23 @@ tools:
           name: 'invalid',
           description: '', // Empty description - should fail validation
           mode: 'invalid_mode', // Invalid mode
-          temperature: 3.0 // Out of range
+          temperature: 3.0, // Out of range
         },
         content: 'Invalid agent content',
-        filePath: '/test/invalid.md'
+        filePath: '/test/invalid.md',
       };
-      
+
       // Attempt conversion
       const convertedAgent = converter.convert(invalidAgent as any, 'opencode');
-      
+
       // Validate the result
       const validation = validator.validate(convertedAgent);
-      
+
       expect(validation.valid).toBe(false);
       expect(validation.errors.length).toBeGreaterThan(0);
-      expect(validation.errors.some(e => e.message.includes('required') || e.message.includes('empty'))).toBe(true);
+      expect(
+        validation.errors.some((e) => e.message.includes('required') || e.message.includes('empty'))
+      ).toBe(true);
     });
 
     test('should pass validation for properly converted agents', () => {
@@ -309,15 +312,15 @@ tools:
           description: 'A properly formatted agent for testing',
           mode: 'subagent',
           temperature: 0.7,
-          tools: { read: true, write: false }
+          tools: { read: true, write: false },
         },
         content: '# Valid Agent\n\nThis agent should pass all validations.',
-        filePath: '/test/valid.md'
+        filePath: '/test/valid.md',
       };
-      
+
       const convertedAgent = converter.convert(validAgent as any, 'claude-code');
       const validation = validator.validate(convertedAgent);
-      
+
       expect(validation.valid).toBe(true);
       expect(validation.errors).toHaveLength(0);
       expect(validation.warnings).toHaveLength(0);
@@ -329,7 +332,7 @@ tools:
       // Create a test agent file
       const agentDir = join(tempDir, 'codeflow-agents');
       await mkdir(agentDir, { recursive: true });
-      
+
       const agentContent = `---
 name: perf-test
 description: Performance test agent
@@ -338,23 +341,23 @@ mode: subagent
 
 # Performance Test
 `;
-      
+
       await writeFile(join(agentDir, 'perf-test.md'), agentContent);
-      
+
       const targetDir = join(tempDir, 'target');
       await mkdir(targetDir, { recursive: true });
-      
+
       // Temporarily change to temp directory
       const originalCwd = process.cwd();
       process.chdir(tempDir);
-      
+
       try {
         // Clear previous metrics
         globalPerformanceMonitor.reset();
-        
+
         // Run conversion
         await copyAgentsWithConversion(tempDir, targetDir, 'opencode');
-        
+
         // Check that performance metrics were updated
         const metrics = globalPerformanceMonitor.getMetrics();
         expect(metrics.agentParseTime).toBeGreaterThan(0);

@@ -2,6 +2,18 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Global Development Standards
+
+**IMPORTANT**: All coding must follow the centralized development standards. These are the single source of truth for all projects:
+
+- **[Global Rules](../../docs/global-rules.md)** - Overview and core development principles
+- **[Git Workflow](../../docs/git-workflow.md)** - Branch strategy, commit conventions, PR process, versioning
+- **[Testing Standards](../../docs/testing-standards.md)** - TDD practices, testing patterns, frameworks, coverage requirements
+- **[Security Guidelines](../../docs/security-guidelines.md)** - Authentication, data protection, OWASP compliance, secure coding
+- **[Code Quality](../../docs/code-quality.md)** - SOLID principles, naming conventions, function complexity, code organization
+- **[Accessibility](../../docs/accessibility.md)** - WCAG 2.2 AA compliance, keyboard navigation, screen readers, ARIA
+- **[Communication Style](../../docs/communication-style.md)** - AI agent interaction patterns, intellectual honesty, clarification guidelines
+
 ## Development Commands
 
 - **Type checking**: `npm run typecheck` or `bun run typecheck` - Runs TypeScript compiler without emitting files
@@ -186,3 +198,13 @@ For complete OpenCode command syntax and options, see:
 - **Context Limits**: Use agents to work within context constraints efficiently
 
 **Remember**: Subagents are designed to handle specific types of work better than general assistance. Always leverage their specialized capabilities for optimal results.
+
+## Development Standards Quick Reference
+
+For detailed guidelines, always refer to the centralized documentation in `../../docs/`:
+- **Git Workflow**: See [../../docs/git-workflow.md](../../docs/git-workflow.md)
+- **Testing**: See [../../docs/testing-standards.md](../../docs/testing-standards.md)
+- **Security**: See [../../docs/security-guidelines.md](../../docs/security-guidelines.md)
+- **Code Quality**: See [../../docs/code-quality.md](../../docs/code-quality.md)
+- **Accessibility**: See [../../docs/accessibility.md](../../docs/accessibility.md)
+- **Communication**: See [../../docs/communication-style.md](../../docs/communication-style.md)

@@ -109,7 +109,7 @@ describe('YAML Formatting', () => {
           name: 'test-agent',
           description: 'Test agent',
           mode: 'subagent',
-          model: 'gpt-4',
+          model: 'gpt-4o',
           temperature: 0.7,
           tools: {
             read: true,
@@ -131,7 +131,7 @@ describe('YAML Formatting', () => {
       expect(yaml).toContain('name: test-agent');
       expect(yaml).toContain('description: Test agent');
       expect(yaml).toContain('mode: subagent');
-      expect(yaml).toContain('model: gpt-4');
+      expect(yaml).toContain('model: gpt-4o');
       expect(yaml).toContain('temperature: 0.7');
       expect(yaml).toContain('tools:');
       expect(yaml).toContain('  read: true');
@@ -325,7 +325,7 @@ Content`;
 name: roundtrip-test
 description: Test round-trip serialization
 mode: subagent
-model: gpt-4
+model: gpt-4o
 temperature: 0.8
 tools:
   read: true
@@ -385,7 +385,7 @@ This tests that data is preserved through parsing and serialization.`;
       expect(finalData.frontmatter.name).toBe('roundtrip-test');
       expect(finalData.frontmatter.description).toBe('Test round-trip serialization');
       expect(finalData.frontmatter.mode).toBe('subagent');
-      expect(finalData.frontmatter.model).toBe('gpt-4');
+      expect(finalData.frontmatter.model).toBe('gpt-4o');
       expect(finalData.frontmatter.temperature).toBe(0.8);
       expect(finalData.frontmatter.tools).toEqual({
         read: true,

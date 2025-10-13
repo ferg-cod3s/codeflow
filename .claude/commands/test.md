@@ -338,6 +338,7 @@ Create complete test coverage including automated unit/integration tests, manual
 For thorough test generation and validation requiring multiple testing domains:
 
 #### Phase 1: Test Strategy Development (Parallel)
+
 - **codebase-locator**: Identify all components and files that need testing
 - **codebase-analyzer**: Understand implementation details and dependencies
 - **thoughts-analyzer**: Review existing test documentation and testing patterns
@@ -345,6 +346,7 @@ For thorough test generation and validation requiring multiple testing domains:
 - **test-generator**: Primary agent for comprehensive test suite generation
 
 #### Phase 2: Domain-Specific Test Generation (Sequential)
+
 - **api-builder**: Generate API contract and integration tests
 - **database-expert**: Create database interaction and migration tests
 - **security-scanner**: Develop security-focused test cases
@@ -353,18 +355,21 @@ For thorough test generation and validation requiring multiple testing domains:
 - **compliance-expert**: Create regulatory compliance validation tests
 
 #### Phase 3: Test Execution & Validation (Parallel)
+
 - **quality-testing-performance-tester**: Execute performance, load, and stress tests
 - **full-stack-developer**: Validate test implementation and fix issues
 - **code-reviewer**: Review test code quality and coverage completeness
 - **monitoring-expert**: Validate monitoring and alerting test scenarios
 
 #### Phase 4: Integration & System Testing (Sequential)
+
 - **infrastructure-builder**: Test infrastructure and deployment scenarios
 - **deployment-wizard**: Validate deployment and rollback testing
 - **devops-operations-specialist**: Test operational procedures and monitoring
 - **cost-optimizer**: Validate cost-related test scenarios
 
 #### Phase 5: Documentation & Reporting (Parallel)
+
 - **content-writer**: Document test scenarios and procedures
 - **thoughts-analyzer**: Update testing documentation and best practices
 - **content-localization-coordinator**: Test internationalization scenarios
@@ -396,7 +401,6 @@ For thorough test generation and validation requiring multiple testing domains:
 - **Regression Prevention**: Include comprehensive regression test suites
 - **Performance Benchmarking**: Establish performance baselines and thresholds
 - **Monitoring Integration**: Include monitoring and alerting validation
-
 
 ### Cache Usage Patterns
 

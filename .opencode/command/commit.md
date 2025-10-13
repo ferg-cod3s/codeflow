@@ -1,26 +1,37 @@
 ---
 name: commit
-description: Commits the local changes in multiple atomic commits
 mode: command
-model: anthropic/claude-sonnet-4
-version: 2.1.0-optimized
-last_updated: 2025-10-01
-command_schema_version: "1.0"
-outputs:
-  - name: result
+description: Commits the local changes in multiple atomic commits
+version: 2.0.0-internal
+last_updated: 2025-09-13
+command_schema_version: 1
+inputs:
+  - name: git_status
     type: string
-    description: Command execution result
+    required: true
+    description: Current git status output
+  - name: git_diff
+    type: string
+    required: true
+    description: Git diff of changes to be committed
+outputs:
+  - name: commit_plan
+    type: structured
+    format: JSON with commit messages and file groupings
+    description: Structured plan of commits to be created
 cache_strategy:
-  type: content_based
-  ttl: 3600
+  type: agent_specific
+  ttl: 300
+  invalidation: content_based
   scope: command
 success_signals:
-  - Command completed successfully
-  - Task executed without errors
+  - Successfully created N commit(s)
+  - All changes committed atomically
+  - Commit messages follow conventional format
 failure_modes:
-  - Command execution failed
-  - Invalid parameters provided
-  - System error occurred
+  - Git repository not clean
+  - No changes to commit
+  - Commit message validation failed
 ---
 # Commit Changes
 
@@ -192,6 +203,7 @@ Create atomic, well-structured git commits that follow conventional commit stand
 For structured commit creation requiring change analysis and validation:
 
 #### Phase 1: Change Analysis & Validation (Parallel)
+
 - **codebase-locator**: Identify all changed files and their relationships
 - **codebase-analyzer**: Understand the nature and impact of code changes
 - **thoughts-analyzer**: Review change documentation and implementation notes
@@ -199,6 +211,7 @@ For structured commit creation requiring change analysis and validation:
 - **code-reviewer**: Validate code quality before committing
 
 #### Phase 2: Commit Planning & Organization (Sequential)
+
 - **full-stack-developer**: Validate technical correctness of changes
 - **system-architect**: Assess architectural impact of changes
 - **api-builder**: Verify API contract changes are properly documented
@@ -206,6 +219,7 @@ For structured commit creation requiring change analysis and validation:
 - **security-scanner**: Ensure security changes are properly implemented
 
 #### Phase 3: Quality Assurance Validation (Parallel)
+
 - **test-generator**: Verify test changes are included and comprehensive
 - **quality-testing-performance-tester**: Validate performance impact of changes
 - **compliance-expert**: Ensure regulatory compliance changes are complete
@@ -213,12 +227,14 @@ For structured commit creation requiring change analysis and validation:
 - **monitoring-expert**: Validate monitoring and alerting changes
 
 #### Phase 4: Documentation & Communication (Sequential)
+
 - **thoughts-analyzer**: Ensure documentation changes are included
 - **content-writer**: Validate user-facing documentation updates
 - **content-localization-coordinator**: Verify internationalization changes
 - **deployment-wizard**: Ensure deployment-related changes are complete
 
 #### Phase 5: Final Validation & Commit (Parallel)
+
 - **infrastructure-builder**: Validate infrastructure changes are complete
 - **devops-operations-specialist**: Verify operational changes are ready
 - **cost-optimizer**: Validate cost-related changes are appropriate
@@ -251,7 +267,6 @@ For structured commit creation requiring change analysis and validation:
 - **Incremental Commits**: Commit frequently with small, focused changes
 - **Revert Readiness**: Ensure each commit can be safely reverted if needed
 - **Branch Strategy**: Follow established branching and merging practices
-
 
 ### Cache Invalidation Triggers
 

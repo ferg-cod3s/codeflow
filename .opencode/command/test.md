@@ -1,26 +1,41 @@
 ---
 name: test
-description: Generate and run a comprehensive testing workflow
 mode: command
-model: anthropic/claude-sonnet-4
-version: 2.1.0-optimized
-last_updated: 2025-10-01
-command_schema_version: "1.0"
-outputs:
-  - name: result
+description: Generate and run a comprehensive testing workflow
+version: 2.0.0-internal
+last_updated: 2025-09-13
+command_schema_version: 1
+inputs:
+  - name: scope
     type: string
-    description: Command execution result
+    required: true
+    description: Short description of the feature/area under test
+  - name: files
+    type: array
+    required: false
+    description: Paths that must be tested or that changed
+  - name: plan
+    type: string
+    required: false
+    description: Path to implementation plan to derive criteria from
+outputs:
+  - name: test_results
+    type: structured
+    format: JSON with test execution results and coverage
+    description: Comprehensive test execution results and analysis
 cache_strategy:
   type: content_based
-  ttl: 3600
+  ttl: 900
+  invalidation: manual
   scope: command
 success_signals:
-  - Command completed successfully
-  - Task executed without errors
+  - Test suite generated and executed successfully
+  - All automated tests passing
+  - Test coverage report generated
 failure_modes:
-  - Command execution failed
-  - Invalid parameters provided
-  - System error occurred
+  - Test generation failed due to missing context
+  - Automated tests failing with errors
+  - Test execution environment not configured
 ---
 # Generate Test Suite
 
@@ -344,6 +359,7 @@ Create complete test coverage including automated unit/integration tests, manual
 For thorough test generation and validation requiring multiple testing domains:
 
 #### Phase 1: Test Strategy Development (Parallel)
+
 - **codebase-locator**: Identify all components and files that need testing
 - **codebase-analyzer**: Understand implementation details and dependencies
 - **thoughts-analyzer**: Review existing test documentation and testing patterns
@@ -351,6 +367,7 @@ For thorough test generation and validation requiring multiple testing domains:
 - **test-generator**: Primary agent for comprehensive test suite generation
 
 #### Phase 2: Domain-Specific Test Generation (Sequential)
+
 - **api-builder**: Generate API contract and integration tests
 - **database-expert**: Create database interaction and migration tests
 - **security-scanner**: Develop security-focused test cases
@@ -359,18 +376,21 @@ For thorough test generation and validation requiring multiple testing domains:
 - **compliance-expert**: Create regulatory compliance validation tests
 
 #### Phase 3: Test Execution & Validation (Parallel)
+
 - **quality-testing-performance-tester**: Execute performance, load, and stress tests
 - **full-stack-developer**: Validate test implementation and fix issues
 - **code-reviewer**: Review test code quality and coverage completeness
 - **monitoring-expert**: Validate monitoring and alerting test scenarios
 
 #### Phase 4: Integration & System Testing (Sequential)
+
 - **infrastructure-builder**: Test infrastructure and deployment scenarios
 - **deployment-wizard**: Validate deployment and rollback testing
 - **devops-operations-specialist**: Test operational procedures and monitoring
 - **cost-optimizer**: Validate cost-related test scenarios
 
 #### Phase 5: Documentation & Reporting (Parallel)
+
 - **content-writer**: Document test scenarios and procedures
 - **thoughts-analyzer**: Update testing documentation and best practices
 - **content-localization-coordinator**: Test internationalization scenarios
@@ -402,7 +422,6 @@ For thorough test generation and validation requiring multiple testing domains:
 - **Regression Prevention**: Include comprehensive regression test suites
 - **Performance Benchmarking**: Establish performance baselines and thresholds
 - **Monitoring Integration**: Include monitoring and alerting validation
-
 
 ### Cache Usage Patterns
 

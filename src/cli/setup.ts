@@ -11,6 +11,7 @@ import {
   OpenCodeCommand,
 } from '../conversion/agent-parser.ts';
 import { FormatConverter } from '../conversion/format-converter.ts';
+import { CommandConverter } from '../conversion/command-converter.ts';
 
 export type SupportedFormat = 'claude-code' | 'opencode';
 
@@ -58,7 +59,7 @@ function getCommandSourceDirs(sourcePath: string, targetDir: string): string[] {
 }
 
 async function copyCommands(
-  converter: FormatConverter,
+  converter: FormatConverter | CommandConverter,
   sourcePath: string,
   targetPath: string,
   setupDirs: string[]
@@ -93,13 +94,34 @@ async function copyCommands(
                   const sourceFile = join(sourceDir, file.name);
                   const targetFile = join(targetDir, file.name);
 
-                  // Convert command if target is OpenCode
+                  // Convert command based on target format
                   if (targetDir.includes('.opencode')) {
                     try {
-                      const command = await parseCommandFile(sourceFile, 'base');
-                      const convertedCommand = converter.baseCommandToOpenCode(command);
-                      const serialized = serializeCommand(convertedCommand);
-                      await writeFile(targetFile, serialized);
+                      if (converter instanceof CommandConverter) {
+                        const content = await readFile(sourceFile, 'utf-8');
+                        const convertedContent = converter.convertToOpenCode(content, sourceFile);
+                        await writeFile(targetFile, convertedContent);
+                      } else {
+                        const command = await parseCommandFile(sourceFile, 'base');
+                        const convertedCommand = converter.baseCommandToOpenCode(command);
+                        const serialized = serializeCommand(convertedCommand);
+                        await writeFile(targetFile, serialized);
+                      }
+                    } catch (error: any) {
+                      console.error(`❌ Failed to convert command ${file.name}: ${error.message}`);
+                      copyErrors++;
+                      continue;
+                    }
+                  } else if (targetDir.includes('.claude')) {
+                    try {
+                      if (converter instanceof CommandConverter) {
+                        const content = await readFile(sourceFile, 'utf-8');
+                        const convertedContent = converter.convertToClaudeCode(content, sourceFile);
+                        await writeFile(targetFile, convertedContent);
+                      } else {
+                        // For agent converter, just copy as-is for now
+                        await copyFile(sourceFile, targetFile);
+                      }
                     } catch (error: any) {
                       console.error(`❌ Failed to convert command ${file.name}: ${error.message}`);
                       copyErrors++;
@@ -177,11 +199,12 @@ export async function setup(
     console.log(`📁 Source: ${sourcePath}`);
     console.log(`📁 Target: ${targetPath}`);
 
-    // Initialize converter
-    const converter = new FormatConverter();
+    // Initialize converters
+    const agentConverter = new FormatConverter();
+    const commandConverter = new CommandConverter();
 
     // Copy commands
-    const fileCount = await copyCommands(converter, sourcePath, targetPath, setupDirs);
+    const fileCount = await copyCommands(commandConverter, sourcePath, targetPath, setupDirs);
 
     // Create agent directories for each platform
     for (const type of projectTypes) {

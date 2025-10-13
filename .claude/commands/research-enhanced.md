@@ -13,19 +13,23 @@ Conducts comprehensive research across your codebase, documentation, and externa
 This command orchestrates multiple specialized agents in a carefully designed workflow:
 
 ### Phase 1: Discovery (Parallel)
+
 - 🔍 **codebase-locator** finds relevant files and components
 - 📚 **thoughts-locator** discovers existing documentation and notes
 
 ### Phase 2: Analysis (Sequential)
+
 - 🧠 **codebase-analyzer** understands implementation details
 - 💡 **thoughts-analyzer** extracts insights from documentation
 
 ### Phase 3: External Research (Optional)
+
 - 🌐 **web-search-researcher** gathers external context and best practices
 
 ## When to Use
 
 **Perfect for:**
+
 - Starting work on unfamiliar parts of the codebase
 - Planning new features or major changes
 - Understanding complex systems or architectures
@@ -33,6 +37,7 @@ This command orchestrates multiple specialized agents in a carefully designed wo
 - Creating onboarding documentation
 
 **Example Research Questions:**
+
 - "How does the user authentication system work?"
 - "What's the current state of our API rate limiting?"
 - "How should we implement real-time notifications?"
@@ -41,6 +46,7 @@ This command orchestrates multiple specialized agents in a carefully designed wo
 ## What You'll Get
 
 ### Research Report Includes:
+
 - **Code Analysis**: File locations, key functions, and implementation patterns
 - **Documentation Insights**: Existing docs, decisions, and context
 - **Architecture Overview**: How components interact and data flows
@@ -48,6 +54,7 @@ This command orchestrates multiple specialized agents in a carefully designed wo
 - **Action Items**: Specific next steps based on findings
 
 ### Sample Output Structure:
+
 ```
 ## Research Summary
 - Objective: [Your research question]
@@ -84,18 +91,21 @@ This command orchestrates multiple specialized agents in a carefully designed wo
 For complex research requiring deep analysis across multiple domains:
 
 #### Phase 1: Comprehensive Discovery (Parallel Execution)
+
 - **codebase-locator**: Maps all relevant files, components, and directory structures
 - **thoughts-locator**: Discovers existing documentation, past decisions, and technical notes
 - **codebase-pattern-finder**: Identifies recurring implementation patterns and architectural approaches
 - **web-search-researcher**: Gathers external best practices and industry standards (when applicable)
 
 #### Phase 2: Deep Analysis (Sequential Processing)
+
 - **codebase-analyzer**: Provides detailed implementation understanding with file:line evidence
 - **thoughts-analyzer**: Extracts actionable insights from documentation and historical context
 - **system-architect**: Analyzes architectural implications and design patterns
 - **performance-engineer**: Evaluates performance characteristics and optimization opportunities
 
 #### Phase 3: Domain-Specific Assessment (Conditional)
+
 - **database-expert**: Analyzes data architecture and persistence patterns
 - **api-builder**: Evaluates API design and integration approaches
 - **security-scanner**: Assesses security architecture and potential vulnerabilities
@@ -103,6 +113,7 @@ For complex research requiring deep analysis across multiple domains:
 - **infrastructure-builder**: Analyzes deployment and infrastructure implications
 
 #### Phase 4: Synthesis & Validation (Parallel)
+
 - **code-reviewer**: Validates research findings against code quality standards
 - **test-generator**: Identifies testing gaps and coverage requirements
 - **quality-testing-performance-tester**: Provides performance benchmarking insights
@@ -130,7 +141,6 @@ For complex research requiring deep analysis across multiple domains:
 - **Early Termination**: Stop analysis when sufficient understanding is achieved
 - **Caching Strategy**: Leverage cached results for similar research topics
 
-
 ## Integration with Other Commands
 
 - **→ /plan**: Use research findings to create detailed implementation plans
@@ -140,4 +150,4 @@ For complex research requiring deep analysis across multiple domains:
 
 ---
 
-*Ready to dive deep? Ask me anything about your codebase and I'll provide comprehensive insights to guide your next steps.*
+_Ready to dive deep? Ask me anything about your codebase and I'll provide comprehensive insights to guide your next steps._

@@ -15,6 +15,7 @@ import { info } from './info';
 import { update } from './update';
 import { clean } from './clean';
 import { exportProject } from './export';
+import { research } from './research';
 import packageJson from '../../package.json';
 import { join } from 'node:path';
 import { existsSync } from 'node:fs';
@@ -99,6 +100,26 @@ try {
         type: 'string',
         default: 'base',
       },
+      output: {
+        type: 'string',
+        short: 'o',
+      },
+      'include-web': {
+        type: 'boolean',
+        default: false,
+      },
+      specialists: {
+        type: 'string',
+      },
+      verbose: {
+        type: 'boolean',
+        short: 'v',
+        default: false,
+      },
+      'min-quality': {
+        type: 'string',
+        
+      },
     },
     strict: true,
     allowPositionals: true,
@@ -149,6 +170,7 @@ Commands:
    update                     Check for and install CLI updates
    clean [path]               Clean up cache, temp, and orphaned files
    export [path]              Export project setup to a file
+   research "<query>" [options]  Execute deep research workflow for codebase analysis
 
 Catalog Subcommands:
   catalog list [type] [source] [--tags tag1,tag2]    List catalog items (filter by type/source/tags)
@@ -206,14 +228,15 @@ DEVELOPMENT WORKFLOW:
     codeflow catalog import <github-repo>          # Import from external catalogs
 
   Available slash commands (when using Claude Code or OpenCode):
-    /research - Comprehensive codebase and documentation analysis
-    /plan     - Creates detailed implementation plans from tickets and research
-    /execute  - Implements plans with proper verification
-    /test     - Generates comprehensive test suites for implemented features
-    /document - Creates user guides, API docs, and technical documentation
-    /commit   - Creates commits with structured messages
-    /review   - Validates implementations against original plans
-    /help     - Get detailed development guidance and workflow information
+    /research  - Comprehensive codebase and documentation analysis
+    /plan      - Creates detailed implementation plans from tickets and research
+    /execute   - Implements plans with proper verification
+    /test      - Generates comprehensive test suites for implemented features
+    /document  - Creates user guides, API docs, and technical documentation
+    /commit    - Creates commits with structured messages
+    /review    - Validates implementations against original plans
+    /continue  - Resume execution from the last completed step
+    /help      - Get detailed development guidance and workflow information
 
   Core Agent Types:
     codebase-locator        - Finds WHERE files and components exist
@@ -410,6 +433,17 @@ switch (command) {
       output: values.output,
       includeContent: values['include-content'],
       verbose: values.verbose,
+    });
+    break;
+
+  case 'research':
+    const researchQuery = args[1];
+    await research(researchQuery, {
+      output: values.output,
+      'include-web': values['include-web'],
+      specialists: values.specialists,
+      verbose: values.verbose,
+      'min-quality': values['min-quality'],
     });
     break;
 

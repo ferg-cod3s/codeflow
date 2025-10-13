@@ -1,26 +1,45 @@
 ---
 name: project-docs
-description: Generate comprehensive project documentation including PRD, security docs, user flows, and more
 mode: command
-model: anthropic/claude-sonnet-4
-version: 2.1.0-optimized
-last_updated: 2025-10-01
-command_schema_version: "1.0"
-outputs:
-  - name: result
+description: Generate comprehensive project documentation including PRD, security docs, user flows, and more
+version: 1.0.0
+last_updated: 2025-09-20
+command_schema_version: 1
+inputs:
+  - name: prompt
     type: string
-    description: Command execution result
+    required: true
+    description: Project description or prompt to generate documentation from
+  - name: analyze_existing
+    type: boolean
+    required: false
+    description: Analyze existing project structure instead of using prompt
+  - name: include_security
+    type: boolean
+    required: false
+    description: "Include security documentation (default: true)"
+  - name: include_api_docs
+    type: boolean
+    required: false
+    description: "Include API documentation (default: true)"
+outputs:
+  - name: documentation_files
+    type: structured
+    format: JSON with file paths and metadata
+    description: Generated documentation files with metadata
 cache_strategy:
   type: content_based
-  ttl: 3600
+  ttl: 7200
+  invalidation: manual
   scope: command
 success_signals:
-  - Command completed successfully
-  - Task executed without errors
+  - All documentation files created successfully
+  - Files saved to docs/
+  - Documentation structure validated
 failure_modes:
-  - Command execution failed
-  - Invalid parameters provided
-  - System error occurred
+  - Invalid project prompt or description
+  - Missing required agents for documentation generation
+  - Documentation directory not accessible
 ---
 # Generate Project Documentation
 
@@ -499,6 +518,7 @@ date: 2025-09-20
 For complete project documentation requiring multi-domain expertise and content specialization:
 
 #### Phase 1: Project Analysis & Planning (Parallel)
+
 - **codebase-locator**: Analyze existing project structure and components
 - **thoughts-locator**: Discover existing documentation and project knowledge
 - **codebase-analyzer**: Understand project architecture and implementation
@@ -506,6 +526,7 @@ For complete project documentation requiring multi-domain expertise and content 
 - **system-architect**: Analyze overall system architecture and design
 
 #### Phase 2: Core Documentation Generation (Sequential)
+
 - **content-writer**: Primary agent for creating user-facing and business documentation
 - **api-builder**: Generate comprehensive API documentation and specifications
 - **database-expert**: Document data architecture and database design
@@ -513,6 +534,7 @@ For complete project documentation requiring multi-domain expertise and content 
 - **compliance-expert**: Generate compliance and regulatory documentation
 
 #### Phase 3: Technical Documentation Creation (Parallel)
+
 - **performance-engineer**: Document performance requirements and architecture
 - **infrastructure-builder**: Create infrastructure and deployment documentation
 - **monitoring-expert**: Document monitoring and observability setup
@@ -520,6 +542,7 @@ For complete project documentation requiring multi-domain expertise and content 
 - **deployment-wizard**: Document deployment processes and CI/CD pipelines
 
 #### Phase 4: Specialized Content Development (Parallel)
+
 - **accessibility-pro**: Create accessibility guidelines and documentation
 - **ux-optimizer**: Document user experience design and workflows
 - **content-localization-coordinator**: Plan internationalization and localization
@@ -527,6 +550,7 @@ For complete project documentation requiring multi-domain expertise and content 
 - **growth-engineer**: Create growth and analytics documentation
 
 #### Phase 5: Quality Assurance & Integration (Sequential)
+
 - **code-reviewer**: Validate technical accuracy of all documentation
 - **quality-testing-performance-tester**: Review performance and testing documentation
 - **full-stack-developer**: Validate implementation documentation accuracy
@@ -561,7 +585,6 @@ For complete project documentation requiring multi-domain expertise and content 
 - **Feedback Integration**: Establish processes for continuous documentation improvement
 - **Multi-format Output**: Generate documentation in multiple formats (web, PDF, etc.)
 - **Localization Ready**: Structure content for easy translation and localization
-
 
 ### Cache Usage Patterns
 

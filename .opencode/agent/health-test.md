@@ -2,7 +2,7 @@
 name: health-test
 description: Test agent for health monitoring
 mode: subagent
-model: gpt-4
+model: opencode/grok-code
 permission:
   edit: deny
   bash: deny

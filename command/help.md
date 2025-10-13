@@ -2,7 +2,6 @@
 name: help
 mode: command
 description: Get help with using opencode and codeflow development workflows
-model: anthropic/claude-sonnet-4
 temperature: 0.1
 ---
 
@@ -75,6 +74,7 @@ This is a **Codeflow Automation Enhancement CLI** built with **Bun** and **TypeS
 - `/document` - Creates user guides, API docs, and technical documentation
 - `/commit` - Creates commits with structured messages
 - `/review` - Validates implementations against original plans
+- `/continue` - Resume execution from the last completed step
 
 **Slash Commands Available**:
 

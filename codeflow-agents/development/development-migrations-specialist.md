@@ -5,7 +5,7 @@ spec_version: UATS-1.0
 description: Plan and execute safe, reversible database schema and data
   migrations with zero/minimal downtime, across PostgreSQL/MySQL/NoSQL systems.
 mode: subagent
-model: opencode/grok-code
+model: grok-code
 temperature: 0.3
 category: development
 tags:

@@ -170,15 +170,8 @@ export function normalizePermissionFormat(frontmatter: any): any {
     return cleanFrontmatter;
   }
 
-  // If no permission format found, add default permissions
-  return {
-    ...frontmatter,
-    permission: {
-      edit: 'deny',
-      bash: 'deny',
-      webfetch: 'allow',
-    },
-  };
+  // If no permission format found, return as-is (for Claude Code and other formats that don't use permissions)
+  return frontmatter;
 }
 
 /**

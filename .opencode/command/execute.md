@@ -1,26 +1,41 @@
 ---
 name: execute
-description: Execute a specific implementation plan from docs/plans/
 mode: command
-model: anthropic/claude-sonnet-4
-version: 2.1.0-optimized
-last_updated: 2025-10-01
-command_schema_version: "1.0"
-outputs:
-  - name: result
+description: Execute a specific implementation plan from docs/plans/
+version: 2.0.0-internal
+last_updated: 2025-09-13
+command_schema_version: 1
+inputs:
+  - name: plan_path
     type: string
-    description: Command execution result
+    required: true
+    description: Path to the implementation plan in docs/plans/
+  - name: ticket_reference
+    type: string
+    required: false
+    description: Reference to original ticket or issue
+  - name: start_phase
+    type: number
+    required: false
+    description: "Phase number to start execution from (default: first unchecked)"
+outputs:
+  - name: execution_status
+    type: structured
+    format: JSON with phase completion and issues
+    description: Detailed execution status and progress tracking
 cache_strategy:
   type: content_based
-  ttl: 3600
+  ttl: 1800
+  invalidation: manual
   scope: command
 success_signals:
-  - Command completed successfully
-  - Task executed without errors
+  - Plan execution completed successfully
+  - All phases implemented and verified
+  - Plan file updated with completion status
 failure_modes:
-  - Command execution failed
-  - Invalid parameters provided
-  - System error occurred
+  - Plan file not found or invalid
+  - Implementation blocked by technical issues
+  - Verification checks failing
 ---
 # Execute Implementation Plan
 
@@ -262,12 +277,14 @@ When the actual codebase differs from the plan:
 For complex feature implementation requiring coordinated expertise across domains:
 
 #### Phase 1: Pre-Implementation Validation (Parallel)
+
 - **codebase-locator**: Verify all referenced components and files exist
 - **codebase-analyzer**: Understand current implementation state and integration points
 - **thoughts-analyzer**: Review existing documentation and implementation notes
 - **codebase-pattern-finder**: Identify established patterns for the implementation approach
 
 #### Phase 2: Domain-Specific Implementation (Sequential by Phase)
+
 - **full-stack-developer**: Primary implementation agent for feature development
 - **api-builder**: Handle API endpoint creation and contract implementation
 - **database-expert**: Manage schema changes and data migration implementation
@@ -277,6 +294,7 @@ For complex feature implementation requiring coordinated expertise across domain
 - **ux-optimizer**: Optimize user experience implementation details
 
 #### Phase 3: Quality Assurance & Validation (Parallel)
+
 - **code-reviewer**: Comprehensive code quality and maintainability review
 - **test-generator**: Generate and implement comprehensive test suites
 - **quality-testing-performance-tester**: Execute performance and load testing
@@ -284,12 +302,14 @@ For complex feature implementation requiring coordinated expertise across domain
 - **monitoring-expert**: Implement monitoring and observability features
 
 #### Phase 4: Infrastructure & Deployment (Sequential)
+
 - **infrastructure-builder**: Prepare infrastructure changes and configurations
 - **deployment-wizard**: Implement deployment automation and rollback procedures
 - **devops-operations-specialist**: Coordinate deployment and operational handoff
 - **cost-optimizer**: Validate cost implications of infrastructure changes
 
 #### Phase 5: Documentation & Knowledge Transfer (Parallel)
+
 - **content-writer**: Create user documentation and release notes
 - **thoughts-analyzer**: Update technical documentation and implementation notes
 - **content-localization-coordinator**: Handle internationalization updates
@@ -321,7 +341,6 @@ For complex feature implementation requiring coordinated expertise across domain
 - **Security Reviews**: Conduct security validation at key implementation milestones
 - **Rollback Planning**: Ensure rollback capabilities exist before deployment
 - **Monitoring Setup**: Implement observability before production deployment
-
 
 ### Cache Usage Patterns
 

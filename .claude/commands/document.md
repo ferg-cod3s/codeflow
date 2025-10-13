@@ -304,6 +304,7 @@ version: <semver or commit>
 For multi-audience documentation requiring domain expertise and content specialization:
 
 #### Phase 1: Content Analysis & Planning (Parallel)
+
 - **codebase-locator**: Identify all components and files requiring documentation
 - **codebase-analyzer**: Understand implementation details for technical accuracy
 - **thoughts-analyzer**: Review existing documentation patterns and standards
@@ -311,6 +312,7 @@ For multi-audience documentation requiring domain expertise and content speciali
 - **content-writer**: Primary agent for content creation and audience adaptation
 
 #### Phase 2: Technical Documentation Generation (Sequential)
+
 - **api-builder**: Generate API documentation and contract specifications
 - **database-expert**: Document data models, schemas, and database interactions
 - **system-architect**: Provide architectural context and design decisions
@@ -318,6 +320,7 @@ For multi-audience documentation requiring domain expertise and content speciali
 - **security-scanner**: Include security considerations and best practices
 
 #### Phase 3: Specialized Content Creation (Parallel)
+
 - **accessibility-pro**: Create accessibility documentation and guidelines
 - **compliance-expert**: Document regulatory compliance requirements and procedures
 - **ux-optimizer**: Provide user experience documentation and workflows
@@ -325,12 +328,14 @@ For multi-audience documentation requiring domain expertise and content speciali
 - **deployment-wizard**: Document deployment procedures and operational requirements
 
 #### Phase 4: Content Review & Validation (Sequential)
+
 - **code-reviewer**: Validate technical accuracy and code references
 - **quality-testing-performance-tester**: Review performance-related documentation
 - **monitoring-expert**: Validate monitoring and alerting documentation
 - **full-stack-developer**: Confirm implementation details are accurately represented
 
 #### Phase 5: Content Publishing & Maintenance (Parallel)
+
 - **thoughts-analyzer**: Update internal documentation and knowledge base
 - **content-localization-coordinator**: Coordinate translation and localization efforts
 - **devops-operations-specialist**: Document operational procedures and runbooks
@@ -361,7 +366,6 @@ For multi-audience documentation requiring domain expertise and content speciali
 - **Interactive Elements**: Include code examples, tutorials, and interactive demos
 - **Feedback Integration**: Establish processes for documentation improvement
 - **Localization Planning**: Plan for international audience requirements
-
 
 ### Cache Usage Patterns
 

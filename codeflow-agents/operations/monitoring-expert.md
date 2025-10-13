@@ -8,7 +8,7 @@ description: Implements system alerts, monitoring solutions, and observability
   monitoring, alerting systems, and observability infrastructure for production
   systems.
 mode: subagent
-model: opencode/grok-code
+model: grok-code
 temperature: 0.2
 category: operations
 tags:

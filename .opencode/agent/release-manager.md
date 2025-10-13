@@ -2,7 +2,7 @@
 name: release-manager
 description: CI/CD release coordination and deployment management specialist. Manages release pipelines, version control, deployment strategies, and rollback procedures. Ensures smooth transitions from development to production with proper testing gates and monitoring.
 mode: subagent
-model: github-copilot/gpt-4.1
+model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: deny

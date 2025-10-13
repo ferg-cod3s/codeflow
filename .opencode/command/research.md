@@ -1,26 +1,46 @@
 ---
 name: research
-description: Research a ticket or provide a prompt for ad-hoc research
 mode: command
-model: anthropic/claude-sonnet-4
+description: Research a ticket or provide a prompt for ad-hoc research
 version: 2.1.0-optimized
-last_updated: 2025-10-01
-command_schema_version: "1.0"
-outputs:
-  - name: result
+last_updated: 2025-09-17
+command_schema_version: 1
+inputs:
+  - name: current_date
     type: string
-    description: Command execution result
+    required: false
+    description: Current date for research document (auto-generated)
+    default: auto
+  - name: ticket
+    type: string
+    required: true
+    description: Path to ticket file or research question/topic
+  - name: scope
+    type: string
+    required: false
+    description: Research scope hint (codebase|thoughts|both)
+  - name: depth
+    type: string
+    required: false
+    description: Research depth (shallow|medium|deep)
+outputs:
+  - name: research_document
+    type: structured
+    format: JSON with research findings and document metadata
+    description: Comprehensive research findings with document path
 cache_strategy:
   type: content_based
   ttl: 3600
+  invalidation: manual
   scope: command
 success_signals:
-  - Command completed successfully
-  - Task executed without errors
+  - Research completed successfully
+  - Findings documented in docs/research/
+  - All research questions addressed
 failure_modes:
-  - Command execution failed
-  - Invalid parameters provided
-  - System error occurred
+  - Ticket file not found or invalid
+  - Research agents unable to complete analysis
+  - Insufficient findings to answer research question
 ---
 # Research Codebase
 
@@ -161,7 +181,7 @@ Multi-dimensional research via agent coordination for codebase patterns, histori
 
 ```markdown
 ---
-date: {{current_date}}
+date: { { current_date } }
 researcher: Assistant
 topic: 'Research Topic'
 tags: [research, tags]

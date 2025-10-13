@@ -53,7 +53,7 @@ async function extractMetadata(filePath: string): Promise<{ description?: string
 }
 
 /**
- * List files in a directory
+ * List files in a directory (recursively for base format)
  */
 async function listDirectory(dir: string, type: 'agent' | 'command'): Promise<ListItem[]> {
   if (!existsSync(dir)) {
@@ -61,30 +61,41 @@ async function listDirectory(dir: string, type: 'agent' | 'command'): Promise<Li
   }
 
   try {
-    const files = readdirSync(dir).filter((f) => f.endsWith('.md'));
     const items: ListItem[] = [];
+    const isBaseFormat = dir.includes('codeflow-agents') || dir.endsWith('command');
 
-    for (const file of files) {
-      const filePath = join(dir, file);
-      const metadata = await extractMetadata(filePath);
+    async function scanDirectory(currentDir: string): Promise<void> {
+      const entries = readdirSync(currentDir, { withFileTypes: true });
 
-      // Determine platform based on directory path
-      let platform: 'claude-code' | 'opencode' | 'base' = 'base';
-      if (dir.includes('.claude')) {
-        platform = 'claude-code';
-      } else if (dir.includes('.opencode')) {
-        platform = 'opencode';
+      for (const entry of entries) {
+        const fullPath = join(currentDir, entry.name);
+
+        if (entry.isDirectory() && isBaseFormat) {
+          await scanDirectory(fullPath);
+        } else if (entry.isFile() && entry.name.endsWith('.md')) {
+          const metadata = await extractMetadata(fullPath);
+
+          let platform: 'claude-code' | 'opencode' | 'base' = 'base';
+          if (dir.includes('.claude')) {
+            platform = 'claude-code';
+          } else if (dir.includes('.opencode')) {
+            platform = 'opencode';
+          } else if (dir.includes('codeflow-agents') || dir === 'command') {
+            platform = 'base';
+          }
+
+          items.push({
+            name: entry.name.replace('.md', ''),
+            type,
+            platform,
+            path: fullPath,
+            ...metadata,
+          });
+        }
       }
-
-      items.push({
-        name: file.replace('.md', ''),
-        type,
-        platform,
-        path: filePath,
-        ...metadata,
-      });
     }
 
+    await scanDirectory(dir);
     return items;
   } catch (error) {
     console.warn(
@@ -156,7 +167,7 @@ export async function list(
 
   // Collect agents
   if (type === 'agents' || type === 'all') {
-    const agentDirs = ['.claude/agents', '.opencode/agent'];
+    const agentDirs = ['.claude/agents', '.opencode/agent', 'codeflow-agents'];
 
     for (const dir of agentDirs) {
       const fullPath = join(projectPathResolved, dir);
@@ -167,7 +178,7 @@ export async function list(
 
   // Collect commands
   if (type === 'commands' || type === 'all') {
-    const commandDirs = ['.claude/commands', '.opencode/command'];
+    const commandDirs = ['.claude/commands', '.opencode/command', 'command'];
 
     for (const dir of commandDirs) {
       const fullPath = join(projectPathResolved, dir);

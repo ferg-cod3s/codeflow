@@ -53,6 +53,7 @@
     "test:unit": "bun run run-tests.ts unit",
     "test:integration": "bun run run-tests.ts integration",
     "test:e2e": "bun run run-tests.ts e2e",
+    "test:e2e:sequential": "bun run scripts/run-e2e-tests.ts",
     "test:watch": "bun test --watch",
     "test:coverage": "bun run run-tests.ts --coverage",
     "test:agents": "bun test tests/unit/agents",
@@ -94,6 +95,11 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.18.1",
+    "boxen": "^8.0.1",
+    "chalk": "^5.6.2",
+    "cli-table3": "^0.6.5",
+    "inquirer": "^12.9.6",
+    "ora": "^9.0.0",
     "semver": "^7.7.2",
     "yaml": "^2.8.1",
     "zod": "^4.1.11"
