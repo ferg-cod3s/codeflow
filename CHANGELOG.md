@@ -1,26 +1,10 @@
-## [0.12.5](https://github.com/ferg-cod3s/codeflow/compare/v0.12.4...v0.12.5) (2025-10-13)
+## [0.12.5](https://github.com/ferg-cod3s/codeflow/compare/v0.12.4...v0.12.5) (2025-10-14)
 
 
 ### Bug Fixes
 
-* **commands**: Fix OpenCode command inputs field persistence in generated files ([#issue](https://github.com/ferg-cod3s/codeflow/issues/))
-* **models**: Update all OpenCode commands to use valid opencode/code-supernova model
-* **validation**: Remove invalid anthropic/claude-sonnet-4 model references from validation
+* resolve OpenCode command input field persistence and model validation ([b4ee293](https://github.com/ferg-cod3s/codeflow/commit/b4ee293ba48351a772aee074fb06d3e48f65532f))
 
-
-### Features
-
-* add agent-create, agent-registry, drift-check, status, and sync commands
-* add content-writer, dryrun-test, and health-test agents
-* add comprehensive OpenCode model allowlist and validation
-* update CLAUDE.md with drift detection workflow guidance and model policy
-
-
-### Tests
-
-* 264 tests passing with updated model expectations
-* add comprehensive command validation test suite
-* update all conversion tests for OpenCode model validation
 
 
 ## [0.1.9](https://github.com/ferg-cod3s/codeflow/compare/v0.1.8...v0.1.9) (2025-09-02)
