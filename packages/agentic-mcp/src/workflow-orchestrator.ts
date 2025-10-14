@@ -2,12 +2,11 @@
 
 import type { Agent } from './agent-registry.js';
 import type { AgentExecutionResult } from './agent-spawner.js';
-import { spawnAgentTask, executeParallelAgents, executeSequentialAgents } from './agent-spawner.js';
-import { suggestAgents } from './agent-registry.js';
+import { executeParallelAgents, executeSequentialAgents } from './agent-spawner.js';
 
 /**
  * Multi-Phase Workflow Orchestration Engine
- * 
+ *
  * Implements complex workflows with phase dependencies, conditional execution,
  * and dynamic agent selection based on findings.
  */
@@ -83,14 +82,14 @@ export async function executeMultiPhaseWorkflow(
 ): Promise<MultiPhaseWorkflowResult> {
   const startTime = Date.now();
   const phaseResults: PhaseResult[] = [];
-  
+
   console.log(`🚀 Starting multi-phase workflow: ${phases.length} phases`);
-  
+
   for (const phase of phases) {
     console.log(`\n📍 Phase: ${phase.name} (${phase.type})`);
-    
+
     const phaseStartTime = Date.now();
-    
+
     // Check if phase should be executed
     if (phase.type === 'conditional' && phase.condition && !phase.condition(context)) {
       console.log(`⏭️  Skipping conditional phase: ${phase.name}`);
@@ -103,7 +102,7 @@ export async function executeMultiPhaseWorkflow(
       });
       continue;
     }
-    
+
     // Check dependencies
     if (phase.depends_on && phase.depends_on.length > 0) {
       const depsResolved = checkDependencies(phase.depends_on, context.results);
@@ -118,10 +117,10 @@ export async function executeMultiPhaseWorkflow(
         continue;
       }
     }
-    
+
     try {
       let results: AgentExecutionResult[] = [];
-      
+
       // Execute agents based on phase type
       switch (phase.type) {
         case 'parallel':
@@ -135,18 +134,18 @@ export async function executeMultiPhaseWorkflow(
           results = await executePhaseParallel(phase, context, registry);
           break;
       }
-      
+
       // Store results in context
       for (const agent of phase.agents) {
-        const agentResults = results.filter(r => r.agentId === agent.name);
+        const agentResults = results.filter((r) => r.agentId === agent.name);
         if (!context.results.has(agent.name)) {
           context.results.set(agent.name, []);
         }
         context.results.get(agent.name)!.push(...agentResults);
       }
-      
+
       const phaseDuration = Date.now() - phaseStartTime;
-      
+
       phaseResults.push({
         phaseName: phase.name,
         type: phase.type,
@@ -154,12 +153,11 @@ export async function executeMultiPhaseWorkflow(
         results,
         duration: phaseDuration,
       });
-      
+
       console.log(`✅ Phase completed: ${phase.name} (${phaseDuration}ms)`);
-      
+
       // Update workflow findings after each phase
       updateWorkflowFindings(context, results);
-      
     } catch (error: any) {
       console.error(`❌ Phase failed: ${phase.name}`, error);
       phaseResults.push({
@@ -170,15 +168,15 @@ export async function executeMultiPhaseWorkflow(
       });
     }
   }
-  
+
   const totalDuration = Date.now() - startTime;
-  
+
   // Generate workflow summary
   const summary = generateWorkflowSummary(phaseResults, context, totalDuration);
-  
+
   console.log(`\n🎉 Workflow completed in ${totalDuration}ms`);
   console.log(`📊 Quality Score: ${summary.qualityScore}/100`);
-  
+
   return {
     workflow: 'multi-phase',
     phases: phaseResults,
@@ -196,9 +194,9 @@ async function executePhaseParallel(
   context: WorkflowContext,
   registry: Map<string, Agent>
 ): Promise<AgentExecutionResult[]> {
-  const agentIds = phase.agents.map(a => a.name);
-  const tasks = phase.agents.map(a => buildAgentTask(a, context));
-  
+  const agentIds = phase.agents.map((a) => a.name);
+  const tasks = phase.agents.map((a) => buildAgentTask(a, context));
+
   return await executeParallelAgents(agentIds, tasks, registry);
 }
 
@@ -210,11 +208,11 @@ async function executePhaseSequential(
   context: WorkflowContext,
   registry: Map<string, Agent>
 ): Promise<AgentExecutionResult[]> {
-  const agentSpecs = phase.agents.map(a => ({
+  const agentSpecs = phase.agents.map((a) => ({
     agentId: a.name,
     task: buildAgentTask(a, context),
   }));
-  
+
   return await executeSequentialAgents(agentSpecs, registry);
 }
 
@@ -223,18 +221,18 @@ async function executePhaseSequential(
  */
 function buildAgentTask(agent: AgentSpec, context: WorkflowContext): string {
   const parts: string[] = [];
-  
+
   parts.push(`**Purpose**: ${agent.purpose}`);
   parts.push(`**Research Query**: ${context.query}`);
-  
+
   if (context.domain) {
     parts.push(`**Domain**: ${context.domain}`);
   }
-  
+
   if (context.requirements) {
     parts.push(`**Requirements**: ${context.requirements}`);
   }
-  
+
   // Add context from previous agents if dependencies exist
   if (agent.depends_on && agent.depends_on.length > 0) {
     parts.push(`\n**Previous Findings**:`);
@@ -246,7 +244,7 @@ function buildAgentTask(agent: AgentSpec, context: WorkflowContext): string {
       }
     }
   }
-  
+
   return parts.join('\n');
 }
 
@@ -284,10 +282,7 @@ function checkDependencies(
 /**
  * Update workflow findings based on agent results
  */
-function updateWorkflowFindings(
-  context: WorkflowContext,
-  results: AgentExecutionResult[]
-): void {
+function updateWorkflowFindings(context: WorkflowContext, results: AgentExecutionResult[]): void {
   // Analyze results and update findings
   for (const result of results) {
     // Extract domain signals from agent results
@@ -320,27 +315,29 @@ function generateWorkflowSummary(
   let totalAgents = 0;
   let successfulAgents = 0;
   let failedAgents = 0;
-  
+
   for (const phase of phases) {
     totalAgents += phase.results.length;
-    successfulAgents += phase.results.filter(r => r.status === 'ready').length;
-    failedAgents += phase.results.filter(r => r.status === 'error').length;
+    successfulAgents += phase.results.filter((r) => r.status === 'ready').length;
+    failedAgents += phase.results.filter((r) => r.status === 'error').length;
   }
-  
+
   // Calculate quality score (0-100)
-  const completionRate = totalAgents > 0 ? (successfulAgents / totalAgents) : 0;
-  const phaseCompletionRate = phases.filter(p => p.status === 'completed').length / phases.length;
+  const completionRate = totalAgents > 0 ? successfulAgents / totalAgents : 0;
+  const phaseCompletionRate = phases.filter((p) => p.status === 'completed').length / phases.length;
   const qualityScore = Math.round((completionRate * 0.7 + phaseCompletionRate * 0.3) * 100);
-  
+
   // Determine confidence based on results
   let confidence: 'high' | 'medium' | 'low' = 'medium';
   if (qualityScore >= 80) confidence = 'high';
   if (qualityScore < 50) confidence = 'low';
-  
+
   // Generate insights
   const insights: string[] = [];
   if (context.findings.domains.length > 0) {
-    insights.push(`Identified ${context.findings.domains.length} domain(s): ${context.findings.domains.join(', ')}`);
+    insights.push(
+      `Identified ${context.findings.domains.length} domain(s): ${context.findings.domains.join(', ')}`
+    );
   }
   if (successfulAgents > 0) {
     insights.push(`Successfully executed ${successfulAgents} agent(s)`);
@@ -348,7 +345,7 @@ function generateWorkflowSummary(
   if (failedAgents > 0) {
     insights.push(`${failedAgents} agent(s) encountered errors`);
   }
-  
+
   // Generate next steps
   const nextSteps: string[] = [];
   if (context.findings.needsDeepAnalysis) {
@@ -361,7 +358,7 @@ function generateWorkflowSummary(
     nextSteps.push('Re-run workflow with adjusted parameters for better coverage');
   }
   nextSteps.push('Use findings to create implementation plan with /plan command');
-  
+
   return {
     totalAgents,
     successfulAgents,
@@ -382,18 +379,27 @@ export async function selectDomainSpecialists(
   registry: Map<string, Agent>
 ): Promise<string[]> {
   const specialists: string[] = [];
-  
+
   // Map domains to specialist agents
   const domainMapping: Record<string, string[]> = {
-    security: ['security-scanner', 'security-auditor', 'frontend-security-coder', 'backend-security-coder'],
-    performance: ['performance-engineer', 'quality-testing-performance-tester', 'database-optimizer'],
+    security: [
+      'security-scanner',
+      'security-auditor',
+      'frontend-security-coder',
+      'backend-security-coder',
+    ],
+    performance: [
+      'performance-engineer',
+      'quality-testing-performance-tester',
+      'database-optimizer',
+    ],
     database: ['database-expert', 'database-optimizer', 'database-admin'],
     api: ['api-builder', 'graphql-architect', 'api-documenter'],
     infrastructure: ['infrastructure-builder', 'devops-operations-specialist', 'cloud-architect'],
     frontend: ['frontend-developer', 'ui-ux-designer', 'accessibility-pro'],
     testing: ['test-automator', 'test-generator', 'quality-testing-performance-tester'],
   };
-  
+
   // Select specialists based on identified domains
   for (const domain of findings.domains) {
     const domainSpecialists = domainMapping[domain] || [];
@@ -403,7 +409,7 @@ export async function selectDomainSpecialists(
       }
     }
   }
-  
+
   // Limit to top 5 specialists
   return specialists.slice(0, 5);
 }

@@ -1,7 +1,7 @@
-import { join, dirname, resolve } from "node:path";
-import { existsSync, mkdirSync } from "node:fs";
-import { readdir, stat, readFile } from "node:fs/promises";
-import { homedir } from "node:os";
+import { join, dirname, resolve } from 'node:path';
+import { existsSync, mkdirSync } from 'node:fs';
+import { readdir, stat, readFile } from 'node:fs/promises';
+import { homedir } from 'node:os';
 
 interface AgenticConfig {
   thoughts: string;
@@ -56,18 +56,18 @@ async function getFileHash(path: string, ignoreFrontmatter: boolean = false): Pr
     const text = await file.text();
     const contentWithoutFrontmatter = stripYamlFrontmatter(text);
     const encoder = new TextEncoder();
-    const hasher = new Bun.CryptoHasher("sha256");
+    const hasher = new Bun.CryptoHasher('sha256');
     hasher.update(encoder.encode(contentWithoutFrontmatter));
-    return hasher.digest("hex");
+    return hasher.digest('hex');
   } else {
-    const hasher = new Bun.CryptoHasher("sha256");
+    const hasher = new Bun.CryptoHasher('sha256');
     hasher.update(await file.arrayBuffer());
-    return hasher.digest("hex");
+    return hasher.digest('hex');
   }
 }
 
 async function readAgenticConfig(projectPath: string): Promise<AgenticConfig | null> {
-  const configPath = join(projectPath, ".opencode", "agentic.json");
+  const configPath = join(projectPath, '.opencode', 'agentic.json');
 
   if (!existsSync(configPath)) {
     return null;
@@ -81,24 +81,23 @@ async function readAgenticConfig(projectPath: string): Promise<AgenticConfig | n
   }
 }
 
-export function resolveAgentModel(cliModel: string | undefined, projectPath: string): Promise<string | undefined> {
-  return new Promise(async (resolve) => {
-    // 1. CLI parameter has highest priority
-    if (cliModel) {
-      resolve(cliModel);
-      return;
-    }
+export async function resolveAgentModel(
+  cliModel: string | undefined,
+  projectPath: string
+): Promise<string | undefined> {
+  // 1. CLI parameter has highest priority
+  if (cliModel) {
+    return cliModel;
+  }
 
-    // 2. Check agentic.json config
-    const config = await readAgenticConfig(projectPath);
-    if (config?.agents?.model) {
-      resolve(config.agents.model);
-      return;
-    }
+  // 2. Check agentic.json config
+  const config = await readAgenticConfig(projectPath);
+  if (config?.agents?.model) {
+    return config.agents.model;
+  }
 
-    // 3. No model specified
-    resolve(undefined);
-  });
+  // 3. No model specified
+  return undefined;
 }
 
 export async function processAgentTemplate(filePath: string, agentModel?: string): Promise<string> {
@@ -124,24 +123,26 @@ export function findAgenticInstallDir(): string {
   // The source files should be in the same directory as the bin folder
   const packageDir = dirname(binaryDir);
 
-  if (existsSync(join(packageDir, "agent")) && existsSync(join(packageDir, "command"))) {
+  if (existsSync(join(packageDir, 'agent')) && existsSync(join(packageDir, 'command'))) {
     return packageDir;
   }
 
   // Fallback: check if we're running from local repo during development
-  const localPackageDir = join(dirname(dirname(process.execPath)), "..");
-  if (existsSync(join(localPackageDir, "agent")) && existsSync(join(localPackageDir, "command"))) {
+  const localPackageDir = join(dirname(dirname(process.execPath)), '..');
+  if (existsSync(join(localPackageDir, 'agent')) && existsSync(join(localPackageDir, 'command'))) {
     return localPackageDir;
   }
 
-  throw new Error(`Could not find agent/command directories. Binary dir: ${binaryDir}, Package dir: ${packageDir}`);
+  throw new Error(
+    `Could not find agent/command directories. Binary dir: ${binaryDir}, Package dir: ${packageDir}`
+  );
 }
 
 export async function findOutOfSyncFiles(
   targetPath: string,
   agentModel?: string,
   projectPath?: string,
-  ignoreFrontmatter: boolean = false,
+  ignoreFrontmatter: boolean = false
 ): Promise<FileSync[]> {
   const sourceDir = findAgenticInstallDir();
   const results: FileSync[] = [];
@@ -151,18 +152,18 @@ export async function findOutOfSyncFiles(
 
   // Resolve the agent model with proper priority
   const resolvedModel = await resolveAgentModel(agentModel, resolvedProjectPath);
-  
+
   // Directories to sync
-  const dirsToSync = ["agent", "command"];
-  
+  const dirsToSync = ['agent', 'command'];
+
   // Only check files from agentic source against target
   for (const dir of dirsToSync) {
     const sourceDirPath = join(sourceDir, dir);
     if (!existsSync(sourceDirPath)) continue;
-    
+
     const stats = await stat(sourceDirPath);
     if (!stats.isDirectory()) continue;
-    
+
     for await (const sourceFile of walkDir(sourceDirPath)) {
       const relativePath = sourceFile.slice(sourceDir.length + 1);
       const targetFile = join(targetPath, relativePath);
@@ -207,63 +208,65 @@ export async function findOutOfSyncFiles(
       }
     }
   }
-  
+
   return results;
 }
 
 export function resolveProjectPath(providedPath?: string, useGlobal: boolean = false): string {
   const home = homedir();
-  
+
   // If using global flag, return the global config directory
   if (useGlobal) {
-    const globalDir = join(home, ".config", "opencode");
-    
+    const globalDir = join(home, '.config', 'opencode');
+
     // Create the directory if it doesn't exist
     if (!existsSync(globalDir)) {
       mkdirSync(globalDir, { recursive: true });
     }
-    
+
     return globalDir;
   }
-  
+
   if (providedPath) {
     // Path was provided, check if .opencode exists
     const resolvedPath = resolve(providedPath);
-    const opencodeDir = join(resolvedPath, ".opencode");
-    
+    const opencodeDir = join(resolvedPath, '.opencode');
+
     if (!existsSync(opencodeDir)) {
       console.error(`Error: No .opencode directory found at ${opencodeDir}`);
       process.exit(1);
     }
-    
+
     return resolvedPath;
   }
-  
+
   // No path provided, start searching from current directory
   const cwd = process.cwd();
-  
+
   // Ensure we're in a subdirectory of $HOME
   if (!cwd.startsWith(home)) {
     console.error(`Error: Current directory is not within home directory (${home})`);
-    console.error("Automatic project detection only works within your home directory");
+    console.error('Automatic project detection only works within your home directory');
     process.exit(1);
   }
-  
+
   // Search upward for .opencode directory
   let currentDir = cwd;
-  
-  while (currentDir !== home && currentDir !== "/") {
-    const opencodeDir = join(currentDir, ".opencode");
-    
+
+  while (currentDir !== home && currentDir !== '/') {
+    const opencodeDir = join(currentDir, '.opencode');
+
     if (existsSync(opencodeDir)) {
       return currentDir;
     }
-    
+
     currentDir = dirname(currentDir);
   }
-  
+
   // No .opencode found
-  console.error("Error: No .opencode directory found in current directory or any parent directories");
-  console.error("Please run this command from a project directory or specify a path");
+  console.error(
+    'Error: No .opencode directory found in current directory or any parent directories'
+  );
+  console.error('Please run this command from a project directory or specify a path');
   process.exit(1);
 }

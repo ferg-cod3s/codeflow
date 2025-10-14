@@ -11,7 +11,7 @@ import {
 
 /**
  * Research Workflow Implementation
- * 
+ *
  * Implements the deep research & analysis workflow defined in command/research-enhanced.md
  */
 
@@ -87,37 +87,37 @@ export async function executeResearchWorkflow(
   console.log(`\n🔬 Starting Deep Research Workflow`);
   console.log(`📋 Query: ${options.query}`);
   console.log(`🎯 Domain: ${options.domain || 'auto-detect'}\n`);
-  
+
   // Create workflow context
   const context = createWorkflowContext(options.query, options.domain);
-  
+
   // Load and parse workflow phases from command definition
   const phases = await loadResearchPhases(options);
-  
+
   // Execute multi-phase workflow
   const workflowResult = await executeMultiPhaseWorkflow(phases, context, registry);
-  
+
   // If domain specialists are requested, execute Phase 4
   if (options.engageDomainSpecialists && context.findings.domains.length > 0) {
     console.log(`\n🎓 Engaging domain specialists...`);
     const specialists = await selectDomainSpecialists(context.findings, registry);
-    
+
     if (specialists.length > 0) {
       const phase4 = createDomainSpecialistPhase(specialists, options.maxSpecialists || 5);
       const phase4Result = await executeMultiPhaseWorkflow([phase4], context, registry);
-      
+
       // Merge Phase 4 results
       workflowResult.phases.push(...phase4Result.phases);
     }
   }
-  
+
   // Generate comprehensive research report
   const report = await generateResearchReport(workflowResult, context);
-  
+
   console.log(`\n✅ Research workflow completed`);
   console.log(`📊 Quality Score: ${workflowResult.summary.qualityScore}/100`);
   console.log(`🎯 Confidence: ${report.confidence}\n`);
-  
+
   return { workflow: workflowResult, report };
 }
 
@@ -126,7 +126,7 @@ export async function executeResearchWorkflow(
  */
 async function loadResearchPhases(options: ResearchWorkflowOptions): Promise<WorkflowPhase[]> {
   const phases: WorkflowPhase[] = [];
-  
+
   // Phase 1: Discovery (Parallel)
   phases.push({
     name: 'Discovery Phase',
@@ -144,7 +144,7 @@ async function loadResearchPhases(options: ResearchWorkflowOptions): Promise<Wor
       },
     ],
   });
-  
+
   // Phase 2: Analysis (Sequential)
   phases.push({
     name: 'Analysis Phase',
@@ -165,7 +165,7 @@ async function loadResearchPhases(options: ResearchWorkflowOptions): Promise<Wor
     ],
     depends_on: ['codebase-locator', 'thoughts-locator'],
   });
-  
+
   // Phase 3: External Research (Optional)
   if (options.includeExternalResearch) {
     phases.push({
@@ -180,7 +180,7 @@ async function loadResearchPhases(options: ResearchWorkflowOptions): Promise<Wor
       ],
     });
   }
-  
+
   return phases;
 }
 
@@ -188,12 +188,12 @@ async function loadResearchPhases(options: ResearchWorkflowOptions): Promise<Wor
  * Create Phase 4: Domain Specialists (Conditional)
  */
 function createDomainSpecialistPhase(specialists: string[], maxSpecialists: number): WorkflowPhase {
-  const agents = specialists.slice(0, maxSpecialists).map(specialistId => ({
+  const agents = specialists.slice(0, maxSpecialists).map((specialistId) => ({
     name: specialistId,
     purpose: `Provide specialized analysis in ${specialistId.replace(/-/g, ' ')} domain`,
     timeout: '8 minutes',
   }));
-  
+
   return {
     name: 'Domain Specialist Analysis',
     type: 'conditional',
@@ -210,11 +210,13 @@ async function generateResearchReport(
   context: any
 ): Promise<ResearchReport> {
   // Extract findings from each phase
-  const discoveryPhase = workflowResult.phases.find(p => p.phaseName === 'Discovery Phase');
-  const analysisPhase = workflowResult.phases.find(p => p.phaseName === 'Analysis Phase');
-  const externalPhase = workflowResult.phases.find(p => p.phaseName === 'External Research');
-  const specialistPhase = workflowResult.phases.find(p => p.phaseName === 'Domain Specialist Analysis');
-  
+  const _discoveryPhase = workflowResult.phases.find((p) => p.phaseName === 'Discovery Phase');
+  const analysisPhase = workflowResult.phases.find((p) => p.phaseName === 'Analysis Phase');
+  const externalPhase = workflowResult.phases.find((p) => p.phaseName === 'External Research');
+  const specialistPhase = workflowResult.phases.find(
+    (p) => p.phaseName === 'Domain Specialist Analysis'
+  );
+
   // Build summary
   const summary: ResearchSummary = {
     objective: context.query,
@@ -223,7 +225,7 @@ async function generateResearchReport(
     confidence: workflowResult.summary.confidence,
     timestamp: workflowResult.timestamp,
   };
-  
+
   // Build codebase analysis
   const codebaseAnalysis: CodebaseAnalysis = {
     coreFiles: extractCoreFiles(analysisPhase),
@@ -231,7 +233,7 @@ async function generateResearchReport(
     dataFlow: extractDataFlow(analysisPhase),
     patterns: extractPatterns(analysisPhase),
   };
-  
+
   // Build documentation insights
   const documentationInsights: DocumentationInsights = {
     existingDocs: extractExistingDocs(analysisPhase),
@@ -239,7 +241,7 @@ async function generateResearchReport(
     knownIssues: extractKnownIssues(analysisPhase),
     architectureNotes: extractArchitectureNotes(analysisPhase),
   };
-  
+
   // Build external research (if available)
   let externalResearch: ExternalResearch | undefined;
   if (externalPhase && externalPhase.status === 'completed') {
@@ -250,20 +252,20 @@ async function generateResearchReport(
       resources: [],
     };
   }
-  
+
   // Build domain specialist findings (if available)
   let domainSpecialistFindings: DomainSpecialistFindings | undefined;
   if (specialistPhase && specialistPhase.status === 'completed') {
     domainSpecialistFindings = {
-      specialists: specialistPhase.results.map(r => r.agentId),
+      specialists: specialistPhase.results.map((r) => r.agentId),
       findings: new Map(),
       criticalIssues: [],
     };
   }
-  
+
   // Generate recommendations
   const recommendations = generateRecommendations(workflowResult, context);
-  
+
   return {
     summary,
     codebaseAnalysis,
@@ -281,34 +283,32 @@ async function generateResearchReport(
  */
 function extractKeyFindings(workflowResult: MultiPhaseWorkflowResult): string[] {
   const findings: string[] = [];
-  
+
   // Add insights from workflow summary
   findings.push(...workflowResult.summary.insights);
-  
+
   // Add high-level findings based on successful agents
   const successfulAgents = workflowResult.summary.successfulAgents;
   if (successfulAgents > 0) {
     findings.push(`Successfully analyzed codebase with ${successfulAgents} specialized agent(s)`);
   }
-  
+
   return findings.slice(0, 5); // Top 5 findings
 }
 
 /**
  * Extract core files from analysis phase
  */
-function extractCoreFiles(phase: any): Array<{ path: string; purpose: string }> {
+function extractCoreFiles(_phase: any): Array<{ path: string; purpose: string }> {
   // In real implementation, parse agent results
   // For now, return placeholder
-  return [
-    { path: 'src/main.ts', purpose: 'Application entry point' },
-  ];
+  return [{ path: 'src/main.ts', purpose: 'Application entry point' }];
 }
 
 /**
  * Extract key functions from analysis phase
  */
-function extractKeyFunctions(phase: any): Array<{ name: string; file: string; purpose: string }> {
+function extractKeyFunctions(_phase: any): Array<{ name: string; file: string; purpose: string }> {
   return [
     { name: 'executeWorkflow', file: 'src/workflow.ts', purpose: 'Orchestrate workflow execution' },
   ];
@@ -317,51 +317,54 @@ function extractKeyFunctions(phase: any): Array<{ name: string; file: string; pu
 /**
  * Extract data flow description
  */
-function extractDataFlow(phase: any): string {
+function extractDataFlow(_phase: any): string {
   return 'User request → Router → Controller → Service → Data Layer → Response';
 }
 
 /**
  * Extract implementation patterns
  */
-function extractPatterns(phase: any): string[] {
+function extractPatterns(_phase: any): string[] {
   return ['MVC Architecture', 'Dependency Injection', 'Repository Pattern'];
 }
 
 /**
  * Extract existing documentation
  */
-function extractExistingDocs(phase: any): string[] {
+function extractExistingDocs(_phase: any): string[] {
   return ['README.md', 'API_DOCS.md', 'ARCHITECTURE.md'];
 }
 
 /**
  * Extract past decisions
  */
-function extractPastDecisions(phase: any): string[] {
+function extractPastDecisions(_phase: any): string[] {
   return ['Chose TypeScript for type safety', 'Adopted microservices architecture'];
 }
 
 /**
  * Extract known issues
  */
-function extractKnownIssues(phase: any): string[] {
+function extractKnownIssues(_phase: any): string[] {
   return ['Performance bottleneck in data processing', 'Missing test coverage'];
 }
 
 /**
  * Extract architecture notes
  */
-function extractArchitectureNotes(phase: any): string[] {
+function extractArchitectureNotes(_phase: any): string[] {
   return ['Modular design with clear separation of concerns', 'Event-driven communication'];
 }
 
 /**
  * Generate recommendations based on findings
  */
-function generateRecommendations(workflowResult: MultiPhaseWorkflowResult, context: any): Recommendation[] {
+function generateRecommendations(
+  workflowResult: MultiPhaseWorkflowResult,
+  context: any
+): Recommendation[] {
   const recommendations: Recommendation[] = [];
-  
+
   // Add recommendations based on quality score
   if (workflowResult.summary.qualityScore < 70) {
     recommendations.push({
@@ -371,7 +374,7 @@ function generateRecommendations(workflowResult: MultiPhaseWorkflowResult, conte
       rationale: 'Quality score indicates incomplete analysis',
     });
   }
-  
+
   // Add domain-specific recommendations
   if (context.findings.domains.includes('security')) {
     recommendations.push({
@@ -382,7 +385,7 @@ function generateRecommendations(workflowResult: MultiPhaseWorkflowResult, conte
       risks: ['Potential vulnerabilities', 'Compliance issues'],
     });
   }
-  
+
   // Add general recommendations
   recommendations.push({
     category: 'short-term',
@@ -390,7 +393,7 @@ function generateRecommendations(workflowResult: MultiPhaseWorkflowResult, conte
     action: 'Create implementation plan using /plan command',
     rationale: 'Research provides sufficient context for planning',
   });
-  
+
   return recommendations;
 }
 
@@ -399,58 +402,58 @@ function generateRecommendations(workflowResult: MultiPhaseWorkflowResult, conte
  */
 export function formatResearchReport(report: ResearchReport): string {
   const sections: string[] = [];
-  
+
   sections.push('# Research Report\n');
-  
+
   // Summary
   sections.push('## Summary\n');
   sections.push(`**Objective**: ${report.summary.objective}\n`);
   sections.push(`**Confidence Level**: ${report.confidence}\n`);
   sections.push(`**Timestamp**: ${report.summary.timestamp}\n`);
-  
+
   sections.push('### Key Findings\n');
   for (const finding of report.summary.keyFindings) {
     sections.push(`- ${finding}`);
   }
   sections.push('');
-  
+
   // Codebase Analysis
   sections.push('## Codebase Analysis\n');
-  
+
   sections.push('### Core Files\n');
   for (const file of report.codebaseAnalysis.coreFiles) {
     sections.push(`- **${file.path}**: ${file.purpose}`);
   }
   sections.push('');
-  
+
   sections.push('### Key Functions\n');
   for (const func of report.codebaseAnalysis.keyFunctions) {
     sections.push(`- **${func.name}** (${func.file}): ${func.purpose}`);
   }
   sections.push('');
-  
+
   sections.push('### Data Flow\n');
   sections.push(`${report.codebaseAnalysis.dataFlow}\n`);
-  
+
   // Documentation Insights
   sections.push('## Documentation Insights\n');
-  
+
   sections.push('### Existing Documentation\n');
   for (const doc of report.documentationInsights.existingDocs) {
     sections.push(`- ${doc}`);
   }
   sections.push('');
-  
+
   sections.push('### Past Decisions\n');
   for (const decision of report.documentationInsights.pastDecisions) {
     sections.push(`- ${decision}`);
   }
   sections.push('');
-  
+
   // Recommendations
   sections.push('## Recommendations\n');
-  
-  const immediateRecs = report.recommendations.filter(r => r.category === 'immediate');
+
+  const immediateRecs = report.recommendations.filter((r) => r.category === 'immediate');
   if (immediateRecs.length > 0) {
     sections.push('### Immediate Actions\n');
     for (const rec of immediateRecs) {
@@ -462,8 +465,8 @@ export function formatResearchReport(report: ResearchReport): string {
     }
     sections.push('');
   }
-  
-  const shortTermRecs = report.recommendations.filter(r => r.category === 'short-term');
+
+  const shortTermRecs = report.recommendations.filter((r) => r.category === 'short-term');
   if (shortTermRecs.length > 0) {
     sections.push('### Short-term Actions\n');
     for (const rec of shortTermRecs) {
@@ -472,13 +475,13 @@ export function formatResearchReport(report: ResearchReport): string {
     }
     sections.push('');
   }
-  
+
   // Next Steps
   sections.push('## Next Steps\n');
   for (const step of report.nextSteps) {
     sections.push(`- ${step}`);
   }
   sections.push('');
-  
+
   return sections.join('\n');
 }

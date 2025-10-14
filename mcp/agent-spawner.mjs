@@ -272,8 +272,8 @@ function buildAgentPrompt(agent, task, brief) {
   if (agent.tools && Object.keys(agent.tools).length > 0) {
     sections.push('## Available Tools');
     const enabledTools = Object.entries(agent.tools)
-      .filter(([_, enabled]) => enabled)
-      .map(([tool, _]) => `- ${tool}`)
+      .filter(([_toolName, enabled]) => enabled)
+      .map(([tool, _enabled]) => `- ${tool}`)
       .join('\n');
     if (enabledTools) {
       sections.push(enabledTools);

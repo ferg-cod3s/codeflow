@@ -34,8 +34,8 @@ function parseFrontmatter(content) {
 
   // Parse YAML frontmatter manually (simple key-value pairs)
   const frontmatter = {};
-  let currentKey = '';
-  let currentValue = '';
+   let _currentKey = '';
+   let _currentValue = '';
   let inTools = false;
   let toolsIndentLevel = 0;
   let inAllowedDirectories = false;

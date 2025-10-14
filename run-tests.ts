@@ -5,9 +5,8 @@
  * Runs all test suites and generates coverage reports
  */
 
-import { $ } from 'bun';
 import { existsSync } from 'fs';
-import { mkdir, rm, readFile, writeFile } from 'fs/promises';
+import { mkdir, rm, writeFile } from 'fs/promises';
 import { join } from 'path';
 import chalk from 'chalk';
 

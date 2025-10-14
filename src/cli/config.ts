@@ -1,7 +1,7 @@
-import { join } from "node:path";
-import { existsSync, writeFileSync } from "node:fs";
-import { readFile } from "node:fs/promises";
-import { resolveProjectPath } from "./utils";
+import { join } from 'node:path';
+import { existsSync, writeFileSync } from 'node:fs';
+import { readFile } from 'node:fs/promises';
+import { resolveProjectPath } from './utils';
 
 interface AgenticConfig {
   thoughts: string;
@@ -12,15 +12,15 @@ interface AgenticConfig {
 
 function getDefaultConfig(): AgenticConfig {
   return {
-    thoughts: "thoughts",
+    thoughts: 'thoughts',
     agents: {
-      model: "opencode/grok-code"
-    }
+      model: 'opencode/grok-code',
+    },
   };
 }
 
 async function readConfig(projectPath: string): Promise<AgenticConfig> {
-  const configPath = join(projectPath, ".opencode", "agentic.json");
+  const configPath = join(projectPath, '.opencode', 'agentic.json');
 
   if (!existsSync(configPath)) {
     return getDefaultConfig();
@@ -32,20 +32,20 @@ async function readConfig(projectPath: string): Promise<AgenticConfig> {
 
     // Merge with defaults to ensure all fields exist
     return {
-      thoughts: config.thoughts || "thoughts",
+      thoughts: config.thoughts || 'thoughts',
       agents: {
-        model: config.agents?.model || "opencode/grok-code"
-      }
+        model: config.agents?.model || 'opencode/grok-code',
+      },
     };
-  } catch (error) {
+  } catch (_error) {
     console.warn(`Warning: Could not read config file at ${configPath}, using defaults`);
     return getDefaultConfig();
   }
 }
 
 function writeConfig(projectPath: string, config: AgenticConfig): void {
-  const opencodeDir = join(projectPath, ".opencode");
-  const configPath = join(opencodeDir, "agentic.json");
+  const opencodeDir = join(projectPath, '.opencode');
+  const configPath = join(opencodeDir, 'agentic.json');
 
   // Ensure .opencode directory exists
   if (!existsSync(opencodeDir)) {
@@ -97,7 +97,11 @@ function getNestedValue(obj: any, path: string): string | undefined {
   return typeof current === 'string' ? current : undefined;
 }
 
-export async function config(projectPath: string | undefined, key?: string, value?: string): Promise<void> {
+export async function config(
+  projectPath: string | undefined,
+  key?: string,
+  value?: string
+): Promise<void> {
   // Resolve the project path
   const resolvedProjectPath = resolveProjectPath(projectPath);
 
@@ -105,7 +109,7 @@ export async function config(projectPath: string | undefined, key?: string, valu
 
   if (!key) {
     // No key provided, show current config
-    console.log("Current configuration:");
+    console.log('Current configuration:');
     console.log(JSON.stringify(currentConfig, null, 2));
     return;
   }

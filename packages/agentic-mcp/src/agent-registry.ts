@@ -2,7 +2,7 @@
 
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import os from 'node:os';
+
 import { existsSync } from 'node:fs';
 
 /**
@@ -272,12 +272,12 @@ export async function loadProjectAgents(): Promise<Map<string, Agent>> {
           };
 
           agents.set(agent.id, agent);
-        } catch (error) {
+        } catch (_error) {
           // Skip invalid agent files silently
           console.warn(`Skipping invalid agent file: ${filePath}`);
         }
       }
-    } catch (error) {
+    } catch (_error) {
       // Directory access issues - skip silently
     }
   }

@@ -368,7 +368,7 @@ export class CacheManager {
     const filePath = path.join(this.cacheDir, `${key}.json`);
     try {
       await fs.unlink(filePath);
-    } catch (error) {
+    } catch (_error) {
       // Ignore if file doesn't exist
     }
   }
@@ -393,7 +393,7 @@ export class CacheManager {
           this.stats.entries++;
         }
       }
-    } catch (error) {
+    } catch (_error) {
       // Ignore if cache directory doesn't exist or is corrupted
     }
   }
@@ -410,7 +410,7 @@ export class CacheManager {
         const filePath = path.join(this.cacheDir, file);
         await fs.unlink(filePath);
       }
-    } catch (error) {
+    } catch (_error) {
       // Ignore if directory doesn't exist
     }
   }

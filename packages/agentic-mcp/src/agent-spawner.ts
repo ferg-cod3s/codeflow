@@ -229,7 +229,7 @@ export function createWorkflowOrchestrator(registry: Map<string, Agent>): Workfl
         agents.push('web-search-researcher');
       }
 
-      const tasks = agents.map((agentId) => `Research and analyze: ${query}`);
+      const tasks = agents.map((_agentId) => `Research and analyze: ${query}`);
       const results = await executeParallelAgents(agents, tasks, registry);
 
       return {
@@ -329,22 +329,23 @@ export function validateAgentExecution(
   };
 }
 
-
 /**
  * Enhanced workflow orchestrator with multi-phase support
  */
-export function createEnhancedWorkflowOrchestrator(registry: Map<string, Agent>): EnhancedWorkflowOrchestrator {
+export function createEnhancedWorkflowOrchestrator(
+  registry: Map<string, Agent>
+): EnhancedWorkflowOrchestrator {
   return {
     async executeResearchWorkflow(options: any): Promise<any> {
       // Dynamic import to avoid circular dependencies
       const { executeResearchWorkflow: executeResearch } = await import('./research-workflow.js');
       const { validateWorkflowQuality } = await import('./quality-validator.js');
-      
+
       const result = await executeResearch(options, registry);
-      
+
       // Validate workflow quality
       const validation = validateWorkflowQuality(result.workflow, result.workflow.context);
-      
+
       return {
         ...result,
         validation,

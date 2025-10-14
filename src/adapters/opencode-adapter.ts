@@ -16,7 +16,7 @@ import { Platform } from '../config/platform-detector.js';
 
 /**
  * OpenCode Platform Adapter
- * 
+ *
  * Implements platform adapter for OpenCode:
  * - Discovers agents from .opencode/agent/*.md files
  * - Connects to MCP server for agent invocations
@@ -62,14 +62,17 @@ export class OpenCodeAdapter extends BasePlatformAdapter {
         args: ['mcp'],
       });
 
-      this.mcpClient = new Client({
-        name: 'codeflow-research',
-        version: '1.0.0',
-      }, {
-        capabilities: {
-          tools: {},
+      this.mcpClient = new Client(
+        {
+          name: 'codeflow-research',
+          version: '1.0.0',
         },
-      });
+        {
+          capabilities: {
+            tools: {},
+          },
+        }
+      );
 
       await this.mcpClient.connect(transport);
     } catch (error) {
@@ -107,13 +110,13 @@ export class OpenCodeAdapter extends BasePlatformAdapter {
       try {
         const fileAgents = await this.discoverAgentsFromFiles();
         agents.push(...fileAgents);
-      } catch (fsError) {
+      } catch (_fsError) {
         throw new Error(`Failed to discover OpenCode agents: ${error}`);
       }
     }
 
     // Cache agents
-    agents.forEach(agent => this.agentCache.set(agent.name, agent));
+    agents.forEach((agent) => this.agentCache.set(agent.name, agent));
 
     return agents;
   }
@@ -130,15 +133,15 @@ export class OpenCodeAdapter extends BasePlatformAdapter {
 
     try {
       const toolsResult = await this.mcpClient.listTools();
-      
+
       // Filter for codeflow.agent.* tools
-      const agentTools = toolsResult.tools.filter(tool => 
+      const agentTools = toolsResult.tools.filter((tool) =>
         tool.name.startsWith('codeflow.agent.')
       );
 
       for (const tool of agentTools) {
         const agentName = tool.name.replace('codeflow.agent.', '');
-        
+
         agents.push({
           name: agentName,
           description: tool.description,
@@ -161,12 +164,12 @@ export class OpenCodeAdapter extends BasePlatformAdapter {
     const agents: AgentMetadata[] = [];
 
     const files = await readdir(this.agentsDirectory);
-    const agentFiles = files.filter(file => file.endsWith('.md'));
+    const agentFiles = files.filter((file) => file.endsWith('.md'));
 
     for (const file of agentFiles) {
       const filePath = join(this.agentsDirectory, file);
       const metadata = await this.parseAgentMetadata(filePath);
-      
+
       if (metadata) {
         agents.push(metadata);
       }
@@ -206,10 +209,10 @@ export class OpenCodeAdapter extends BasePlatformAdapter {
    */
   private extractDescription(content: string): string | undefined {
     const lines = content.split('\n');
-    
+
     for (const line of lines) {
       const trimmed = line.trim();
-      
+
       if (!trimmed || trimmed === '---') {
         continue;
       }
@@ -239,14 +242,30 @@ export class OpenCodeAdapter extends BasePlatformAdapter {
   private parseCapabilitiesFromDescription(text: string): string[] {
     const capabilities: string[] = [];
     const keywords = [
-      'search', 'analyze', 'research', 'locate', 'document',
-      'review', 'test', 'deploy', 'monitor', 'optimize',
-      'security', 'performance', 'database', 'api', 'frontend',
-      'backend', 'architecture', 'design', 'ux', 'data',
+      'search',
+      'analyze',
+      'research',
+      'locate',
+      'document',
+      'review',
+      'test',
+      'deploy',
+      'monitor',
+      'optimize',
+      'security',
+      'performance',
+      'database',
+      'api',
+      'frontend',
+      'backend',
+      'architecture',
+      'design',
+      'ux',
+      'data',
     ];
 
     const lowerText = text.toLowerCase();
-    
+
     for (const keyword of keywords) {
       if (lowerText.includes(keyword)) {
         capabilities.push(keyword);
@@ -271,7 +290,7 @@ export class OpenCodeAdapter extends BasePlatformAdapter {
     try {
       // Get agent metadata
       const metadata = await this.getAgentMetadata(agentName);
-      
+
       if (!metadata) {
         return createErrorResult(agentName, `Agent '${agentName}' not found`);
       }
@@ -294,26 +313,20 @@ export class OpenCodeAdapter extends BasePlatformAdapter {
         agentPath: metadata.path,
       });
     } catch (error) {
-      return createErrorResult(
-        agentName,
-        error instanceof Error ? error.message : String(error)
-      );
+      return createErrorResult(agentName, error instanceof Error ? error.message : String(error));
     }
   }
 
   /**
    * Invoke agent via MCP protocol
    */
-  private async invokeViaMCP(
-    agentName: string,
-    context: AgentInvocationContext
-  ): Promise<string> {
+  private async invokeViaMCP(agentName: string, context: AgentInvocationContext): Promise<string> {
     if (!this.mcpClient) {
       throw new Error('MCP client not initialized');
     }
 
     const toolName = `codeflow.agent.${agentName}`;
-    
+
     const result = await this.mcpClient.callTool({
       name: toolName,
       arguments: {
@@ -325,10 +338,10 @@ export class OpenCodeAdapter extends BasePlatformAdapter {
     // Extract text content from result
     if (Array.isArray(result.content)) {
       const textContent = result.content
-        .filter(item => item.type === 'text')
-        .map(item => 'text' in item ? item.text : '')
+        .filter((item) => item.type === 'text')
+        .map((item) => ('text' in item ? item.text : ''))
         .join('\n');
-      
+
       return textContent;
     }
 
@@ -350,22 +363,22 @@ export class OpenCodeAdapter extends BasePlatformAdapter {
 
     try {
       const metadata = await this.getAgentMetadata(agentName);
-      
+
       if (!metadata) {
         return createErrorResult(agentName, `Agent '${agentName}' not found`);
       }
 
       // For now, simulate streaming by chunking the output
       const output = await this.invokeViaMCP(agentName, context);
-      
+
       // Simulate streaming
       const chunkSize = 50;
       for (let i = 0; i < output.length; i += chunkSize) {
         const chunk = output.slice(i, i + chunkSize);
         onChunk(chunk);
-        
+
         // Small delay to simulate streaming
-        await new Promise(resolve => setTimeout(resolve, 10));
+        await new Promise((resolve) => setTimeout(resolve, 10));
       }
 
       const duration = Date.now() - startTime;
@@ -376,22 +389,18 @@ export class OpenCodeAdapter extends BasePlatformAdapter {
         streaming: true,
       });
     } catch (error) {
-      return createErrorResult(
-        agentName,
-        error instanceof Error ? error.message : String(error)
-      );
+      return createErrorResult(agentName, error instanceof Error ? error.message : String(error));
     }
   }
 
   /**
    * Simulate agent invocation
    */
-  private simulateAgentInvocation(
-    agentName: string,
-    context: AgentInvocationContext
-  ): string {
-    return `[OpenCode Agent: ${agentName}]\n\nObjective: ${context.objective}\n\n` +
-           `This is a simulated response. MCP client not available.`;
+  private simulateAgentInvocation(agentName: string, context: AgentInvocationContext): string {
+    return (
+      `[OpenCode Agent: ${agentName}]\n\nObjective: ${context.objective}\n\n` +
+      `This is a simulated response. MCP client not available.`
+    );
   }
 
   /**
@@ -402,9 +411,7 @@ export class OpenCodeAdapter extends BasePlatformAdapter {
 
     // OpenCode supports parallel invocations via MCP
     return Promise.all(
-      requests.map(request => 
-        this.invokeAgent(request.agentName, request.context)
-      )
+      requests.map((request) => this.invokeAgent(request.agentName, request.context))
     );
   }
 
@@ -427,9 +434,6 @@ export class OpenCodeAdapter extends BasePlatformAdapter {
 /**
  * Create OpenCode adapter
  */
-export function createOpenCodeAdapter(
-  projectRoot: string,
-  mcpEndpoint?: string
-): OpenCodeAdapter {
+export function createOpenCodeAdapter(projectRoot: string, mcpEndpoint?: string): OpenCodeAdapter {
   return new OpenCodeAdapter(projectRoot, mcpEndpoint);
 }

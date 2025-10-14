@@ -4,7 +4,6 @@ import url from 'node:url';
 import crypto from 'node:crypto';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import { z } from 'zod';
 import { buildAgentRegistry, categorizeAgents, suggestAgents } from './agent-registry.mjs';
 import {
   spawnAgentTask,
@@ -48,7 +47,7 @@ function toSlug(filePath) {
   return base.replace(/[^a-zA-Z0-9]+/g, '_');
 }
 
-function toUniqueId(prefix, filePath) {
+function _toUniqueId(prefix, filePath) {
   const slug = toSlug(filePath);
   // Use cross-platform crypto for hashing
   const hash = crypto.createHash('sha1').update(filePath).digest('hex').slice(0, 8);
@@ -106,7 +105,7 @@ async function loadMarkdownFiles(dir) {
     return entries
       .filter((e) => e.isFile() && e.name.toLowerCase().endsWith('.md'))
       .map((e) => path.join(dir, e.name));
-  } catch (err) {
+  } catch (_err) {
     return [];
   }
 }
@@ -158,7 +157,7 @@ function jsonSchemaObject(properties = {}, required = []) {
   };
 }
 
-function toolSpecFromEntry(entry) {
+function _toolSpecFromEntry(entry) {
   return {
     name: entry.id,
     description: `${entry.description}. Returns the markdown body.`,
@@ -326,7 +325,7 @@ async function run() {
         title: entry.id,
         description: entry.description + ' (Enhanced with agent orchestration capabilities)',
       },
-      async (args = {}) => {
+      async (_args = {}) => {
         const commandContent = await fs.readFile(entry.filePath, 'utf8');
 
         // Enhanced context with available agents
@@ -419,15 +418,15 @@ async function run() {
     // Bun sometimes doesn't keep the event loop alive on stdio alone; explicitly wait.
     try {
       process.stdin.resume();
-    } catch {}
+    } catch {} // Ignore stdin setup errors
     try {
       process.stdin.on('end', onClose);
       process.stdin.on('close', onClose);
-    } catch {}
+    } catch {} // Ignore stdin event setup errors
     try {
       process.on('SIGINT', onClose);
       process.on('SIGTERM', onClose);
-    } catch {}
+    } catch {} // Ignore signal setup errors
   });
 }
 

@@ -1,20 +1,19 @@
 #!/usr/bin/env node
 
-import fs from "node:fs/promises";
-import path from "node:path";
-import url from "node:url";
-import crypto from "node:crypto";
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { buildSafeAgentRegistry, categorizeAgents, suggestAgents, type Agent, type AgentCategories } from './agent-registry.js';
-import { 
-  spawnAgentTask, 
-  executeParallelAgents, 
-  executeSequentialAgents, 
-  createWorkflowOrchestrator,
-  validateAgentExecution,
-  type WorkflowOrchestrator 
-} from './agent-spawner.js';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import url from 'node:url';
+
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import {
+  buildSafeAgentRegistry,
+  categorizeAgents,
+  suggestAgents,
+  type Agent,
+  type AgentCategories,
+} from './agent-registry.js';
+import { createWorkflowOrchestrator, type WorkflowOrchestrator } from './agent-spawner.js';
 
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -22,12 +21,10 @@ const __dirname = path.dirname(__filename);
 // Global agent registry - initialized once on server startup
 let globalAgentRegistry: Map<string, Agent> | null = null;
 let agentCategories: AgentCategories | null = null;
-let workflowOrchestrator: WorkflowOrchestrator | null = null;
+let _workflowOrchestrator: WorkflowOrchestrator | null = null;
 
 // Core workflow commands - these are generic and PII-safe
-const CORE_COMMANDS = [
-  'research', 'plan', 'execute', 'test', 'document', 'commit', 'review'
-];
+const CORE_COMMANDS = ['research', 'plan', 'execute', 'test', 'document', 'commit', 'review'];
 
 interface CommandTemplate {
   name: string;
@@ -38,8 +35,8 @@ interface CommandTemplate {
 // Built-in command templates - generic and PII-safe
 const COMMAND_TEMPLATES: CommandTemplate[] = [
   {
-    name: "research",
-    description: "Comprehensive codebase and documentation analysis",
+    name: 'research',
+    description: 'Comprehensive codebase and documentation analysis',
     content: `# Research Command
 
 You are tasked with conducting comprehensive research on a codebase or specific topic.
@@ -67,11 +64,11 @@ Structure your research as:
 - **Recommendations**: Specific next steps or improvements
 - **References**: Code locations, documentation, or resources examined
 
-Conduct thorough research based on the provided scope and requirements.`
+Conduct thorough research based on the provided scope and requirements.`,
   },
   {
-    name: "plan",
-    description: "Create detailed implementation plans",
+    name: 'plan',
+    description: 'Create detailed implementation plans',
     content: `# Plan Command
 
 You are tasked with creating a detailed implementation plan based on research findings and requirements.
@@ -102,11 +99,11 @@ Structure your plan as:
 - **Risks**: Potential challenges and mitigation strategies
 - **Timeline**: Estimated effort and sequencing
 
-Create a comprehensive implementation plan based on the provided requirements.`
+Create a comprehensive implementation plan based on the provided requirements.`,
   },
   {
-    name: "execute",
-    description: "Implement plans with systematic verification",
+    name: 'execute',
+    description: 'Implement plans with systematic verification',
     content: `# Execute Command
 
 You are tasked with implementing a specific plan or feature with systematic verification.
@@ -143,11 +140,11 @@ For each implementation step:
 - **Testing**: How the change was verified
 - **Notes**: Any issues encountered or deviations from plan
 
-Execute the implementation systematically with proper verification and documentation.`
+Execute the implementation systematically with proper verification and documentation.`,
   },
   {
-    name: "test",
-    description: "Generate comprehensive test suites",
+    name: 'test',
+    description: 'Generate comprehensive test suites',
     content: `# Test Command
 
 You are tasked with generating comprehensive tests for implemented functionality.
@@ -185,11 +182,11 @@ For each test suite:
 - **Coverage**: What percentage of code/functionality is tested
 - **Execution**: Instructions for running the tests
 
-Generate comprehensive tests that ensure code quality and reliability.`
+Generate comprehensive tests that ensure code quality and reliability.`,
   },
   {
-    name: "document",
-    description: "Create user guides and technical documentation",
+    name: 'document',
+    description: 'Create user guides and technical documentation',
     content: `# Document Command
 
 You are tasked with creating comprehensive documentation for implemented functionality.
@@ -227,11 +224,11 @@ Structure documentation as:
 - **Reference**: Detailed parameter and option descriptions
 - **Troubleshooting**: Common issues and solutions
 
-Create comprehensive, user-friendly documentation that enables effective use of the functionality.`
+Create comprehensive, user-friendly documentation that enables effective use of the functionality.`,
   },
   {
-    name: "commit",
-    description: "Create structured git commits with proper messaging",
+    name: 'commit',
+    description: 'Create structured git commits with proper messaging',
     content: `# Commit Command
 
 You are tasked with creating well-structured git commits with proper messaging.
@@ -283,11 +280,11 @@ For each proposed commit:
 - **Commit Message**: Properly formatted message
 - **Description**: Explanation of the changes made
 
-Create clean, well-documented commits that provide clear project history.`
+Create clean, well-documented commits that provide clear project history.`,
   },
   {
-    name: "review",
-    description: "Validate implementations against requirements and quality standards",
+    name: 'review',
+    description: 'Validate implementations against requirements and quality standards',
     content: `# Review Command
 
 You are tasked with conducting a comprehensive review of implemented functionality.
@@ -328,17 +325,17 @@ Structure the review as:
 - **Recommendations**: Specific improvements or next steps
 - **Approval Status**: Whether implementation is ready for deployment
 
-Conduct a thorough review that ensures quality and compliance with requirements.`
-  }
+Conduct a thorough review that ensures quality and compliance with requirements.`,
+  },
 ];
 
 function findCommandDirectories(): string[] {
   const cwd = process.cwd();
   const searchPaths = [
-    path.join(cwd, ".opencode", "command"),
-    path.join(cwd, ".claude", "commands"),
+    path.join(cwd, '.opencode', 'command'),
+    path.join(cwd, '.claude', 'commands'),
   ];
-  
+
   return searchPaths;
 }
 
@@ -346,7 +343,7 @@ async function loadMarkdownFiles(dir: string): Promise<string[]> {
   try {
     const entries = await fs.readdir(dir, { withFileTypes: true });
     return entries
-      .filter((e) => e.isFile() && e.name.toLowerCase().endsWith(".md"))
+      .filter((e) => e.isFile() && e.name.toLowerCase().endsWith('.md'))
       .map((e) => path.join(dir, e.name));
   } catch {
     return [];
@@ -355,11 +352,11 @@ async function loadMarkdownFiles(dir: string): Promise<string[]> {
 
 async function loadCommand(filePath: string): Promise<string> {
   try {
-    return await fs.readFile(filePath, "utf8");
+    return await fs.readFile(filePath, 'utf8');
   } catch {
     // Fallback to built-in template
     const filename = path.basename(filePath, '.md');
-    const template = COMMAND_TEMPLATES.find(t => t.name === filename);
+    const template = COMMAND_TEMPLATES.find((t) => t.name === filename);
     return template?.content || `# ${filename}\n\nCommand not found.`;
   }
 }
@@ -374,7 +371,7 @@ async function buildTools() {
   // Try to find commands in project directories first
   const commandDirs = findCommandDirectories();
   let commandFiles: string[] = [];
-  
+
   for (const dir of commandDirs) {
     const files = await loadMarkdownFiles(dir);
     if (files.length > 0) {
@@ -385,9 +382,9 @@ async function buildTools() {
 
   // If no project commands found, use built-in templates
   if (commandFiles.length === 0) {
-    console.error("📋 No project commands found, using built-in templates");
+    console.error('📋 No project commands found, using built-in templates');
     console.error("💡 Run 'codeflow setup .' to install project-specific commands");
-    
+
     for (const template of COMMAND_TEMPLATES) {
       tools.push({
         id: template.name,
@@ -399,7 +396,7 @@ async function buildTools() {
     // Use project commands
     for (const filePath of commandFiles) {
       const base = path.basename(filePath, '.md');
-      
+
       if (CORE_COMMANDS.includes(base)) {
         tools.push({
           id: base,
@@ -416,19 +413,18 @@ async function buildTools() {
 /**
  * Add agent context to command content
  */
-function addAgentContext(commandContent: string, context: { availableAgents: string[], agentCategories: AgentCategories, totalAgents: number }): string {
-  const agentSection = [
-    '## Available Agents',
-    '',
-    '### Agent Categories:'
-  ];
-  
+function addAgentContext(
+  commandContent: string,
+  context: { availableAgents: string[]; agentCategories: AgentCategories; totalAgents: number }
+): string {
+  const agentSection = ['## Available Agents', '', '### Agent Categories:'];
+
   for (const [category, agents] of Object.entries(context.agentCategories)) {
     if (agents.length > 0) {
       agentSection.push(`**${category}**: ${agents.join(', ')}`);
     }
   }
-  
+
   agentSection.push('');
   agentSection.push('### Agent Functions Available:');
   agentSection.push('- `spawnAgent(agentId, task)` - Execute a single agent');
@@ -437,41 +433,50 @@ function addAgentContext(commandContent: string, context: { availableAgents: str
   agentSection.push('- `executeResearchWorkflow(domain, query)` - Run research workflow');
   agentSection.push('- `executePlanningWorkflow(requirements, context)` - Run planning workflow');
   agentSection.push('');
-  
+
   return commandContent + '\n\n' + agentSection.join('\n');
 }
 
 async function run() {
-  console.error("🚀 Starting CodeFlow MCP Server with Agent Support");
+  console.error('🚀 Starting CodeFlow MCP Server with Agent Support');
   console.error(`📁 Working directory: ${process.cwd()}`);
-  
+
   // Initialize agent registry on startup
   try {
     console.error('🤖 Building agent registry...');
     globalAgentRegistry = await buildSafeAgentRegistry();
     agentCategories = categorizeAgents(globalAgentRegistry);
-    workflowOrchestrator = createWorkflowOrchestrator(globalAgentRegistry);
+    _workflowOrchestrator = createWorkflowOrchestrator(globalAgentRegistry);
     console.error(`✅ Agent registry initialized with ${globalAgentRegistry.size} agents`);
   } catch (error: any) {
     console.error('❌ Failed to initialize agent registry:', error.message);
     // Continue without agents rather than failing completely
     globalAgentRegistry = new Map();
     agentCategories = {
-      codebase: [], research: [], planning: [], development: [],
-      testing: [], operations: [], business: [], design: [], specialized: []
+      codebase: [],
+      research: [],
+      planning: [],
+      development: [],
+      testing: [],
+      operations: [],
+      business: [],
+      design: [],
+      specialized: [],
     };
   }
-  
-  const server = new McpServer({ 
-    name: "agentic-codeflow-mcp-server", 
-    version: "0.1.0" 
+
+  const server = new McpServer({
+    name: 'agentic-codeflow-mcp-server',
+    version: '0.1.0',
   });
 
   const transport = new StdioServerTransport();
   const toolEntries = await buildTools();
   const commandCache = new Map<string, string>();
 
-  console.error(`🛠️  Registered ${toolEntries.length} tools: ${toolEntries.map(t => t.id).join(', ')}`);
+  console.error(
+    `🛠️  Registered ${toolEntries.length} tools: ${toolEntries.map((t) => t.id).join(', ')}`
+  );
 
   // Register each core workflow command with agent context
   for (const entry of toolEntries) {
@@ -479,7 +484,7 @@ async function run() {
       entry.id,
       {
         title: entry.id,
-        description: entry.description + " (Enhanced with agent orchestration capabilities)",
+        description: entry.description + ' (Enhanced with agent orchestration capabilities)',
       },
       async () => {
         let commandContent = commandCache.get(entry.id);
@@ -487,24 +492,24 @@ async function run() {
           commandContent = await entry.getContent();
           commandCache.set(entry.id, commandContent);
         }
-        
+
         // Enhanced context with available agents
         if (globalAgentRegistry && agentCategories) {
           const context = {
             availableAgents: Array.from(globalAgentRegistry.keys()),
             agentCategories,
-            totalAgents: globalAgentRegistry.size
+            totalAgents: globalAgentRegistry.size,
           };
-          
+
           // Add agent context information to command content
           const enhancedContent = addAgentContext(commandContent, context);
           return {
-            content: [{ type: "text", text: enhancedContent }],
+            content: [{ type: 'text', text: enhancedContent }],
           };
         }
-        
+
         return {
-          content: [{ type: "text", text: commandContent }],
+          content: [{ type: 'text', text: commandContent }],
         };
       }
     );
@@ -512,80 +517,87 @@ async function run() {
 
   // Utility tool for getting command documentation
   server.registerTool(
-    "get_command",
+    'get_command',
     {
-      title: "get_command",
-      description: "Get command documentation by name (research, plan, execute, test, document, commit, review)",
+      title: 'get_command',
+      description:
+        'Get command documentation by name (research, plan, execute, test, document, commit, review)',
     },
     async (args = {}) => {
-      const name = (args.name || "").toString().trim();
+      const name = (args.name || '').toString().trim();
       if (!name) {
-        return { 
-          content: [{ 
-            type: "text", 
-            text: "Error: 'name' is required\n\nAvailable commands: " + toolEntries.map(t => t.id).join(', ')
-          }] 
+        return {
+          content: [
+            {
+              type: 'text',
+              text:
+                "Error: 'name' is required\n\nAvailable commands: " +
+                toolEntries.map((t) => t.id).join(', '),
+            },
+          ],
         };
       }
-      
-      const tool = toolEntries.find(t => t.id === name);
+
+      const tool = toolEntries.find((t) => t.id === name);
       if (!tool) {
-        const availableCommands = toolEntries.map(t => t.id).join(', ');
-        return { 
-          content: [{ 
-            type: "text", 
-            text: `Command '${name}' not found.\n\nAvailable commands: ${availableCommands}` 
-          }] 
+        const availableCommands = toolEntries.map((t) => t.id).join(', ');
+        return {
+          content: [
+            {
+              type: 'text',
+              text: `Command '${name}' not found.\n\nAvailable commands: ${availableCommands}`,
+            },
+          ],
         };
       }
-      
+
       let content = await tool.getContent();
-      
+
       // Enhanced context with available agents
       if (globalAgentRegistry && agentCategories) {
         const context = {
           availableAgents: Array.from(globalAgentRegistry.keys()),
           agentCategories,
-          totalAgents: globalAgentRegistry.size
+          totalAgents: globalAgentRegistry.size,
         };
-        
+
         content = addAgentContext(content, context);
       }
-      
-      return { content: [{ type: "text", text: content }] };
+
+      return { content: [{ type: 'text', text: content }] };
     }
   );
 
   console.error(`✅ MCP Server ready with ${globalAgentRegistry?.size || 0} agents available`);
-  
+
   await server.connect(transport);
-  
+
   // Keep the process alive
   await new Promise((resolve) => {
     const onClose = () => {
-      console.error("🛑 MCP Server shutting down");
+      console.error('🛑 MCP Server shutting down');
       resolve(undefined);
     };
-    
-    try { 
-      process.stdin.resume(); 
-    } catch {}
-    
+
     try {
-      process.stdin.on("end", onClose);
-      process.stdin.on("close", onClose);
-    } catch {}
-    
+      process.stdin.resume();
+    } catch {} // Ignore stdin resume errors
+
     try {
-      process.on("SIGINT", onClose);
-      process.on("SIGTERM", onClose);
+      process.stdin.on('end', onClose);
+      process.stdin.on('close', onClose);
+    } catch {}
+
+    try {
+      process.on('SIGINT', onClose);
+      process.on('SIGTERM', onClose);
     } catch {}
   });
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   run().catch((err) => {
-    console.error("❌ CodeFlow MCP server failed:", err.message || err);
+    console.error('❌ CodeFlow MCP server failed:', err.message || err);
     process.exit(1);
   });
 }

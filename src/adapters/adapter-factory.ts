@@ -6,7 +6,7 @@ import { ResearchConfig } from '../config/config-loader.js';
 
 /**
  * Adapter Factory
- * 
+ *
  * Creates the appropriate platform adapter based on:
  * 1. Explicit platform specification
  * 2. Auto-detection
@@ -25,15 +25,15 @@ export class AdapterFactory {
       case Platform.CLAUDE_CODE:
         return createClaudeAdapter(projectRoot);
 
-      case Platform.OPENCODE:
+      case Platform.OPENCODE: {
         const mcpEndpoint = config?.platform?.opencode?.mcpEndpoint;
         return createOpenCodeAdapter(projectRoot, mcpEndpoint);
+      }
 
       case Platform.UNKNOWN:
       default:
         throw new Error(
-          `Unsupported platform: ${platform}. ` +
-          `Supported platforms: Claude Code, OpenCode`
+          `Unsupported platform: ${platform}. ` + `Supported platforms: Claude Code, OpenCode`
         );
     }
   }
@@ -51,17 +51,17 @@ export class AdapterFactory {
     if (detection.platform === Platform.UNKNOWN) {
       throw new Error(
         'Could not detect platform. Please ensure either:\n' +
-        '  - .claude/agents/ directory exists (Claude Code)\n' +
-        '  - .opencode/agent/ directory exists (OpenCode)\n' +
-        '\nEvidence collected:\n' +
-        detection.evidence.map(e => `  - ${e}`).join('\n')
+          '  - .claude/agents/ directory exists (Claude Code)\n' +
+          '  - .opencode/agent/ directory exists (OpenCode)\n' +
+          '\nEvidence collected:\n' +
+          detection.evidence.map((e) => `  - ${e}`).join('\n')
       );
     }
 
     if (detection.confidence === 'low') {
       console.warn(
         `⚠️  Low confidence platform detection (${detection.platform})\n` +
-        `Evidence:\n${detection.evidence.map(e => `  - ${e}`).join('\n')}`
+          `Evidence:\n${detection.evidence.map((e) => `  - ${e}`).join('\n')}`
       );
     }
 

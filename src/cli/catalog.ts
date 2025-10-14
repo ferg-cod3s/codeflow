@@ -547,7 +547,7 @@ export class CatalogCLI {
         console.log(`❌ Missing: ${item.id}`);
       } else {
         try {
-          const content = await readFile(sourcePath, 'utf-8');
+          const __content = await readFile(sourcePath, 'utf-8');
           const agent = await parseAgentFile(sourcePath, 'base');
           if (!agent) {
             invalid++;
@@ -563,7 +563,7 @@ export class CatalogCLI {
             console.log(`⚠️  Invalid: ${item.id}`);
             validation.errors.forEach((err) => console.log(`    - ${err.message}`));
           }
-        } catch (error) {
+        } catch (_error) {
           invalid++;
           console.log(`⚠️  Error reading: ${item.id}`);
         }
