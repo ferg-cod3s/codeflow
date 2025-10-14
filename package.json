@@ -4,7 +4,8 @@
   "description": "AI Agent & Command Distribution Platform - Deploy 33+ specialized AI agents and workflow commands to any project instantly",
   "type": "module",
   "bin": {
-    "codeflow": "./src/cli/index.ts"
+    "codeflow": "./src/cli/index.ts",
+    "agentic-codeflow": "./src/cli/index.ts"
   },
   "keywords": [
     "cli",

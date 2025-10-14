@@ -19,7 +19,7 @@ async function checkForUpdates(): Promise<{
 
   try {
     // Try to get latest version from npm registry
-    const registryInfo = execSync('npm view codeflow version', { encoding: 'utf8' }).trim();
+    const registryInfo = execSync('npm view @agentic-codeflow/cli version', { encoding: 'utf8' }).trim();
     const latestVersion = registryInfo;
 
     const hasUpdate = latestVersion !== currentVersion;
@@ -51,11 +51,11 @@ async function performUpdate(options: UpdateOptions): Promise<void> {
 
   try {
     if (verbose) {
-      console.log('Running: npm install -g codeflow');
+      console.log('Running: npm install -g @agentic-codeflow/cli');
     }
 
     // Update globally
-    execSync('npm install -g codeflow', {
+    execSync('npm install -g @agentic-codeflow/cli', {
       stdio: verbose ? 'inherit' : 'pipe',
     });
 
