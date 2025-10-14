@@ -1,6 +1,11 @@
 ## [0.12.8](https://github.com/ferg-cod3s/codeflow/compare/v0.12.7...v0.12.8) (2025-10-14)
 
 
+### Bug Fixes
+
+* enhance validation error reporting and fix agent manifest paths ([4e3386b](https://github.com/ferg-cod3s/codeflow/commit/4e3386b4163a8015a8ccf8aee07bb7442439e6a8))
+
+
 
 ## [0.12.7](https://github.com/ferg-cod3s/codeflow/compare/v0.12.5...v0.12.7) (2025-10-14)
 
