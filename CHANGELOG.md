@@ -4,6 +4,7 @@
 ### Bug Fixes
 
 * enhance validation error reporting and fix agent manifest paths ([4e3386b](https://github.com/ferg-cod3s/codeflow/commit/4e3386b4163a8015a8ccf8aee07bb7442439e6a8))
+* **release:** honor --bump-* flags; normalize .gitignore test-reports entry ([91448ff](https://github.com/ferg-cod3s/codeflow/commit/91448ffa5c0dc21789d95ef487f7c1a13ca113e9))
 
 
 
