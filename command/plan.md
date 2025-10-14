@@ -30,7 +30,7 @@ cache_strategy:
   scope: command
 success_signals:
   - 'Implementation plan created successfully'
-  - 'Plan saved to docs/plans/ directory'
+  - 'Plan saved to {resolved_plans_dir} directory'
   - 'All research questions resolved'
 failure_modes:
   - 'Required files not found or invalid'
@@ -45,6 +45,79 @@ You are tasked with creating detailed implementation plans through an interactiv
 ## Purpose
 
 Create comprehensive, actionable implementation plans by thoroughly researching requirements, analyzing codebase constraints, and producing structured technical specifications.
+
+
+## 📋 Configuration Resolution
+
+**CRITICAL**: Before executing, resolve configuration to determine correct input/output paths.
+
+### Resolution Priority (First Match Wins)
+
+1. **Environment Variables** - `CODEFLOW_RESEARCH_DIR`, `CODEFLOW_PLANS_DIR`, `CODEFLOW_TICKETS_DIR`, `CODEFLOW_KNOWLEDGE_PATH`
+2. **Project Config** - `.codeflow/config.yaml` in project root
+3. **User Config** - `~/.codeflow/config.yaml` in home directory  
+4. **Defaults** - `docs/research/`, `docs/plans/`, `docs/tickets/`, `thoughts/`
+
+### Resolution Algorithm
+
+```javascript
+function resolveConfigPath(key, defaultValue) {
+  // 1. Check environment variable
+  const envVar = process.env[`CODEFLOW_${key.toUpperCase()}`];
+  if (envVar) return envVar;
+  
+  // 2. Check project config
+  const projectConfig = readYAML('.codeflow/config.yaml');
+  if (projectConfig?.output?.[key]) return projectConfig.output[key];
+  if (projectConfig?.research?.[key]) return projectConfig.research[key];
+  
+  // 3. Check user config
+  const userConfig = readYAML('~/.codeflow/config.yaml');
+  if (userConfig?.output?.[key]) return userConfig.output[key];
+  if (userConfig?.research?.[key]) return userConfig.research[key];
+  
+  // 4. Return default
+  return defaultValue;
+}
+
+// Usage:
+const researchDir = resolveConfigPath('research_dir', 'docs/research/');
+const plansDir = resolveConfigPath('plans_dir', 'docs/plans/');
+const ticketsDir = resolveConfigPath('tickets_dir', 'docs/tickets/');
+const knowledgePath = resolveConfigPath('knowledge_path', 'thoughts/');
+```
+
+### Example Configurations
+
+**Project Config** (`.codeflow/config.yaml`):
+```yaml
+output:
+  research_dir: documentation/research/
+  plans_dir: documentation/plans/
+  tickets_dir: documentation/tickets/
+research:
+  knowledge_source_config:
+    directory:
+      path: knowledge-base/
+```
+
+**Environment Variables**:
+```bash
+export CODEFLOW_RESEARCH_DIR="custom-research/"
+export CODEFLOW_KNOWLEDGE_PATH="kb/"
+```
+
+### Resolution Output Example
+
+```
+📋 Configuration Resolved:
+  ✓ Research output: {resolved_research_dir} (source: {config_source})
+  ✓ Plans directory: {resolved_plans_dir} (source: {config_source})
+  ✓ Knowledge path: {resolved_knowledge_path} (source: {config_source})
+```
+
+**Use resolved paths throughout - NEVER hardcode paths!**
+
 
 ## Inputs
 
@@ -104,7 +177,7 @@ Create comprehensive, actionable implementation plans by thoroughly researching 
   "phase": "context_analysis",
   "error_type": "missing_files",
   "expected": "All specified files exist",
-  "found": "File not found: docs/tickets/missing-ticket.md",
+  "found": "File not found: {resolved_tickets_dir}missing-ticket.md",
   "mitigation": "Verify file paths and ensure all referenced files exist",
   "requires_user_input": true
 }
@@ -159,7 +232,7 @@ Create comprehensive, actionable implementation plans by thoroughly researching 
     "open_questions": 0
   },
   "plan": {
-    "path": "docs/plans/2025-09-13-feature-implementation.md",
+    "path": "{resolved_plans_dir}2025-09-13-feature-implementation.md",
     "title": "User Authentication System Implementation Plan",
     "phases": 4,
     "estimated_effort": "medium",
@@ -184,7 +257,7 @@ Create comprehensive, actionable implementation plans by thoroughly researching 
 
 #### Automated Verification
 
-- [ ] Plan file created in `docs/plans/` directory with correct naming
+- [ ] Plan file created in `{resolved_plans_dir}` directory with correct naming
 - [ ] All referenced files exist and are accessible
 - [ ] Plan follows required template structure
 - [ ] Success criteria include both automated and manual verification

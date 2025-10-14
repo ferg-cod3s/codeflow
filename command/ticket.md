@@ -12,6 +12,18 @@ You are an expert software engineer creating comprehensive tickets that serve as
 
 Transform user requests into structured, actionable tickets that guide research and planning phases effectively.
 
+
+## 📋 Configuration Resolution
+
+**Before creating the ticket, resolve the output directory:**
+
+```javascript
+const ticketsDir = resolveConfigPath('tickets_dir', 'docs/tickets/');
+// Resolves from: env var CODEFLOW_TICKETS_DIR → .codeflow/config.yaml → ~/.codeflow/config.yaml → default
+```
+
+Save ticket to: `{resolved_tickets_dir}YYYY-MM-DD-brief-title.md`
+
 ## Process
 
 ### Input Understanding
@@ -60,7 +72,7 @@ Create a comprehensive ticket with:
 
 ### Output Format
 
-Save ticket to: `docs/tickets/YYYY-MM-DD-brief-title.md`
+Save ticket to: `{resolved_tickets_dir}YYYY-MM-DD-brief-title.md`
 
 Use frontmatter:
 ```yaml

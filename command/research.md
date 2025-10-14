@@ -12,7 +12,7 @@ inputs:
     description: Research question, topic, or path to ticket file. Accepts freeform text after /research command.
     examples:
       - "How does authentication work?"
-      - "docs/tickets/feature-123.md"
+      - "{resolved_tickets_dir}feature-123.md"
       - "Analyze the API rate limiting implementation"
   - name: current_date
     type: string
@@ -40,7 +40,7 @@ inputs:
     description: Configuration for the knowledge source
     properties:
       directory:
-        path: thoughts/
+        path: {resolved_knowledge_path}
         description: Local directory path for documentation
       mcp:
         server: notion
@@ -62,7 +62,7 @@ cache_strategy:
   scope: command
 success_signals:
   - 'Research completed successfully'
-  - 'Findings documented in docs/research/'
+  - 'Findings documented in {resolved_research_dir}'
   - 'All research questions addressed'
   - 'Knowledge source successfully accessed'
 failure_modes:
@@ -89,14 +89,14 @@ The research command accepts **freeform input** - just type your question or top
 
 ```bash
 /research How does the authentication system work?
-/research docs/tickets/oauth-implementation.md
+/research {resolved_tickets_dir}oauth-implementation.md
 /research What are the performance bottlenecks in data processing?
 /research Analyze the current API rate limiting approach
 ```
 
 ## Configurable Knowledge Sources
 
-The research command now supports **multiple knowledge sources** beyond the default `thoughts/` directory:
+The research command now supports **multiple knowledge sources** beyond the default `{resolved_knowledge_path}` directory:
 
 ### Supported Source Types
 
@@ -107,11 +107,11 @@ Local filesystem directory containing markdown documentation.
 knowledge_source_type: directory
 knowledge_source_config:
   directory:
-    path: thoughts/
+    path: {resolved_knowledge_path}
 ```
 
 **Use cases:**
-- Local documentation in `thoughts/`, `docs/`, or custom paths
+- Local documentation in `{resolved_knowledge_path}`, `docs/`, or custom paths
 - Technical decision records (TDRs/ADRs)
 - Meeting notes and research documents
 
@@ -212,7 +212,7 @@ gh_projects:
 1. **Explicit command parameter** (highest priority)
 2. **Project-level config** (`.codeflow/config.yaml`)
 3. **User-level config** (`~/.codeflow/config.yaml`)
-4. **Default** (`thoughts/` directory)
+4. **Default** (`{resolved_knowledge_path}` directory)
 
 ### Example: Project-Level Configuration
 
@@ -253,7 +253,7 @@ knowledge_sources:
   - type: directory
     config:
       directory:
-        path: thoughts/
+        path: {resolved_knowledge_path}
   - type: mcp
     config:
       mcp:
@@ -324,7 +324,7 @@ This command orchestrates multiple specialized agents in a carefully designed wo
 - Objective: [Your research question]
 - Key Findings: [3-5 major insights]
 - Confidence Level: [High/Medium/Low]
-- Knowledge Sources: [directory:thoughts/, mcp:notion, gh-projects:myorg/1]
+- Knowledge Sources: [directory:{resolved_knowledge_path}, mcp:notion, gh-projects:myorg/1]
 
 ## Codebase Analysis
 - Core Files: [List with explanations]
@@ -333,7 +333,7 @@ This command orchestrates multiple specialized agents in a carefully designed wo
 
 ## Documentation Insights
 
-### From Local Docs (thoughts/)
+### From Local Docs ({resolved_knowledge_path})
 - [Findings from local directory]
 
 ### From Notion
@@ -431,6 +431,79 @@ For complex research requiring deep analysis across multiple domains:
 ## Purpose
 
 Multi-dimensional research via agent coordination for codebase patterns, historical context, and architectural insights, synthesized into documentation. Supports configurable knowledge sources including local directories, MCP servers (Notion, Confluence), and GitHub Projects.
+
+
+## 📋 Configuration Resolution
+
+**CRITICAL**: Before executing, resolve configuration to determine correct input/output paths.
+
+### Resolution Priority (First Match Wins)
+
+1. **Environment Variables** - `CODEFLOW_RESEARCH_DIR`, `CODEFLOW_PLANS_DIR`, `CODEFLOW_TICKETS_DIR`, `CODEFLOW_KNOWLEDGE_PATH`
+2. **Project Config** - `.codeflow/config.yaml` in project root
+3. **User Config** - `~/.codeflow/config.yaml` in home directory  
+4. **Defaults** - `docs/research/`, `docs/plans/`, `docs/tickets/`, `thoughts/`
+
+### Resolution Algorithm
+
+```javascript
+function resolveConfigPath(key, defaultValue) {
+  // 1. Check environment variable
+  const envVar = process.env[`CODEFLOW_${key.toUpperCase()}`];
+  if (envVar) return envVar;
+  
+  // 2. Check project config
+  const projectConfig = readYAML('.codeflow/config.yaml');
+  if (projectConfig?.output?.[key]) return projectConfig.output[key];
+  if (projectConfig?.research?.[key]) return projectConfig.research[key];
+  
+  // 3. Check user config
+  const userConfig = readYAML('~/.codeflow/config.yaml');
+  if (userConfig?.output?.[key]) return userConfig.output[key];
+  if (userConfig?.research?.[key]) return userConfig.research[key];
+  
+  // 4. Return default
+  return defaultValue;
+}
+
+// Usage:
+const researchDir = resolveConfigPath('research_dir', 'docs/research/');
+const plansDir = resolveConfigPath('plans_dir', 'docs/plans/');
+const ticketsDir = resolveConfigPath('tickets_dir', 'docs/tickets/');
+const knowledgePath = resolveConfigPath('knowledge_path', 'thoughts/');
+```
+
+### Example Configurations
+
+**Project Config** (`.codeflow/config.yaml`):
+```yaml
+output:
+  research_dir: documentation/research/
+  plans_dir: documentation/plans/
+  tickets_dir: documentation/tickets/
+research:
+  knowledge_source_config:
+    directory:
+      path: knowledge-base/
+```
+
+**Environment Variables**:
+```bash
+export CODEFLOW_RESEARCH_DIR="custom-research/"
+export CODEFLOW_KNOWLEDGE_PATH="kb/"
+```
+
+### Resolution Output Example
+
+```
+📋 Configuration Resolved:
+  ✓ Research output: {resolved_research_dir} (source: {config_source})
+  ✓ Plans directory: {resolved_plans_dir} (source: {config_source})
+  ✓ Knowledge path: {resolved_knowledge_path} (source: {config_source})
+```
+
+**Use resolved paths throughout - NEVER hardcode paths!**
+
 
 ## Inputs
 
@@ -531,7 +604,7 @@ Multi-dimensional research via agent coordination for codebase patterns, histori
     "scope": "codebase|knowledge|both",
     "depth": "shallow|medium|deep",
     "knowledge_sources": [
-      {"type": "directory", "path": "thoughts/", "files_found": 12},
+      {"type": "directory", "path": "{resolved_knowledge_path}", "files_found": 12},
       {"type": "mcp", "server": "notion", "pages_found": 8},
       {"type": "gh-projects", "project": "myorg/1", "items_found": 15}
     ]
@@ -549,7 +622,7 @@ Multi-dimensional research via agent coordination for codebase patterns, histori
     }
   },
   "document": {
-    "path": "docs/research/YYYY-MM-DD-topic.md",
+    "path": "{resolved_research_dir}YYYY-MM-DD-topic.md",
     "sections": ["synopsis", "summary", "findings", "references", "source_attribution"],
     "code_refs": 12,
     "knowledge_refs": 17,
@@ -570,7 +643,7 @@ Multi-dimensional research via agent coordination for codebase patterns, histori
 
 ### Automated
 
-- Document created in `docs/research/`
+- Document created in `{resolved_research_dir}`
 - YAML frontmatter structure with source metadata
 - Agents completed successfully
 - File:line references included
@@ -655,7 +728,7 @@ tags: [research, tags]
 status: complete
 knowledge_sources:
   - type: directory
-    path: thoughts/
+    path: {resolved_knowledge_path}
     items: 12
   - type: mcp
     server: notion
@@ -682,10 +755,10 @@ knowledge_sources:
 - Finding ([file.ext:line])
 - Connections and patterns
 
-### From Local Documentation (thoughts/)
+### From Local Documentation ({resolved_knowledge_path})
 
 - [Findings from local files]
-- Source: `thoughts/2025-10-13-architecture.md`
+- Source: `{resolved_knowledge_path}2025-10-13-architecture.md`
 
 ### From Notion (via MCP)
 
@@ -703,7 +776,7 @@ knowledge_sources:
 
 ## Knowledge References
 
-- `thoughts/decisions/auth.md` - Authentication decisions
+- `{resolved_knowledge_path}decisions/auth.md` - Authentication decisions
 - [Notion: API Design](https://notion.so/...) - API architecture
 - [GitHub Issue #123](https://github.com/org/repo/issues/123) - Implementation task
 

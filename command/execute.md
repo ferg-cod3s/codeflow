@@ -1,7 +1,7 @@
 ---
 name: execute
 mode: command
-description: Execute a specific implementation plan from docs/plans/
+description: Execute a specific implementation plan from {resolved_plans_dir}
 version: 2.0.0-internal
 last_updated: 2025-09-13
 command_schema_version: 1.0
@@ -9,7 +9,7 @@ inputs:
   - name: plan_path
     type: string
     required: true
-    description: Path to the implementation plan in docs/plans/
+    description: Path to the implementation plan in {resolved_plans_dir}
   - name: ticket_reference
     type: string
     required: false
@@ -40,15 +40,88 @@ failure_modes:
 
 # Execute Implementation Plan
 
-You are tasked with implementing an approved technical plan from `docs/plans/`. This command uses intelligent caching to optimize implementation workflows and maintain consistency across similar execution patterns.
+You are tasked with implementing an approved technical plan from `{resolved_plans_dir}`. This command uses intelligent caching to optimize implementation workflows and maintain consistency across similar execution patterns.
 
 ## Purpose
 
 Execute technical implementation plans by following structured phases, adapting to real-world constraints, and ensuring all success criteria are met.
 
+
+## 📋 Configuration Resolution
+
+**CRITICAL**: Before executing, resolve configuration to determine correct input/output paths.
+
+### Resolution Priority (First Match Wins)
+
+1. **Environment Variables** - `CODEFLOW_RESEARCH_DIR`, `CODEFLOW_PLANS_DIR`, `CODEFLOW_TICKETS_DIR`, `CODEFLOW_KNOWLEDGE_PATH`
+2. **Project Config** - `.codeflow/config.yaml` in project root
+3. **User Config** - `~/.codeflow/config.yaml` in home directory  
+4. **Defaults** - `docs/research/`, `docs/plans/`, `docs/tickets/`, `thoughts/`
+
+### Resolution Algorithm
+
+```javascript
+function resolveConfigPath(key, defaultValue) {
+  // 1. Check environment variable
+  const envVar = process.env[`CODEFLOW_${key.toUpperCase()}`];
+  if (envVar) return envVar;
+  
+  // 2. Check project config
+  const projectConfig = readYAML('.codeflow/config.yaml');
+  if (projectConfig?.output?.[key]) return projectConfig.output[key];
+  if (projectConfig?.research?.[key]) return projectConfig.research[key];
+  
+  // 3. Check user config
+  const userConfig = readYAML('~/.codeflow/config.yaml');
+  if (userConfig?.output?.[key]) return userConfig.output[key];
+  if (userConfig?.research?.[key]) return userConfig.research[key];
+  
+  // 4. Return default
+  return defaultValue;
+}
+
+// Usage:
+const researchDir = resolveConfigPath('research_dir', 'docs/research/');
+const plansDir = resolveConfigPath('plans_dir', 'docs/plans/');
+const ticketsDir = resolveConfigPath('tickets_dir', 'docs/tickets/');
+const knowledgePath = resolveConfigPath('knowledge_path', 'thoughts/');
+```
+
+### Example Configurations
+
+**Project Config** (`.codeflow/config.yaml`):
+```yaml
+output:
+  research_dir: documentation/research/
+  plans_dir: documentation/plans/
+  tickets_dir: documentation/tickets/
+research:
+  knowledge_source_config:
+    directory:
+      path: knowledge-base/
+```
+
+**Environment Variables**:
+```bash
+export CODEFLOW_RESEARCH_DIR="custom-research/"
+export CODEFLOW_KNOWLEDGE_PATH="kb/"
+```
+
+### Resolution Output Example
+
+```
+📋 Configuration Resolved:
+  ✓ Research output: {resolved_research_dir} (source: {config_source})
+  ✓ Plans directory: {resolved_plans_dir} (source: {config_source})
+  ✓ Knowledge path: {resolved_knowledge_path} (source: {config_source})
+```
+
+**Use resolved paths throughout - NEVER hardcode paths!**
+
+
 ## Inputs
 
-- **plan_path**: Path to the implementation plan file in `docs/plans/`
+- **plan_path**: Path to the implementation plan file in `{resolved_plans_dir}`
 - **ticket_reference**: Optional reference to the original ticket or issue
 - **start_phase**: Optional phase number to begin execution from
 - **conversation_context**: History of planning and preparation work
@@ -94,8 +167,8 @@ Execute technical implementation plans by following structured phases, adapting 
   "command": "execute",
   "phase": "context_analysis",
   "error_type": "plan_not_found",
-  "expected": "Valid plan file in docs/plans/",
-  "found": "File does not exist: docs/plans/missing-plan.md",
+  "expected": "Valid plan file in {resolved_plans_dir}",
+  "found": "File does not exist: {resolved_plans_dir}missing-plan.md",
   "mitigation": "Verify plan path and ensure file exists",
   "requires_user_input": true
 }
@@ -144,7 +217,7 @@ Execute technical implementation plans by following structured phases, adapting 
     "savings": 0.20
   },
   "plan": {
-    "path": "docs/plans/2025-09-13-feature-implementation.md",
+    "path": "{resolved_plans_dir}2025-09-13-feature-implementation.md",
     "total_phases": 5,
     "completed_phases": 3,
     "current_phase": 4
