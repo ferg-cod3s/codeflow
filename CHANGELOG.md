@@ -1,3 +1,12 @@
+## [0.12.9](https://github.com/ferg-cod3s/codeflow/compare/v0.12.8...v0.12.9) (2025-10-14)
+
+
+### Bug Fixes
+
+* prevent README duplication and improve CLI documentation ([5e63d2d](https://github.com/ferg-cod3s/codeflow/commit/5e63d2dad3373c09c9edb91804aacabf2090abe6))
+
+
+
 ## [0.12.8](https://github.com/ferg-cod3s/codeflow/compare/v0.12.7...v0.12.8) (2025-10-14)
 
 
