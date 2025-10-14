@@ -1,0 +1,40 @@
+# Global User Configuration for GitHub Projects
+# Copy this file to: ~/.codeflow/config.yaml
+# 
+# This configuration will apply to ALL projects unless overridden by project-level config
+
+knowledge_sources:
+  - type: gh-projects
+    config:
+      # Your GitHub username or organization
+      owner: ferg-cod3s
+      
+      # Project number (find with: gh project list --owner ferg-cod3s)
+      # Note: You need 'read:project' scope. Run: gh auth refresh -s read:project
+      project_number: 1
+      
+      # Optional: Filter which items to include
+      filters:
+        status: 
+          - "In Progress"
+          - "Todo"
+          - "Backlog"
+      
+      # Optional: Which fields to extract
+      fields:
+        - title
+        - body
+        - status
+        - labels
+        - assignees
+        - milestone
+
+# Optional: Customize output locations (defaults shown)
+output:
+  research: "docs/research"
+  plans: "docs/plans"
+  
+# Optional: Default research scope
+defaults:
+  research_scope: "both"  # Options: "codebase", "knowledge", "both"
+  research_depth: "medium"  # Options: "shallow", "medium", "deep"
