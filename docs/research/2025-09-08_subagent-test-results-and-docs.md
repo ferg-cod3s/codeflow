@@ -41,8 +41,8 @@ This research analyzes the results of a comprehensive subagent test run after ex
   - `codeflow-agents/development/codebase-locator.md`
   - `codeflow-agents/development/codebase-analyzer.md`
   - `codeflow-agents/development/codebase-pattern-finder.md`
-  - `codeflow-agents/generalist/thoughts-locator.md`
-  - `codeflow-agents/generalist/thoughts-analyzer.md`
+  - `codeflow-agents/generalist/knowledge-locator.md`
+  - `codeflow-agents/generalist/knowledge-analyzer.md`
   - `codeflow-agents/generalist/web-search-researcher.md`
 - Orchestrated via:
   - `mcp/agent-registry.mjs`

@@ -66,7 +66,7 @@ Create comprehensive, actionable implementation plans by thoroughly researching 
 
 1. **Check Cache First**: Query cache for similar planning patterns using ticket context hash
 2. **Read All Input Files**: Completely read all specified ticket and research files
-3. **Spawn Parallel Research**: Launch codebase-locator, codebase-analyzer, and thoughts-locator agents
+3. **Spawn Parallel Research**: Launch codebase-locator, codebase-analyzer, and knowledge-locator agents
 4. **Gather Comprehensive Context**: Read all files identified by research agents
 5. **Cross-Reference Analysis**: Verify requirements against actual codebase state
 
@@ -255,8 +255,8 @@ Create comprehensive, actionable implementation plans by thoroughly researching 
 - **codebase-locator**: Find all relevant files and components
 - **codebase-analyzer**: Understand current implementation details
 - **codebase-pattern-finder**: Discover similar implementations to model after
-- **thoughts-locator**: Find existing research and decisions
-- **thoughts-analyzer**: Extract insights from documentation
+- **knowledge-locator**: Find existing research and decisions
+- **knowledge-analyzer**: Extract insights from documentation
 
 ### Task Specification Best Practices
 
@@ -304,9 +304,9 @@ For complex feature planning requiring architectural and technical expertise:
 
 #### Phase 1: Research Integration & Context Building (Parallel)
 - **codebase-locator**: Maps existing component locations and architectural boundaries
-- **thoughts-locator**: Discovers existing plans, architectural decisions, and technical constraints
+- **knowledge-locator**: Discovers existing plans, architectural decisions, and technical constraints
 - **codebase-pattern-finder**: Identifies established implementation patterns for similar features
-- **thoughts-analyzer**: Extracts insights from past planning decisions and outcomes
+- **knowledge-analyzer**: Extracts insights from past planning decisions and outcomes
 
 #### Phase 2: Technical Feasibility Analysis (Sequential)
 - **codebase-analyzer**: Validates technical assumptions and identifies integration points

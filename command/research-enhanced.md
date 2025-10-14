@@ -27,7 +27,7 @@ agent_sequence:
       - name: "codebase-locator"
         purpose: "Find relevant files and components"
         timeout: "5 minutes"
-      - name: "thoughts-locator"
+      - name: "knowledge-locator"
         purpose: "Discover existing documentation"
         timeout: "3 minutes"
   phase_2:
@@ -38,9 +38,9 @@ agent_sequence:
         purpose: "Understand implementation details"
         depends_on: ["codebase-locator"]
         timeout: "8 minutes"
-      - name: "thoughts-analyzer"
+      - name: "knowledge-analyzer"
         purpose: "Extract insights from documentation"
-        depends_on: ["thoughts-locator"]
+        depends_on: ["knowledge-locator"]
         timeout: "5 minutes"
   phase_3:
     name: "External Research"
@@ -111,11 +111,11 @@ This command orchestrates multiple specialized agents in a carefully designed wo
 
 ### Phase 1: Discovery (Parallel)
 - 🔍 **codebase-locator** finds relevant files and components
-- 📚 **thoughts-locator** discovers existing documentation and notes
+- 📚 **knowledge-locator** discovers existing documentation and notes
 
 ### Phase 2: Analysis (Sequential)
 - 🧠 **codebase-analyzer** understands implementation details
-- 💡 **thoughts-analyzer** extracts insights from documentation
+- 💡 **knowledge-analyzer** extracts insights from documentation
 
 ### Phase 3: External Research (Optional)
 - 🌐 **web-search-researcher** gathers external context and best practices
@@ -182,13 +182,13 @@ For complex research requiring deep analysis across multiple domains:
 
 #### Phase 1: Comprehensive Discovery (Parallel Execution)
 - **codebase-locator**: Maps all relevant files, components, and directory structures
-- **thoughts-locator**: Discovers existing documentation, past decisions, and technical notes
+- **knowledge-locator**: Discovers existing documentation, past decisions, and technical notes
 - **codebase-pattern-finder**: Identifies recurring implementation patterns and architectural approaches
 - **web-search-researcher**: Gathers external best practices and industry standards (when applicable)
 
 #### Phase 2: Deep Analysis (Sequential Processing)
 - **codebase-analyzer**: Provides detailed implementation understanding with file:line evidence
-- **thoughts-analyzer**: Extracts actionable insights from documentation and historical context
+- **knowledge-analyzer**: Extracts actionable insights from documentation and historical context
 - **system-architect**: Analyzes architectural implications and design patterns
 - **performance-engineer**: Evaluates performance characteristics and optimization opportunities
 

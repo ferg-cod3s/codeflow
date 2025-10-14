@@ -1,0 +1,63 @@
+# Multiple Knowledge Sources Configuration
+# Research will query all sources in parallel and combine results
+# Useful for comprehensive research across team knowledge bases
+
+research:
+  # Use array format for multiple sources
+  knowledge_sources:
+    # Source 1: Local documentation
+    - type: directory
+      config:
+        directory:
+          path: thoughts/
+          include_patterns:
+            - "*.md"
+    
+    # Source 2: Notion team wiki
+    - type: mcp
+      config:
+        mcp:
+          server: notion
+          database_id: your-notion-database-id
+          query_filter:
+            property: Status
+            select:
+              equals: Published
+    
+    # Source 3: GitHub project board
+    - type: gh-projects
+      config:
+        gh_projects:
+          owner: myorg
+          project_number: 1
+          fields: [Status, Priority, Assignees]
+          filters:
+            status: ["In Progress", "Done"]
+  
+  # Optional: Configure how to handle failures
+  error_handling:
+    # Continue if a source fails
+    fail_gracefully: true
+    # Log which sources failed
+    log_failures: true
+    # Minimum successful sources required (0 = continue even if all fail)
+    min_sources: 1
+
+# How It Works:
+# - All sources are queried in parallel for performance
+# - Results are merged with clear source attribution
+# - If a source is unavailable, others continue
+# - Output shows which sources were successfully queried
+
+# Example Output:
+# ### From Local Documentation (thoughts/)
+# - Finding from local file
+# - Source: thoughts/2025-10-13-architecture.md
+#
+# ### From Notion (via MCP)
+# - Finding from team wiki
+# - Source: [Architecture Decision Records](https://notion.so/page-url)
+#
+# ### From GitHub Projects
+# - Finding from project board
+# - Source: Issue #123, Task "Implement OAuth2"

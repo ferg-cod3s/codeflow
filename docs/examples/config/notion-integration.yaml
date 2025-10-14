@@ -1,0 +1,34 @@
+# Notion Integration Configuration
+# Connects to Notion workspace via MCP for research queries
+# Requires: @modelcontextprotocol/server-notion installed
+# Environment: NOTION_API_KEY must be set
+
+research:
+  knowledge_source_type: mcp
+  knowledge_source_config:
+    mcp:
+      server: notion
+      # Your Notion database ID (found in database URL)
+      database_id: abc123def456ghi789
+      
+      # Optional: Filter which pages to include
+      query_filter:
+        property: Status
+        select:
+          equals: Active
+      
+      # Optional: Sort results
+      sorts:
+        - property: Last edited
+          direction: descending
+      
+      # Optional: Limit number of results
+      page_size: 100
+
+# Setup Instructions:
+# 1. Install MCP server: npm install -g @modelcontextprotocol/server-notion
+# 2. Create Notion integration at https://notion.so/my-integrations
+# 3. Share your database with the integration
+# 4. Set environment variable: export NOTION_API_KEY=your_key_here
+# 5. Find database ID from the database URL
+# 6. Test connection: codeflow research test-connection

@@ -360,7 +360,7 @@ For thorough implementation validation requiring multi-domain expertise:
 #### Phase 1: Implementation Analysis (Parallel)
 - **codebase-locator**: Identify all implemented components and changed files
 - **codebase-analyzer**: Understand implementation details and code changes
-- **thoughts-analyzer**: Review implementation documentation and notes
+- **knowledge-analyzer**: Review implementation documentation and notes
 - **codebase-pattern-finder**: Validate adherence to established patterns
 - **code-reviewer**: Primary agent for comprehensive code quality validation
 
@@ -387,7 +387,7 @@ For thorough implementation validation requiring multi-domain expertise:
 - **content-localization-coordinator**: Verify internationalization implementations
 
 #### Phase 5: Documentation & Reporting (Parallel)
-- **thoughts-analyzer**: Validate documentation updates and completeness
+- **knowledge-analyzer**: Validate documentation updates and completeness
 - **content-writer**: Review user-facing documentation accuracy
 - **code-reviewer**: Final comprehensive quality assessment
 

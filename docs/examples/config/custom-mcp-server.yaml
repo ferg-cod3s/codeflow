@@ -1,0 +1,77 @@
+# Custom MCP Server Configuration
+# Use a custom Model Context Protocol server for specialized knowledge sources
+# Examples: Internal wiki, proprietary docs, database, API documentation
+
+research:
+  knowledge_source_type: mcp
+  knowledge_source_config:
+    mcp:
+      # Custom server name (must be registered in MCP config)
+      server: my-custom-server
+      
+      # Server-specific configuration
+      connection:
+        host: localhost
+        port: 3000
+        protocol: http
+      
+      # Authentication (if required)
+      auth:
+        type: bearer
+        token_env: CUSTOM_SERVER_TOKEN
+      
+      # Query parameters specific to your server
+      query_params:
+        collection: engineering-docs
+        version: latest
+        include_archived: false
+      
+      # Optional: Request timeout
+      timeout_ms: 5000
+      
+      # Optional: Retry configuration
+      retry:
+        max_attempts: 3
+        backoff_ms: 1000
+
+# Custom MCP Server Implementation:
+# Your custom server should implement the MCP protocol:
+# 
+# 1. Expose endpoints:
+#    - GET /mcp/resources - List available resources
+#    - POST /mcp/query - Execute search query
+#    - GET /mcp/resource/{id} - Fetch specific resource
+#
+# 2. Response format:
+#    {
+#      "resources": [
+#        {
+#          "id": "unique-id",
+#          "title": "Document Title",
+#          "content": "Full text content",
+#          "metadata": {
+#            "source": "internal-wiki",
+#            "updated": "2025-10-13T12:00:00Z",
+#            "author": "john@example.com"
+#          }
+#        }
+#      ]
+#    }
+#
+# 3. Register server in ~/.config/mcp/config.json:
+#    {
+#      "servers": {
+#        "my-custom-server": {
+#          "command": "node",
+#          "args": ["/path/to/your/mcp-server.js"]
+#        }
+#      }
+#    }
+
+# Example Use Cases:
+# - Company internal wiki
+# - API documentation system
+# - Engineering runbooks
+# - Customer support knowledge base
+# - Legal/compliance documentation
+# - Product specifications database

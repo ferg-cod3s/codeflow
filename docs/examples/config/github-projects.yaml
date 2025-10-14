@@ -1,0 +1,46 @@
+# GitHub Projects Integration Configuration
+# Connects to GitHub Projects for research queries
+# Requires: gh CLI installed and authenticated
+
+research:
+  knowledge_source_type: gh-projects
+  knowledge_source_config:
+    gh_projects:
+      # Organization or user that owns the project
+      owner: mycompany
+      
+      # Project number (found in project URL)
+      project_number: 3
+      
+      # Fields to retrieve from project items
+      fields:
+        - Status
+        - Priority
+        - Labels
+        - Milestone
+        - Assignees
+        - "Sprint"  # Custom fields need quotes if they contain spaces
+      
+      # Optional: Filter which items to include
+      filters:
+        status:
+          - "In Progress"
+          - "In Review"
+        labels:
+          - high-priority
+          - backend
+        # Custom field filters
+        Priority:
+          - P0
+          - P1
+      
+      # Optional: Include closed items within timeframe
+      include_closed: true
+      closed_since_days: 30
+
+# Setup Instructions:
+# 1. Install GitHub CLI: brew install gh
+# 2. Authenticate: gh auth login
+# 3. Find your project number: gh project list --owner YOUR_ORG
+# 4. Test access: gh project view PROJECT_NUMBER --owner YOUR_ORG
+# 5. Test connection: codeflow research test-connection

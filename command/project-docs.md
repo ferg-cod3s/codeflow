@@ -520,9 +520,9 @@ For complete project documentation requiring multi-domain expertise and content 
 
 #### Phase 1: Project Analysis & Planning (Parallel)
 - **codebase-locator**: Analyze existing project structure and components
-- **thoughts-locator**: Discover existing documentation and project knowledge
+- **knowledge-locator**: Discover existing documentation and project knowledge
 - **codebase-analyzer**: Understand project architecture and implementation
-- **thoughts-analyzer**: Review project history and decision documentation
+- **knowledge-analyzer**: Review project history and decision documentation
 - **system-architect**: Analyze overall system architecture and design
 
 #### Phase 2: Core Documentation Generation (Sequential)
@@ -550,7 +550,7 @@ For complete project documentation requiring multi-domain expertise and content 
 - **code-reviewer**: Validate technical accuracy of all documentation
 - **quality-testing-performance-tester**: Review performance and testing documentation
 - **full-stack-developer**: Validate implementation documentation accuracy
-- **thoughts-analyzer**: Ensure documentation is integrated with knowledge base
+- **knowledge-analyzer**: Ensure documentation is integrated with knowledge base
 - **content-writer**: Final content review and consistency validation
 
 ### Project Documentation Orchestration Best Practices

@@ -280,7 +280,7 @@ For complex feature implementation requiring coordinated expertise across domain
 #### Phase 1: Pre-Implementation Validation (Parallel)
 - **codebase-locator**: Verify all referenced components and files exist
 - **codebase-analyzer**: Understand current implementation state and integration points
-- **thoughts-analyzer**: Review existing documentation and implementation notes
+- **knowledge-analyzer**: Review existing documentation and implementation notes
 - **codebase-pattern-finder**: Identify established patterns for the implementation approach
 
 #### Phase 2: Domain-Specific Implementation (Sequential by Phase)
@@ -307,7 +307,7 @@ For complex feature implementation requiring coordinated expertise across domain
 
 #### Phase 5: Documentation & Knowledge Transfer (Parallel)
 - **content-writer**: Create user documentation and release notes
-- **thoughts-analyzer**: Update technical documentation and implementation notes
+- **knowledge-analyzer**: Update technical documentation and implementation notes
 - **content-localization-coordinator**: Handle internationalization updates
 
 ### Execution Orchestration Best Practices
@@ -327,7 +327,7 @@ For complex feature implementation requiring coordinated expertise across domain
 - **Security**: Cleared by security-scanner
 - **Compliance**: Approved by compliance-expert (if applicable)
 - **Accessibility**: Validated by accessibility-pro (if applicable)
-- **Documentation**: Updated by thoughts-analyzer and content-writer
+- **Documentation**: Updated by knowledge-analyzer and content-writer
 
 ### Risk Mitigation Strategies
 

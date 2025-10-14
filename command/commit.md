@@ -206,7 +206,7 @@ For structured commit creation requiring change analysis and validation:
 #### Phase 1: Change Analysis & Validation (Parallel)
 - **codebase-locator**: Identify all changed files and their relationships
 - **codebase-analyzer**: Understand the nature and impact of code changes
-- **thoughts-analyzer**: Review change documentation and implementation notes
+- **knowledge-analyzer**: Review change documentation and implementation notes
 - **codebase-pattern-finder**: Identify change patterns and grouping opportunities
 - **code-reviewer**: Validate code quality before committing
 
@@ -225,7 +225,7 @@ For structured commit creation requiring change analysis and validation:
 - **monitoring-expert**: Validate monitoring and alerting changes
 
 #### Phase 4: Documentation & Communication (Sequential)
-- **thoughts-analyzer**: Ensure documentation changes are included
+- **knowledge-analyzer**: Ensure documentation changes are included
 - **content-writer**: Validate user-facing documentation updates
 - **content-localization-coordinator**: Verify internationalization changes
 - **deployment-wizard**: Ensure deployment-related changes are complete

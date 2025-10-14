@@ -1,0 +1,18 @@
+# Default Configuration - Local Directory
+# This is the default behavior when no configuration is provided
+# Research queries will search the local thoughts/ directory
+
+research:
+  knowledge_source_type: directory
+  knowledge_source_config:
+    directory:
+      path: thoughts/
+      # Optional: Specify file patterns to include
+      include_patterns:
+        - "*.md"
+        - "*.txt"
+      # Optional: Exclude certain directories or files
+      exclude_patterns:
+        - "node_modules/**"
+        - ".git/**"
+        - "**/archive/**"
