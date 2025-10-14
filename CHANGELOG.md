@@ -1,3 +1,12 @@
+## [0.12.6](https://github.com/ferg-cod3s/codeflow/compare/v0.12.5...v0.12.6) (2025-10-14)
+
+
+### Features
+
+* add configurable knowledge sources and rename agents to generic terminology ([c71b445](https://github.com/ferg-cod3s/codeflow/commit/c71b445bc8ecc8ac626ebf6e54cc5a7334336d4a))
+
+
+
 ## [0.12.5](https://github.com/ferg-cod3s/codeflow/compare/v0.12.4...v0.12.5) (2025-10-14)
 
 
