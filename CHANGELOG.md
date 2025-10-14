@@ -1,9 +1,14 @@
-## [0.12.6](https://github.com/ferg-cod3s/codeflow/compare/v0.12.5...v0.12.6) (2025-10-14)
+## [0.12.8](https://github.com/ferg-cod3s/codeflow/compare/v0.12.7...v0.12.8) (2025-10-14)
+
+
+
+## [0.12.7](https://github.com/ferg-cod3s/codeflow/compare/v0.12.5...v0.12.7) (2025-10-14)
 
 
 ### Features
 
 * add configurable knowledge sources and rename agents to generic terminology ([c71b445](https://github.com/ferg-cod3s/codeflow/commit/c71b445bc8ecc8ac626ebf6e54cc5a7334336d4a))
+* add dynamic path resolution to all command prompts ([531c3eb](https://github.com/ferg-cod3s/codeflow/commit/531c3eb2cba383fb54ab11a9546abc68d1203e9a))
 
 
 
