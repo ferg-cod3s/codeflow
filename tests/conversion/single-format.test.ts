@@ -90,7 +90,7 @@ describe('Single Format Architecture', () => {
       description: 'Test agent for format conversion',
       mode: 'subagent' as const,
       temperature: 0.8,
-      model: 'claude-3-5-sonnet',
+      model: 'opencode/code-supernova',
       tools: {
         read: true,
         write: false,

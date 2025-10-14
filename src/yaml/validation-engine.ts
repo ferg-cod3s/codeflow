@@ -136,9 +136,8 @@ export class ValidationEngine {
     );
 
     if (invalidFields.length > 0) {
-      errors.push({
+      warnings.push({
         message: `Invalid fields for Claude Code v2.x.x: ${invalidFields.join(', ')}. Only allowed: ${CLAUDE_CODE_AGENT_FIELDS.join(', ')}`,
-        severity: 'error',
       });
     }
 

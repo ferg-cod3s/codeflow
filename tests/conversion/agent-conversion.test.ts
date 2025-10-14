@@ -35,7 +35,7 @@ describe('Agent Conversion Integration', () => {
 name: test-agent
 description: A test agent for conversion
 mode: subagent
-model: gpt-4
+model: opencode/code-supernova
 temperature: 0.7
 tools:
   read: true
@@ -83,7 +83,7 @@ Test the conversion functionality.
     expect(yamlContent).toContain('name: test-agent');
     expect(yamlContent).toContain('description: A test agent for conversion');
     expect(yamlContent).toContain('mode: subagent');
-    expect(yamlContent).toContain('model: gpt-4');
+    expect(yamlContent).toContain('model: opencode/code-supernova');
     expect(yamlContent).toContain('temperature: 0.7');
     expect(yamlContent).toContain('permission:');
     expect(yamlContent).toContain('  read: allow');
@@ -166,7 +166,7 @@ temperature: 2.5  # Temperature too high
 name: roundtrip-agent
 description: Test agent for round-trip conversion
 mode: subagent
-model: gpt-4
+model: opencode/code-supernova
 temperature: 0.8
 tools:
   read: true
@@ -272,7 +272,7 @@ This has malformed YAML frontmatter.
 name: no-perm-agent
 description: Agent without explicit permissions
 mode: subagent
-model: gpt-4
+model: opencode/code-supernova
 ---
 
 # No Permissions Agent

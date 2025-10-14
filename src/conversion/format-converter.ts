@@ -1,14 +1,79 @@
 import { Agent, BaseAgent, ClaudeCodeAgent, OpenCodeAgent, Command, BaseCommand, OpenCodeCommand } from './agent-parser';
+import { existsSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
 
 /**
  * Format conversion engine for agents
  */
 export class FormatConverter {
+  // Cached allowlist for OpenCode models (Set of provider/model strings) or null if unavailable
+  private _opencodeModelAllowlist: Set<string> | null | undefined;
+
+  /**
+   * Load OpenCode model allowlist from config/opencode-models.json
+   * Supports two formats:
+   *  - ["provider/model", ...]
+   *  - { "models": ["provider/model", ...] }
+   * Returns Set<string> when available, or null when file missing/invalid.
+   */
+  private loadOpenCodeModelAllowlist(): Set<string> | null {
+    if (this._opencodeModelAllowlist !== undefined) {
+      return this._opencodeModelAllowlist;
+    }
+
+    const allowlistPath = join(process.cwd(), 'config', 'opencode-models.json');
+    if (!existsSync(allowlistPath)) {
+      this._opencodeModelAllowlist = null;
+      return null;
+    }
+
+    try {
+      const raw = readFileSync(allowlistPath, 'utf8');
+      const parsed = JSON.parse(raw);
+      let models: string[] | undefined;
+
+      if (Array.isArray(parsed)) {
+        models = parsed as string[];
+      } else if (parsed && Array.isArray((parsed as any).models)) {
+        models = (parsed as any).models as string[];
+      }
+
+      if (models && models.every((m) => typeof m === 'string')) {
+        this._opencodeModelAllowlist = new Set(models);
+        return this._opencodeModelAllowlist;
+      }
+
+      console.warn(
+        'config/opencode-models.json is invalid; expected array or { "models": string[] }'
+      );
+      this._opencodeModelAllowlist = null;
+      return null;
+    } catch (err: any) {
+      console.warn(
+        `Failed to parse config/opencode-models.json: ${err?.message || String(err)}`
+      );
+      this._opencodeModelAllowlist = null;
+      return null;
+    }
+  }
+
+  /** Ensure provided OpenCode model is allowlisted (no-op if no allowlist or model omitted). */
+  private ensureOpenCodeModelAllowed(model?: string): void {
+    const allowlist = this.loadOpenCodeModelAllowlist();
+    if (!model || !allowlist) return;
+    if (!allowlist.has(model)) {
+      throw new Error(
+        `Model '${model}' is not allowed by OpenCode model allowlist. ` +
+          `Add it to config/opencode-models.json or omit the model to use platform defaults.`
+      );
+    }
+  }
+
   /**
    * Convert Base format to Claude Code format (v2.x.x specification)
-   * Only allowed fields: name, description, tools (string), model (inherit|sonnet|opus|haiku)
+   * Only includes: name, description, tools (string)
    */
-  private baseToClaudeCode(agent: Agent): Agent {
+  public baseToClaudeCode(agent: Agent): Agent {
     if (agent.format !== 'base') {
       throw new Error(`Expected base format, got ${agent.format}`);
     }
@@ -33,18 +98,11 @@ export class FormatConverter {
       toolsString = allowedTools.length > 0 ? allowedTools.join(', ') : undefined;
     }
 
-    // Validate and convert model to Claude Code format
-    let model: string | undefined;
-    if (baseAgent.model) {
-      model = this.convertModelForClaudeCode(baseAgent.model);
-    }
-
-    // STRICT: Only include Claude Code v2.x.x allowed fields
+    // STRICT: Only include Claude Code v2.x.x core fields
     const claudeCodeFrontmatter: ClaudeCodeAgent = {
       name: baseAgent.name,
       description: baseAgent.description,
       ...(toolsString && { tools: toolsString }),
-      ...(model && { model }),
     };
     // Explicitly strips: mode, temperature, capabilities, permission, tags, category, etc.
 
@@ -59,7 +117,7 @@ export class FormatConverter {
    * Convert Base format to OpenCode format
    * OpenCode uses official OpenCode.ai specification: description, mode, model, temperature, tools, permission, disable
    */
-  private baseToOpenCode(agent: Agent): Agent {
+  public baseToOpenCode(agent: Agent): Agent {
     if (agent.format !== 'base') {
       throw new Error(`Expected base format, got ${agent.format}`);
     }
@@ -90,6 +148,9 @@ export class FormatConverter {
       openCodeFrontmatter.model = this.convertModelForOpenCode(openCodeFrontmatter.model);
     }
 
+    // Enforce model allowlist if configured. If model omitted, platform defaults apply.
+    this.ensureOpenCodeModelAllowed(openCodeFrontmatter.model);
+
     // Validate and normalize permissions
     if (openCodeFrontmatter.permission) {
       const validation = this.validatePermissions(openCodeFrontmatter.permission);
@@ -117,7 +178,7 @@ export class FormatConverter {
   /**
    * Convert Claude Code format to Base format
    */
-  private claudeCodeToBase(agent: Agent): Agent {
+  public claudeCodeToBase(agent: Agent): Agent {
     if (agent.format !== 'claude-code') {
       throw new Error(`Expected claude-code format, got ${agent.format}`);
     }
@@ -135,7 +196,8 @@ export class FormatConverter {
       : undefined;
 
     const baseFrontmatter: BaseAgent = {
-      ...claudeAgent,
+      name: claudeAgent.name,
+      description: claudeAgent.description,
       tools,
     };
 
@@ -149,7 +211,7 @@ export class FormatConverter {
   /**
    * Convert Claude Code format to OpenCode format
    */
-  private claudeCodeToOpenCode(agent: Agent): Agent {
+  public claudeCodeToOpenCode(agent: Agent): Agent {
     if (agent.format !== 'claude-code') {
       throw new Error(`Expected claude-code format, got ${agent.format}`);
     }
@@ -173,6 +235,9 @@ export class FormatConverter {
       openCodeFrontmatter.model = this.convertModelForOpenCode(openCodeFrontmatter.model);
     }
 
+    // Enforce model allowlist if configured. If model omitted, platform defaults apply.
+    this.ensureOpenCodeModelAllowed(openCodeFrontmatter.model);
+
     return {
       ...agent,
       format: 'opencode',
@@ -183,7 +248,7 @@ export class FormatConverter {
   /**
    * Convert OpenCode format to Base format
    */
-  private openCodeToBase(agent: Agent): Agent {
+  public openCodeToBase(agent: Agent): Agent {
     if (agent.format !== 'opencode') {
       throw new Error(`Expected opencode format, got ${agent.format}`);
     }
@@ -218,7 +283,7 @@ export class FormatConverter {
   /**
    * Convert OpenCode format to Claude Code format
    */
-  private openCodeToClaudeCode(agent: Agent): Agent {
+  public openCodeToClaudeCode(agent: Agent): Agent {
     if (agent.format !== 'opencode') {
       throw new Error(`Expected opencode format, got ${agent.format}`);
     }
@@ -296,10 +361,10 @@ export class FormatConverter {
       const roundTrip = this.convert(converted, agent.format);
 
       // Compare key fields
-      if (agent.frontmatter.name !== roundTrip.frontmatter.name) {
+      if ((agent.frontmatter as any).name !== (roundTrip.frontmatter as any).name) {
         errors.push('Name field changed during round-trip conversion');
       }
-      if (agent.frontmatter.description !== roundTrip.frontmatter.description) {
+      if ((agent.frontmatter as any).description !== (roundTrip.frontmatter as any).description) {
         errors.push('Description field changed during round-trip conversion');
       }
 
@@ -455,7 +520,10 @@ export class FormatConverter {
       name: baseCommand.name,
       description: baseCommand.description,
       mode: 'command',
+      model: 'opencode/code-supernova',
       version: baseCommand.version,
+      last_updated: new Date().toISOString().split('T')[0],
+      command_schema_version: baseCommand.command_schema_version || '1.0',
       inputs: baseCommand.inputs,
       outputs: baseCommand.outputs,
       cache_strategy: baseCommand.cache_strategy,
@@ -498,3 +566,4 @@ export class FormatConverter {
     return { valid: errors.length === 0, errors };
   }
 }
+

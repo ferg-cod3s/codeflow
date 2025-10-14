@@ -86,7 +86,7 @@ describe('Setup Agents Functionality', () => {
 name: test-agent
 description: A test agent for conversion
 mode: subagent
-model: gpt-4
+model: opencode/code-supernova
 temperature: 0.7
 tools:
   read: true
@@ -234,7 +234,7 @@ tools:
           name: 'roundtrip-test',
           description: 'Test agent for round-trip conversion',
           mode: 'subagent' as const,
-          model: 'gpt-4',
+          model: 'opencode/code-supernova',
           temperature: 0.8,
           tools: {
             read: true,

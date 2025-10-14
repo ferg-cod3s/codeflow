@@ -89,7 +89,7 @@ describe('Format Conversion', () => {
       const claudeAgent = `---
 name: test-agent
 description: A test agent
-model: claude-3-5-sonnet-20241022
+model: opencode/code-supernova
 temperature: 0.7
 category: testing
 tags: ["test", "example"]
@@ -106,7 +106,7 @@ This is the agent content.`;
       const metadata = yaml.parse(frontmatterMatch![1]);
       expect(metadata.name).toBe('test-agent');
       expect(metadata.mode).toBe('subagent');
-      expect(metadata.model).toContain('anthropic/claude');
+      expect(metadata.model).toBe('opencode/code-supernova');
       expect(metadata.primary_objective).toBeTruthy();
       expect(metadata.tools).toBeTruthy();
       expect(metadata.permission).toBeTruthy();
@@ -116,7 +116,7 @@ This is the agent content.`;
       const claudeCommand = `---
 name: test-command
 description: A test command
-model: claude-3-5-sonnet-20241022
+model: opencode/code-supernova
 temperature: 0.2
 mode: command
 category: utility
@@ -133,7 +133,7 @@ Command content here.`;
       const metadata = yaml.parse(frontmatterMatch![1]);
       expect(metadata.name).toBe('test-command');
       expect(metadata.mode).toBe('command');
-      expect(metadata.model).toContain('anthropic/claude');
+      expect(metadata.model).toBe('opencode/code-supernova');
     });
 
     test('should preserve content after frontmatter', async () => {
@@ -294,7 +294,7 @@ console.log('Hello, World!');
       const fullContent = `---
 name: test
 description: Test
-model: claude-3-5-sonnet-20241022
+model: opencode/code-supernova
 ---
 
 ${content}`;

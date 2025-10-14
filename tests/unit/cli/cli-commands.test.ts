@@ -104,7 +104,7 @@ describe('CLI Commands', () => {
       const testAgent = `---
 name: test-agent
 description: Test agent for conversion
-model: claude-3-5-sonnet-20241022
+model: opencode/code-supernova
 temperature: 0.7
 ---
 
@@ -136,7 +136,7 @@ This is a test agent.`;
       await writeFile(testFile, `---
 name: test
 description: Test file
-model: claude-3-5-sonnet-20241022
+model: opencode/code-supernova
 ---
 
 Content`);

@@ -1,0 +1,11 @@
+{
+  "models": [
+    "opencode/code-supernova",
+    "opencode/grok-code",
+    "github-copilot/gpt-4.1",
+    "github-copilot/gpt-5",
+    "github-copilot/gpt-5-codex",
+    "github-copilot/claude-sonnet-4",
+    "github-copilot/claude-3.5-sonnet"
+  ]
+}

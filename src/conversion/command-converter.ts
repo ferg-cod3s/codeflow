@@ -238,9 +238,9 @@ export class CommandConverter {
 
     // Convert OpenCode model names to Claude format
     const modelMap: Record<string, string> = {
-      'anthropic/claude-sonnet-4': 'claude-3-5-sonnet-20241022',
+      'opencode/code-supernova': 'claude-3-5-sonnet-20241022',
       'anthropic/claude-3-5-sonnet': 'claude-3-5-sonnet-20241022',
-      'opencode/grok-code-fast': 'claude-3-5-sonnet-20241022',
+      'opencode/grok-code': 'claude-3-5-sonnet-20241022',
     };
 
     return modelMap[model] || 'claude-3-5-sonnet-20241022';
@@ -250,15 +250,15 @@ export class CommandConverter {
    * Convert model name to OpenCode format
    */
   private convertModelToOpenCode(model?: string): string {
-    if (!model) return 'anthropic/claude-sonnet-4';
+    if (!model) return 'opencode/code-supernova';
 
     // Convert Claude model names to OpenCode format
     const modelMap: Record<string, string> = {
-      'claude-3-5-sonnet-20241022': 'anthropic/claude-sonnet-4',
-      'claude-3-5-sonnet': 'anthropic/claude-sonnet-4',
+      'claude-3-5-sonnet-20241022': 'opencode/code-supernova',
+      'claude-3-5-sonnet': 'opencode/code-supernova',
     };
 
-    return modelMap[model] || 'anthropic/claude-sonnet-4';
+    return modelMap[model] || 'opencode/code-supernova';
   }
 
   /**

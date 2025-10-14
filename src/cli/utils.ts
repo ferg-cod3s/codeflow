@@ -6,7 +6,7 @@ import { homedir } from "node:os";
 interface AgenticConfig {
   thoughts: string;
   agents: {
-    model: string;
+    model?: string;
   };
 }
 
@@ -104,16 +104,41 @@ export function resolveAgentModel(cliModel: string | undefined, projectPath: str
 export async function processAgentTemplate(filePath: string, agentModel?: string): Promise<string> {
   const content = await readFile(filePath, 'utf-8');
 
-  // If no agent model specified, return original content
-  if (!agentModel) {
+  // Only operate on files with YAML frontmatter
+  if (!content.startsWith('---')) {
+    // No frontmatter; do not inject or strip model lines
     return content;
   }
 
-  // Replace model field in frontmatter
-  const modelRegex = /^model:\s*.+$/gm;
-  const newModelLine = `model: ${agentModel}`;
+  const lines = content.split('\n');
+  let fmCloseIndex = -1;
+  for (let i = 1; i < lines.length; i++) {
+    if (lines[i].trim() === '---') { fmCloseIndex = i; break; }
+  }
+  if (fmCloseIndex === -1) {
+    // Malformed frontmatter, leave unchanged
+    return content;
+  }
 
-  return content.replace(modelRegex, newModelLine);
+  const fmLines = lines.slice(1, fmCloseIndex);
+  const bodyLines = lines.slice(fmCloseIndex + 1);
+  const modelIdx = fmLines.findIndex(l => /^\s*model\s*:\s*/.test(l));
+
+  if (!agentModel) {
+    // Strip existing model line if present
+    if (modelIdx !== -1) {
+      fmLines.splice(modelIdx, 1);
+    }
+  } else {
+    // Replace existing model line or insert one
+    if (modelIdx !== -1) {
+      fmLines[modelIdx] = `model: ${agentModel}`;
+    } else {
+      fmLines.unshift(`model: ${agentModel}`);
+    }
+  }
+
+  return ['---', ...fmLines, '---', ...bodyLines].join('\n');
 }
 
 export function findAgenticInstallDir(): string {

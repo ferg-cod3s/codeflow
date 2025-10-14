@@ -51,6 +51,16 @@
       }
     },
     {
+      "name": "api-builder-enhanced",
+      "description": "Expert at building robust, scalable APIs with proper authentication, validation, rate limiting, and comprehensive documentation",
+      "category": "development",
+      "sources": {
+        "base": "codeflow-agents/development/api-builder-enhanced.md",
+        "claude-code": ".claude/agents/api-builder-enhanced.md",
+        "opencode": ".opencode/agent/api-builder-enhanced.md"
+      }
+    },
+    {
       "name": "code-reviewer",
       "description": "Engineering-level static code quality review & refactor opportunity synthesizer.",
       "category": "development",
@@ -111,6 +121,16 @@
       }
     },
     {
+      "name": "content-writer",
+      "description": "Specialized agent for writing, editing, and maintaining technical documentation, user guides, changelogs, and internal communication.",
+      "category": "generalist",
+      "sources": {
+        "base": "codeflow-agents/generalist/content-writer.md",
+        "claude-code": ".claude/agents/content-writer.md",
+        "opencode": ".opencode/agent/content-writer.md"
+      }
+    },
+    {
       "name": "cost-optimizer",
       "description": "Cloud cost optimization and resource efficiency specialist.",
       "category": "operations",
@@ -161,6 +181,16 @@
       }
     },
     {
+      "name": "dryrun-test",
+      "description": "Test agent for dry run validation of agent workflows and command execution.",
+      "category": "quality-testing",
+      "sources": {
+        "base": "codeflow-agents/quality-testing/dryrun-test.md",
+        "claude-code": ".claude/agents/dryrun-test.md",
+        "opencode": ".opencode/agent/dryrun-test.md"
+      }
+    },
+    {
       "name": "full-stack-developer",
       "description": "Generalist implementation developer focused on end-to-end feature delivery (UI → API → data) within established architectural, security, performance, and infrastructure guidelines.",
       "category": "development",
@@ -178,6 +208,16 @@
         "base": "codeflow-agents/business-analytics/growth-engineer.md",
         "claude-code": ".claude/agents/growth-engineer.md",
         "opencode": ".opencode/agent/growth-engineer.md"
+      }
+    },
+    {
+      "name": "health-test",
+      "description": "Test agent for health monitoring of agentic system components and workflows.",
+      "category": "quality-testing",
+      "sources": {
+        "base": "codeflow-agents/quality-testing/health-test.md",
+        "claude-code": ".claude/agents/health-test.md",
+        "opencode": ".opencode/agent/health-test.md"
       }
     },
     {
@@ -331,6 +371,6 @@
       }
     }
   ],
-  "total_agents": 33,
-  "last_updated": "2025-09-24T11:16:15.319Z"
+  "total_agents": 37,
+  "last_updated": "2025-10-13T20:04:03.839Z"
 }

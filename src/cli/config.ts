@@ -1,12 +1,17 @@
 import { join } from "node:path";
-import { existsSync, writeFileSync } from "node:fs";
+import { existsSync, writeFileSync, readFileSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { resolveProjectPath } from "./utils";
 
+// Agentic CLI configuration
+// Note: agents.model is OPTIONAL. If omitted, downstream generators will not
+// write a model field and will defer to platform presets/defaults instead.
+// Supplying a value enables explicit model pinning (validated against
+// config/opencode-models.json if present).
 interface AgenticConfig {
   thoughts: string;
   agents: {
-    model: string;
+    model?: string;
   };
 }
 
@@ -14,9 +19,38 @@ function getDefaultConfig(): AgenticConfig {
   return {
     thoughts: "thoughts",
     agents: {
-      model: "opencode/grok-code"
+      // Intentionally no default model. Leaving this empty allows
+      // platform-specific defaults/presets to apply.
     }
   };
+}
+
+/**
+ * Load OpenCode model allowlist from config/opencode-models.json if present.
+ * Accepts either an array of strings or an object { models: string[] }.
+ * Returns Set of allowed models, null if file missing, or throws nothing (logs warnings) on parse error.
+ */
+function loadOpenCodeModelAllowlist(): Set<string> | null {
+  try {
+    const allowlistPath = join(process.cwd(), 'config', 'opencode-models.json');
+    if (!existsSync(allowlistPath)) return null;
+    const raw = readFileSync(allowlistPath, 'utf-8');
+    const parsed = JSON.parse(raw);
+    let models: string[] | undefined;
+    if (Array.isArray(parsed)) {
+      models = parsed as string[];
+    } else if (parsed && Array.isArray(parsed.models)) {
+      models = parsed.models as string[];
+    }
+    if (!models) {
+      console.warn('config/opencode-models.json present but not an array or {"models": []}. Ignoring.');
+      return null;
+    }
+    return new Set(models.filter((m) => typeof m === 'string'));
+  } catch (err) {
+    console.warn('Failed to load config/opencode-models.json. Proceeding without enforcement.', err);
+    return null;
+  }
 }
 
 async function readConfig(projectPath: string): Promise<AgenticConfig> {
@@ -30,11 +64,21 @@ async function readConfig(projectPath: string): Promise<AgenticConfig> {
     const configContent = await readFile(configPath, 'utf-8');
     const config = JSON.parse(configContent);
 
-    // Merge with defaults to ensure all fields exist
+    const allowlist = loadOpenCodeModelAllowlist();
+    let model: string | undefined = config.agents?.model;
+    if (allowlist && model && !allowlist.has(model)) {
+      console.warn(
+        `Warning: Model '${model}' is not allowed by config/opencode-models.json. The value will be ignored.\n` +
+        `To use a custom model, add it to config/opencode-models.json or choose an allowed model.`
+      );
+      model = undefined;
+    }
+
+    // Merge with defaults to ensure top-level fields exist; omit model if undefined
     return {
       thoughts: config.thoughts || "thoughts",
       agents: {
-        model: config.agents?.model || "opencode/grok-code"
+        ...(model ? { model } : {})
       }
     };
   } catch (error) {
@@ -119,6 +163,17 @@ export async function config(projectPath: string | undefined, key?: string, valu
       console.log(`${key}: ${currentValue}`);
     }
     return;
+  }
+
+  // Validate model value against allowlist if setting agents.model (or alias agent.model)
+  if (key === 'agents.model' || key === 'agent.model') {
+    const allowlist = loadOpenCodeModelAllowlist();
+    if (allowlist && !allowlist.has(value)) {
+      console.error(
+        `❌ Model '${value}' is not allowed. It must be one of the models in config/opencode-models.json.`
+      );
+      return;
+    }
   }
 
   // Set the new value

@@ -111,7 +111,7 @@ Command with multiple parameters.
       const claudeContent = `---
 name: test
 description: Test command
-model: claude-3-5-sonnet-20241022
+model: opencode/code-supernova
 temperature: 0.2
 category: testing
 params:
@@ -136,7 +136,7 @@ This is a test command.
       expect(result).toContain('name: test');
       expect(result).toContain('description: Test command');
       expect(result).toContain('mode: command');
-      expect(result).toContain('model: anthropic/claude-sonnet-4'); // Converted model
+      expect(result).toContain('model: opencode/code-supernova'); // Converted model
 
       // Should contain inputs structure
       expect(result).toContain('inputs:');
@@ -161,7 +161,7 @@ This is a test command.
       const frontmatter = {
         name: 'test',
         description: 'test',
-        model: 'anthropic/claude-sonnet-4',
+        model: 'opencode/code-supernova',
       };
 
       const result = (converter as any).convertOpenCodeToClaudeCode(frontmatter);
@@ -176,7 +176,7 @@ This is a test command.
       };
 
       const result = (converter as any).convertClaudeCodeToOpenCode(frontmatter);
-      expect(result.model).toBe('anthropic/claude-sonnet-4');
+      expect(result.model).toBe('opencode/code-supernova');
     });
   });
 
@@ -208,7 +208,7 @@ This is a test command.
 name: test
 mode: command
 description: Test command
-model: anthropic/claude-sonnet-4
+model: opencode/code-supernova
 ---
 
 # Test Command
@@ -226,7 +226,7 @@ Test content.
       // Convert to OpenCode
       const opencodeResult = await converter.convertFile(testCommandPath, 'opencode');
       expect(opencodeResult).toContain('mode: command');
-      expect(opencodeResult).toContain('model: anthropic/claude-sonnet-4');
+      expect(opencodeResult).toContain('model: opencode/code-supernova');
     });
   });
 });

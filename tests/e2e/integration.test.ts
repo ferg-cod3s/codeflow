@@ -50,7 +50,7 @@ describe('End-to-End Integration', () => {
       const claudeAgent = `---
 name: integration-test-agent
 description: Agent created for integration testing
-model: claude-3-5-sonnet-20241022
+model: opencode/code-supernova
 temperature: 0.7
 category: testing
 tags: ["test", "integration"]
@@ -101,7 +101,7 @@ This agent is used for integration testing.
       const externalTemplate = `---
 name: external-template
 description: External template for testing
-model: claude-3-5-sonnet-20241022
+model: opencode/code-supernova
 prompt: |
   You are a helpful assistant.
   Please help the user with their request.
@@ -233,7 +233,7 @@ Test content.`;
       const invalidYaml = `---
 name: invalid
 description: Missing quote causes error
-model: claude-3-5-sonnet-20241022
+model: opencode/code-supernova
 invalid_field: this: causes: yaml: error
 ---
 
@@ -302,7 +302,7 @@ Content`;
         const agentContent = `---
 name: perf-test-agent-${i}
 description: Performance test agent ${i}
-model: claude-3-5-sonnet-20241022
+model: opencode/code-supernova
 ---
 
 Agent ${i} content`;
