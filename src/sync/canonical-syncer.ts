@@ -99,8 +99,21 @@ export class CanonicalSyncer {
 
       // Only proceed if no validation errors (unless force is true)
       if (result.errors.length > 0 && !options.force) {
+        console.error('\n❌ Agent Validation Errors:\n');
+        result.errors.forEach((error, i) => {
+          console.error(`${i + 1}. Agent: ${error.agent}`);
+          console.error(`   File: ${error.filePath}`);
+          console.error(`   Type: ${error.type}`);
+          console.error(`   Error: ${error.message}`);
+          if (error.suggestion) {
+            console.error(`   💡 Fix: ${error.suggestion}`);
+          }
+          console.error('');
+        });
+        
         throw new Error(
-          `${result.errors.length} agents failed validation. Use --force to override.`
+          `❌ ${result.errors.length} agents failed validation. ` +
+          `Fix the errors above or use --force to override.`
         );
       }
 

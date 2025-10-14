@@ -335,7 +335,7 @@
       "description": "High-precision research & documentation insight extraction agent for the /thoughts knowledge base.",
       "category": "generalist",
       "sources": {
-        "base": "codeflow-agents/generalist/thoughts-analyzer.md",
+        "base": "codeflow-agents/generalist/knowledge-analyzer.md",
         "claude-code": ".claude/agents/thoughts-analyzer.md",
         "opencode": ".opencode/agent/thoughts-analyzer.md"
       }
@@ -345,7 +345,7 @@
       "description": "Focused documentation discovery & categorization agent for the /thoughts knowledge base.",
       "category": "generalist",
       "sources": {
-        "base": "codeflow-agents/generalist/thoughts-locator.md",
+        "base": "codeflow-agents/generalist/knowledge-locator.md",
         "claude-code": ".claude/agents/thoughts-locator.md",
         "opencode": ".opencode/agent/thoughts-locator.md"
       }
