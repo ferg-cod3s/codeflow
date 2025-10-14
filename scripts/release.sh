@@ -81,7 +81,7 @@ validate_version() {
 
 # Main function
 main() {
-    local bump_type=""
+    # bump_type parsed from CLI; do not reset here
     print_status "Starting codeflow release process..."
 
     # Check if we're in the right directory
