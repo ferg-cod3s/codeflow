@@ -98,3 +98,6 @@ Pods/
 tsconfig.tsbuildinfo
 .opencode/
 .claude/
+
+# Test reports
+ test-reports/
