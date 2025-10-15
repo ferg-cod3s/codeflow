@@ -17,6 +17,8 @@ const __dirname = dirname(__filename);
 // Command files to validate
 const COMMAND_FILES = [
   'commit.md',
+  'continue.md',
+  'help.md',
   'document.md',
   'execute.md',
   'plan.md',
@@ -24,7 +26,6 @@ const COMMAND_FILES = [
   'review.md',
   'test.md',
 ];
-
 // Validation results
 class ValidationResult {
   constructor() {
@@ -33,10 +34,10 @@ class ValidationResult {
     this.score = 0;
     this.totalChecks = 0;
   }
-
   addError(message, file, line = null) {
     this.errors.push({ message, file, line });
   }
+
 
   addWarning(message, file, line = null) {
     this.warnings.push({ message, file, line });
@@ -83,6 +84,23 @@ function validateFrontmatter(content, fileName, result) {
     }
 
     // Check for new fields from optimization
+// Check for disallowed fields
+    const disallowedFields = ['model', 'temperature', 'mode'];
+    for (const field of disallowedFields) {
+      if (frontmatter.includes(`${field}:`)) {
+        result.addError(`Disallowed frontmatter field: ${field}`, fileName);
+      } else {
+        result.incrementScore();
+      }
+    }
+
+// Check cache_strategy.type enum
+    const hasValidCacheType = frontmatter.includes('type: agent_specific') || frontmatter.includes('type: shared') || frontmatter.includes('type: hierarchical');
+    if (!hasValidCacheType) {
+      result.addError('Invalid or missing cache_strategy.type. Must be one of: agent_specific, shared, hierarchical', fileName);
+    } else {
+      result.incrementScore();
+    }
     const optimizationFields = [
       'command_schema_version',
       'cache_strategy',
@@ -296,11 +314,9 @@ async function validateAllCommands() {
     files: {},
   };
 
-  console.log('🔍 Validating CodeFlow command prompts...\n');
 
   for (const fileName of COMMAND_FILES) {
     const filePath = join(commandDir, fileName);
-    console.log(`📄 Validating ${fileName}...`);
 
     const result = await validateCommandFile(filePath, fileName);
     results.files[fileName] = {
@@ -324,47 +340,24 @@ async function validateAllCommands() {
  * Print validation results
  */
 function printResults(results) {
-  console.log('\n📊 VALIDATION RESULTS\n');
 
-  console.log('SUMMARY:');
-  console.log(`  Total Files: ${results.summary.totalFiles}`);
-  console.log(`  Average Compliance Score: ${results.summary.averageScore.toFixed(1)}%`);
-  console.log(`  Total Errors: ${results.summary.totalErrors}`);
-  console.log(`  Total Warnings: ${results.summary.totalWarnings}`);
 
-  console.log('\nFILE-BY-FILE RESULTS:');
   for (const [fileName, result] of Object.entries(results.files)) {
-    console.log(`\n  ${fileName}:`);
-    console.log(`    Compliance Score: ${result.score.toFixed(1)}%`);
-    console.log(`    Errors: ${result.errors.length}`);
-    console.log(`    Warnings: ${result.warnings.length}`);
 
     if (result.errors.length > 0) {
-      console.log('    ❌ ERRORS:');
-      result.errors.forEach((error) => console.log(`      • ${error.message}`));
     }
 
     if (result.warnings.length > 0) {
-      console.log('    ⚠️  WARNINGS:');
-      result.warnings.forEach((warning) => console.log(`      • ${warning.message}`));
     }
   }
 
-  console.log('\n🎯 OPTIMIZATION TARGETS:');
-  console.log('  Compliance Score: ≥ 95%');
-  console.log('  Zero Errors: All required fields and sections present');
-  console.log('  Minimal Warnings: < 2 per file');
-  console.log('  Cache Integration: 100% coverage');
 
   // Exit with error code if there are errors
   if (results.summary.totalErrors > 0) {
-    console.log('\n❌ Validation failed due to errors');
     process.exit(1);
   } else if (results.summary.averageScore < 95) {
-    console.log('\n⚠️  Validation passed but compliance score below target');
     process.exit(1);
   } else {
-    console.log('\n✅ Validation passed');
   }
 }
 

@@ -1,11 +1,138 @@
 ---
 name: help
-mode: command
 description: Get help with using opencode and codeflow development workflows
-temperature: 0.1
+version: 1.0.0
+last_updated: 2025-10-15
+command_schema_version: 1.0
+inputs:
+  - name: topic
+    type: string
+    required: false
+    description: Specific topic to get help with
+cache_strategy:
+  type: agent_specific
+  ttl: 7200
+  invalidation: time_based
+  scope: global
+success_signals:
+  - 'Help information provided successfully'
+  - 'Relevant documentation referenced'
+  - 'Workflow guidance delivered'
+failure_modes:
+  - 'Topic not found in available documentation'
+  - 'Unable to access help resources'
+  - 'Incomplete or unclear help request'
 ---
 
 # CodeFlow Development Guidance
+
+This command provides guidance for working with the CodeFlow system and development workflows.
+
+## Purpose
+
+Provide comprehensive guidance for using CodeFlow development workflows, including architecture overview, command usage, and best practices.
+
+## Inputs
+
+- **topic**: Specific topic to get help with (optional)
+
+## Preconditions
+
+- Access to CodeFlow documentation and resources
+
+## Process Phases
+
+### Phase 1: Topic Analysis
+
+1. Analyze the help request or topic
+2. Identify relevant documentation sections
+3. Determine appropriate guidance level
+
+### Phase 2: Information Gathering
+
+1. Retrieve relevant documentation
+2. Extract key concepts and workflows
+3. Organize information by category
+
+### Phase 3: Response Generation
+
+1. Structure response with clear sections
+2. Include practical examples
+3. Provide actionable next steps
+
+## Error Handling
+
+### Unknown Topic
+
+- Phase: topic_analysis
+- Expected: Recognized topic or general help request
+- Mitigation: Provide general overview and suggest related topics
+- Requires user input: false
+
+### Documentation Unavailable
+
+- Phase: information_gathering
+- Expected: Accessible documentation resources
+- Mitigation: Provide basic guidance from built-in knowledge
+- Requires user input: false
+
+## Structured Output
+
+```help-response
+{
+  "status": "success|error",
+  "topic": "requested_topic",
+  "sections": ["overview", "commands", "workflows", "examples"],
+  "references": ["doc_links"],
+  "next_steps": ["suggested_actions"]
+}
+```
+
+## Success Criteria
+
+### Automated
+
+- Help information delivered
+- Relevant sections included
+- Clear structure maintained
+
+### Manual
+
+- User understands the guidance
+- Information is actionable
+- Appropriate detail level provided
+
+## Edge Cases
+
+### Broad Request
+
+- Provide overview of all major areas
+- Include navigation guidance
+
+### Technical Depth
+
+- Balance detail with accessibility
+- Reference advanced documentation
+
+## Anti-Patterns
+
+- Information overload
+- Unstructured responses
+- Missing practical examples
+
+## Caching Guidelines
+
+### Cache Usage
+
+- Store help responses for common topics
+- Cache documentation references
+- Maintain topic index
+
+### Invalidation
+
+- Manual: When documentation updates
+- Time-based: Weekly refresh for dynamic content
+
 
 This command provides guidance for working with the CodeFlow system and development workflows.
 
@@ -170,7 +297,6 @@ OpenCode requires explicit argument specification with YAML frontmatter:
 ```yaml
 ---
 name: research
-mode: command
 scope: codebase
 depth: deep
 ---
