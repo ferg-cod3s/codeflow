@@ -1,11 +1,28 @@
-## [0.12.12](https://github.com/ferg-cod3s/codeflow/compare/v0.12.11...v0.12.12) (2025-10-15)
+# [0.13.0](https://github.com/ferg-cod3s/codeflow/compare/v0.12.11...v0.13.0) (2025-10-16)
+
 
 ### Bug Fixes
 
-* make command files schema-compliant and extend validator ([9338749](https://github.com/ferg-cod3s/codeflow/commit/9338749))
+* make command files schema-compliant and extend validator ([9338749](https://github.com/ferg-cod3s/codeflow/commit/9338749b608f6a6a7a4c5c2e920b832d4ba392ce))
 
 
-## [0.12.11](https://github.com/ferg-cod3s/codeflow/compare/v0.12.5...v0.12.11) (2025-10-14)
+### Features
+
+* version 0.13.0 - monitoring system and sync improvements ([ce7d6be](https://github.com/ferg-cod3s/codeflow/commit/ce7d6be608f9906f24b14746a358bbb6499ca06a))
+
+
+### BREAKING CHANGES
+
+* None - backward compatible release
+
+
+
+## [0.12.11](https://github.com/ferg-cod3s/codeflow/compare/v0.12.5...v0.12.11) (2025-10-15)
+
+
+### Bug Fixes
+
+* resolve all ESLint errors ([08da258](https://github.com/ferg-cod3s/codeflow/commit/08da25842f3bd9a1f2a477bb955dd407dc976243))
 
 
 
