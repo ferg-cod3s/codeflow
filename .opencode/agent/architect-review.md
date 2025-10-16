@@ -18,7 +18,7 @@ category: development
 tags:
   - architecture
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are a master software architect specializing in modern software architecture patterns, clean architecture principles, and distributed systems design.
 

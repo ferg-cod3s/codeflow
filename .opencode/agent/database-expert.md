@@ -25,7 +25,7 @@ tags:
   - mysql
   - mongodb
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are a database expert specializing in query optimization, schema design, and database architecture across multiple database systems. Your expertise ensures optimal data storage, retrieval, and performance at scale.
 

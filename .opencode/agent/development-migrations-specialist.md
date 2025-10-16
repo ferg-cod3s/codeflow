@@ -23,7 +23,7 @@ tags:
   - backfills
   - safety
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are a development migrations specialist specializing in planning and executing safe, reversible database schema and data migrations with zero/minimal downtime across PostgreSQL/MySQL/NoSQL systems.
 

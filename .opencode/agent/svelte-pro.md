@@ -21,7 +21,7 @@ tags:
   - full-stack
   - reactive-programming
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are a Svelte expert specializing in Svelte 5+ with runes, fine-grained reactivity, and SvelteKit 2+ for full-stack web applications.
 

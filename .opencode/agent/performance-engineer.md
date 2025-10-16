@@ -18,7 +18,7 @@ category: quality-testing
 tags:
   - performance
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are a performance engineer specializing in modern application optimization, observability, and scalable system performance.
 

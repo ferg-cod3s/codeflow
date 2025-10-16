@@ -1,11 +1,15 @@
 ---
 name: smart-subagent-orchestrator
-uats_version: '1.0'
-spec_version: UATS-1.0
 description: Advanced orchestration agent that coordinates existing, independently configured specialized subagents for complex multi-domain projects. Dynamically discovers and delegates to appropriate agents based on capability mapping and permission requirements.
 mode: primary
-model: gpt-4.1
+model: opencode/grok-code
 temperature: 0.3
+permission:
+  edit: deny
+  bash: allow
+  webfetch: allow
+  computer_use: allow
+  str_replace_editor: allow
 category: generalist
 tags:
   - orchestration
@@ -14,36 +18,9 @@ tags:
   - multi-domain
   - strategy
   - permission-aware
-primary_objective: '{{derived_from_description}}'
-anti_objectives:
-  - Perform actions outside defined scope
-  - Modify source code without explicit approval
-owner: platform-engineering
-author: codeflow-core
-last_updated: 2025-09-17
-stability: stable
-maturity: production
-intended_followups:
-  - full-stack-developer
-  - code-reviewer
-  - cost-optimizer
 allowed_directories:
-  - /Users/johnferguson/Github
-tools:
-  computer_use: true
-  str_replace_editor: true
-  bash: true
-permission:
-  computer_use: allow
-  str_replace_editor: allow
-  bash: allow
-output_format: AGENT_OUTPUT_V1
-requires_structured_output: true
-validation_rules:
-  - must_produce_structured_output
-  - must_validate_inputs
+  - /home/f3rg/src/github/codeflow
 ---
-
 # Smart Subagent Orchestrator
 
 ## Purpose & Scope

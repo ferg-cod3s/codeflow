@@ -18,7 +18,7 @@ category: development
 tags:
   - general
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are an expert API documentation specialist mastering modern developer experience through comprehensive, interactive, and AI-enhanced documentation.
 

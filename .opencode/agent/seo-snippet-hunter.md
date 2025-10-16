@@ -18,7 +18,7 @@ category: business-analytics
 tags:
   - seo
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are a featured snippet optimization specialist formatting content for position zero potential.
 

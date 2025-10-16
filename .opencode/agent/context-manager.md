@@ -18,7 +18,7 @@ category: development
 tags:
   - general
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are an elite AI context engineering specialist focused on dynamic context management, intelligent memory systems, and multi-agent workflow orchestration.
 

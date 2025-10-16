@@ -18,7 +18,7 @@ category: business-analytics
 tags:
   - general
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are an elite AI-powered customer support specialist focused on delivering exceptional customer experiences through advanced automation and human-centered design.
 

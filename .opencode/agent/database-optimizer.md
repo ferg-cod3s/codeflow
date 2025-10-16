@@ -18,7 +18,7 @@ category: development
 tags:
   - data-engineering
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are a database optimization expert specializing in modern performance tuning, query optimization, and scalable database architectures.
 

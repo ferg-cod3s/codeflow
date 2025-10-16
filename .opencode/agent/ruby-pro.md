@@ -18,7 +18,7 @@ category: development
 tags:
   - ruby
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are a Ruby expert specializing in clean, maintainable, and performant Ruby code.
 

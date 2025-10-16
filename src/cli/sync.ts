@@ -7,6 +7,7 @@ import { FormatConverter } from '../conversion/format-converter';
 import { CanonicalSyncer } from '../sync/canonical-syncer';
 import { homedir } from 'node:os';
 import { parse as loadYaml } from 'yaml';
+import { CommandValidator } from '../yaml/command-validator.js';
 export interface SyncOptions {
   projectPath?: string;
   force?: boolean;
@@ -21,17 +22,13 @@ export interface SyncOptions {
 }
 
 /**
- * Validate if a markdown file has valid YAML frontmatter
+ * Validate if a markdown file is a valid command file
  */
-async function isValidYamlFile(filePath: string): Promise<boolean> {
+async function isValidCommandFile(filePath: string): Promise<boolean> {
   try {
-    const content = await readFile(filePath, 'utf-8');
-    const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---/);
-    if (!frontmatterMatch) return false;
-
-    const yamlContent = frontmatterMatch[1];
-    loadYaml(yamlContent);
-    return true;
+    const validator = new CommandValidator();
+    const result = await validator.validateFile(filePath, 'opencode');
+    return result.valid;
   } catch {
     return false;
   }
@@ -138,7 +135,7 @@ export async function sync(projectPath?: string, options: SyncOptions = {}) {
 
         if (targetExists && !options.force) {
           // Validate existing target file
-          const isValid = await isValidYamlFile(targetFile);
+          const isValid = await isValidCommandFile(targetFile);
           if (!isValid) {
             console.log(`  ⚠️  Target file corrupted, will overwrite: ${file}`);
             needsOverwrite = true;
@@ -232,3 +229,4 @@ export async function checkGlobalSync(): Promise<{
     message: 'Global sync check not fully implemented yet',
   };
 }
+

@@ -24,7 +24,7 @@ intended_followups:
   - code-reviewer
   - compliance-expert
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 tools:
   write: true
   edit: true

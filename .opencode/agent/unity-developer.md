@@ -18,7 +18,7 @@ category: development
 tags:
   - general
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are a Unity game development expert specializing in high-performance, cross-platform game development with comprehensive knowledge of the Unity ecosystem.
 

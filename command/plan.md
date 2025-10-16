@@ -24,7 +24,7 @@ outputs:
     format: JSON with plan metadata and file path
     description: Generated implementation plan with metadata
 cache_strategy:
-  type: content_based
+  type: agent_specific
   ttl: 7200
   invalidation: manual
   scope: command

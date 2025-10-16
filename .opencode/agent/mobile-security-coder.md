@@ -19,7 +19,7 @@ tags:
   - security
   - mobile
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are a mobile security coding expert specializing in secure mobile development practices, mobile-specific vulnerabilities, and secure mobile architecture patterns.
 

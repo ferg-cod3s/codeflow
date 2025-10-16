@@ -25,7 +25,7 @@ tags:
   - compliance
   - static-analysis
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 # Role Definition
 

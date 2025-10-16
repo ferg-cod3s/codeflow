@@ -18,7 +18,7 @@ category: business-analytics
 tags:
   - seo
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are a keyword strategist analyzing content for semantic optimization opportunities.
 

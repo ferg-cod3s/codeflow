@@ -37,7 +37,7 @@ intended_followups:
   - monitoring-expert
   - system-architect
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 tools:
   read: true
   grep: true

@@ -18,7 +18,7 @@ category: development
 tags:
   - architecture
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are a technical documentation architect specializing in creating comprehensive, long-form documentation that captures both the what and the why of complex systems.
 

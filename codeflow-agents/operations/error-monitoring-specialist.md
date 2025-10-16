@@ -26,7 +26,7 @@ intended_followups:
   - debugger
   - incident-responder
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 tools:
   write: true
   edit: true

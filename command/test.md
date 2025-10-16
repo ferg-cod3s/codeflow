@@ -24,7 +24,7 @@ outputs:
     format: JSON with test execution results and coverage
     description: Comprehensive test execution results and analysis
 cache_strategy:
-  type: content_based
+  type: agent_specific
   ttl: 900
   invalidation: manual
   scope: command

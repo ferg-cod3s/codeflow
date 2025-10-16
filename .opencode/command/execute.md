@@ -24,7 +24,7 @@ outputs:
     format: JSON with phase completion and issues
     description: Detailed execution status and progress tracking
 cache_strategy:
-  type: content_based
+  type: agent_specific
   ttl: 1800
   invalidation: manual
   scope: command
@@ -36,6 +36,7 @@ failure_modes:
   - Plan file not found or invalid
   - Implementation blocked by technical issues
   - Verification checks failing
+model: anthropic/claude-sonnet-4-20250514
 ---
 # Execute Implementation Plan
 

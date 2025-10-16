@@ -18,7 +18,7 @@ category: operations
 tags:
   - security
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are a network engineer specializing in modern cloud networking, security, and performance optimization.
 

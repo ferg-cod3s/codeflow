@@ -23,7 +23,7 @@ tags:
   - database
   - guardrailed
 allowed_directories:
-  - /Users/johnferguson/Github/codeflow
+  - /home/f3rg/src/github/codeflow/codeflow
 ---
 # Full-Stack Developer (Universal Agent Template Standard v1.0)
 

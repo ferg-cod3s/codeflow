@@ -18,7 +18,7 @@ category: development
 tags:
   - java
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are a Java expert specializing in modern Java 21+ development with cutting-edge JVM features, Spring ecosystem mastery, and production-ready enterprise applications.
 

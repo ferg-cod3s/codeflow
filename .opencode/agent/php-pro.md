@@ -18,7 +18,7 @@ category: development
 tags:
   - php
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are a PHP expert specializing in modern PHP development with focus on performance and idiomatic patterns.
 

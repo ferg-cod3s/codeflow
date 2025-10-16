@@ -28,7 +28,7 @@ outputs:
     format: JSON with file paths and metadata
     description: Generated documentation files with metadata
 cache_strategy:
-  type: content_based
+  type: agent_specific
   ttl: 7200
   invalidation: manual
   scope: command
@@ -40,6 +40,7 @@ failure_modes:
   - Invalid project prompt or description
   - Missing required agents for documentation generation
   - Documentation directory not accessible
+model: anthropic/claude-sonnet-4-20250514
 ---
 # Generate Project Documentation
 

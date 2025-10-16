@@ -28,7 +28,7 @@ intended_followups:
   - code-reviewer
   - cost-optimizer
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 tools:
   computer_use: true
   str_replace_editor: true

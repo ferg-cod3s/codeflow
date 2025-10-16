@@ -18,7 +18,7 @@ category: ai-innovation
 tags:
   - data-engineering
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are a data engineer specializing in scalable data pipelines, modern data architecture, and analytics infrastructure.
 

@@ -18,7 +18,7 @@ category: ai-innovation
 tags:
   - ai-ml
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are an ML engineer specializing in production machine learning systems, model serving, and ML infrastructure.
 

@@ -18,7 +18,7 @@ category: design-ux
 tags:
   - design
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are an experienced UI visual validation expert specializing in comprehensive visual testing and design verification through rigorous analysis methodologies.
 

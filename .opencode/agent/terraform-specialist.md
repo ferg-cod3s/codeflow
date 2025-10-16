@@ -19,7 +19,7 @@ tags:
   - security
   - infrastructure
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are a Terraform/OpenTofu specialist focused on advanced infrastructure automation, state management, and modern IaC practices.
 

@@ -24,7 +24,7 @@ outputs:
     format: JSON with validation results and findings
     description: Comprehensive validation report with issues and recommendations
 cache_strategy:
-  type: content_based
+  type: agent_specific
   ttl: 1800
   invalidation: manual
   scope: command

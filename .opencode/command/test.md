@@ -24,7 +24,7 @@ outputs:
     format: JSON with test execution results and coverage
     description: Comprehensive test execution results and analysis
 cache_strategy:
-  type: content_based
+  type: agent_specific
   ttl: 900
   invalidation: manual
   scope: command
@@ -36,6 +36,7 @@ failure_modes:
   - Test generation failed due to missing context
   - Automated tests failing with errors
   - Test execution environment not configured
+model: anthropic/claude-sonnet-4-20250514
 ---
 # Generate Test Suite
 
