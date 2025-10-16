@@ -9,12 +9,14 @@ This document explains the slash commands available in the codeflow workflow sys
 **Purpose**: Install all agents and commands to your project
 **Usage**: `codeflow setup [project-path]`
 **Options**:
+
 - `--type claude-code`: Install for Claude Code (.claude/commands)
 - `--type opencode`: Install for OpenCode (.opencode/command)
 - `--global`: Install to global directories
 - `--force`: Force overwrite existing setup
 
 **Examples**:
+
 ```bash
 codeflow setup .                    # Setup current directory
 codeflow setup --type opencode      # Setup for OpenCode
@@ -146,6 +148,22 @@ model: model_identifier
 Command prompt content with {{variable}} placeholder and !shell commands support.
 ```
 
+### MCP-Compatible Clients (Cursor, VS Code, etc.)
+
+MCP clients use JSON parameter format for tool calls:
+
+```json
+{
+  "tool": "research",
+  "parameters": {
+    "query": "Research question or topic",
+    "scope": "codebase|thoughts|both",
+    "depth": "shallow|medium|deep",
+    "ticket": "path/to/ticket.md"
+  }
+}
+```
+
 ## Usage Examples
 
 ### Research Command
@@ -153,9 +171,20 @@ Command prompt content with {{variable}} placeholder and !shell commands support
 ```bash
 # Claude Code
 /research thoughts/tickets/feature-auth.md
+/research "investigate user authentication system" --scope=codebase --depth=deep
 
 # OpenCode
 /research "investigate user authentication system for OAuth integration"
+
+# MCP Client (JSON format)
+{
+  "tool": "research",
+  "parameters": {
+    "query": "investigate user authentication system",
+    "scope": "codebase",
+    "depth": "deep"
+  }
+}
 ```
 
 ### Planning Command

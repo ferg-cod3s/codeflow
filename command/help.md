@@ -133,7 +133,6 @@ Provide comprehensive guidance for using CodeFlow development workflows, includi
 - Manual: When documentation updates
 - Time-based: Weekly refresh for dynamic content
 
-
 This command provides guidance for working with the CodeFlow system and development workflows.
 
 ## Development Commands
@@ -297,8 +296,11 @@ OpenCode requires explicit argument specification with YAML frontmatter:
 ```yaml
 ---
 name: research
+mode: command
 scope: codebase
 depth: deep
+model: anthropic/claude-sonnet-4
+temperature: 0.1
 ---
 Research query here...
 ```
@@ -309,6 +311,28 @@ Research query here...
 - `depth`: `"medium"`
 - `model`: `"anthropic/claude-sonnet-4"`
 - `temperature`: `0.1`
+
+#### MCP-Compatible Clients (Cursor, VS Code, etc.)
+
+MCP clients use JSON parameter format for structured argument passing:
+
+```json
+{
+  "tool": "research",
+  "parameters": {
+    "query": "Analyze authentication system",
+    "scope": "codebase",
+    "depth": "deep",
+    "ticket": "docs/tickets/auth-ticket.md"
+  }
+}
+```
+
+**Default Values**:
+
+- Same as Claude Code defaults
+- JSON schema validation
+- Structured parameter passing
 
 ### Date Formatting
 

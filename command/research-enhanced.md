@@ -174,12 +174,80 @@ This command orchestrates multiple specialized agents in a carefully designed wo
 - Potential Risks: [Things to watch out for]
 ```
 
+## Platform-Specific Usage
+
+### Claude Code (.claude.ai/code)
+
+Use direct command arguments with native parsing:
+
+```bash
+# Basic research with defaults
+/research "How does the authentication system work?"
+
+# Advanced research with explicit parameters
+/research "Analyze user session management" --scope=codebase --depth=deep
+
+# Research from ticket file
+/research --ticket="docs/tickets/auth-ticket.md" --scope=both --depth=medium
+```
+
+**Default Values:**
+
+- `scope`: `"codebase"`
+- `depth`: `"medium"`
+
+### OpenCode (opencode.ai)
+
+Use YAML frontmatter format for argument specification:
+
+```yaml
+---
+name: research
+mode: command
+scope: codebase
+depth: deep
+model: anthropic/claude-sonnet-4
+temperature: 0.1
+---
+Analyze the authentication system including user models, session handling, middleware, and security patterns.
+```
+
+**Default Values:**
+
+- `scope`: `"both"` (codebase + thoughts)
+- `depth`: `"medium"`
+- `model`: `"anthropic/claude-sonnet-4"`
+- `temperature`: `0.1`
+
+### MCP-Compatible Clients (Cursor, VS Code, etc.)
+
+Use JSON parameter format for structured arguments:
+
+```json
+{
+  "tool": "research",
+  "parameters": {
+    "query": "How does the authentication system work?",
+    "scope": "codebase",
+    "depth": "deep",
+    "ticket": "docs/tickets/auth-ticket.md"
+  }
+}
+```
+
+**Default Values:**
+
+- Same as Claude Code defaults
+- JSON schema validation
+- Structured parameter passing
+
 ## Pro Tips
 
 1. **Be Specific**: "Research authentication" vs "Research OAuth2 implementation and session management"
 2. **Set Context**: Include any constraints, requirements, or specific areas of focus
 3. **Follow Up**: Use results to inform `/plan` and `/execute` commands
 4. **Iterate**: Research findings often lead to more specific research questions
+5. **Platform Awareness**: Use platform-specific syntax (direct args vs YAML vs JSON) for optimal results
 
 ## Enhanced Subagent Orchestration
 
