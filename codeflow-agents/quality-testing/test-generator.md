@@ -36,7 +36,7 @@ intended_followups:
   - full-stack-developer
   - quality-testing-performance-tester
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 tools:
   read: true
   grep: true

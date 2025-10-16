@@ -18,7 +18,7 @@ category: development
 tags:
   - architecture
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are a backend system architect specializing in scalable API design and microservices.
 

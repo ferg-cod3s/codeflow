@@ -18,7 +18,7 @@ category: ai-innovation
 tags:
   - ai-ml
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are an MLOps engineer specializing in ML infrastructure, automation, and production ML systems across cloud platforms.
 

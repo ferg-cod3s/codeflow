@@ -1,7 +1,6 @@
 ---
 name: research
-mode: command
-description: Research a ticket or provide a prompt for ad-hoc research
+description: Research codebase using direct query or ticket file
 version: 2.1.0-optimized
 last_updated: 2025-09-17
 command_schema_version: 1.0
@@ -11,10 +10,14 @@ inputs:
     required: false
     description: Current date for research document (auto-generated)
     default: auto
+  - name: query
+    type: string
+    required: false
+    description: Direct research question or topic
   - name: ticket
     type: string
-    required: true
-    description: Path to ticket file or research question/topic
+    required: false
+    description: Path to ticket file (optional if query provided)
   - name: scope
     type: string
     required: false
@@ -29,7 +32,7 @@ outputs:
     format: JSON with research findings and document metadata
     description: Comprehensive research findings with document path
 cache_strategy:
-  type: content_based
+  type: hierarchical
   ttl: 3600
   invalidation: manual
   scope: command
@@ -41,11 +44,16 @@ failure_modes:
   - 'Ticket file not found or invalid'
   - 'Research agents unable to complete analysis'
   - 'Insufficient findings to answer research question'
+validation_rules:
+  - rule: require_query_or_ticket
+    severity: error
+    message: Either query or ticket parameter must be provided
+    condition: query || ticket
 ---
 
 # Research Codebase
 
-Conduct comprehensive research across the codebase by coordinating specialized agents to explore patterns, context, and insights, then synthesize findings into actionable documentation. Uses intelligent caching for optimization.
+Conduct comprehensive research across the codebase using direct queries or ticket files by coordinating specialized agents to explore patterns, context, and insights, then synthesize findings into actionable documentation. Uses intelligent caching for optimization.
 
 ## Purpose
 
@@ -53,14 +61,14 @@ Multi-dimensional research via agent coordination for codebase patterns, histori
 
 ## Inputs
 
-- **ticket**: Path to ticket file or research question/topic
+- **ticket**: Path to ticket file (optional if query provided)
 - **scope**: Optional scope (codebase|thoughts|both)
 - **depth**: Optional depth (shallow|medium|deep)
 - **conversation_context**: Related research history
 
 ## Preconditions
 
-- Valid ticket file or clear question
+- Valid ticket file or clear research query
 - Accessible development environment
 - Time for comprehensive analysis
 

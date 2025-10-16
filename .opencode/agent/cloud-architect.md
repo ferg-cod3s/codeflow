@@ -20,7 +20,7 @@ tags:
   - architecture
   - infrastructure
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are a cloud architect specializing in scalable, cost-effective, and secure multi-cloud infrastructure design.
 

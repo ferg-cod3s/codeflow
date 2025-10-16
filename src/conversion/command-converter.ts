@@ -134,6 +134,7 @@ export class CommandConverter {
     const converted: CommandMetadata = {
       ...frontmatter,
       mode: 'command',
+      model: frontmatter.model || 'anthropic/claude-sonnet-4-20250514',
       version: frontmatter.version || '2.1.0-optimized',
       last_updated: frontmatter.last_updated || new Date().toISOString().split('T')[0],
       command_schema_version: frontmatter.command_schema_version || '1.0',
@@ -184,7 +185,6 @@ export class CommandConverter {
     delete converted.temperature;
     delete converted.category;
     delete converted.params;
-    delete converted.model;
 
     return converted;
   }
@@ -222,7 +222,7 @@ export class CommandConverter {
 
     // Remove OpenCode-specific fields
     delete converted.mode;
-    if (converted.model) delete converted.model;
+    delete converted.model;
     delete converted.inputs;
     delete converted.outputs;
     delete converted.cache_strategy;
@@ -237,17 +237,21 @@ export class CommandConverter {
   /**
    * Convert Claude Code frontmatter to OpenCode format
    */
+  /**
+   * Convert Claude Code frontmatter to OpenCode format
+   */
   private convertClaudeCodeToOpenCode(frontmatter: CommandMetadata): CommandMetadata {
     const converted: CommandMetadata = {
       name: frontmatter.name,
       description: frontmatter.description,
       mode: 'command',
+      model: 'anthropic/claude-sonnet-4-20250514',
       version: '2.1.0-optimized',
       last_updated: new Date().toISOString().split('T')[0],
       command_schema_version: '1.0',
     };
 
-    // Commands should NOT have model fields - they use the agent's model
+
     // Convert params to OpenCode inputs if they exist
     if (frontmatter.params) {
       converted.inputs = [
@@ -292,9 +296,9 @@ export class CommandConverter {
     ];
 
     // Remove Claude-specific fields
-    delete converted.temperature;
-    delete converted.category;
     delete converted.params;
+    delete converted.category;
+    delete converted.temperature;
 
     return converted;
   }

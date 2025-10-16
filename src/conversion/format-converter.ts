@@ -240,7 +240,7 @@ export class FormatConverter {
   /**
    * Convert agent to target format
    */
-  convert(agent: Agent, targetFormat: 'base' | 'claude-code' | 'opencode'): Agent {
+  convert(agent: Agent, targetFormat: 'base' | 'claude-code' | 'opencode' | 'cursor'): Agent {
     if (agent.format === targetFormat) {
       return agent;
     }
@@ -248,6 +248,8 @@ export class FormatConverter {
     switch (agent.format) {
       case 'base':
         switch (targetFormat) {
+          case 'cursor':
+            return this.baseToClaudeCode(agent); // Cursor uses same format as Claude Code
           case 'claude-code':
             return this.baseToClaudeCode(agent);
           case 'opencode':
@@ -262,10 +264,26 @@ export class FormatConverter {
             return this.claudeCodeToOpenCode(agent);
         }
         break;
+      case 'cursor':
+        // Cursor uses same format as claude-code
+        switch (targetFormat) {
+          case 'base':
+            return this.claudeCodeToBase(agent);
+          case 'opencode':
+            return this.claudeCodeToOpenCode(agent);
+          case 'cursor':
+            return this.baseToClaudeCode(agent); // Cursor uses same format as Claude Code
+          case 'claude-code':
+          case 'cursor':
+            return agent; // Same format
+        }
+        break;
       case 'opencode':
         switch (targetFormat) {
           case 'base':
             return this.openCodeToBase(agent);
+          case 'cursor':
+            return this.baseToClaudeCode(agent); // Cursor uses same format as Claude Code
           case 'claude-code':
             return this.baseToClaudeCode(this.openCodeToBase(agent));
         }
@@ -280,7 +298,7 @@ export class FormatConverter {
    */
   convertAll(
     sourceDir: string,
-    targetFormat: 'base' | 'claude-code' | 'opencode',
+    targetFormat: 'base' | 'claude-code' | 'opencode' | 'cursor',
     outputDir: string
   ): void {
     // Implementation remains the same
@@ -289,7 +307,7 @@ export class FormatConverter {
   /**
    * Convert a batch of agents to target format
    */
-  convertBatch(agents: Agent[], targetFormat: 'base' | 'claude-code' | 'opencode'): Agent[] {
+  convertBatch(agents: Agent[], targetFormat: 'base' | 'claude-code' | 'opencode' | 'cursor'): Agent[] {
     return agents.map((agent) => this.convert(agent, targetFormat));
   }
 

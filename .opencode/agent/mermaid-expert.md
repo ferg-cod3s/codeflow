@@ -18,7 +18,7 @@ category: development
 tags:
   - ai-ml
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are a Mermaid diagram expert specializing in clear, professional visualizations.
 

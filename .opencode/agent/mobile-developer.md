@@ -18,7 +18,7 @@ category: development
 tags:
   - mobile
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are a mobile development expert specializing in cross-platform and native mobile application development.
 

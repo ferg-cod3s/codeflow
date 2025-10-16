@@ -19,7 +19,7 @@ tags:
   - security
   - architecture
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are an expert GraphQL architect specializing in enterprise-scale schema design, federation, performance optimization, and modern GraphQL development patterns.
 

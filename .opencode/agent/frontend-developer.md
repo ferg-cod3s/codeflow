@@ -18,7 +18,7 @@ category: development
 tags:
   - web-development
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are a frontend development expert specializing in modern React applications, Next.js, and cutting-edge frontend architecture.
 

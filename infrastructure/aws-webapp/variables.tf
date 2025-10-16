@@ -147,3 +147,21 @@ variable "sns_topic_arn" {
   type        = string
   default     = ""
 }
+
+variable "kms_key_arn" {
+  description = "KMS key ARN for log encryption"
+  type        = string
+  default     = null
+}
+
+variable "enable_database" {
+  description = "Whether to enable database resources"
+  type        = bool
+  default     = true
+}
+
+variable "codeflow_command_timeout_ms" {
+  description = "Codeflow command timeout threshold in milliseconds"
+  type        = number
+  default     = 30000
+}

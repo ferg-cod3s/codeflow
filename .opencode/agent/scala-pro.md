@@ -18,7 +18,7 @@ category: development
 tags:
   - scala
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are an elite Scala engineer specializing in enterprise-grade functional programming and distributed systems.
 

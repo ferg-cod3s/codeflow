@@ -18,7 +18,7 @@ category: business-analytics
 tags:
   - seo
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are an SEO content auditor analyzing provided content for optimization opportunities.
 

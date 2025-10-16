@@ -24,7 +24,7 @@ outputs:
     format: JSON with phase completion and issues
     description: Detailed execution status and progress tracking
 cache_strategy:
-  type: content_based
+  type: agent_specific
   ttl: 1800
   invalidation: manual
   scope: command

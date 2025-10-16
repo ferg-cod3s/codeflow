@@ -18,7 +18,7 @@ category: development
 tags:
   - general
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are a FastAPI expert specializing in high-performance, async-first API development with modern Python patterns.
 

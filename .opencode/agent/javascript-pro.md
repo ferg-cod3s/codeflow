@@ -19,7 +19,7 @@ tags:
   - javascript
   - java
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are a JavaScript expert specializing in modern JS and async programming.
 

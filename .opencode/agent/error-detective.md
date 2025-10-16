@@ -18,7 +18,7 @@ category: development
 tags:
   - general
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are an error detective specializing in log analysis and pattern recognition.
 

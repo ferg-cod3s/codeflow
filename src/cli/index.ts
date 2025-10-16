@@ -17,138 +17,11 @@ import { clean } from './clean';
 import { exportProject } from './export';
 import { research } from './research';
 import packageJson from '../../package.json';
-import { join } from 'node:path';
+import { join, resolve, sep } from 'node:path';
 import { existsSync } from 'node:fs';
+import { homedir } from 'node:os';
 
-/**
- * Helper function to determine directory path for agent format
- */
-function getFormatDirectory(
-  format: 'base' | 'claude-code' | 'opencode',
-  projectPath: string
-): string {
-  const codeflowRoot = join(import.meta.dir, '../..');
-
-  switch (format) {
-    case 'base':
-      // Base format refers to the global codeflow agent directory
-      return join(codeflowRoot, 'codeflow-agents');
-    case 'claude-code':
-      // For projects, use .claude/agents if it exists, otherwise use global
-      const projectClaudeDir = join(projectPath, '.claude', 'agents');
-      return existsSync(projectClaudeDir) ? projectClaudeDir : join(codeflowRoot, 'claude-agents');
-    case 'opencode':
-      // For projects, use .opencode/agent if it exists, otherwise use global
-      const projectOpenCodeDir = join(projectPath, '.opencode', 'agent');
-      return existsSync(projectOpenCodeDir)
-        ? projectOpenCodeDir
-        : join(codeflowRoot, 'opencode-agents');
-    default:
-      throw new Error(`Unknown format: ${format}`);
-  }
-}
-
-let values: any;
-let positionals: string[];
-
-try {
-  const parsed = parseArgs({
-    args: Bun.argv,
-    options: {
-      help: {
-        type: 'boolean',
-        short: 'h',
-        default: false,
-      },
-      version: {
-        type: 'boolean',
-        default: false,
-      },
-      force: {
-        type: 'boolean',
-        short: 'f',
-        default: false,
-      },
-      type: {
-        type: 'string',
-        short: 't',
-      },
-      validate: {
-        type: 'boolean',
-        default: true,
-      },
-      'dry-run': {
-        type: 'boolean',
-        default: false,
-      },
-      global: {
-        type: 'boolean',
-        short: 'g',
-        default: false,
-      },
-      project: {
-        type: 'string',
-      },
-      source: {
-        type: 'string',
-      },
-      target: {
-        type: 'string',
-        default: 'project',
-      },
-      'source-format': {
-        type: 'string',
-        default: 'base',
-      },
-      output: {
-        type: 'string',
-        short: 'o',
-      },
-      'include-web': {
-        type: 'boolean',
-        default: false,
-      },
-      specialists: {
-        type: 'string',
-      },
-      verbose: {
-        type: 'boolean',
-        short: 'v',
-        default: false,
-      },
-      'min-quality': {
-        type: 'string',
-        
-      },
-    },
-    strict: true,
-    allowPositionals: true,
-  });
-  values = parsed.values;
-  positionals = parsed.positionals;
-} catch (error: any) {
-  if (error.code === 'ERR_PARSE_ARGS_UNKNOWN_OPTION') {
-    console.error(`Error: ${error.message}`);
-    console.error("Run 'codeflow --help' for usage information");
-    process.exit(1);
-  }
-  throw error;
-}
-
-// Remove the first two positionals (bun and script path)
-const args = positionals.slice(2);
-const command = args[0];
-
-// Handle --version flag
-if (values.version) {
-  console.log(`Codeflow ${packageJson.version}`);
-  process.exit(0);
-}
-
-// Handle help (both --help flag and help command)
-if (values.help || command === 'help' || !command) {
-  console.log(`
-codeflow - Intelligent AI workflow management and development automation
+const HELP_TEXT = `codeflow - Intelligent AI workflow management and development automation
 
 CodeFlow is a CLI built with Bun and TypeScript that manages agents and commands for AI-assisted development workflows.
 
@@ -251,15 +124,170 @@ DEVELOPMENT WORKFLOW:
     - Use specialized domain agents for complex tasks
     - Emphasize context compression and fresh analysis
 
-For more detailed guidance, use the /help slash command in Claude Code/OpenCode or see docs/README.md
- `);
+For more detailed guidance, use the /help slash command in Claude Code/OpenCode or see docs/README.md`;
+
+/**
+ * Safely resolve and validate paths to prevent directory traversal attacks
+ */
+function safeResolve(base: string, candidate: string, allowedRoots: string[] = []): string {
+  if (candidate.includes('..')) {
+    throw new Error(`Path traversal detected: ${candidate} contains ".."`);
+  }
+  const resolved = join(base, candidate);
+  const normalized = resolve(resolved);
+
+  // Check if the normalized path is within allowed roots
+  const isAllowed =
+    allowedRoots.length === 0 ||
+    allowedRoots.some((root) => {
+      const rootNormalized = resolve(root);
+      return normalized.startsWith(rootNormalized + sep) || normalized === rootNormalized;
+    });
+
+  if (!isAllowed) {
+    throw new Error(
+      'Path traversal detected: ' + candidate + ' resolves outside allowed directories'
+    );
+  }
+
+  return normalized;
+}
+
+/**
+ * Helper function to determine directory path for agent format
+ */
+function getFormatDirectory(
+  format: 'base' | 'claude-code' | 'opencode',
+  projectPath: string
+): string {
+  const codeflowRoot = join(import.meta.dir, '../..');
+
+  switch (format) {
+    case 'base':
+      // Base format refers to the global codeflow agent directory
+      return join(codeflowRoot, 'codeflow-agents');
+    case 'claude-code':
+      // For projects, use .claude/agents if it exists, otherwise use global
+      const projectClaudeDir = join(projectPath, '.claude', 'agents');
+      return existsSync(projectClaudeDir) ? projectClaudeDir : join(codeflowRoot, 'claude-agents');
+    case 'opencode':
+      // For projects, use .opencode/agent if it exists, otherwise use global
+      const projectOpenCodeDir = join(projectPath, '.opencode', 'agent');
+      return existsSync(projectOpenCodeDir)
+        ? projectOpenCodeDir
+        : join(codeflowRoot, 'opencode-agents');
+    default:
+      throw new Error(`Unknown format: ${format}`);
+  }
+}
+
+let values: any;
+let positionals: string[];
+
+try {
+  const parsed = parseArgs({
+    args: Bun.argv,
+    options: {
+      help: {
+        type: 'boolean',
+        short: 'h',
+        default: false,
+      },
+      version: {
+        type: 'boolean',
+        default: false,
+      },
+      force: {
+        type: 'boolean',
+        short: 'f',
+        default: false,
+      },
+      type: {
+        type: 'string',
+        short: 't',
+      },
+      validate: {
+        type: 'boolean',
+        default: true,
+      },
+      'dry-run': {
+        type: 'boolean',
+        default: false,
+      },
+      global: {
+        type: 'boolean',
+        short: 'g',
+        default: false,
+      },
+      project: {
+        type: 'string',
+      },
+      source: {
+        type: 'string',
+      },
+      target: {
+        type: 'string',
+        default: 'project',
+      },
+      'source-format': {
+        type: 'string',
+        default: 'base',
+      },
+      output: {
+        type: 'string',
+        short: 'o',
+      },
+      'include-web': {
+        type: 'boolean',
+        default: false,
+      },
+      specialists: {
+        type: 'string',
+      },
+      verbose: {
+        type: 'boolean',
+        short: 'v',
+        default: false,
+      },
+      'min-quality': {
+        type: 'string',
+      },
+    },
+    strict: true,
+    allowPositionals: true,
+  });
+  values = parsed.values;
+  positionals = parsed.positionals;
+} catch (error: any) {
+  if (error.code === 'ERR_PARSE_ARGS_UNKNOWN_OPTION') {
+    console.error(`Error: ${error.message}`);
+    console.error("Run 'codeflow --help' for usage information");
+    process.exit(1);
+  }
+  throw error;
+}
+
+// Remove the first two positionals (bun and script path)
+const args = positionals.slice(2);
+const command = args[0];
+
+// Handle --version flag
+if (values.version) {
+  console.log(`Codeflow ${packageJson.version}`);
+  process.exit(0);
+}
+
+// Handle help (both --help flag and help command)
+if (values.help || command === 'help' || !command) {
+  console.log(HELP_TEXT);
   process.exit(0);
 }
 
 switch (command) {
   case 'setup':
     const setupPath = args[1];
-    await setup(setupPath, {
+    const safeSetupPath = safeResolve(process.cwd(), setupPath || '.', [process.cwd(), homedir()]);
+    await setup(safeSetupPath, {
       global: values.global,
       force: values.force,
       type: values.type,
@@ -267,11 +295,16 @@ switch (command) {
     break;
   case 'status':
     const statusPath = args[1];
-    await status(statusPath);
+    const safeStatusPath = safeResolve(process.cwd(), statusPath || '.', [
+      process.cwd(),
+      homedir(),
+    ]);
+    await status(safeStatusPath);
     break;
   case 'sync':
     const syncPath = args[1];
-    await sync(syncPath, {
+    const safeSyncPath = safeResolve(process.cwd(), syncPath || '.', [process.cwd(), homedir()]);
+    await sync(safeSyncPath, {
       global: values.global,
       force: values.force,
       dryRun: values['dry-run'],
@@ -385,7 +418,8 @@ switch (command) {
 
   case 'list':
     const listPath = args[1];
-    await list(listPath, {
+    const safeListPath = safeResolve(process.cwd(), listPath || '.', [process.cwd(), homedir()]);
+    await list(safeListPath, {
       type: values.type || 'all',
       platform: values.platform || 'all',
       format: values.format || 'table',
@@ -401,7 +435,8 @@ switch (command) {
       process.exit(1);
     }
     const infoPath = args[2];
-    await info(itemName, infoPath, {
+    const safeInfoPath = safeResolve(process.cwd(), infoPath || '.', [process.cwd(), homedir()]);
+    await info(itemName, safeInfoPath, {
       format: values.format || 'detailed',
       showContent: values['show-content'],
     });
@@ -418,7 +453,8 @@ switch (command) {
 
   case 'clean':
     const cleanPath = args[1];
-    await clean(cleanPath, {
+    const safeCleanPath = safeResolve(process.cwd(), cleanPath || '.', [process.cwd(), homedir()]);
+    await clean(safeCleanPath, {
       dryRun: values['dry-run'],
       force: values.force,
       verbose: values.verbose,
@@ -428,7 +464,11 @@ switch (command) {
 
   case 'export':
     const exportPath = args[1];
-    await exportProject(exportPath, {
+    const safeExportPath = safeResolve(process.cwd(), exportPath || '.', [
+      process.cwd(),
+      homedir(),
+    ]);
+    await exportProject(safeExportPath, {
       format: values.format || 'json',
       output: values.output,
       includeContent: values['include-content'],

@@ -17,12 +17,8 @@ function validateClaudeCommand(metadata: any): { valid: boolean; errors: string[
   // Required fields
   if (!metadata.name) errors.push('Missing required field: name');
   if (!metadata.description) errors.push('Missing required field: description');
-  if (!metadata.model) errors.push('Missing required field: model');
   
-  // Model format
-  if (metadata.model && !metadata.model.includes('claude')) {
-    errors.push('Model should be a Claude model');
-  }
+  // Note: Claude Code commands don't use 'model' field in frontmatter, they use 'temperature' instead
   
   // Temperature for commands should be lower (more deterministic)
   if (metadata.temperature !== undefined) {
@@ -371,7 +367,7 @@ describe('Command Validation', () => {
         expect(claudeMeta).toBeTruthy();
         expect(claudeMeta.name).toBe('continue');
         expect(claudeMeta.description).toContain('Resume execution');
-        expect(claudeMeta.model).toContain('claude');
+        // Note: Claude Code commands don't use 'model' field - configuration is managed by Claude Code platform
         expect(claudeMeta.temperature).toBeLessThanOrEqual(0.5);
       }
 

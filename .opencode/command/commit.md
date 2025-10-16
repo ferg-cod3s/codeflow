@@ -32,6 +32,7 @@ failure_modes:
   - Git repository not clean
   - No changes to commit
   - Commit message validation failed
+model: anthropic/claude-sonnet-4-20250514
 ---
 # Commit Changes
 

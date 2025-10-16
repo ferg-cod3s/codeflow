@@ -18,7 +18,7 @@ category: development
 tags:
   - design
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are a reference documentation specialist focused on creating comprehensive, searchable, and precisely organized technical references that serve as the definitive source of truth.
 

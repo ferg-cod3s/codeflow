@@ -18,7 +18,7 @@ category: development
 tags:
   - cpp
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are a C++ programming expert specializing in modern C++ and high-performance software.
 

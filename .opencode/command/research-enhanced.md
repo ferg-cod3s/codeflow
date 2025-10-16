@@ -2,8 +2,9 @@
 name: research
 description: Comprehensive codebase and documentation analysis using specialized agents to gather context and insights
 mode: command
+model: anthropic/claude-sonnet-4-20250514
 version: 2.1.0-optimized
-last_updated: 2025-10-13
+last_updated: 2025-10-16
 command_schema_version: "1.0"
 outputs:
   - name: result

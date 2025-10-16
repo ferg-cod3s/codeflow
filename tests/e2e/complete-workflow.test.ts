@@ -1,25 +1,29 @@
 import { describe, test, expect, beforeAll, afterAll } from 'bun:test';
 import { existsSync, mkdirSync, rmSync, writeFileSync } from 'fs';
-import { join, resolve } from 'path';
+import { join } from 'path';
 import { tmpdir } from 'os';
+import { setup } from '../../src/cli/setup';
+import { status } from '../../src/cli/status';
+import { sync } from '../../src/cli/sync';
+import { convert } from '../../src/cli/convert';
 
 const TEST_TIMEOUT = 60000; // 60 seconds
-const CLI_PATH = resolve(__dirname, '../../src/cli/index.ts');
 
-// Run CLI command by directly requiring and executing the CLI module
-async function runCommand(args: string[]): Promise<void> {
-  // Save current process.argv
-  const originalArgv = process.argv;
-
-  try {
-    // Set process.argv to mimic CLI invocation
-    process.argv = ['bun', CLI_PATH, ...args];
-
-    // Dynamic import the CLI (this executes the CLI code)
-    await import(CLI_PATH + '?t=' + Date.now());
-  } finally {
-    // Restore original process.argv
-    process.argv = originalArgv;
+/**
+ * Helper function to get format directory path
+ */
+function getFormatDirectory(
+  format: 'base' | 'claude-code' | 'opencode',
+  projectPath: string
+): string {
+  switch (format) {
+    case 'opencode':
+      return join(projectPath, '.opencode', 'agent');
+    case 'claude-code':
+      return join(projectPath, '.claude', 'agents');
+    case 'base':
+      // For tests, use a test base directory
+      return join(projectPath, 'codeflow-agents');
   }
 }
 
@@ -55,7 +59,7 @@ describe('MVP Workflow E2E Tests', () => {
 
       // Phase 1: Project Setup
       const setupStart = Date.now();
-      await runCommand(['setup', testProjectDir]);
+      await setup(testProjectDir, { force: false, type: 'opencode' });
 
       checkpoints.setup = Date.now() - setupStart;
       expect(checkpoints.setup).toBeLessThan(3000); // Setup should take < 3 seconds
@@ -69,7 +73,7 @@ describe('MVP Workflow E2E Tests', () => {
 
       // Phase 2: Status Check
       const statusStart = Date.now();
-      await runCommand(['status', testProjectDir]);
+      await status(testProjectDir);
 
       checkpoints.status = Date.now() - statusStart;
       expect(checkpoints.status).toBeLessThan(2000); // Status should be fast
@@ -93,16 +97,14 @@ You are a test agent used for end-to-end workflow validation.`;
       const baseAgentPath = join(testProjectDir, '.opencode', 'agent', 'test_agent.md');
       writeFileSync(baseAgentPath, testAgentContent);
 
-      // Test format conversion (base to opencode)
-      await runCommand([
-        'convert',
-        '--source',
-        'base',
-        '--target',
-        'opencode',
-        '--project',
-        testProjectDir,
-      ]);
+      // Test format conversion (opencode to claude-code)
+      const sourceDir = getFormatDirectory('opencode', testProjectDir);
+      const targetDir = getFormatDirectory('claude-code', testProjectDir);
+      
+      // Create target directory if it doesn't exist
+      mkdirSync(targetDir, { recursive: true });
+      
+      await convert(sourceDir, targetDir, 'claude-code');
 
       checkpoints.convert = Date.now() - convertStart;
       expect(checkpoints.convert).toBeLessThan(5000); // Conversion should take < 5 seconds
@@ -112,8 +114,13 @@ You are a test agent used for end-to-end workflow validation.`;
       // Phase 4: Synchronization Test
       const syncStart = Date.now();
 
-      // Test sync command
-      await runCommand(['sync', '--project', testProjectDir]);
+      // Test sync command - direct function call
+      await sync(testProjectDir, {
+        global: false,
+        force: false,
+        dryRun: false,
+        verbose: false,
+      });
 
       checkpoints.sync = Date.now() - syncStart;
       expect(checkpoints.sync).toBeLessThan(5000); // Sync should take < 5 seconds

@@ -18,7 +18,7 @@ category: development
 tags:
   - csharp
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are a C# expert specializing in modern .NET development and enterprise-grade applications.
 

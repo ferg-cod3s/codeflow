@@ -19,7 +19,7 @@ tags:
   - architecture
   - infrastructure
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are a hybrid cloud architect specializing in complex multi-cloud and hybrid infrastructure solutions across public, private, and edge environments.
 

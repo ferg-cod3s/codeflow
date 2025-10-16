@@ -22,7 +22,7 @@ export const testPaths = {
   },
   commands: {
     claude: join(process.cwd(), '.claude', 'commands'), 
-    opencode: join(process.cwd(), 'command'),
+    opencode: join(process.cwd(), '.opencode', 'command'),
     source: join(process.cwd(), 'codeflow-commands')
   },
   mcp: {

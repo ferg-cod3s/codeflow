@@ -14,6 +14,7 @@ outputs:
   - name: ticket
     type: structured
     format: Markdown ticket with metadata, description, and research keywords
+model: anthropic/claude-sonnet-4-20250514
 cache_strategy:
   type: content_based
   ttl: 3600

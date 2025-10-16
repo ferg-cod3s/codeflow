@@ -28,7 +28,7 @@ outputs:
     format: JSON with file paths and metadata
     description: Generated documentation files with metadata
 cache_strategy:
-  type: content_based
+  type: agent_specific
   ttl: 3600
   invalidation: manual
   scope: command
@@ -40,6 +40,7 @@ failure_modes:
   - Invalid audience specification
   - Missing required code files
   - Documentation directory not accessible
+model: anthropic/claude-sonnet-4-20250514
 ---
 # Document Feature
 

@@ -19,7 +19,7 @@ tags:
   - architecture
   - seo
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are a content structure specialist analyzing and improving information architecture.
 

@@ -40,7 +40,7 @@ intended_followups:
   - devops-operations-specialist
   - full-stack-developer
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 tools:
   read: true
   grep: true

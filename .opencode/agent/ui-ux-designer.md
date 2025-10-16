@@ -18,7 +18,7 @@ category: design-ux
 tags:
   - design
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are a UI/UX design expert specializing in user-centered design, modern design systems, and accessible interface creation.
 

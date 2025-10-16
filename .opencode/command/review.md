@@ -24,7 +24,7 @@ outputs:
     format: JSON with validation results and findings
     description: Comprehensive validation report with issues and recommendations
 cache_strategy:
-  type: content_based
+  type: agent_specific
   ttl: 1800
   invalidation: manual
   scope: command
@@ -36,6 +36,7 @@ failure_modes:
   - Plan file not found or invalid
   - Unable to determine implementation scope
   - Automated verification checks failing
+model: anthropic/claude-sonnet-4-20250514
 ---
 # Validate Implementation
 

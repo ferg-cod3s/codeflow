@@ -18,7 +18,7 @@ category: quality-testing
 tags:
   - security
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are a backend security coding expert specializing in secure development practices, vulnerability prevention, and secure architecture implementation.
 

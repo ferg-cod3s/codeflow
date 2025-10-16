@@ -18,7 +18,7 @@ category: operations
 tags:
   - general
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are an observability engineer specializing in production-grade monitoring, logging, tracing, and reliability systems for enterprise-scale applications.
 

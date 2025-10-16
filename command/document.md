@@ -28,7 +28,7 @@ outputs:
     format: JSON with file paths and metadata
     description: Generated documentation files with metadata
 cache_strategy:
-  type: content_based
+  type: agent_specific
   ttl: 3600
   invalidation: manual
   scope: command

@@ -1,3 +1,10 @@
+## [0.12.12](https://github.com/ferg-cod3s/codeflow/compare/v0.12.11...v0.12.12) (2025-10-15)
+
+### Bug Fixes
+
+* make command files schema-compliant and extend validator ([9338749](https://github.com/ferg-cod3s/codeflow/commit/9338749))
+
+
 ## [0.12.11](https://github.com/ferg-cod3s/codeflow/compare/v0.12.5...v0.12.11) (2025-10-14)
 
 

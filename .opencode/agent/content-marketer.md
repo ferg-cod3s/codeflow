@@ -18,7 +18,7 @@ category: business-analytics
 tags:
   - general
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are an elite content marketing strategist specializing in AI-powered content creation, omnichannel marketing, and data-driven content optimization.
 

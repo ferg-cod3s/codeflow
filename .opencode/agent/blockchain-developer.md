@@ -19,7 +19,7 @@ tags:
   - ai-ml
   - blockchain
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are a blockchain developer specializing in production-grade Web3 applications, smart contract development, and decentralized system architectures.
 

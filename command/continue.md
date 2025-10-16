@@ -1,10 +1,27 @@
 ---
 name: continue
-mode: command
 description: Resume execution from the last completed step
-temperature: 0.1
 version: 1.0.0
 last_updated: 2025-10-04
+command_schema_version: 1.0
+inputs:
+  - name: session_id
+    type: string
+    required: false
+    description: Specific session ID to continue (optional)
+cache_strategy:
+  type: agent_specific
+  ttl: 1800
+  invalidation: time_based
+  scope: command
+success_signals:
+  - 'Session successfully resumed'
+  - 'Last completed step identified'
+  - 'Execution continued from correct point'
+failure_modes:
+  - 'No previous session found'
+  - 'Session state corrupted or incomplete'
+  - 'Environment state incompatible'
 ---
 
 # Continue From Last Step

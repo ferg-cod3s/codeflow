@@ -86,7 +86,7 @@ export interface OpenCodeAgent {
  * Generic agent interface that can represent any format
  */
 export interface Agent extends ParsedEntity {
-  format: 'base' | 'claude-code' | 'opencode';
+  format: 'base' | 'claude-code' | 'opencode' | 'cursor' | 'cursor';
   frontmatter: BaseAgent | ClaudeCodeAgent | OpenCodeAgent;
 }
 
@@ -206,12 +206,13 @@ function parseFrontmatter(content: string): { frontmatter: any; body: string } {
  */
 export async function parseAgentFile(
   filePath: string,
-  format: 'base' | 'claude-code' | 'opencode'
+  format: 'base' | 'claude-code' | 'opencode' | 'cursor'
 ): Promise<Agent> {
   const parseCache = globalPerformanceMonitor.getParseCache();
 
   // Check cache first
-  const cached = await parseCache.get(filePath);
+  const cacheKey = `${filePath}:${format}`;
+  const cached = await parseCache.get(cacheKey);
   if (cached) {
     if ('frontmatter' in cached) {
       // Cached successful parse
@@ -247,7 +248,7 @@ export async function parseAgentFile(
     };
 
     // Cache successful parse
-    await parseCache.set(filePath, agent);
+    await parseCache.set(cacheKey, agent);
 
     const parseTime = performance.now() - parseStart;
     globalPerformanceMonitor.updateMetrics({ agentParseTime: parseTime });
@@ -349,7 +350,7 @@ function parseWithFallback(content: string): {
  */
 export async function parseAgentsFromDirectory(
   directory: string,
-  format: 'base' | 'claude-code' | 'opencode' | 'auto'
+  format: 'base' | 'claude-code' | 'opencode' | 'cursor' | 'cursor' | 'auto'
 ): Promise<{ agents: Agent[]; errors: ParseError[] }> {
   const { readdir } = await import('node:fs/promises');
   const { join } = await import('node:path');
@@ -373,6 +374,7 @@ export async function parseAgentsFromDirectory(
       if (stat.isDirectory()) {
         // This is a subdirectory, parse agents from it recursively
         try {
+          let actualFormat = format as 'base' | 'claude-code' | 'opencode' | 'cursor';
           const subdirAgents = await parseAgentsFromDirectory(itemPath, format);
           agents.push(...subdirAgents.agents);
           errors.push(...subdirAgents.errors);
@@ -385,10 +387,7 @@ export async function parseAgentsFromDirectory(
       } else if (item.endsWith('.md') && !item.startsWith('README')) {
         // This is a markdown file, parse it
         try {
-          let actualFormat: 'base' | 'claude-code' | 'opencode' = format as
-            | 'base'
-            | 'claude-code'
-            | 'opencode';
+          let actualFormat = format as 'base' | 'claude-code' | 'opencode' | 'cursor';
           if (format === 'auto') {
             // Auto-detect format from file content
             const content = await globalFileReader.readFile(itemPath);

@@ -18,7 +18,7 @@ category: quality-testing
 tags:
   - security
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are a security auditor specializing in DevSecOps, application security, and comprehensive cybersecurity practices.
 

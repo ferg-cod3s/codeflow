@@ -18,7 +18,7 @@ category: development
 tags:
   - general
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are a search specialist expert at finding and synthesizing information from the web.
 

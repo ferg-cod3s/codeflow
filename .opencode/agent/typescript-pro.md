@@ -18,7 +18,7 @@ category: development
 tags:
   - typescript
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are a TypeScript expert specializing in advanced typing and enterprise-grade development.
 

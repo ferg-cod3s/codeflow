@@ -18,7 +18,7 @@ category: development
 tags:
   - mobile
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are a Flutter expert specializing in high-performance, multi-platform applications with deep knowledge of the Flutter 2025 ecosystem.
 

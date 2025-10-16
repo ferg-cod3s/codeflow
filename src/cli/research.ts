@@ -47,17 +47,17 @@ export class ResearchCLI {
   private async initialize(): Promise<void> {
     try {
       // Load modules from agentic-mcp package
-      const agenticMcpPath = join(this.projectRoot, '..', 'packages', 'agentic-mcp', 'dist');
+      const agenticMcpPath = join(this.projectRoot, 'packages', 'agentic-mcp', 'dist');
       
       if (!existsSync(agenticMcpPath)) {
         throw new Error('Agentic MCP package not found. Please run: npm run build');
       }
 
       // Dynamically import the modules
-      const { AgentRegistry } = await import(`${agenticMcpPath}/agent-registry.js`);
+      const { buildSafeAgentRegistry } = await import(`${agenticMcpPath}/agent-registry.js`);
       const { executeResearchWorkflow } = await import(`${agenticMcpPath}/research-workflow.js`);
       
-      this.agentRegistry = new AgentRegistry(this.projectRoot);
+      this.agentRegistry = await buildSafeAgentRegistry();
       this.workflowOrchestrator = { executeResearchWorkflow };
       
       console.log('✅ Research system initialized\n');
@@ -80,13 +80,15 @@ export class ResearchCLI {
       this.showProgress('Initializing', 0);
 
       // Execute the workflow
+      // Execute the workflow
       const result = await this.workflowOrchestrator.executeResearchWorkflow(
-        options.query,
         {
+          query: options.query,
           includeExternalResearch: options.includeWeb ?? false,
-          domainSpecialists: options.specialists || [],
-          minQualityScore: options.minQuality || 50,
-        }
+          engageDomainSpecialists: options.specialists && options.specialists.length > 0,
+          maxSpecialists: options.specialists ? options.specialists.length : 3,
+        },
+        this.agentRegistry
       );
 
       // Show completion

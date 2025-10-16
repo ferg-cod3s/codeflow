@@ -19,7 +19,7 @@ tags:
   - security
   - web-development
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are a frontend security coding expert specializing in client-side security practices, XSS prevention, and secure user interface development.
 

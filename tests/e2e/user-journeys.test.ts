@@ -1,25 +1,29 @@
 import { describe, test, expect, beforeAll, afterAll } from 'bun:test';
-import { existsSync, mkdirSync, rmSync, writeFileSync, readFileSync } from 'fs';
-import { join, resolve } from 'path';
+import { existsSync, mkdirSync, rmSync, writeFileSync } from 'fs';
+import { join } from 'path';
 import { tmpdir } from 'os';
+import { setup } from '../../src/cli/setup';
+import { status } from '../../src/cli/status';
+import { sync } from '../../src/cli/sync';
+import { convert } from '../../src/cli/convert';
 
 const TEST_TIMEOUT = 60000; // 60 seconds
-const CLI_PATH = resolve(__dirname, '../../src/cli/index.ts');
 
-// Run CLI command by directly requiring and executing the CLI module
-async function runCommand(args: string[]): Promise<void> {
-  // Save current process.argv
-  const originalArgv = process.argv;
-
-  try {
-    // Set process.argv to mimic CLI invocation
-    process.argv = ['bun', CLI_PATH, ...args];
-
-    // Dynamic import the CLI (this executes the CLI code)
-    await import(CLI_PATH + '?t=' + Date.now());
-  } finally {
-    // Restore original process.argv
-    process.argv = originalArgv;
+/**
+ * Helper function to get format directory path
+ */
+function getFormatDirectory(
+  format: 'base' | 'claude-code' | 'opencode',
+  projectPath: string
+): string {
+  switch (format) {
+    case 'opencode':
+      return join(projectPath, '.opencode', 'agent');
+    case 'claude-code':
+      return join(projectPath, '.claude', 'agents');
+    case 'base':
+      // For tests, use a test base directory
+      return join(projectPath, 'codeflow-agents');
   }
 }
 
@@ -69,8 +73,8 @@ describe('MVP User Journey E2E Tests', () => {
         )
       );
 
-      // User runs initial setup
-      await runCommand(['setup', projectDir]);
+      // User runs initial setup - direct function call instead of CLI
+      await setup(projectDir, { force: false, type: 'opencode' });
 
       expect(existsSync(join(projectDir, '.opencode'))).toBe(true);
       expect(existsSync(join(projectDir, '.opencode', 'agent'))).toBe(true);
@@ -78,13 +82,18 @@ describe('MVP User Journey E2E Tests', () => {
 
       console.log('✅ Project setup successful');
 
-      // Step 2: User checks status
-      await runCommand(['status', projectDir]);
+      // Step 2: User checks status - direct function call
+      await status(projectDir);
 
       console.log('✅ Status check successful');
 
-      // Step 3: User runs sync
-      await runCommand(['sync', '--project', projectDir]);
+      // Step 3: User runs sync - direct function call
+      await sync(projectDir, {
+        global: false,
+        force: false,
+        dryRun: false,
+        verbose: true,
+      });
 
       console.log('✅ Sync successful');
 
@@ -103,15 +112,14 @@ You are a test agent for MVP validation.`;
       const baseAgentPath = join(projectDir, '.opencode', 'agent', 'test_agent.md');
       writeFileSync(baseAgentPath, testAgentContent);
 
-      await runCommand([
-        'convert',
-        '--source',
-        'base',
-        '--target',
-        'opencode',
-        '--project',
-        projectDir,
-      ]);
+      // Direct function call for convert
+      const sourceDir = getFormatDirectory('opencode', projectDir);
+      const targetDir = getFormatDirectory('claude-code', projectDir);
+      
+      // Create target directory if it doesn't exist
+      mkdirSync(targetDir, { recursive: true });
+      
+      await convert(sourceDir, targetDir, 'claude-code');
 
       console.log('✅ Format conversion successful');
 

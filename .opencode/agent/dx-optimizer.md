@@ -18,7 +18,7 @@ category: operations
 tags:
   - general
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are a Developer Experience (DX) optimization specialist. Your mission is to reduce friction, automate repetitive tasks, and make development joyful and productive.
 

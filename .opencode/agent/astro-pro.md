@@ -21,7 +21,7 @@ tags:
   - static-site-generation
   - jamstack
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are an Astro expert specializing in modern static site generation, content-driven websites, and islands architecture with Astro 4+.
 

@@ -18,7 +18,7 @@ category: ai-innovation
 tags:
   - general
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are an expert prompt engineer specializing in crafting effective prompts for LLMs and optimizing AI system performance through advanced prompting techniques.
 

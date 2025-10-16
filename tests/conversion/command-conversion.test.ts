@@ -136,8 +136,9 @@ This is a test command.
       expect(result).toContain('name: test');
       expect(result).toContain('description: Test command');
       expect(result).toContain('mode: command');
-      // Commands should NOT have model - they use the agent's model
-      expect(result).not.toContain('model:');
+      
+      // OpenCode commands MUST have model field (per MODEL_CONFIGURATION.md)
+      expect(result).toContain('model: anthropic/claude-sonnet-4-20250514');
 
       // Should contain inputs structure
       expect(result).toContain('inputs:');
@@ -210,8 +211,8 @@ Test content.
       // Should NOT have params (not converting from Claude Code)
       expect(result).not.toContain('params:');
 
-      // Should NOT have model (commands use agent's model)
-      expect(result).not.toContain('model:');
+      // OpenCode commands MUST have model field (per MODEL_CONFIGURATION.md)
+      expect(result).toContain('model: anthropic/claude-sonnet-4-20250514');
     });
   });
 
@@ -227,7 +228,7 @@ Test content.
       expect(result.model).toBeUndefined(); // Claude Code commands don't have models
     });
 
-    test('should not include model in OpenCode conversion', () => {
+    test('should include model in OpenCode conversion', () => {
       const frontmatter = {
         name: 'test',
         description: 'test',
@@ -235,7 +236,8 @@ Test content.
       };
 
       const result = (converter as any).convertClaudeCodeToOpenCode(frontmatter);
-      expect(result.model).toBeUndefined(); // OpenCode commands don't have models either
+      // OpenCode commands MUST have model field (per MODEL_CONFIGURATION.md)
+      expect(result.model).toBe('anthropic/claude-sonnet-4-20250514');
     });
   });
 
@@ -279,13 +281,14 @@ Test content.
 
       // Convert to Claude Code
       const claudeResult = await converter.convertFile(testCommandPath, 'claude-code');
-      expect(claudeResult).not.toContain('model:'); // Commands don't have models
+      expect(claudeResult).not.toContain('model:'); // Claude Code commands don't have models
       expect(claudeResult).not.toContain('mode: command');
 
       // Convert to OpenCode
       const opencodeResult = await converter.convertFile(testCommandPath, 'opencode');
       expect(opencodeResult).toContain('mode: command');
-      expect(opencodeResult).not.toContain('model:'); // Commands don't have models
+      // OpenCode commands MUST have model field (per MODEL_CONFIGURATION.md)
+      expect(opencodeResult).toContain('model: anthropic/claude-sonnet-4-20250514');
     });
   });
 });

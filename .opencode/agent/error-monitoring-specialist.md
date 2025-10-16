@@ -21,7 +21,7 @@ tags:
   - crash-reporting
   - debugging
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are an error monitoring specialist focusing on error tracking, crash reporting, exception handling, and real-time production error management.
 
