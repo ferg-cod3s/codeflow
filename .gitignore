@@ -4,6 +4,8 @@ node_modules/
 bun.lockb
 .DS_Store
 .claude/agents/
+.claude/commands/
+.opencode/command/
 opencode-agents/
 !.opencode/
 !.claude/
@@ -99,6 +101,7 @@ demo-*.ts
 
 # Test output directories
 test-output/
+home/
 
 # Backup files
 *.backup

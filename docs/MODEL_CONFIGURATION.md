@@ -24,7 +24,6 @@ We've implemented a centralized model configuration system that:
 
 1. Maintains correct model IDs for each platform
 2. Automatically fixes model IDs during sync operations
-3. Integrates with the catalog system for consistent installations
 
 ## Configuration File
 
@@ -79,16 +78,6 @@ If you need to fix models manually:
 
 ### Catalog Integration
 
-The catalog system automatically applies correct models when installing:
-
-```bash
-# Install with automatic model configuration
-codeflow catalog install <item-id> --global
-
-# Sync all catalog items with correct models
-codeflow catalog sync --global
-```
-
 ## How It Works
 
 ### 1. Smart Sync Script (`sync-with-model-config.sh`)
@@ -107,15 +96,6 @@ The TypeScript ModelFixer class:
 - Loads model configuration
 - Provides methods to fix model IDs in content
 - Validates model formats for different targets
-- Integrates with the catalog installation process
-
-### 3. Catalog Integration
-
-When installing items through the catalog:
-
-1. Content is converted to the target format
-2. ModelFixer applies the correct model ID
-3. Content is validated before writing
 
 ## Supported Platforms
 

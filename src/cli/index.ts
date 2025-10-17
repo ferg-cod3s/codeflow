@@ -6,8 +6,7 @@ import { setup } from './setup';
 import { convert } from './convert';
 import { sync } from './sync';
 import { startWatch } from './watch';
-import { catalog } from './catalog.js';
-import { discover } from './discover.js';
+
 import { fixModels } from './fix-models.js';
 import { validate } from './validate';
 import { list } from './list';
@@ -35,8 +34,7 @@ Commands:
    fix-models [options]       Fix model configurations (default: global, use --local for project)
    convert <source> <target> <format>  Convert agents between formats
    watch start [options]      Start automatic file synchronization daemon
-   catalog <subcommand>       Browse, search, and install catalog items
-   discover [query]           Find agents by use case (e.g., "build API", "fix performance")
+
    validate [path]            Validate agents and commands for integrity issues
    list [path]                List installed agents and commands
    info <item-name> [path]    Show detailed information about an agent or command
@@ -45,21 +43,7 @@ Commands:
    export [path]              Export project setup to a file
    research "<query>" [options]  Execute deep research workflow for codebase analysis
 
-Catalog Subcommands:
-  catalog list [type] [source] [--tags tag1,tag2]    List catalog items (filter by type/source/tags)
-  catalog search <term> [--tags tag1,tag2]           Search catalog items by query
-  catalog info <item-id>                             Show detailed information about an item
-  catalog install <item-id> [--target claude-code,opencode] [--global] [--dry-run]
-                                                     Install item to specified targets
-  catalog install-all [--target claude-code,opencode] [--global] [--dry-run] [--source name]
-                                                     Install all catalog items to specified targets
-  catalog import <source> [--adapter name] [--filter patterns] [--dry-run]
-                                                     Import items from external sources (GitHub repos, etc.)
-  catalog update [item-ids]                          Update installed items to latest versions
-  catalog remove <item-id>                           Remove an installed item
-  catalog build [--force]                            Build or rebuild the catalog index
-  catalog health-check                               Check catalog health and integrity
-  catalog sync [--global] [--dry-run]                Sync catalog items to configured locations
+
 
 Options:
   -f, --force               Force overwrite existing setup
@@ -84,21 +68,8 @@ Examples:
   codeflow convert ./codeflow-agents ./claude-agents claude-code
   codeflow watch start --global
 
-  # Catalog commands:
-  codeflow catalog list agent --tags "code-review,testing"  # List agents with specific tags
-  codeflow catalog search "code review"                     # Search for code review items
-  codeflow catalog info claude-templates/blog-writer        # Show item details
-  codeflow catalog install claude-templates/blog-writer --target claude-code --global
-  codeflow catalog install-all --global --dry-run          # Preview installing all items
-  codeflow catalog import davila7/claude-code-templates     # Import from GitHub repo
-  codeflow catalog import davila7/claude-code-templates --dry-run --adapter github
-  codeflow catalog sync --global                            # Sync to global directories
-
 DEVELOPMENT WORKFLOW:
-  Use 'codeflow setup' to initialize agents and commands in your project, or use the catalog system:
-    codeflow catalog install <item-id> --global    # Install specific agents/commands globally
-    codeflow catalog install-all --global          # Install all available items globally
-    codeflow catalog import <github-repo>          # Import from external catalogs
+  Use 'codeflow setup' to initialize agents and commands in your project
 
   Available slash commands (when using Claude Code or OpenCode):
     /research  - Comprehensive codebase and documentation analysis
@@ -376,33 +347,6 @@ switch (command) {
       console.error('Available actions: start');
       process.exit(1);
     }
-    break;
-  case 'catalog':
-    const catalogSubcommand = args[1] || 'help';
-    const catalogOptions: any = {
-      type: values.type,
-      source: args[2], // For import command, this is the repository URL
-      tags: values.tags ? values.tags.split(',') : undefined,
-      target: values.target ? values.target.split(',') : undefined,
-      global: values.global,
-      dryRun: values['dry-run'],
-      force: values.force,
-      query: args[2],
-      id: args[2],
-      adapter: values.adapter,
-      filter: values.filter ? values.filter.split(',') : undefined,
-      exclude: values.exclude ? values.exclude.split(',') : undefined,
-    };
-    await catalog(catalogSubcommand, catalogOptions);
-    break;
-
-  case 'discover':
-    const discoverQuery = args[1];
-    await discover(discoverQuery, {
-      complexity: values.complexity,
-      useCase: values['use-case'],
-      domain: values.domain,
-    });
     break;
 
   case 'validate':

@@ -1,8 +1,8 @@
 # Catalog + Installer Research for @agentic-codeflow/cli
 
-Date: 2025-09-21  
-Author: @ferg-cod3s  
-Status: Draft
+Date: 2025-09-21
+Author: @ferg-cod3s
+Status: Cancelled - Catalog system removed as over-engineered
 
 ## Objective
 
@@ -13,13 +13,15 @@ Research and design a portable "catalog + installer" system for Codeflow that en
 ### Codeflow Current State
 
 **Strengths:**
+
 - **Canonical-first architecture**: Single source of truth in `codeflow-agents/` using BaseAgent format
-- **Multi-platform conversion**: Automatic conversion to Claude Code (`.claude`) and OpenCode (`.opencode`) formats  
+- **Multi-platform conversion**: Automatic conversion to Claude Code (`.claude`) and OpenCode (`.opencode`) formats
 - **Validation pipeline**: Comprehensive schema validation and round-trip conversion testing
 - **Agent manifest**: Structured catalog in `AGENT_MANIFEST.json` with 29+ core agents
 - **CLI integration**: Commands like `codeflow setup`, `codeflow pull`, `codeflow sync`
 
 **Limitations:**
+
 - No browsable catalog interface for discovery
 - Limited search capabilities
 - No external component ingestion
@@ -29,12 +31,14 @@ Research and design a portable "catalog + installer" system for Codeflow that en
 ### davila7/claude-code-templates
 
 **Strengths:**
+
 - **Rich template ecosystem**: 100+ pre-built Claude Code templates
 - **Diverse categories**: Writing, coding, analysis, business, creative templates
 - **Ready-to-use format**: Native Claude Code YAML format
 - **Community contributions**: Active development and contributions
 
 **Limitations:**
+
 - Platform-specific (Claude Code only)
 - No validation pipeline
 - No conversion capabilities
@@ -46,6 +50,7 @@ Research and design a portable "catalog + installer" system for Codeflow that en
 ### Catalog System
 
 #### Registry Index Structure
+
 ```json
 {
   "version": "1.0.0",
@@ -118,6 +123,7 @@ Research and design a portable "catalog + installer" system for Codeflow that en
 ```
 
 #### Catalog Types
+
 - **Agents**: AI agents for specific domains (development, operations, analysis)
 - **Commands**: Slash commands for complex workflows
 - **Templates**: Pre-configured prompts and workflows
@@ -128,6 +134,7 @@ Research and design a portable "catalog + installer" system for Codeflow that en
 ### Installer CLI
 
 #### Core Commands
+
 ```bash
 # Discovery and browsing
 codeflow catalog list [--type agent|command|template] [--source core|claude-templates]
@@ -140,17 +147,19 @@ codeflow catalog install template claude-templates/blog-writer [--target claude-
 codeflow catalog update [item-id]
 codeflow catalog remove [item-id]
 
-# Health and maintenance  
+# Health and maintenance
 codeflow catalog health-check
 codeflow catalog sync [--dry-run]
 ```
 
 #### Integration with Codeflow Conversion
+
 - **Validation**: All installed components pass through existing `AgentValidator`
 - **Conversion**: Use `FormatConverter` to generate platform-specific formats
 - **Deployment**: Leverage existing `setup`/`pull` commands for project installation
 
 #### Optional Utilities
+
 - **Health-check**: Validate installed components and dependencies
 - **Analytics**: Opt-in usage tracking and performance metrics
 - **Sandbox run**: Test components in isolated environment
@@ -161,6 +170,7 @@ codeflow catalog sync [--dry-run]
 ### Source Provider for davila7 Repository
 
 #### Adapter Implementation
+
 ```typescript
 interface SourceAdapter {
   name: string;
@@ -171,8 +181,8 @@ interface SourceAdapter {
 }
 
 class ClaudeCodeTemplatesAdapter implements SourceAdapter {
-  name = "claude-code-templates";
-  version = "1.0.0";
+  name = 'claude-code-templates';
+  version = '1.0.0';
 
   async scan(repoUrl: string): Promise<CatalogItem[]> {
     // Clone/fetch repository
@@ -191,6 +201,7 @@ class ClaudeCodeTemplatesAdapter implements SourceAdapter {
 ```
 
 #### Import Pipeline Orchestration
+
 ```bash
 codeflow catalog import davila7/claude-code-templates \
   --adapter claude-code-templates \
@@ -200,12 +211,13 @@ codeflow catalog import davila7/claude-code-templates \
 ```
 
 ### CLI Command
+
 ```bash
 # Import external catalog
 codeflow catalog import <repo-url> [options]
   --adapter <adapter-name>        # Source adapter to use
   --filter <glob-patterns>        # Include only matching paths
-  --exclude <glob-patterns>       # Exclude matching paths  
+  --exclude <glob-patterns>       # Exclude matching paths
   --dry-run                       # Preview imports without changes
   --target-source <source-name>   # Custom source name in catalog
 ```
@@ -213,15 +225,17 @@ codeflow catalog import <repo-url> [options]
 ### Mapping Strategy
 
 #### Agent Mapping
+
 ```yaml
 # Original Claude Code template
-name: "Code Reviewer"
-description: "Expert code reviewer focusing on best practices"
+name: 'Code Reviewer'
+description: 'Expert code reviewer focusing on best practices'
 model: claude-3-5-sonnet-20241022
 temperature: 0.1
 ```
 
 #### Converted to BaseAgent Format
+
 ```yaml
 ---
 name: code-reviewer-imported
@@ -242,17 +256,19 @@ Expert code reviewer focusing on best practices and security.
 
 ## Process
 1. Analyze code for bugs, security issues, and performance problems
-2. Check adherence to coding standards and best practices  
+2. Check adherence to coding standards and best practices
 3. Suggest improvements and optimizations
 4. Provide constructive feedback with examples
 ```
 
 #### Handling Lossy/Non-mappable Fields
-- **x-claude.*** extensions preserve Claude-specific metadata
+
+- **x-claude.\*** extensions preserve Claude-specific metadata
 - **Platform-only targets**: Items that cannot be converted remain single-platform
 - **Conversion notes**: Document limitations in item metadata
 
 #### Command and Template Mapping
+
 - **Commands**: Convert YAML frontmatter to Codeflow command format
 - **Templates**: Extract prompt templates and convert to reusable components
 - **Settings**: Map Claude-specific settings to platform equivalents where possible
@@ -260,11 +276,12 @@ Expert code reviewer focusing on best practices and security.
 ### Provenance and Attribution
 
 #### Required Fields
+
 ```json
 {
   "provenance": {
     "repo": "davila7/claude-code-templates",
-    "path": "writing/blog-writer.yaml", 
+    "path": "writing/blog-writer.yaml",
     "sha": "a1b2c3d4e5f6789",
     "license": "Apache-2.0",
     "attribution": "davila7",
@@ -275,6 +292,7 @@ Expert code reviewer focusing on best practices and security.
 ```
 
 #### Third-party Notices
+
 - Auto-generate `THIRD_PARTY_NOTICES.md` during import
 - Include license text and attribution for all imported components
 - Track license compatibility with Codeflow MIT license
@@ -282,6 +300,7 @@ Expert code reviewer focusing on best practices and security.
 ### De-duplication and QA
 
 #### Conflict Resolution
+
 - **Name conflicts**: Append source suffix (`code-reviewer-claude-templates`)
 - **Functionality overlap**: Present choices during installation
 - **Quality assessment**: Validate all imports through existing pipeline
@@ -289,6 +308,7 @@ Expert code reviewer focusing on best practices and security.
 ## Examples
 
 ### Base Agent YAML Frontmatter (Converted from Claude Template)
+
 ```yaml
 ---
 name: technical-writer-imported
@@ -325,6 +345,7 @@ Professional technical documentation specialist focused on clear, accurate docum
 ```
 
 ### Catalog Index JSON Example
+
 ```json
 {
   "version": "1.0.0",
@@ -347,7 +368,7 @@ Professional technical documentation specialist focused on clear, accurate docum
     },
     {
       "id": "claude-templates/product-manager",
-      "kind": "template", 
+      "kind": "template",
       "name": "Product Manager",
       "description": "Strategic product management assistant",
       "tags": ["product", "strategy", "management"],
@@ -359,6 +380,7 @@ Professional technical documentation specialist focused on clear, accurate docum
 ```
 
 ### CLI UX Examples
+
 ```bash
 # Browse available components
 $ codeflow catalog list --type agent
@@ -389,7 +411,7 @@ $ codeflow catalog install agent claude-templates/blog-writer --target claude-co
 # Check installation health
 $ codeflow catalog health-check
 ✅ 12 agents installed and valid
-✅ 4 commands installed and valid  
+✅ 4 commands installed and valid
 ⚠️  2 components have updates available
 ❌ 1 component failed validation (outdated schema)
 ```
@@ -397,20 +419,22 @@ $ codeflow catalog health-check
 ## Risks and Mitigations
 
 ### Technical Risks
-- **Import quality**: Automated conversion may introduce errors
-  - *Mitigation*: Comprehensive validation pipeline and manual review process
-- **License conflicts**: Incompatible licenses in external repositories
-  - *Mitigation*: License scanning and compatibility checking before import
-- **Maintenance overhead**: External catalogs may become stale
-  - *Mitigation*: Automated health checks and update notifications
 
-### Operational Risks  
+- **Import quality**: Automated conversion may introduce errors
+  - _Mitigation_: Comprehensive validation pipeline and manual review process
+- **License conflicts**: Incompatible licenses in external repositories
+  - _Mitigation_: License scanning and compatibility checking before import
+- **Maintenance overhead**: External catalogs may become stale
+  - _Mitigation_: Automated health checks and update notifications
+
+### Operational Risks
+
 - **Storage bloat**: Large catalogs consuming disk space
-  - *Mitigation*: Lazy loading and optional component caching
+  - _Mitigation_: Lazy loading and optional component caching
 - **Network dependencies**: Internet required for catalog operations
-  - *Mitigation*: Offline mode using cached catalog index
+  - _Mitigation_: Offline mode using cached catalog index
 - **Version conflicts**: Different versions of same component
-  - *Mitigation*: Semantic versioning and dependency resolution
+  - _Mitigation_: Semantic versioning and dependency resolution
 
 ## Open Questions
 
