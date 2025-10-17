@@ -113,8 +113,7 @@ async function loadMarkdownFiles(dir) {
 async function buildTools() {
   const tools = [];
 
-  // Only load workflow commands - agents are internal implementation details
-  // Try each command directory in priority order
+  // Load workflow commands
   let commandFiles = [];
   for (const dir of paths.commandDirs) {
     const files = await loadMarkdownFiles(dir);
@@ -124,24 +123,82 @@ async function buildTools() {
     }
   }
 
-  // Define the core 7 workflow commands we want to expose
+  // Load popular service agents from agent directories
+  let agentFiles = [];
+  const agentDirs = [
+    path.join(paths.codeflowRoot, '.opencode', 'agent'),
+    path.join(paths.codeflowRoot, 'codeflow-agents'),
+    path.join(process.cwd(), '.opencode', 'agent'),
+    path.join(process.cwd(), '.claude', 'agents'),
+  ];
+
+  for (const dir of agentDirs) {
+    const files = await loadMarkdownFiles(dir);
+    agentFiles.push(...files);
+  }
+
+  // Define the core workflow commands and popular service agents we want to expose
   const coreCommands = ['research', 'plan', 'execute', 'test', 'document', 'commit', 'review'];
 
+  // Define popular service agents that should be exposed as MCP tools
+  const popularServiceAgents = [
+    'github-operations-specialist',
+    'deployment-engineer',
+    'deployment-wizard',
+    'monitoring-expert',
+    'observability-engineer',
+    'performance-engineer',
+    'error-monitoring-specialist',
+    'devops-troubleshooter',
+    'devops-operations-specialist',
+    'terraform-specialist',
+    'kubernetes-architect',
+    'cloud-architect',
+    'database-admin',
+    'database-optimizer',
+    'security-scanner',
+    'security-auditor',
+    'compliance-expert',
+    'error-detective',
+    'network-engineer',
+    'cost-optimizer',
+  ];
+
+  // Process command files
   for (const filePath of commandFiles) {
     const base = path.basename(filePath, '.md');
 
-    // Only include core workflow commands
+    // Include core workflow commands
     if (!coreCommands.includes(base)) {
       continue;
     }
 
     const slug = toSlug(filePath);
     tools.push({
-      id: base, // Use simple name like "research", "plan", etc.
+      id: base,
       type: 'command',
       slug,
       filePath,
       description: `Codeflow workflow: ${base}`,
+    });
+  }
+
+  // Process agent files
+  for (const filePath of agentFiles) {
+    const base = path.basename(filePath, '.md');
+
+    // Include popular service agents
+    if (!popularServiceAgents.includes(base)) {
+      continue;
+    }
+
+    const slug = toSlug(filePath);
+    tools.push({
+      id: base,
+      type: 'agent',
+      slug,
+      filePath,
+      description: `Codeflow agent: ${base.replace(/-/g, ' ')}`,
     });
   }
 

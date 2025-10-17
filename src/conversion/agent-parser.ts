@@ -29,6 +29,7 @@ export interface BaseAgent {
   category?: string;
   tags?: string[];
   allowed_directories?: string[];
+  permission?: Record<string, any>; // OpenCode permission object (singular)
   permissions?: {
     opencode?: Record<string, any>;
     claude?: Record<string, any>;
@@ -143,12 +144,60 @@ function detectFormatFromContent(content: string): 'base' | 'claude-code' | 'ope
  * Normalize permission format between tools: and permission: formats
  */
 export function normalizePermissionFormat(frontmatter: any): any {
-  // If agent uses tools: format, convert to permission: format
+  // If agent uses both tools: and permission: formats, merge them intelligently
+  if (
+    frontmatter.tools &&
+    typeof frontmatter.tools === 'object' &&
+    frontmatter.permission &&
+    typeof frontmatter.permission === 'object'
+  ) {
+    // Preserve complex permission objects (like bash wildcards), only use tools as fallback
+    const permissions = {
+      read:
+        frontmatter.permission.read || booleanToPermissionString(frontmatter.tools.read || false),
+      write:
+        frontmatter.permission.write || booleanToPermissionString(frontmatter.tools.write || false),
+      edit:
+        frontmatter.permission.edit || booleanToPermissionString(frontmatter.tools.edit || false),
+      bash:
+        typeof frontmatter.permission.bash === 'object'
+          ? frontmatter.permission.bash
+          : frontmatter.permission.bash ||
+            booleanToPermissionString(frontmatter.tools.bash || false),
+      webfetch:
+        frontmatter.permission.webfetch ||
+        booleanToPermissionString(frontmatter.tools.webfetch !== false),
+    };
+
+    // Remove individual permission fields and tools to avoid duplication
+    const {
+      edit,
+      bash,
+      patch,
+      read,
+      grep,
+      glob,
+      list,
+      webfetch,
+      write,
+      tools,
+      ...cleanFrontmatter
+    } = frontmatter;
+
+    return {
+      ...cleanFrontmatter,
+      permission: permissions,
+    };
+  }
+
+  // If agent uses tools: format only, convert to permission: format
   if (frontmatter.tools && typeof frontmatter.tools === 'object') {
     const permissions = {
+      read: booleanToPermissionString(frontmatter.tools.read || false),
+      write: booleanToPermissionString(frontmatter.tools.write || false),
       edit: booleanToPermissionString(frontmatter.tools.edit || false),
       bash: booleanToPermissionString(frontmatter.tools.bash || false),
-      webfetch: booleanToPermissionString(frontmatter.tools.webfetch !== false), // Default to true if not explicitly false
+      webfetch: booleanToPermissionString(frontmatter.tools.webfetch !== false),
     };
 
     // Remove individual permission fields to avoid duplication
@@ -192,11 +241,8 @@ function parseFrontmatter(content: string): { frontmatter: any; body: string } {
     throw new Error(result.error.message);
   }
 
-  // Normalize permission format for compatibility
-  const normalizedFrontmatter = normalizePermissionFormat(result.data.frontmatter);
-
   return {
-    frontmatter: normalizedFrontmatter,
+    frontmatter: result.data.frontmatter,
     body: result.data.body,
   };
 }
@@ -239,10 +285,15 @@ export async function parseAgentFile(
       frontmatter.name = basename(filePath, '.md');
     }
 
+    // Normalize permission format only for OpenCode format
+    // Base, Claude Code, and Cursor formats should preserve original tools/permission fields
+    const normalizedFrontmatter =
+      format === 'opencode' ? normalizePermissionFormat(frontmatter) : frontmatter;
+
     const agent: Agent = {
       name: basename(filePath, '.md'),
       format,
-      frontmatter,
+      frontmatter: normalizedFrontmatter,
       content: body,
       filePath,
     };

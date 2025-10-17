@@ -83,11 +83,7 @@ export class FormatConverter {
       model: baseAgent.model,
       temperature: baseAgent.temperature,
       // Use proper OpenCode permission format - convert from base permissions or tools
-      permission: baseAgent.permissions?.opencode
-        ? this.convertBaseOpenCodePermissions(baseAgent.permissions.opencode)
-        : baseAgent.tools
-          ? this.convertToolsToPermissions(baseAgent.tools)
-          : undefined,
+      permission: this.extractPermissions(baseAgent),
       // Preserve custom fields for compatibility
       ...(baseAgent.category && { category: baseAgent.category }),
       ...(baseAgent.tags && { tags: baseAgent.tags }),
@@ -307,7 +303,10 @@ export class FormatConverter {
   /**
    * Convert a batch of agents to target format
    */
-  convertBatch(agents: Agent[], targetFormat: 'base' | 'claude-code' | 'opencode' | 'cursor'): Agent[] {
+  convertBatch(
+    agents: Agent[],
+    targetFormat: 'base' | 'claude-code' | 'opencode' | 'cursor'
+  ): Agent[] {
     return agents.map((agent) => this.convert(agent, targetFormat));
   }
 
@@ -340,6 +339,47 @@ export class FormatConverter {
         errors: [error.message],
       };
     }
+  }
+
+  /**
+   * Extract permissions from base agent in priority order:
+   * 1. Complex permission objects (bash: {...}, edit: 'allow', etc.)
+   * 2. permissions.opencode field
+   * 3. tools object (boolean flags)
+   */
+  private extractPermissions(baseAgent: BaseAgent): Record<string, any> | undefined {
+    const basePermission = (baseAgent as any).permission;
+
+    // Priority 1: Check if permission field exists with complex objects or simple strings
+    if (basePermission && typeof basePermission === 'object') {
+      const extracted: Record<string, any> = {};
+
+      for (const [key, value] of Object.entries(basePermission)) {
+        if (typeof value === 'object' && value !== null) {
+          // Preserve complex permission objects (e.g., bash wildcard rules)
+          extracted[key] = value;
+        } else if (typeof value === 'string' && ['allow', 'ask', 'deny'].includes(value)) {
+          // Preserve simple permission strings
+          extracted[key] = value;
+        }
+      }
+
+      if (Object.keys(extracted).length > 0) {
+        return extracted;
+      }
+    }
+
+    // Priority 2: Check permissions.opencode field
+    if (baseAgent.permissions?.opencode) {
+      return this.convertBaseOpenCodePermissions(baseAgent.permissions.opencode);
+    }
+
+    // Priority 3: Fall back to tools object
+    if (baseAgent.tools) {
+      return this.convertToolsToPermissions(baseAgent.tools);
+    }
+
+    return undefined;
   }
 
   /**
@@ -533,7 +573,17 @@ export class FormatConverter {
     }
 
     for (const [action, value] of Object.entries(permissions)) {
-      if (!['allow', 'ask', 'deny'].includes(value as string)) {
+      // Allow nested objects for complex permission rules (e.g., bash wildcards)
+      if (typeof value === 'object' && value !== null) {
+        // Validate nested permission values
+        for (const [subAction, subValue] of Object.entries(value)) {
+          if (!['allow', 'ask', 'deny'].includes(subValue as string)) {
+            errors.push(
+              `Nested permission for '${action}.${subAction}' must be 'allow', 'ask', or 'deny', got '${subValue}'`
+            );
+          }
+        }
+      } else if (!['allow', 'ask', 'deny'].includes(value as string)) {
         errors.push(`Permission for '${action}' must be 'allow', 'ask', or 'deny', got '${value}'`);
       }
     }

@@ -77,10 +77,11 @@ To eliminate the friction between AI platforms and development workflows by crea
 
 #### **FR-001: Multi-Platform AI Integration**
 
-- **Description**: Support for Claude Code, OpenCode, MCP Protocol, and custom AI platforms
+- **Description**: Support for Claude Code, OpenCode, Cursor, MCP Protocol, and custom AI platforms
 - **Acceptance Criteria**:
   - Automatically detect project type and configure appropriate integration
   - Support native slash commands for Claude Code
+  - Support Cursor commands and agents via MCP integration
   - Provide MCP server for non-native platforms
   - Allow custom platform integration via plugins
 - **Priority**: P0 (Critical)

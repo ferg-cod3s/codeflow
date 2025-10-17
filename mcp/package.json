@@ -37,7 +37,7 @@
   },
   "mcp": {
     "name": "Codeflow Tools",
-    "description": "AI-assisted development workflow tools for research, planning, execution, and testing",
+    "description": "AI-assisted development workflow tools for research, planning, execution, testing, and popular service integrations",
     "tools": [
       "research",
       "plan",
@@ -45,7 +45,27 @@
       "test",
       "document",
       "commit",
-      "review"
+      "review",
+      "github-operations-specialist",
+      "deployment-engineer",
+      "deployment-wizard",
+      "monitoring-expert",
+      "observability-engineer",
+      "performance-engineer",
+      "error-monitoring-specialist",
+      "devops-troubleshooter",
+      "devops-operations-specialist",
+      "terraform-specialist",
+      "kubernetes-architect",
+      "cloud-architect",
+      "database-admin",
+      "database-optimizer",
+      "security-scanner",
+      "security-auditor",
+      "compliance-expert",
+      "error-detective",
+      "network-engineer",
+      "cost-optimizer"
     ]
   }
 }

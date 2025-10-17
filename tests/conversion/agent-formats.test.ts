@@ -483,9 +483,9 @@ mode: subagent
 model: gpt-4o
 temperature: 0.8
 tools:
-  read_file: true
-  write_file: true
-  search: false
+  read: true
+  write: true
+  bash: false
 custom_field: custom_value
 ---
 
