@@ -1,2 +1,3 @@
 bun test
 bun run validate:agents
+bun run scripts/update-changelog.mjs
