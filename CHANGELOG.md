@@ -1,3 +1,12 @@
+## [0.14.1](https://github.com/ferg-cod3s/codeflow/compare/v0.14.0...v0.14.1) (2025-10-19)
+
+
+### Features
+
+* v0.14.1 final architecture enhancements ([c963cfb](https://github.com/ferg-cod3s/codeflow/commit/c963cfb21a91c35db4220f6d10435bdbaf310863))
+
+
+
 # [0.14.0](https://github.com/ferg-cod3s/codeflow/compare/v0.13.0...v0.14.0) (2025-10-19)
 
 
