@@ -16,6 +16,9 @@
 
 ### Features
 
+### Code Refactoring
+* migrate thoughts agents to research agents and update documentation ([3a5b98e0fb7abce97651314ba7a40bc32d640fbb](https://github.com/ferg-cod3s/codeflow/commit/3a5b98e0fb7abce97651314ba7a40bc32d640fbb))
+
 * enhance smart-subagent-orchestrator and add new specialized agents ([bf41fd2](https://github.com/ferg-cod3s/codeflow/commit/bf41fd2750bbcb1b690fb065489cc67406aeffc0))
 
 
