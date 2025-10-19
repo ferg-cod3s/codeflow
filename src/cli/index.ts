@@ -15,6 +15,7 @@ import { update } from './update';
 import { clean } from './clean';
 import { exportProject } from './export';
 import { research } from './research';
+import { buildManifest } from './build-manifest';
 import packageJson from '../../package.json';
 import { join, resolve, sep } from 'node:path';
 import { existsSync } from 'node:fs';
@@ -34,6 +35,7 @@ Commands:
    fix-models [options]       Fix model configurations (default: global, use --local for project)
    convert <source> <target> <format>  Convert agents between formats
    watch start [options]      Start automatic file synchronization daemon
+   build-manifest [options]   Build or rebuild the agent manifest file
 
    validate [path]            Validate agents and commands for integrity issues
    list [path]                List installed agents and commands
@@ -442,6 +444,16 @@ switch (command) {
       specialists: values.specialists,
       verbose: values.verbose,
       'min-quality': values['min-quality'],
+    });
+    break;
+  }
+
+  case 'build-manifest': {
+    await buildManifest({
+      output: values.output,
+      dryRun: values['dry-run'],
+      verbose: values.verbose,
+      projectRoot: values.project || process.cwd(),
     });
     break;
   }

@@ -120,6 +120,7 @@ Essential agents for development workflows:
 - `validate [path]` - Validate agents and commands
 - `fix-models` - Fix model configurations
 - `clean [path]` - Clean up cache and temp files
+- `build-manifest [options]` - Build or rebuild the agent manifest file
 
 **Utility Commands:**
 
@@ -151,23 +152,4 @@ MIT - See [LICENSE](./LICENSE)
 
 ---
 
-**Version**: 0.14.0 | **Agents**: 123+ | **Commands**: 15+ | **Platforms**: Claude Code, OpenCode, MCP
-
-
-
-## Codeflow Workflow
-
-### Available Commands
-
-- `/research` - Comprehensive codebase and documentation analysis
-- `/plan` - Create detailed implementation plans
-- `/execute` - Implement plans with verification
-- `/test` - Generate comprehensive test suites
-- `/document` - Create user guides and API documentation
-- `/commit` - Create structured git commits
-- `/review` - Validate implementations against plans
-- `/project-docs` - Generate complete project documentation
-
-### Claude Code Integration
-
-Commands are located in `.claude/commands/`.
+**Version**: 0.14.2 | **Agents**: 123+ | **Commands**: 15+ | **Platforms**: Claude Code, OpenCode, MCP

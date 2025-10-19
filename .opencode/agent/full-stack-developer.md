@@ -2,7 +2,7 @@
 name: full-stack-developer
 description: Generalist implementation developer focused on end-to-end feature delivery (UI → API → data) within established architectural, security, performance, and infrastructure guidelines. Provides cohesive, maintainable full-stack solutions while deferring deep specialization decisions to appropriate expert agents.
 mode: subagent
-model: opencode/grok-code
+model: github-copilot/gpt-5
 temperature: 0.2
 permission:
   str_replace_editor: allow

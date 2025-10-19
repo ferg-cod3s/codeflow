@@ -10,7 +10,7 @@ This document explains how arguments and defaults work across different AI codin
 - **Documentation**: https://docs.claude.ai/code
 
 ### 2. OpenCode (opencode.ai)
-- **Agent System**: Native (no MCP needed)  
+- **Agent System**: Native (no MCP needed)
 - **Argument Style**: YAML frontmatter
 - **Documentation**: https://opencode.ai/docs
 
@@ -63,6 +63,51 @@ Analyze the authentication system including user models, session handling, middl
 - `model`: `"anthropic/claude-sonnet-4"`
 - `temperature`: `0.1`
 - `mode`: `"command"`
+
+### Body Content Variable Syntax
+
+Commands reference input parameters in their body content using platform-specific syntax:
+
+#### OpenCode: `$ARGUMENTS`
+
+OpenCode uses a **single generic placeholder** for all command arguments:
+
+```markdown
+Create a new React component named $ARGUMENTS with TypeScript support.
+```
+
+**Important Limitation**: OpenCode can only pass arguments as a single string. Commands with multiple parameters will receive all arguments as one value.
+
+**Example**:
+- Command: `/research authentication flows`
+- `$ARGUMENTS` receives: `"authentication flows"`
+
+#### Claude Code & Cursor: `{{variable}}`
+
+Claude and Cursor use **named parameters** matching frontmatter inputs:
+
+```markdown
+Research the {{topic}} in {{scope}} with {{depth}} analysis.
+```
+
+**Multiple parameters work independently**:
+- `{{ticket}}` - receives ticket file path
+- `{{query}}` - receives search query
+- `{{scope}}` - receives scope parameter
+- `{{depth}}` - receives depth parameter
+
+#### Conversion Behavior
+
+When converting commands:
+
+**To OpenCode**: All `{{variable}}` → `$ARGUMENTS`
+- Multi-parameter commands get a warning comment
+- OpenCode users must provide arguments as single string
+
+**To Claude/Cursor**: `$ARGUMENTS` → `{{primary_parameter}}`
+- Uses first required input parameter name
+- Falls back to first input if no required parameters
+- Enables proper multi-parameter functionality
 
 ### MCP Arguments
 
@@ -132,7 +177,7 @@ const filenameDate = getDateForFilename(); // "2025-09-27"
 
 **Problem:** Getting `2025-01-26` instead of current date
 **Cause:** Template placeholder not replaced or wrong timezone
-**Solution:** 
+**Solution:**
 - Ensure `current_date` variable is properly set
 - Use UTC timezone for consistency
 - Verify system clock is correct

@@ -69,8 +69,14 @@ export class CommandConverter {
     }
 
     const parsedYaml = parseResult.data;
-    const convertedFrontmatter = this.convertOpenCodeToClaudeCode(
-      parsedYaml.frontmatter as CommandMetadata
+    const frontmatter = parsedYaml.frontmatter as CommandMetadata;
+    const convertedFrontmatter = this.convertOpenCodeToClaudeCode(frontmatter);
+
+    // Transform body content variable syntax
+    const transformedBody = this.transformBodyVariables(
+      parsedYaml.body,
+      'claude-code',
+      frontmatter.inputs
     );
 
     // Create ParsedEntity for serialization
@@ -78,7 +84,7 @@ export class CommandConverter {
       name: convertedFrontmatter.name || 'unknown',
       format: 'claude-code',
       frontmatter: convertedFrontmatter,
-      content: parsedYaml.body,
+      content: transformedBody,
       filePath,
     };
 
@@ -109,12 +115,19 @@ export class CommandConverter {
       ? this.ensureOpenCodeDefaults(frontmatter)
       : this.convertClaudeCodeToOpenCode(frontmatter);
 
+    // Transform body content variable syntax
+    const transformedBody = this.transformBodyVariables(
+      parsedYaml.body,
+      'opencode',
+      convertedFrontmatter.inputs
+    );
+
     // Create ParsedEntity for serialization
     const entity: ParsedEntity = {
       name: convertedFrontmatter.name || 'unknown',
       format: 'opencode',
       frontmatter: convertedFrontmatter,
-      content: parsedYaml.body,
+      content: transformedBody,
       filePath,
     };
 
@@ -356,6 +369,49 @@ export class CommandConverter {
     if (nameLower.includes('document')) return 'documentation';
 
     return 'utility';
+  }
+
+  /**
+   * Transform variable syntax in command body content
+   * OpenCode uses $ARGUMENTS (single placeholder for all args)
+   * Claude/Cursor use {{variable}} (named parameters)
+   */
+  private transformBodyVariables(
+    body: string,
+    targetFormat: 'claude-code' | 'opencode',
+    inputs?: CommandInput[]
+  ): string {
+    if (targetFormat === 'opencode') {
+      // Convert {{variable}} to $ARGUMENTS
+      // OpenCode limitation: can only pass single argument string
+      let transformed = body;
+      const variablePattern = /\{\{(\w+)\}\}/g;
+      const matches = body.match(variablePattern);
+
+      if (matches && matches.length > 1) {
+        // Multiple variables detected - add warning comment
+        transformed =
+          '<!-- Note: OpenCode only supports $ARGUMENTS placeholder. Multiple parameters from Claude/Cursor may not work as expected. -->\n\n' +
+          transformed;
+      }
+
+      // Replace all {{variable}} with $ARGUMENTS
+      transformed = transformed.replace(variablePattern, '$ARGUMENTS');
+
+      return transformed;
+    } else {
+      // Convert $ARGUMENTS to {{variable}}
+      // Use the first required input, or first input if no required ones
+      let primaryParam = 'arguments'; // fallback
+
+      if (inputs && inputs.length > 0) {
+        const requiredInputs = inputs.filter((i) => i.required);
+        const firstInput = requiredInputs.length > 0 ? requiredInputs[0] : inputs[0];
+        primaryParam = firstInput.name;
+      }
+
+      return body.replace(/\$ARGUMENTS/g, `{{${primaryParam}}}`);
+    }
   }
 
   /**

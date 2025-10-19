@@ -106,3 +106,28 @@ home/
 # Backup files
 *.backup
 *.bak
+
+# Archived documentation
+docs/archive/
+
+# Session and phase reports
+*_COMPLETION_REPORT.md
+SESSION_SUMMARY_*.md
+*_ENHANCED_FEATURES.md
+ANNOUNCEMENT_*.md
+RELEASE_*.md
+
+# Test and debug outputs
+*_output.log
+test-wildcard-output/
+test-catalog-system/
+
+# Temporary directories
+Users/
+
+# Test integration directories
+test-integration-*/
+
+# Thoughts documentation (personal notes)
+docs/THOUGHTS.md
+docs/thoughts.md
