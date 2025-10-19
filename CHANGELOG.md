@@ -1,4 +1,9 @@
-# [0.14.0](https://github.com/ferg-cod3s/codeflow/compare/v0.13.0...v0.14.0) (2025-10-17)
+# [0.14.0](https://github.com/ferg-cod3s/codeflow/compare/v0.13.0...v0.14.0) (2025-10-19)
+
+
+### Features
+
+* enhance smart-subagent-orchestrator and add new specialized agents ([bf41fd2](https://github.com/ferg-cod3s/codeflow/commit/bf41fd2750bbcb1b690fb065489cc67406aeffc0))
 
 
 
