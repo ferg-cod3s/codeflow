@@ -2,18 +2,17 @@
 name: seo-cannibalization-detector
 description: Analyzes multiple provided pages to identify keyword overlap and potential cannibalization issues. Suggests differentiation strategies. Use PROACTIVELY when reviewing similar content.
 mode: subagent
-model: opencode/grok-code
 temperature: 0.1
 permission:
+  write: allow
   edit: allow
   bash: allow
-  webfetch: allow
-  write: allow
   patch: allow
   read: allow
   grep: allow
   glob: allow
   list: allow
+  webfetch: allow
 category: business-analytics
 tags:
   - seo

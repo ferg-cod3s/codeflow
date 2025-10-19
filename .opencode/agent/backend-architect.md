@@ -2,18 +2,17 @@
 name: backend-architect
 description: Design RESTful APIs, microservice boundaries, and database schemas. Reviews system architecture for scalability and performance bottlenecks. Use PROACTIVELY when creating new backend services or APIs.
 mode: subagent
-model: opencode/code-supernova
 temperature: 0.1
 permission:
+  write: allow
   edit: allow
   bash: allow
-  webfetch: allow
-  write: allow
   patch: allow
   read: allow
   grep: allow
   glob: allow
   list: allow
+  webfetch: allow
 category: development
 tags:
   - architecture

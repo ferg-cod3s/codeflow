@@ -2,18 +2,17 @@
 name: elixir-pro
 description: Write idiomatic Elixir code with OTP patterns, supervision trees, and Phoenix LiveView. Masters concurrency, fault tolerance, and distributed systems. Use PROACTIVELY for Elixir refactoring, OTP design, or complex BEAM optimizations.
 mode: subagent
-model: opencode/grok-code
 temperature: 0.1
 permission:
+  write: allow
   edit: allow
   bash: allow
-  webfetch: allow
-  write: allow
   patch: allow
   read: allow
   grep: allow
   glob: allow
   list: allow
+  webfetch: allow
 category: development
 tags:
   - elixir

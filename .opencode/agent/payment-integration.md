@@ -2,18 +2,17 @@
 name: payment-integration
 description: Integrate Stripe, PayPal, and payment processors. Handles checkout flows, subscriptions, webhooks, and PCI compliance. Use PROACTIVELY when implementing payments, billing, or subscription features.
 mode: subagent
-model: opencode/grok-code
 temperature: 0.1
 permission:
+  write: allow
   edit: allow
   bash: allow
-  webfetch: allow
-  write: allow
   patch: allow
   read: allow
   grep: allow
   glob: allow
   list: allow
+  webfetch: allow
 category: business-analytics
 tags:
   - general

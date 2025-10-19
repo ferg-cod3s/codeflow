@@ -2,18 +2,17 @@
 name: ios-developer
 description: Develop native iOS applications with Swift/SwiftUI. Masters iOS 18, SwiftUI, UIKit integration, Core Data, networking, and App Store optimization. Use PROACTIVELY for iOS-specific features, App Store optimization, or native iOS development.
 mode: subagent
-model: opencode/grok-code
 temperature: 0.1
 permission:
+  write: allow
   edit: allow
   bash: allow
-  webfetch: allow
-  write: allow
   patch: allow
   read: allow
   grep: allow
   glob: allow
   list: allow
+  webfetch: allow
 category: development
 tags:
   - mobile

@@ -5,12 +5,15 @@ mode: subagent
 model: opencode/grok-code
 temperature: 0.3
 permission:
-  edit: allow
-  bash: allow
-  webfetch: allow
   read: allow
   write: allow
+  edit: allow
   grep: allow
+  bash: allow
+  patch: deny
+  webfetch: deny
+  glob: deny
+  list: deny
 category: business-analytics
 tags:
   - seo

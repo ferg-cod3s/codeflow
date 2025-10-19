@@ -2,18 +2,17 @@
 name: astro-pro
 description: Master Astro 4+ with content collections, islands architecture, and static site generation. Expert in hybrid rendering, performance optimization, and modern web standards. Use PROACTIVELY for Astro development, content-driven sites, or performance-critical static applications.
 mode: subagent
-model: opencode/grok-code
 temperature: 0.1
 permission:
+  write: allow
   edit: allow
   bash: allow
-  webfetch: allow
-  write: allow
   patch: allow
   read: allow
   grep: allow
   glob: allow
   list: allow
+  webfetch: allow
 category: development
 tags:
   - web-development

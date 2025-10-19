@@ -5,7 +5,7 @@ description: Advanced orchestration agent that coordinates specialized subagents
 model: opencode/grok-code
 temperature: 0.7
 allowed_directories: []
-tools: []
+tools: {}
 ---
 
 # Smart Subagent Orchestrator

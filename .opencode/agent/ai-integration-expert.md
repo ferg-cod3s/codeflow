@@ -2,15 +2,17 @@
 name: ai-integration-expert
 description: Adds AI features and integrates machine learning capabilities. Specializes in AI/ML implementation and optimization. Use this agent when you need to integrate AI features like chatbots, recommendation engines, image processing, natural language processing, or predictive analytics.
 mode: subagent
-model: opencode/grok-code
 temperature: 0.2
 permission:
-  edit: allow
-  bash: allow
-  webfetch: allow
   read: allow
   write: allow
+  edit: allow
   grep: allow
+  bash: allow
+  patch: deny
+  webfetch: deny
+  glob: deny
+  list: deny
 category: ai-innovation
 tags:
   - ai

@@ -15,7 +15,7 @@
   },
   "providers": {
     "opencode": {
-      "models": ["grok-code", "code-supernova", "grok-code-fast-1", "gpt-5"],
+      "models": ["grok-code", "code-supernova", "grok-code-fast-1"],
       "active": true
     },
     "anthropic": {
@@ -40,7 +40,7 @@
       "active": true
     },
     "github-copilot": {
-      "models": ["gpt-4.1", "gpt-4o", "o3", "o3-mini"],
+      "models": ["gpt-4.1", "gpt-4o", "o3", "o3-mini", "gpt-5"],
       "active": false
     }
   }

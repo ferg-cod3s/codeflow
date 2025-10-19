@@ -2,18 +2,17 @@
 name: content-localization-coordinator
 description: Coordinate localization (l10n) and internationalization (i18n) workflows including translation management, locale setup, and cultural adaptation processes.
 mode: subagent
-model: opencode/grok-code
 temperature: 0.3
 permission:
-  edit: allow
-  bash: allow
-  webfetch: deny
   read: allow
   grep: allow
   list: allow
   glob: allow
+  edit: allow
   write: allow
+  bash: allow
   patch: deny
+  webfetch: deny
 category: product-strategy
 tags:
   - localization

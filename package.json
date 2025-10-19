@@ -25,7 +25,7 @@
   "bugs": {
     "url": "https://github.com/ferg-cod3s/codeflow/issues"
   },
-  "author": "ferg.cod3s <john.ferguson@jferguson.info>",
+  "author": "Codeflow Team <team@codeflow.dev>",
   "license": "MIT",
   "files": [
     "src/**/*",

@@ -5,9 +5,6 @@ mode: subagent
 model: opencode/code-supernova
 temperature: 0.1
 permission:
-  edit: deny
-  bash: deny
-  webfetch: allow
   read: allow
   grep: allow
   glob: allow

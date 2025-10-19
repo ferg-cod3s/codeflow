@@ -2,18 +2,17 @@
 name: release-manager
 description: CI/CD release coordination and deployment management specialist. Manages release pipelines, version control, deployment strategies, and rollback procedures. Ensures smooth transitions from development to production with proper testing gates and monitoring.
 mode: subagent
-model: opencode/grok-code
 temperature: 0.1
 permission:
-  edit: deny
-  bash: deny
-  webfetch: deny
   read: allow
   grep: allow
   list: allow
   glob: allow
+  edit: deny
   write: deny
   patch: deny
+  bash: deny
+  webfetch: deny
 category: operations
 tags:
   - release-management

@@ -2,18 +2,17 @@
 name: operations-incident-commander
 description: Lead incident response from detection through resolution and post-incident analysis. Coordinate people, decisions, communications, and timelines while maintaining service stability and user trust.
 mode: subagent
-model: opencode/grok-code
 temperature: 0.2
 permission:
-  edit: allow
-  bash: allow
-  webfetch: deny
   read: allow
   grep: allow
   list: allow
   glob: allow
+  edit: allow
   write: allow
   patch: allow
+  bash: allow
+  webfetch: deny
 category: operations
 tags:
   - incident-response

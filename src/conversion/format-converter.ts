@@ -461,6 +461,12 @@ export class FormatConverter {
       sonnet: 'sonnet',
       opus: 'opus',
       haiku: 'haiku',
+      // Map OpenCode models to inherit for Claude Code (they're not compatible)
+      'opencode/grok-code': 'inherit',
+      'opencode/code-supernova': 'inherit',
+      'opencode/grok-code-fast-1': 'inherit',
+      'opencode/gpt-5': 'inherit',
+      'github-copilot/gpt-5': 'inherit',
     };
 
     // Check if model is already in valid format
@@ -493,6 +499,7 @@ export class FormatConverter {
       'anthropic/claude-sonnet-4': 'opencode/grok-code',
       'anthropic/claude-opus-4': 'opencode/code-supernova',
       'anthropic/claude-haiku-4': 'opencode/grok-code',
+      'gpt-5': 'github-copilot/gpt-5', // GPT-5 from github-copilot provider
     };
 
     // If already in OpenCode format, validate it exists
@@ -503,6 +510,15 @@ export class FormatConverter {
         'opencode/code-supernova',
         'opencode/grok-code-fast-1',
       ];
+
+      // Special handling for gpt-5 - redirect to github-copilot provider
+      if (model === 'opencode/gpt-5') {
+        console.warn(
+          `Model '${model}' is not available in opencode provider, using github-copilot provider instead`
+        );
+        return 'github-copilot/gpt-5';
+      }
+
       if (validModels.includes(model)) {
         return model;
       }

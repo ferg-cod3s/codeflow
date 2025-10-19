@@ -5,15 +5,15 @@ mode: subagent
 model: opencode/grok-code
 temperature: 0.2
 permission:
-  edit: deny
-  bash: deny
-  webfetch: deny
   read: allow
   grep: allow
   list: allow
   glob: allow
+  edit: deny
   write: deny
   patch: deny
+  bash: deny
+  webfetch: deny
 category: quality-testing
 tags:
   - testing
