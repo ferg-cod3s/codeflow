@@ -2,14 +2,16 @@
 name: seo-cannibalization-detector
 uats_version: "1.0"
 spec_version: UATS-1.0
-description: Analyzes multiple provided pages to identify keyword overlap and potential cannibalization issues. Suggests differentiation strategies. Use PROACTIVELY when reviewing similar content.
+description: Analyzes multiple provided pages to identify keyword overlap and
+  potential cannibalization issues. Suggests differentiation strategies. Use
+  PROACTIVELY when reviewing similar content.
 mode: subagent
-model: anthropic/claude-haiku-4
 temperature: 0.1
 category: business-analytics
 tags:
   - seo
-primary_objective: Analyzes multiple provided pages to identify keyword overlap and potential cannibalization issues.
+primary_objective: Analyzes multiple provided pages to identify keyword overlap
+  and potential cannibalization issues.
 anti_objectives:
   - Perform actions outside defined scope
   - Modify source code without explicit approval

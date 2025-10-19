@@ -8,7 +8,6 @@ description: Simplifies user flows, enhances user experience, and optimizes
   user experience, optimize user interactions, or improve conversion rates
   through UX improvements.
 mode: subagent
-model: gpt-4.1
 temperature: 0.3
 category: design-ux
 tags:

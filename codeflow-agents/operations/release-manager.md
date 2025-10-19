@@ -7,7 +7,6 @@ description: CI/CD release coordination and deployment management specialist.
   rollback procedures. Ensures smooth transitions from development to production
   with proper testing gates and monitoring.
 mode: subagent
-model: gpt-4.1
 temperature: 0.1
 category: operations
 tags:

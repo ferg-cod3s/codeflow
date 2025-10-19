@@ -8,7 +8,6 @@ description: Targeted multi-phase web research & evidence synthesis agent.
   credibility/recency/relevance, resolves conflicts, and produces a structured
   AGENT_OUTPUT_V1 JSON research dossier with transparent citation mapping.
 mode: subagent
-model: gpt-4.1
 temperature: 0.15
 category: generalist
 tags:

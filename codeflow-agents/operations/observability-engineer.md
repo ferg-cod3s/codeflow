@@ -2,9 +2,11 @@
 name: observability-engineer
 uats_version: "1.0"
 spec_version: UATS-1.0
-description: Build production-ready monitoring, logging, and tracing systems. Implements comprehensive observability strategies, SLI/SLO management, and incident response workflows. Use PROACTIVELY for monitoring infrastructure, performance optimization, or production reliability.
+description: Build production-ready monitoring, logging, and tracing systems.
+  Implements comprehensive observability strategies, SLI/SLO management, and
+  incident response workflows. Use PROACTIVELY for monitoring infrastructure,
+  performance optimization, or production reliability.
 mode: subagent
-model: anthropic/claude-opus-4
 temperature: 0.1
 category: operations
 tags:

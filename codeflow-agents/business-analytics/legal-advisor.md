@@ -2,9 +2,11 @@
 name: legal-advisor
 uats_version: "1.0"
 spec_version: UATS-1.0
-description: Draft privacy policies, terms of service, disclaimers, and legal notices. Creates GDPR-compliant texts, cookie policies, and data processing agreements. Use PROACTIVELY for legal documentation, compliance texts, or regulatory requirements.
+description: Draft privacy policies, terms of service, disclaimers, and legal
+  notices. Creates GDPR-compliant texts, cookie policies, and data processing
+  agreements. Use PROACTIVELY for legal documentation, compliance texts, or
+  regulatory requirements.
 mode: subagent
-model: anthropic/claude-opus-4
 temperature: 0.1
 category: business-analytics
 tags:

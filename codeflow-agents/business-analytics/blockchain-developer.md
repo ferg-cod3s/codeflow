@@ -2,15 +2,18 @@
 name: blockchain-developer
 uats_version: "1.0"
 spec_version: UATS-1.0
-description: Build production-ready Web3 applications, smart contracts, and decentralized systems. Implements DeFi protocols, NFT platforms, DAOs, and enterprise blockchain integrations. Use PROACTIVELY for smart contracts, Web3 apps, DeFi protocols, or blockchain infrastructure.
+description: Build production-ready Web3 applications, smart contracts, and
+  decentralized systems. Implements DeFi protocols, NFT platforms, DAOs, and
+  enterprise blockchain integrations. Use PROACTIVELY for smart contracts, Web3
+  apps, DeFi protocols, or blockchain infrastructure.
 mode: subagent
-model: anthropic/claude-sonnet-4
 temperature: 0.1
 category: business-analytics
 tags:
   - ai-ml
   - blockchain
-primary_objective: Build production-ready Web3 applications, smart contracts, and decentralized systems.
+primary_objective: Build production-ready Web3 applications, smart contracts,
+  and decentralized systems.
 anti_objectives:
   - Perform actions outside defined scope
   - Modify source code without explicit approval

@@ -3,7 +3,7 @@ name: api-builder-enhanced
 mode: subagent
 category: development
 description: 'Expert at building robust, scalable APIs with proper authentication, validation, rate limiting, and comprehensive documentation. Specializes in RESTful and GraphQL endpoints, OAuth2/JWT authentication, API documentation, rate limiting, caching, and performance optimization. Best for: new API development, API architecture review, authentication system design, and comprehensive documentation creation. Escalates to database-expert for complex queries, security-scanner for security review, and performance-engineer for optimization.'
-model: grok-code
+model: opencode/grok-code
 temperature: 0.1
 tags:
   - development

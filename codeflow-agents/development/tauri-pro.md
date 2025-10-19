@@ -1,26 +1,28 @@
 ---
 name: tauri-pro
-description: Master Tauri desktop application development with Rust backend and web frontend integration. Specializes in secure, lightweight, cross-platform desktop applications using web technologies.
-model: anthropic/claude-sonnet-4
+mode: subagent
+description: Master Tauri desktop application development with Rust backend and
+  web frontend integration. Specializes in secure, lightweight, cross-platform
+  desktop applications using web technologies.
 temperature: 0.1
 allowed_directories:
-  - 'src/**/*.{rs,js,ts,html,css,json,toml}'
-  - 'src-tauri/**/*'
-  - 'build/**/*'
-  - 'dist/**/*'
-  - 'public/**/*'
-  - 'tauri.conf.json'
-  - 'Cargo.toml'
-  - 'package.json'
+  - src/**/*.{rs,js,ts,html,css,json,toml}
+  - src-tauri/**/*
+  - build/**/*
+  - dist/**/*
+  - public/**/*
+  - tauri.conf.json
+  - Cargo.toml
+  - package.json
 tools:
-  - 'bash'
-  - 'edit'
-  - 'read'
-  - 'write'
-  - 'glob'
-  - 'grep'
-  - 'list'
-  - 'task'
+  - bash
+  - edit
+  - read
+  - write
+  - glob
+  - grep
+  - list
+  - task
 ---
 
 # Tauri Desktop Application Expert

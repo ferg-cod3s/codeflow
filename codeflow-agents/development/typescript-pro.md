@@ -2,9 +2,11 @@
 name: typescript-pro
 uats_version: "1.0"
 spec_version: UATS-1.0
-description: Master TypeScript with advanced types, generics, and strict type safety. Handles complex type systems, decorators, and enterprise-grade patterns. Use PROACTIVELY for TypeScript architecture, type inference optimization, or advanced typing patterns.
+description: Master TypeScript with advanced types, generics, and strict type
+  safety. Handles complex type systems, decorators, and enterprise-grade
+  patterns. Use PROACTIVELY for TypeScript architecture, type inference
+  optimization, or advanced typing patterns.
 mode: subagent
-model: anthropic/claude-sonnet-4
 temperature: 0.1
 category: development
 tags:

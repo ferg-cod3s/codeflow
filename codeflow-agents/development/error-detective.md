@@ -2,9 +2,11 @@
 name: error-detective
 uats_version: "1.0"
 spec_version: UATS-1.0
-description: Search logs and codebases for error patterns, stack traces, and anomalies. Correlates errors across systems and identifies root causes. Use PROACTIVELY when debugging issues, analyzing logs, or investigating production errors.
+description: Search logs and codebases for error patterns, stack traces, and
+  anomalies. Correlates errors across systems and identifies root causes. Use
+  PROACTIVELY when debugging issues, analyzing logs, or investigating production
+  errors.
 mode: subagent
-model: anthropic/claude-sonnet-4
 temperature: 0.1
 category: development
 tags:

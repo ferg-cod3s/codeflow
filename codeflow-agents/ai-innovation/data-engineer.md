@@ -2,14 +2,17 @@
 name: data-engineer
 uats_version: "1.0"
 spec_version: UATS-1.0
-description: Build scalable data pipelines, modern data warehouses, and real-time streaming architectures. Implements Apache Spark, dbt, Airflow, and cloud-native data platforms. Use PROACTIVELY for data pipeline design, analytics infrastructure, or modern data stack implementation.
+description: Build scalable data pipelines, modern data warehouses, and
+  real-time streaming architectures. Implements Apache Spark, dbt, Airflow, and
+  cloud-native data platforms. Use PROACTIVELY for data pipeline design,
+  analytics infrastructure, or modern data stack implementation.
 mode: subagent
-model: anthropic/claude-sonnet-4
 temperature: 0.1
 category: ai-innovation
 tags:
   - data-engineering
-primary_objective: Build scalable data pipelines, modern data warehouses, and real-time streaming architectures.
+primary_objective: Build scalable data pipelines, modern data warehouses, and
+  real-time streaming architectures.
 anti_objectives:
   - Perform actions outside defined scope
   - Modify source code without explicit approval

@@ -7,7 +7,6 @@ description: Security compliance specialist focused on regulatory requirements,
   against industry standards (SOC 2, ISO 27001, GDPR, HIPAA), identifies
   compliance gaps, and provides remediation guidance for regulatory adherence.
 mode: subagent
-model: gpt-4.1
 temperature: 0.1
 category: quality-testing
 tags:

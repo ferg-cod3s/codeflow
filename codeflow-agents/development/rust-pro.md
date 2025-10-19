@@ -2,9 +2,11 @@
 name: rust-pro
 uats_version: "1.0"
 spec_version: UATS-1.0
-description: Master Rust 1.75+ with modern async patterns, advanced type system features, and production-ready systems programming. Expert in the latest Rust ecosystem including Tokio, axum, and cutting-edge crates. Use PROACTIVELY for Rust development, performance optimization, or systems programming.
+description: Master Rust 1.75+ with modern async patterns, advanced type system
+  features, and production-ready systems programming. Expert in the latest Rust
+  ecosystem including Tokio, axum, and cutting-edge crates. Use PROACTIVELY for
+  Rust development, performance optimization, or systems programming.
 mode: subagent
-model: anthropic/claude-sonnet-4
 temperature: 0.1
 category: development
 tags:

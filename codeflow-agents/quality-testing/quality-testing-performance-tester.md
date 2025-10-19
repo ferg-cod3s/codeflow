@@ -5,7 +5,7 @@ spec_version: UATS-1.0
 description: Design and execute load, stress, soak, and spike tests; analyze
   performance bottlenecks; and recommend optimizations aligned with SLOs.
 mode: subagent
-model: grok-code
+model: opencode/grok-code
 temperature: 0.3
 category: quality-testing
 tags:

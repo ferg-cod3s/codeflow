@@ -2,9 +2,10 @@
 name: mermaid-expert
 uats_version: "1.0"
 spec_version: UATS-1.0
-description: Create Mermaid diagrams for flowcharts, sequences, ERDs, and architectures. Masters syntax for all diagram types and styling. Use PROACTIVELY for visual documentation, system diagrams, or process flows.
+description: Create Mermaid diagrams for flowcharts, sequences, ERDs, and
+  architectures. Masters syntax for all diagram types and styling. Use
+  PROACTIVELY for visual documentation, system diagrams, or process flows.
 mode: subagent
-model: anthropic/claude-sonnet-4
 temperature: 0.1
 category: development
 tags:

@@ -2,14 +2,17 @@
 name: legacy-modernizer
 uats_version: "1.0"
 spec_version: UATS-1.0
-description: Refactor legacy codebases, migrate outdated frameworks, and implement gradual modernization. Handles technical debt, dependency updates, and backward compatibility. Use PROACTIVELY for legacy system updates, framework migrations, or technical debt reduction.
+description: Refactor legacy codebases, migrate outdated frameworks, and
+  implement gradual modernization. Handles technical debt, dependency updates,
+  and backward compatibility. Use PROACTIVELY for legacy system updates,
+  framework migrations, or technical debt reduction.
 mode: subagent
-model: anthropic/claude-sonnet-4
 temperature: 0.1
 category: development
 tags:
   - general
-primary_objective: Refactor legacy codebases, migrate outdated frameworks, and implement gradual modernization.
+primary_objective: Refactor legacy codebases, migrate outdated frameworks, and
+  implement gradual modernization.
 anti_objectives:
   - Perform actions outside defined scope
   - Modify source code without explicit approval

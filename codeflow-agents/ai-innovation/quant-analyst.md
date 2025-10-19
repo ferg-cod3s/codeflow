@@ -2,9 +2,11 @@
 name: quant-analyst
 uats_version: "1.0"
 spec_version: UATS-1.0
-description: Build financial models, backtest trading strategies, and analyze market data. Implements risk metrics, portfolio optimization, and statistical arbitrage. Use PROACTIVELY for quantitative finance, trading algorithms, or risk analysis.
+description: Build financial models, backtest trading strategies, and analyze
+  market data. Implements risk metrics, portfolio optimization, and statistical
+  arbitrage. Use PROACTIVELY for quantitative finance, trading algorithms, or
+  risk analysis.
 mode: subagent
-model: anthropic/claude-opus-4
 temperature: 0.1
 category: ai-innovation
 tags:

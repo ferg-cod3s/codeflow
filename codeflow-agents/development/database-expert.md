@@ -8,7 +8,7 @@ description: Optimizes database queries and designs efficient data models.
   resolve performance bottlenecks in PostgreSQL, MySQL, MongoDB, or other
   database systems.
 mode: subagent
-model: grok-code
+model: opencode/grok-code
 temperature: 0.1
 category: development
 tags:

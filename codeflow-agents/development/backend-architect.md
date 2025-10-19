@@ -2,9 +2,10 @@
 name: backend-architect
 uats_version: "1.0"
 spec_version: UATS-1.0
-description: Design RESTful APIs, microservice boundaries, and database schemas. Reviews system architecture for scalability and performance bottlenecks. Use PROACTIVELY when creating new backend services or APIs.
+description: Design RESTful APIs, microservice boundaries, and database schemas.
+  Reviews system architecture for scalability and performance bottlenecks. Use
+  PROACTIVELY when creating new backend services or APIs.
 mode: subagent
-model: anthropic/claude-opus-4
 temperature: 0.1
 category: development
 tags:

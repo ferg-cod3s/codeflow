@@ -1,6 +1,6 @@
 ---
 name: agent-architect
-uats_version: '1.0'
+uats_version: "1.0"
 spec_version: UATS-1.0
 description: Meta-level agent that creates and designs specialized AI agents
   on-demand for specific tasks, projects, or domains. Analyzes requirements,
@@ -9,7 +9,6 @@ description: Meta-level agent that creates and designs specialized AI agents
   that don't exist in the current system or when you need highly specialized
   combinations of existing agent capabilities.
 mode: subagent
-model: gpt-4.1
 temperature: 0.1
 category: generalist
 tags:

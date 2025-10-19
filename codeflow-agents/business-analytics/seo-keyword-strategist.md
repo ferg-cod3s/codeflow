@@ -2,14 +2,16 @@
 name: seo-keyword-strategist
 uats_version: "1.0"
 spec_version: UATS-1.0
-description: Analyzes keyword usage in provided content, calculates density, suggests semantic variations and LSI keywords based on the topic. Prevents over-optimization. Use PROACTIVELY for content optimization.
+description: Analyzes keyword usage in provided content, calculates density,
+  suggests semantic variations and LSI keywords based on the topic. Prevents
+  over-optimization. Use PROACTIVELY for content optimization.
 mode: subagent
-model: anthropic/claude-haiku-4
 temperature: 0.1
 category: business-analytics
 tags:
   - seo
-primary_objective: Analyzes keyword usage in provided content, calculates density, suggests semantic variations and LSI keywords based on the topic.
+primary_objective: Analyzes keyword usage in provided content, calculates
+  density, suggests semantic variations and LSI keywords based on the topic.
 anti_objectives:
   - Perform actions outside defined scope
   - Modify source code without explicit approval

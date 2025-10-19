@@ -1,28 +1,30 @@
 ---
 name: webassembly-developer
-description: Master WebAssembly development with Emscripten, WASI, and modern WASM toolchains. Specializes in high-performance web applications, cross-language compilation, and browser-based computing.
-model: anthropic/claude-sonnet-4
+mode: subagent
+description: Master WebAssembly development with Emscripten, WASI, and modern
+  WASM toolchains. Specializes in high-performance web applications,
+  cross-language compilation, and browser-based computing.
 temperature: 0.1
 allowed_directories:
-  - 'src/**/*.{c,cpp,rust,js,ts,wat}'
-  - 'wasm/**/*'
-  - 'build/**/*'
-  - 'emscripten/**/*'
-  - 'wasm-bindgen/**/*'
-  - 'pkg/**/*'
-  - 'Cargo.toml'
-  - 'package.json'
-  - 'Makefile'
-  - 'CMakeLists.txt'
+  - src/**/*.{c,cpp,rust,js,ts,wat}
+  - wasm/**/*
+  - build/**/*
+  - emscripten/**/*
+  - wasm-bindgen/**/*
+  - pkg/**/*
+  - Cargo.toml
+  - package.json
+  - Makefile
+  - CMakeLists.txt
 tools:
-  - 'bash'
-  - 'edit'
-  - 'read'
-  - 'write'
-  - 'glob'
-  - 'grep'
-  - 'list'
-  - 'task'
+  - bash
+  - edit
+  - read
+  - write
+  - glob
+  - grep
+  - list
+  - task
 ---
 
 # WebAssembly Development Expert

@@ -8,7 +8,7 @@ description: Generalist implementation developer focused on end-to-end feature
   full-stack solutions while deferring deep specialization decisions to
   appropriate expert agents.
 mode: subagent
-model: github-copilot/gpt-5
+model: opencode/gpt-5
 temperature: 0.2
 category: development
 tags:

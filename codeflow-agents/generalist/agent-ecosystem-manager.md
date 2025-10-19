@@ -1,26 +1,28 @@
 ---
 name: agent-ecosystem-manager
-description: Comprehensive agent ecosystem management specialist. Manages agent lifecycle, performance monitoring, capability validation, and ecosystem optimization for large-scale AI agent deployments.
-model: anthropic/claude-sonnet-4
+mode: subagent
+description: Comprehensive agent ecosystem management specialist. Manages agent
+  lifecycle, performance monitoring, capability validation, and ecosystem
+  optimization for large-scale AI agent deployments.
 temperature: 0.1
 allowed_directories:
-  - 'codeflow-agents/**/*'
-  - '.claude/**/*'
-  - '.opencode/**/*'
-  - 'config/**/*'
-  - 'mcp/**/*'
-  - 'src/**/*'
-  - 'tests/**/*'
-  - 'docs/**/*'
+  - codeflow-agents/**/*
+  - .claude/**/*
+  - .opencode/**/*
+  - config/**/*
+  - mcp/**/*
+  - src/**/*
+  - tests/**/*
+  - docs/**/*
 tools:
-  - 'bash'
-  - 'edit'
-  - 'read'
-  - 'write'
-  - 'glob'
-  - 'grep'
-  - 'list'
-  - 'task'
+  - bash
+  - edit
+  - read
+  - write
+  - glob
+  - grep
+  - list
+  - task
 ---
 
 # Agent Ecosystem Manager

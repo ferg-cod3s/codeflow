@@ -7,7 +7,6 @@ description: Cloud cost optimization and resource efficiency specialist.
   provides recommendations for resource rightsizing, reserved instances, and
   cost-effective architectures.
 mode: subagent
-model: gpt-4.1
 temperature: 0.1
 category: operations
 tags:

@@ -2,9 +2,11 @@
 name: reference-builder
 uats_version: "1.0"
 spec_version: UATS-1.0
-description: Creates exhaustive technical references and API documentation. Generates comprehensive parameter listings, configuration guides, and searchable reference materials. Use PROACTIVELY for API docs, configuration references, or complete technical specifications.
+description: Creates exhaustive technical references and API documentation.
+  Generates comprehensive parameter listings, configuration guides, and
+  searchable reference materials. Use PROACTIVELY for API docs, configuration
+  references, or complete technical specifications.
 mode: subagent
-model: anthropic/claude-haiku-4
 temperature: 0.1
 category: development
 tags:

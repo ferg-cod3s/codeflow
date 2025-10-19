@@ -2,9 +2,11 @@
 name: django-pro
 uats_version: "1.0"
 spec_version: UATS-1.0
-description: Master Django 5.x with async views, DRF, Celery, and Django Channels. Build scalable web applications with proper architecture, testing, and deployment. Use PROACTIVELY for Django development, ORM optimization, or complex Django patterns.
+description: Master Django 5.x with async views, DRF, Celery, and Django
+  Channels. Build scalable web applications with proper architecture, testing,
+  and deployment. Use PROACTIVELY for Django development, ORM optimization, or
+  complex Django patterns.
 mode: subagent
-model: anthropic/claude-sonnet-4
 temperature: 0.1
 category: development
 tags:

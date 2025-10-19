@@ -2,9 +2,10 @@
 name: dx-optimizer
 uats_version: "1.0"
 spec_version: UATS-1.0
-description: Developer Experience specialist. Improves tooling, setup, and workflows. Use PROACTIVELY when setting up new projects, after team feedback, or when development friction is noticed.
+description: Developer Experience specialist. Improves tooling, setup, and
+  workflows. Use PROACTIVELY when setting up new projects, after team feedback,
+  or when development friction is noticed.
 mode: subagent
-model: anthropic/claude-sonnet-4
 temperature: 0.1
 category: operations
 tags:

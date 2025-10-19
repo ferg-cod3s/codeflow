@@ -2,14 +2,17 @@
 name: sql-pro
 uats_version: "1.0"
 spec_version: UATS-1.0
-description: Master modern SQL with cloud-native databases, OLTP/OLAP optimization, and advanced query techniques. Expert in performance tuning, data modeling, and hybrid analytical systems. Use PROACTIVELY for database optimization or complex analysis.
+description: Master modern SQL with cloud-native databases, OLTP/OLAP
+  optimization, and advanced query techniques. Expert in performance tuning,
+  data modeling, and hybrid analytical systems. Use PROACTIVELY for database
+  optimization or complex analysis.
 mode: subagent
-model: anthropic/claude-sonnet-4
 temperature: 0.1
 category: development
 tags:
   - sql
-primary_objective: Master modern SQL with cloud-native databases, OLTP/OLAP optimization, and advanced query techniques.
+primary_objective: Master modern SQL with cloud-native databases, OLTP/OLAP
+  optimization, and advanced query techniques.
 anti_objectives:
   - Perform actions outside defined scope
   - Modify source code without explicit approval

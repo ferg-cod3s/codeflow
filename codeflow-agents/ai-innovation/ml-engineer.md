@@ -2,9 +2,11 @@
 name: ml-engineer
 uats_version: "1.0"
 spec_version: UATS-1.0
-description: Build production ML systems with PyTorch 2.x, TensorFlow, and modern ML frameworks. Implements model serving, feature engineering, A/B testing, and monitoring. Use PROACTIVELY for ML model deployment, inference optimization, or production ML infrastructure.
+description: Build production ML systems with PyTorch 2.x, TensorFlow, and
+  modern ML frameworks. Implements model serving, feature engineering, A/B
+  testing, and monitoring. Use PROACTIVELY for ML model deployment, inference
+  optimization, or production ML infrastructure.
 mode: subagent
-model: anthropic/claude-opus-4
 temperature: 0.1
 category: ai-innovation
 tags:

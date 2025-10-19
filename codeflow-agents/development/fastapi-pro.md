@@ -2,9 +2,11 @@
 name: fastapi-pro
 uats_version: "1.0"
 spec_version: UATS-1.0
-description: Build high-performance async APIs with FastAPI, SQLAlchemy 2.0, and Pydantic V2. Master microservices, WebSockets, and modern Python async patterns. Use PROACTIVELY for FastAPI development, async optimization, or API architecture.
+description: Build high-performance async APIs with FastAPI, SQLAlchemy 2.0, and
+  Pydantic V2. Master microservices, WebSockets, and modern Python async
+  patterns. Use PROACTIVELY for FastAPI development, async optimization, or API
+  architecture.
 mode: subagent
-model: anthropic/claude-sonnet-4
 temperature: 0.1
 category: development
 tags:

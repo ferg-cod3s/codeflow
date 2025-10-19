@@ -2,14 +2,18 @@
 name: flutter-expert
 uats_version: "1.0"
 spec_version: UATS-1.0
-description: Master Flutter development with Dart 3, advanced widgets, and multi-platform deployment. Handles state management, animations, testing, and performance optimization for mobile, web, desktop, and embedded platforms. Use PROACTIVELY for Flutter architecture, UI implementation, or cross-platform features.
+description: Master Flutter development with Dart 3, advanced widgets, and
+  multi-platform deployment. Handles state management, animations, testing, and
+  performance optimization for mobile, web, desktop, and embedded platforms. Use
+  PROACTIVELY for Flutter architecture, UI implementation, or cross-platform
+  features.
 mode: subagent
-model: anthropic/claude-sonnet-4
 temperature: 0.1
 category: development
 tags:
   - mobile
-primary_objective: Master Flutter development with Dart 3, advanced widgets, and multi-platform deployment.
+primary_objective: Master Flutter development with Dart 3, advanced widgets, and
+  multi-platform deployment.
 anti_objectives:
   - Perform actions outside defined scope
   - Modify source code without explicit approval

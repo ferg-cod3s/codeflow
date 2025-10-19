@@ -2,14 +2,16 @@
 name: backend-security-coder
 uats_version: "1.0"
 spec_version: UATS-1.0
-description: Expert in secure backend coding practices specializing in input validation, authentication, and API security. Use PROACTIVELY for backend security implementations or security code reviews.
+description: Expert in secure backend coding practices specializing in input
+  validation, authentication, and API security. Use PROACTIVELY for backend
+  security implementations or security code reviews.
 mode: subagent
-model: anthropic/claude-opus-4
 temperature: 0.1
 category: quality-testing
 tags:
   - security
-primary_objective: Expert in secure backend coding practices specializing in input validation, authentication, and API security.
+primary_objective: Expert in secure backend coding practices specializing in
+  input validation, authentication, and API security.
 anti_objectives:
   - Perform actions outside defined scope
   - Modify source code without explicit approval

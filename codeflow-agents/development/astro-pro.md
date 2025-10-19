@@ -1,10 +1,12 @@
 ---
 name: astro-pro
-uats_version: '1.0'
+uats_version: "1.0"
 spec_version: UATS-1.0
-description: Master Astro 4+ with content collections, islands architecture, and static site generation. Expert in hybrid rendering, performance optimization, and modern web standards. Use PROACTIVELY for Astro development, content-driven sites, or performance-critical static applications.
+description: Master Astro 4+ with content collections, islands architecture, and
+  static site generation. Expert in hybrid rendering, performance optimization,
+  and modern web standards. Use PROACTIVELY for Astro development,
+  content-driven sites, or performance-critical static applications.
 mode: subagent
-model: anthropic/claude-sonnet-4
 temperature: 0.1
 category: development
 tags:
@@ -12,7 +14,8 @@ tags:
   - frontend
   - static-site-generation
   - jamstack
-primary_objective: Build high-performance static and hybrid sites with Astro, content collections, and islands architecture.
+primary_objective: Build high-performance static and hybrid sites with Astro,
+  content collections, and islands architecture.
 anti_objectives:
   - Perform actions outside defined scope
   - Modify source code without explicit approval

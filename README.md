@@ -1,132 +1,154 @@
-# Codeflow - AI Agent & Command Management CLI
+# Codeflow - AI Agent & Command Distribution Platform
 
-A TypeScript-based CLI tool for managing Claude Code, OpenCode, and MCP-compatible client agents and commands. Ensures compliance with Claude Code v2.x.x, OpenCode, and MCP specifications through automated validation and conversion.
+A comprehensive TypeScript-based CLI platform for distributing 123+ specialized AI agents and 15+ workflow commands across Claude Code, OpenCode, and MCP-compatible clients. Built with Bun for maximum performance and reliability.
 
 ## Quick Start
 
 ```bash
-# Install dependencies and link CLI
+# Install dependencies and link CLI globally
 bun install && bun run install
 
-# Setup agents and commands in a project
+# Setup 123+ agents and 15+ commands in your project
 codeflow setup [project-path]
 
-# Check compliance status
+# Check status and compliance
 codeflow status [project-path]
 
-# Sync with latest agents/commands
+# Sync with latest agents and commands
 codeflow sync [project-path]
 
-# Convert between formats
-codeflow convert source/ target/ --format claude-code
+# Start automatic file watching
+codeflow watch start
+
+# Execute research workflow
+codeflow research "analyze authentication system"
 ```
 
-## Format Compliance
+## Platform Support
 
-This tool enforces **Claude Code v2.x.x**, **OpenCode**, and **MCP** specifications. See [COMPLIANCE.md](./COMPLIANCE.md) for detailed format requirements and migration guide.
+**Claude Code (v2.x.x)**: Native integration with YAML frontmatter format
+**OpenCode**: Full support with mode, temperature, and allowed_directories
+**MCP Clients**: JSON parameter format for Cursor, VS Code, and other MCP-compatible editors
 
-**Key Points:**
+See [COMPLIANCE.md](./COMPLIANCE.md) for detailed format specifications and migration guide.
 
-- Claude Code v2.x.x only allows: `name`, `description`, `tools`, `model`
-- OpenCode requires: `name`, `description`, `mode` + optional fields
-- MCP clients use JSON parameter format for tool calls
-- Converter automatically strips invalid fields during conversion
-- Validator catches compliance issues before deployment
+## Available Commands
 
-## Codeflow Workflow
-
-### Available Commands
+### Workflow Commands
 
 - `/research` - Comprehensive codebase and documentation analysis
-- `/plan` - Create detailed implementation plans
-- `/execute` - Implement plans with verification
-- `/test` - Generate comprehensive test suites
-- `/document` - Create user guides and API documentation
-- `/commit` - Create structured git commits
-- `/review` - Validate implementations against plans
-- `/project-docs` - Generate complete project documentation
+- `/plan` - Create detailed implementation plans from tickets and research
+- `/execute` - Implement plans with proper verification
+- `/test` - Generate comprehensive test suites for implemented features
+- `/document` - Create user guides, API docs, and technical documentation
+- `/commit` - Create commits with structured messages
+- `/review` - Validate implementations against original plans
+- `/continue` - Resume execution from last completed step
+- `/help` - Get detailed development guidance and workflow information
+- `/refactor` - Systematic code improvement with validation
+- `/debug` - Systematic debugging and issue resolution
+- `/deploy` - Automated deployment with validation
+- `/ticket` - Create structured development tickets
 
-### Claude Code Integration
+### Platform Integration
 
-Commands are located in `.claude/commands/`.
-
-### OpenCode Integration
-
-Commands are located in `.opencode/command/`.
-
-### MCP-Compatible Clients Integration
-
-Commands are accessed via MCP tool calls with JSON parameters in Cursor, VS Code, and other MCP-compatible editors.
+- **Claude Code**: Commands in `.claude/commands/` with YAML frontmatter
+- **OpenCode**: Commands in `.opencode/command/` with enhanced YAML configuration
+- **MCP Clients**: JSON parameter format for Cursor, VS Code, and other editors
 
 ## Architecture
 
-### Base Format (Source of Truth)
+### Single Source of Truth
 
-Agents are defined in `codeflow-agents/` organized by domain:
+All 123+ agents are defined once in `codeflow-agents/` using a unified BaseAgent format:
 
-- `development/` - Full-stack, backend, frontend, mobile development
-- `operations/` - DevOps, infrastructure, monitoring, incident response
-- `quality-testing/` - Testing, QA, performance, security scanning
-- `ai-innovation/` - LLM integration, AI agents, prompt engineering
-- `business-analytics/` - Data analysis, metrics, business intelligence
-- `design-ux/` - UI/UX, accessibility, design systems
-- `product-strategy/` - Product management, growth, requirements
-- `generalist/` - General purpose agents and orchestrators
+**Agent Categories:**
 
-### Platform Conversion
+- `development/` (57 agents) - Full-stack, backend, frontend, mobile development
+- `operations/` (15 agents) - DevOps, infrastructure, monitoring, incident response
+- `quality-testing/` (13 agents) - Testing, QA, performance, security scanning
+- `ai-innovation/` (8 agents) - LLM integration, AI agents, prompt engineering
+- `business-analytics/` (18 agents) - Data analysis, metrics, business intelligence
+- `design-ux/` (5 agents) - UI/UX, accessibility, design systems
+- `product-strategy/` (1 agent) - Product management, growth, requirements
+- `generalist/` (6 agents) - General purpose agents and orchestrators
 
-Run `codeflow setup [project-path]` to convert base format agents to platform-specific formats:
+### Automatic Platform Conversion
 
-- **Claude Code**: `.claude/commands/` (YAML frontmatter with name, description, tools, model)
-- **OpenCode**: `.opencode/agent/` and `.opencode/command/` (YAML frontmatter with mode, temperature, allowed_directories)
-- **MCP Clients**: JSON parameter format for tool calls in Cursor, VS Code, etc.
+The CLI automatically converts BaseAgent format to platform-specific formats:
 
-### Validation & Compliance
+- **Claude Code**: `.claude/agents/` and `.claude/commands/` (YAML with name, description, tools, model)
+- **OpenCode**: `.opencode/agent/` and `.opencode/command/` (YAML with mode, temperature, allowed_directories)
+- **MCP Clients**: JSON parameter format for Cursor, VS Code, and other MCP-compatible editors
 
-- Automated validation enforces Claude Code v2.x.x, OpenCode, and MCP specifications
-- See [COMPLIANCE.md](./COMPLIANCE.md) for detailed requirements
-- Use `codeflow status` to check compliance issues
+### Core Workflow Agents
+
+Essential agents for development workflows:
+
+- `codebase-locator` - Finds WHERE files and components exist
+- `codebase-analyzer` - Understands HOW specific code works
+- `codebase-pattern-finder` - Discovers similar implementation patterns
+- `thoughts-locator` - Discovers existing documentation about topics
+- `thoughts-analyzer` - Extracts insights from specific documents
+- `web-search-researcher` - Performs targeted web research
 
 ## Features
 
-- **Multi-Platform Support**: Convert between Claude Code, OpenCode, and MCP formats
-- **Automated Validation**: Catch compliance issues before deployment
-- **Base Format Management**: Single source of truth in `codeflow-agents/`
-- **Sync Capabilities**: Keep project configs updated with `codeflow sync`
-- **Watch Mode**: Automatic file synchronization with `codeflow watch start`
+- **123+ Specialized Agents**: Covering development, operations, testing, AI, analytics, design, and business domains
+- **15+ Workflow Commands**: Complete development workflow from research to deployment
+- **Multi-Platform Support**: Claude Code, OpenCode, and MCP-compatible clients
+- **Automatic Validation**: Ensures compliance with platform specifications
+- **Real-time Sync**: Keep projects updated with `codeflow sync` and `codeflow watch start`
+- **Interactive Dashboard**: Monitor agent status and system health
+- **CLI Research**: Execute deep research workflows directly from command line
+- **Format Conversion**: Seamless conversion between platform formats
 
-## Commands
+## CLI Commands
 
-Run `codeflow help` for full command documentation.
+**Core Commands:**
+
+- `setup [project-path]` - Initialize agents and commands in project
+- `status [project-path]` - Check sync status and compliance
+- `sync [project-path]` - Synchronize with latest agents/commands
+- `watch start` - Start automatic file synchronization
+- `research "<query>"` - Execute research workflow from CLI
+
+**Management Commands:**
+
+- `list [path]` - List installed agents and commands
+- `info <item-name>` - Show detailed agent/command information
+- `validate [path]` - Validate agents and commands
+- `fix-models` - Fix model configurations
+- `clean [path]` - Clean up cache and temp files
+
+**Utility Commands:**
+
+- `convert <source> <target> <format>` - Convert between formats
+- `export [path]` - Export project setup
+- `update` - Check for CLI updates
+
+Run `codeflow help` for complete documentation.
 
 ## Documentation
+
+**Core Documentation:**
 
 - [COMPLIANCE.md](./COMPLIANCE.md) - Format specifications and migration guide
 - [DEVELOPMENT.md](./DEVELOPMENT.md) - Development setup and contributing guide
 - [CLAUDE.md](./CLAUDE.md) - Claude Code integration guidance
+- [ARCHITECTURE_OVERVIEW.md](./docs/ARCHITECTURE_OVERVIEW.md) - System architecture and design
+
+**Guides & Reference:**
+
+- [AGENT_REGISTRY.md](./AGENT_REGISTRY.md) - Complete agent capabilities and usage
+- [MCP_QUICKSTART.md](./docs/MCP_QUICKSTART.md) - MCP integration guide
+- [SLASH_COMMANDS.md](./docs/SLASH_COMMANDS.md) - Command reference
 - [docs/](./docs/) - Architecture, workflow, and implementation details
 
 ## License
 
 MIT - See [LICENSE](./LICENSE)
 
-Generated by Codeflow CLI
-## Codeflow Workflow
+---
 
-### Available Commands
-
-- `/research` - Comprehensive codebase and documentation analysis
-- `/plan` - Create detailed implementation plans
-- `/execute` - Implement plans with verification
-- `/test` - Generate comprehensive test suites
-- `/document` - Create user guides and API documentation
-- `/commit` - Create structured git commits
-- `/review` - Validate implementations against plans
-- `/project-docs` - Generate complete project documentation
-
-### Claude Code Integration
-
-Commands are located in `.claude/commands/`.
-
-
-Generated by Codeflow CLI
+**Version**: 0.14.0 | **Agents**: 123+ | **Commands**: 15+ | **Platforms**: Claude Code, OpenCode, MCP

@@ -2,9 +2,10 @@
 name: seo-content-auditor
 uats_version: "1.0"
 spec_version: UATS-1.0
-description: Analyzes provided content for quality, E-E-A-T signals, and SEO best practices. Scores content and provides improvement recommendations based on established guidelines. Use PROACTIVELY for content review.
+description: Analyzes provided content for quality, E-E-A-T signals, and SEO
+  best practices. Scores content and provides improvement recommendations based
+  on established guidelines. Use PROACTIVELY for content review.
 mode: subagent
-model: anthropic/claude-sonnet-4
 temperature: 0.1
 category: business-analytics
 tags:

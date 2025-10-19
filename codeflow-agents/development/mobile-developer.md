@@ -2,14 +2,17 @@
 name: mobile-developer
 uats_version: "1.0"
 spec_version: UATS-1.0
-description: Develop React Native, Flutter, or native mobile apps with modern architecture patterns. Masters cross-platform development, native integrations, offline sync, and app store optimization. Use PROACTIVELY for mobile features, cross-platform code, or app optimization.
+description: Develop React Native, Flutter, or native mobile apps with modern
+  architecture patterns. Masters cross-platform development, native
+  integrations, offline sync, and app store optimization. Use PROACTIVELY for
+  mobile features, cross-platform code, or app optimization.
 mode: subagent
-model: anthropic/claude-sonnet-4
 temperature: 0.1
 category: development
 tags:
   - mobile
-primary_objective: Develop React Native, Flutter, or native mobile apps with modern architecture patterns.
+primary_objective: Develop React Native, Flutter, or native mobile apps with
+  modern architecture patterns.
 anti_objectives:
   - Perform actions outside defined scope
   - Modify source code without explicit approval

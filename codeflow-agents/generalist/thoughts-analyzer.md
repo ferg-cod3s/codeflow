@@ -9,7 +9,6 @@ description: High-precision research & documentation insight extraction agent
   aggressively excluding noise, speculation, and superseded content. Not a
   summarizer—acts as a curator of enduring value.
 mode: subagent
-model: gpt-4.1
 temperature: 0.1
 category: generalist
 tags:

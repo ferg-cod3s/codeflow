@@ -1,5 +1,6 @@
 ---
 name: smart-subagent-orchestrator
+mode: subagent
 description: Advanced orchestration agent that coordinates specialized subagents for complex multi-domain projects. Uses platform-native subagent selection and delegation methods, completely decoupled from MCP infrastructure.
 model: opencode/grok-code
 temperature: 0.7

@@ -2,15 +2,17 @@
 name: seo-structure-architect
 uats_version: "1.0"
 spec_version: UATS-1.0
-description: Analyzes and optimizes content structure including header hierarchy, suggests schema markup, and internal linking opportunities. Creates search-friendly content organization. Use PROACTIVELY for content structuring.
+description: Analyzes and optimizes content structure including header
+  hierarchy, suggests schema markup, and internal linking opportunities. Creates
+  search-friendly content organization. Use PROACTIVELY for content structuring.
 mode: subagent
-model: anthropic/claude-haiku-4
 temperature: 0.1
 category: development
 tags:
   - architecture
   - seo
-primary_objective: Analyzes and optimizes content structure including header hierarchy, suggests schema markup, and internal linking opportunities.
+primary_objective: Analyzes and optimizes content structure including header
+  hierarchy, suggests schema markup, and internal linking opportunities.
 anti_objectives:
   - Perform actions outside defined scope
   - Modify source code without explicit approval

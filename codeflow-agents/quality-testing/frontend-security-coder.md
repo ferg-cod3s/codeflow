@@ -2,15 +2,18 @@
 name: frontend-security-coder
 uats_version: "1.0"
 spec_version: UATS-1.0
-description: Expert in secure frontend coding practices specializing in XSS prevention, output sanitization, and client-side security patterns. Use PROACTIVELY for frontend security implementations or client-side security code reviews.
+description: Expert in secure frontend coding practices specializing in XSS
+  prevention, output sanitization, and client-side security patterns. Use
+  PROACTIVELY for frontend security implementations or client-side security code
+  reviews.
 mode: subagent
-model: anthropic/claude-opus-4
 temperature: 0.1
 category: quality-testing
 tags:
   - security
   - web-development
-primary_objective: Expert in secure frontend coding practices specializing in XSS prevention, output sanitization, and client-side security patterns.
+primary_objective: Expert in secure frontend coding practices specializing in
+  XSS prevention, output sanitization, and client-side security patterns.
 anti_objectives:
   - Perform actions outside defined scope
   - Modify source code without explicit approval

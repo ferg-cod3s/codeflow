@@ -2,14 +2,17 @@
 name: ai-engineer
 uats_version: "1.0"
 spec_version: UATS-1.0
-description: Build production-ready LLM applications, advanced RAG systems, and intelligent agents. Implements vector search, multimodal AI, agent orchestration, and enterprise AI integrations. Use PROACTIVELY for LLM features, chatbots, AI agents, or AI-powered applications.
+description: Build production-ready LLM applications, advanced RAG systems, and
+  intelligent agents. Implements vector search, multimodal AI, agent
+  orchestration, and enterprise AI integrations. Use PROACTIVELY for LLM
+  features, chatbots, AI agents, or AI-powered applications.
 mode: subagent
-model: anthropic/claude-opus-4
 temperature: 0.1
 category: ai-innovation
 tags:
   - ai-ml
-primary_objective: Build production-ready LLM applications, advanced RAG systems, and intelligent agents.
+primary_objective: Build production-ready LLM applications, advanced RAG
+  systems, and intelligent agents.
 anti_objectives:
   - Perform actions outside defined scope
   - Modify source code without explicit approval

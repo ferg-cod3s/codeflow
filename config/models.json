@@ -15,15 +15,7 @@
   },
   "providers": {
     "opencode": {
-      "models": [
-        "grok-code",
-        "code-supernova",
-        "grok-code-fast-1",
-        "claude-sonnet-4",
-        "claude-opus-4-1",
-        "gpt-5",
-        "claude-3-5-haiku"
-      ],
+      "models": ["grok-code", "code-supernova", "grok-code-fast-1", "gpt-5"],
       "active": true
     },
     "anthropic": {

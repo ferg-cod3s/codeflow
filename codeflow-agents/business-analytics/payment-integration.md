@@ -2,9 +2,10 @@
 name: payment-integration
 uats_version: "1.0"
 spec_version: UATS-1.0
-description: Integrate Stripe, PayPal, and payment processors. Handles checkout flows, subscriptions, webhooks, and PCI compliance. Use PROACTIVELY when implementing payments, billing, or subscription features.
+description: Integrate Stripe, PayPal, and payment processors. Handles checkout
+  flows, subscriptions, webhooks, and PCI compliance. Use PROACTIVELY when
+  implementing payments, billing, or subscription features.
 mode: subagent
-model: anthropic/claude-sonnet-4
 temperature: 0.1
 category: business-analytics
 tags:

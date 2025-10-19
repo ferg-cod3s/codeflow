@@ -6,7 +6,7 @@ description: Designs scalable cloud architecture and manages infrastructure as
   code. Specializes in cloud infrastructure and scalability. Use this agent when
   you need to design or optimize cloud infrastructure and ensure scalability.
 mode: subagent
-model: grok-code
+model: opencode/grok-code
 temperature: 0.2
 category: operations
 tags:

@@ -2,15 +2,18 @@
 name: graphql-architect
 uats_version: "1.0"
 spec_version: UATS-1.0
-description: Master modern GraphQL with federation, performance optimization, and enterprise security. Build scalable schemas, implement advanced caching, and design real-time systems. Use PROACTIVELY for GraphQL architecture or performance optimization.
+description: Master modern GraphQL with federation, performance optimization,
+  and enterprise security. Build scalable schemas, implement advanced caching,
+  and design real-time systems. Use PROACTIVELY for GraphQL architecture or
+  performance optimization.
 mode: subagent
-model: anthropic/claude-sonnet-4
 temperature: 0.1
 category: development
 tags:
   - security
   - architecture
-primary_objective: Master modern GraphQL with federation, performance optimization, and enterprise security.
+primary_objective: Master modern GraphQL with federation, performance
+  optimization, and enterprise security.
 anti_objectives:
   - Perform actions outside defined scope
   - Modify source code without explicit approval

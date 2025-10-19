@@ -2,9 +2,11 @@
 name: javascript-pro
 uats_version: "1.0"
 spec_version: UATS-1.0
-description: Master modern JavaScript with ES6+, async patterns, and Node.js APIs. Handles promises, event loops, and browser/Node compatibility. Use PROACTIVELY for JavaScript optimization, async debugging, or complex JS patterns.
+description: Master modern JavaScript with ES6+, async patterns, and Node.js
+  APIs. Handles promises, event loops, and browser/Node compatibility. Use
+  PROACTIVELY for JavaScript optimization, async debugging, or complex JS
+  patterns.
 mode: subagent
-model: anthropic/claude-sonnet-4
 temperature: 0.1
 category: development
 tags:

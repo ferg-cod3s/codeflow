@@ -2,14 +2,19 @@
 name: tdd-orchestrator
 uats_version: "1.0"
 spec_version: UATS-1.0
-description: Master TDD orchestrator specializing in red-green-refactor discipline, multi-agent workflow coordination, and comprehensive test-driven development practices. Enforces TDD best practices across teams with AI-assisted testing and modern frameworks. Use PROACTIVELY for TDD implementation and governance.
+description: Master TDD orchestrator specializing in red-green-refactor
+  discipline, multi-agent workflow coordination, and comprehensive test-driven
+  development practices. Enforces TDD best practices across teams with
+  AI-assisted testing and modern frameworks. Use PROACTIVELY for TDD
+  implementation and governance.
 mode: subagent
-model: anthropic/claude-opus-4
 temperature: 0.1
 category: quality-testing
 tags:
   - testing
-primary_objective: Master TDD orchestrator specializing in red-green-refactor discipline, multi-agent workflow coordination, and comprehensive test-driven development practices.
+primary_objective: Master TDD orchestrator specializing in red-green-refactor
+  discipline, multi-agent workflow coordination, and comprehensive test-driven
+  development practices.
 anti_objectives:
   - Perform actions outside defined scope
   - Modify source code without explicit approval

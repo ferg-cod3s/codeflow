@@ -2,9 +2,11 @@
 name: tutorial-engineer
 uats_version: "1.0"
 spec_version: UATS-1.0
-description: Creates step-by-step tutorials and educational content from code. Transforms complex concepts into progressive learning experiences with hands-on examples. Use PROACTIVELY for onboarding guides, feature tutorials, or concept explanations.
+description: Creates step-by-step tutorials and educational content from code.
+  Transforms complex concepts into progressive learning experiences with
+  hands-on examples. Use PROACTIVELY for onboarding guides, feature tutorials,
+  or concept explanations.
 mode: subagent
-model: anthropic/claude-opus-4
 temperature: 0.1
 category: development
 tags:

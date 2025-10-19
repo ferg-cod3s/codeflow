@@ -2,9 +2,11 @@
 name: docs-architect
 uats_version: "1.0"
 spec_version: UATS-1.0
-description: Creates comprehensive technical documentation from existing codebases. Analyzes architecture, design patterns, and implementation details to produce long-form technical manuals and ebooks. Use PROACTIVELY for system documentation, architecture guides, or technical deep-dives.
+description: Creates comprehensive technical documentation from existing
+  codebases. Analyzes architecture, design patterns, and implementation details
+  to produce long-form technical manuals and ebooks. Use PROACTIVELY for system
+  documentation, architecture guides, or technical deep-dives.
 mode: subagent
-model: anthropic/claude-opus-4
 temperature: 0.1
 category: development
 tags:

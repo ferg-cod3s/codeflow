@@ -2,9 +2,10 @@
 name: risk-manager
 uats_version: "1.0"
 spec_version: UATS-1.0
-description: Monitor portfolio risk, R-multiples, and position limits. Creates hedging strategies, calculates expectancy, and implements stop-losses. Use PROACTIVELY for risk assessment, trade tracking, or portfolio protection.
+description: Monitor portfolio risk, R-multiples, and position limits. Creates
+  hedging strategies, calculates expectancy, and implements stop-losses. Use
+  PROACTIVELY for risk assessment, trade tracking, or portfolio protection.
 mode: subagent
-model: anthropic/claude-opus-4
 temperature: 0.1
 category: business-analytics
 tags:

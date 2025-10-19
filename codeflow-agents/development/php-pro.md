@@ -2,14 +2,16 @@
 name: php-pro
 uats_version: "1.0"
 spec_version: UATS-1.0
-description: Write idiomatic PHP code with generators, iterators, SPL data structures, and modern OOP features. Use PROACTIVELY for high-performance PHP applications.
+description: Write idiomatic PHP code with generators, iterators, SPL data
+  structures, and modern OOP features. Use PROACTIVELY for high-performance PHP
+  applications.
 mode: subagent
-model: anthropic/claude-sonnet-4
 temperature: 0.1
 category: development
 tags:
   - php
-primary_objective: Write idiomatic PHP code with generators, iterators, SPL data structures, and modern OOP features.
+primary_objective: Write idiomatic PHP code with generators, iterators, SPL data
+  structures, and modern OOP features.
 anti_objectives:
   - Perform actions outside defined scope
   - Modify source code without explicit approval

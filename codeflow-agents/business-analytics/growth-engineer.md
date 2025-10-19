@@ -7,7 +7,6 @@ description: Identifies user engagement opportunities and implements growth
   optimization, and viral growth feature development. Use this agent when you
   need to optimize for user growth and engagement.
 mode: subagent
-model: gpt-4.1
 temperature: 0.3
 category: business-analytics
 tags:

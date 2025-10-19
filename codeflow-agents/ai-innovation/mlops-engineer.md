@@ -2,14 +2,17 @@
 name: mlops-engineer
 uats_version: "1.0"
 spec_version: UATS-1.0
-description: Build comprehensive ML pipelines, experiment tracking, and model registries with MLflow, Kubeflow, and modern MLOps tools. Implements automated training, deployment, and monitoring across cloud platforms. Use PROACTIVELY for ML infrastructure, experiment management, or pipeline automation.
+description: Build comprehensive ML pipelines, experiment tracking, and model
+  registries with MLflow, Kubeflow, and modern MLOps tools. Implements automated
+  training, deployment, and monitoring across cloud platforms. Use PROACTIVELY
+  for ML infrastructure, experiment management, or pipeline automation.
 mode: subagent
-model: anthropic/claude-opus-4
 temperature: 0.1
 category: ai-innovation
 tags:
   - ai-ml
-primary_objective: Build comprehensive ML pipelines, experiment tracking, and model registries with MLflow, Kubeflow, and modern MLOps tools.
+primary_objective: Build comprehensive ML pipelines, experiment tracking, and
+  model registries with MLflow, Kubeflow, and modern MLOps tools.
 anti_objectives:
   - Perform actions outside defined scope
   - Modify source code without explicit approval

@@ -6,7 +6,6 @@ description: Coordinate localization (l10n) and internationalization (i18n)
   workflows including translation management, locale setup, and cultural
   adaptation processes.
 mode: subagent
-model: gpt-4.1
 temperature: 0.3
 category: product-strategy
 tags:

@@ -2,14 +2,17 @@
 name: frontend-developer
 uats_version: "1.0"
 spec_version: UATS-1.0
-description: Build React components, implement responsive layouts, and handle client-side state management. Masters React 19, Next.js 15, and modern frontend architecture. Optimizes performance and ensures accessibility. Use PROACTIVELY when creating UI components or fixing frontend issues.
+description: Build React components, implement responsive layouts, and handle
+  client-side state management. Masters React 19, Next.js 15, and modern
+  frontend architecture. Optimizes performance and ensures accessibility. Use
+  PROACTIVELY when creating UI components or fixing frontend issues.
 mode: subagent
-model: anthropic/claude-sonnet-4
 temperature: 0.1
 category: development
 tags:
   - web-development
-primary_objective: Build React components, implement responsive layouts, and handle client-side state management.
+primary_objective: Build React components, implement responsive layouts, and
+  handle client-side state management.
 anti_objectives:
   - Perform actions outside defined scope
   - Modify source code without explicit approval

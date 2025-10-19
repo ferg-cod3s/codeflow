@@ -12,12 +12,50 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const _dirname = path.dirname(__filename);
 
-const VALID_MODELS = [
-  'opencode/zen',
-  'opencode/grok-code',
-  'opencode/code-supernova',
-  'github-copilot/gpt-4.1',
-];
+// Load valid models from configuration
+function loadValidModels() {
+  try {
+    const configPath = path.join(_dirname, '../config/models.json');
+    const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+    const models = [];
+
+    // Add opencode models
+    if (config.providers?.opencode?.models) {
+      models.push(...config.providers.opencode.models.map((m) => `opencode/${m}`));
+    }
+
+    // Add github-copilot models
+    if (config.providers?.['github-copilot']?.models) {
+      models.push(...config.providers['github-copilot'].models.map((m) => `github-copilot/${m}`));
+    }
+
+    // Add anthropic models (for backward compatibility)
+    if (config.providers?.anthropic?.models) {
+      models.push(...config.providers.anthropic.models.map((m) => `anthropic/${m}`));
+    }
+
+    // Add openai models (for backward compatibility)
+    if (config.providers?.openai?.models) {
+      models.push(...config.providers.openai.models.map((m) => m));
+    }
+
+    // Add common shorthand formats
+    models.push('sonnet', 'opus', 'haiku', 'inherit');
+
+    return models;
+  } catch (error) {
+    console.error('Error loading models config:', error.message);
+    // Fallback to basic list
+    return [
+      'opencode/zen',
+      'opencode/grok-code',
+      'opencode/code-supernova',
+      'github-copilot/gpt-4.1',
+    ];
+  }
+}
+
+const VALID_MODELS = loadValidModels();
 const INVALID_MODELS = ['opencode/grok-code-fast'];
 
 function findAgentFiles(dir) {

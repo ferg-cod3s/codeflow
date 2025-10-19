@@ -2,15 +2,17 @@
 name: seo-authority-builder
 uats_version: "1.0"
 spec_version: UATS-1.0
-description: Analyzes content for E-E-A-T signals and suggests improvements to build authority and trust. Identifies missing credibility elements. Use PROACTIVELY for YMYL topics.
+description: Analyzes content for E-E-A-T signals and suggests improvements to
+  build authority and trust. Identifies missing credibility elements. Use
+  PROACTIVELY for YMYL topics.
 mode: subagent
-model: anthropic/claude-sonnet-4
 temperature: 0.1
 category: design-ux
 tags:
   - design
   - seo
-primary_objective: Analyzes content for E-E-A-T signals and suggests improvements to build authority and trust.
+primary_objective: Analyzes content for E-E-A-T signals and suggests
+  improvements to build authority and trust.
 anti_objectives:
   - Perform actions outside defined scope
   - Modify source code without explicit approval

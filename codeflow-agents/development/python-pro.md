@@ -2,9 +2,11 @@
 name: python-pro
 uats_version: "1.0"
 spec_version: UATS-1.0
-description: Master Python 3.12+ with modern features, async programming, performance optimization, and production-ready practices. Expert in the latest Python ecosystem including uv, ruff, pydantic, and FastAPI. Use PROACTIVELY for Python development, optimization, or advanced Python patterns.
+description: Master Python 3.12+ with modern features, async programming,
+  performance optimization, and production-ready practices. Expert in the latest
+  Python ecosystem including uv, ruff, pydantic, and FastAPI. Use PROACTIVELY
+  for Python development, optimization, or advanced Python patterns.
 mode: subagent
-model: anthropic/claude-sonnet-4
 temperature: 0.1
 category: development
 tags:

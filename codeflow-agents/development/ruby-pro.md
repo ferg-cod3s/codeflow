@@ -2,14 +2,17 @@
 name: ruby-pro
 uats_version: "1.0"
 spec_version: UATS-1.0
-description: Write idiomatic Ruby code with metaprogramming, Rails patterns, and performance optimization. Specializes in Ruby on Rails, gem development, and testing frameworks. Use PROACTIVELY for Ruby refactoring, optimization, or complex Ruby features.
+description: Write idiomatic Ruby code with metaprogramming, Rails patterns, and
+  performance optimization. Specializes in Ruby on Rails, gem development, and
+  testing frameworks. Use PROACTIVELY for Ruby refactoring, optimization, or
+  complex Ruby features.
 mode: subagent
-model: anthropic/claude-sonnet-4
 temperature: 0.1
 category: development
 tags:
   - ruby
-primary_objective: Write idiomatic Ruby code with metaprogramming, Rails patterns, and performance optimization.
+primary_objective: Write idiomatic Ruby code with metaprogramming, Rails
+  patterns, and performance optimization.
 anti_objectives:
   - Perform actions outside defined scope
   - Modify source code without explicit approval

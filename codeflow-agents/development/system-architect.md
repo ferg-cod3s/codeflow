@@ -10,7 +10,6 @@ description: Macro-level architecture & large-scale transformation strategist.
   architectural decisions – NOT line-level implementation or performance
   micro-tuning.
 mode: subagent
-model: gpt-4.1
 temperature: 0.15
 category: development
 tags:

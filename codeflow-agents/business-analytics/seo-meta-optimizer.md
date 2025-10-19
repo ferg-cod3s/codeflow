@@ -2,14 +2,16 @@
 name: seo-meta-optimizer
 uats_version: "1.0"
 spec_version: UATS-1.0
-description: Creates optimized meta titles, descriptions, and URL suggestions based on character limits and best practices. Generates compelling, keyword-rich metadata. Use PROACTIVELY for new content.
+description: Creates optimized meta titles, descriptions, and URL suggestions
+  based on character limits and best practices. Generates compelling,
+  keyword-rich metadata. Use PROACTIVELY for new content.
 mode: subagent
-model: anthropic/claude-haiku-4
 temperature: 0.1
 category: business-analytics
 tags:
   - seo
-primary_objective: Creates optimized meta titles, descriptions, and URL suggestions based on character limits and best practices.
+primary_objective: Creates optimized meta titles, descriptions, and URL
+  suggestions based on character limits and best practices.
 anti_objectives:
   - Perform actions outside defined scope
   - Modify source code without explicit approval

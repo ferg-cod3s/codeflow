@@ -2,9 +2,9 @@
 name: debugger
 uats_version: "1.0"
 spec_version: UATS-1.0
-description: Debugging specialist for errors, test failures, and unexpected behavior. Use proactively when encountering any issues.
+description: Debugging specialist for errors, test failures, and unexpected
+  behavior. Use proactively when encountering any issues.
 mode: subagent
-model: anthropic/claude-sonnet-4
 temperature: 0.1
 category: development
 tags:

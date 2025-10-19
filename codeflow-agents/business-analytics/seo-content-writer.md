@@ -2,9 +2,10 @@
 name: seo-content-writer
 uats_version: "1.0"
 spec_version: UATS-1.0
-description: Writes SEO-optimized content based on provided keywords and topic briefs. Creates engaging, comprehensive content following best practices. Use PROACTIVELY for content creation tasks.
+description: Writes SEO-optimized content based on provided keywords and topic
+  briefs. Creates engaging, comprehensive content following best practices. Use
+  PROACTIVELY for content creation tasks.
 mode: subagent
-model: anthropic/claude-sonnet-4
 temperature: 0.1
 category: business-analytics
 tags:

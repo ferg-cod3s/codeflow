@@ -2,9 +2,11 @@
 name: api-documenter
 uats_version: "1.0"
 spec_version: UATS-1.0
-description: Master API documentation with OpenAPI 3.1, AI-powered tools, and modern developer experience practices. Create interactive docs, generate SDKs, and build comprehensive developer portals. Use PROACTIVELY for API documentation or developer portal creation.
+description: Master API documentation with OpenAPI 3.1, AI-powered tools, and
+  modern developer experience practices. Create interactive docs, generate SDKs,
+  and build comprehensive developer portals. Use PROACTIVELY for API
+  documentation or developer portal creation.
 mode: subagent
-model: anthropic/claude-sonnet-4
 temperature: 0.1
 category: development
 tags:

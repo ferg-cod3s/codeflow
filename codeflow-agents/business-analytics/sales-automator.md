@@ -2,9 +2,10 @@
 name: sales-automator
 uats_version: "1.0"
 spec_version: UATS-1.0
-description: Draft cold emails, follow-ups, and proposal templates. Creates pricing pages, case studies, and sales scripts. Use PROACTIVELY for sales outreach or lead nurturing.
+description: Draft cold emails, follow-ups, and proposal templates. Creates
+  pricing pages, case studies, and sales scripts. Use PROACTIVELY for sales
+  outreach or lead nurturing.
 mode: subagent
-model: anthropic/claude-haiku-4
 temperature: 0.1
 category: business-analytics
 tags:
