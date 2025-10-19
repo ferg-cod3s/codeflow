@@ -2,12 +2,12 @@
 
 ## Overview
 
-The `thoughts/` directory is your project's knowledge base, containing all documentation, research, plans, and decisions. It serves as persistent memory for both human developers and AI agents.
+The `research/` directory is your project's knowledge base, containing all documentation, research, plans, and decisions. It serves as persistent memory for both human developers and AI agents.
 
 ## Directory Structure
 
 ```
-thoughts/
+research/
 ├── architecture/     # System design and decisions
 ├── tickets/         # Work items and feature requests
 ├── research/        # Analysis and findings
@@ -175,8 +175,8 @@ last_updated_by: Opus
 
 ### How Agents Search
 
-1. **thoughts-locator**: Finds relevant documents by topic
-2. **thoughts-analyzer**: Extracts insights from specific documents
+1. **research-locator**: Finds relevant documents by topic
+2. **research-analyzer**: Extracts insights from specific documents
 3. **Archive exclusion**: Never searches archive/ directory
 
 ### Search Priority

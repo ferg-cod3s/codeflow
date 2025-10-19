@@ -44,7 +44,7 @@ platform_adaptation:
 ### Pattern 1: Discovery Phase
 
 **Objective**: Find and analyze relevant information
-**Typical Agents**: codebase-locator, thoughts-locator, web-search-researcher
+**Typical Agents**: codebase-locator, research-locator, web-search-researcher
 **Execution**: Parallel when possible, independent tasks
 
 ```yaml
@@ -52,7 +52,7 @@ discovery_workflow:
   phase: 'locate_and_discover'
   agents:
     - type: 'locator'
-      candidates: ['codebase-locator', 'thoughts-locator', 'web-search-researcher']
+      candidates: ['codebase-locator', 'research-locator', 'web-search-researcher']
       selection_criteria: 'domain_match + permissions + availability'
   execution_strategy: 'parallel_independent'
   success_criteria: 'at_least_one_success_per_domain'
@@ -61,7 +61,7 @@ discovery_workflow:
 ### Pattern 2: Analysis Phase
 
 **Objective**: Deep analysis of discovered information
-**Typical Agents**: codebase-analyzer, thoughts-analyzer, security-scanner
+**Typical Agents**: codebase-analyzer, research-analyzer, security-scanner
 **Execution**: Sequential, depends on discovery outputs
 
 ```yaml
@@ -70,7 +70,7 @@ analysis_workflow:
   agents:
     - type: 'analyzer'
       candidates:
-        ['codebase-analyzer', 'thoughts-analyzer', 'security-scanner', 'performance-engineer']
+        ['codebase-analyzer', 'research-analyzer', 'security-scanner', 'performance-engineer']
       selection_criteria: 'expertise_match + context_requirements'
   execution_strategy: 'sequential_with_dependencies'
   success_criteria: 'comprehensive_analysis_coverage'
@@ -151,11 +151,11 @@ selection_algorithm:
 ```yaml
 agent_categories:
   discovery:
-    primary: ['codebase-locator', 'thoughts-locator', 'web-search-researcher']
+    primary: ['codebase-locator', 'research-locator', 'web-search-researcher']
     fallback: ['search-specialist', 'documentation-specialist']
 
   analysis:
-    primary: ['codebase-analyzer', 'thoughts-analyzer', 'security-scanner']
+    primary: ['codebase-analyzer', 'research-analyzer', 'security-scanner']
     fallback: ['system-architect', 'domain-expert']
 
   implementation:
@@ -254,7 +254,7 @@ research_template:
   phases:
     1:
       name: 'Discovery'
-      agents: ['codebase-locator', 'thoughts-locator']
+      agents: ['codebase-locator', 'research-locator']
       execution: 'parallel'
       objective: 'Find relevant code and documentation'
 
@@ -267,7 +267,7 @@ research_template:
 
     3:
       name: 'Analysis'
-      agents: ['codebase-analyzer', 'thoughts-analyzer']
+      agents: ['codebase-analyzer', 'research-analyzer']
       execution: 'parallel'
       objective: 'Deep analysis of discovered components'
       depends_on: 'Pattern Finding'

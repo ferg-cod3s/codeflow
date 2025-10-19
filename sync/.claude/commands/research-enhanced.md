@@ -15,12 +15,12 @@ This command orchestrates multiple specialized agents in a carefully designed wo
 ### Phase 1: Discovery (Parallel)
 
 - 🔍 **codebase-locator** finds relevant files and components
-- 📚 **thoughts-locator** discovers existing documentation and notes
+- 📚 **research-locator** discovers existing documentation and notes
 
 ### Phase 2: Analysis (Sequential)
 
 - 🧠 **codebase-analyzer** understands implementation details
-- 💡 **thoughts-analyzer** extracts insights from documentation
+- 💡 **research-analyzer** extracts insights from documentation
 
 ### Phase 3: External Research (Optional)
 
@@ -93,14 +93,14 @@ For complex research requiring deep analysis across multiple domains:
 #### Phase 1: Comprehensive Discovery (Parallel Execution)
 
 - **codebase-locator**: Maps all relevant files, components, and directory structures
-- **thoughts-locator**: Discovers existing documentation, past decisions, and technical notes
+- **research-locator**: Discovers existing documentation, past decisions, and technical notes
 - **codebase-pattern-finder**: Identifies recurring implementation patterns and architectural approaches
 - **web-search-researcher**: Gathers external best practices and industry standards (when applicable)
 
 #### Phase 2: Deep Analysis (Sequential Processing)
 
 - **codebase-analyzer**: Provides detailed implementation understanding with file:line evidence
-- **thoughts-analyzer**: Extracts actionable insights from documentation and historical context
+- **research-analyzer**: Extracts actionable insights from documentation and historical context
 - **system-architect**: Analyzes architectural implications and design patterns
 - **performance-engineer**: Evaluates performance characteristics and optimization opportunities
 

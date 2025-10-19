@@ -1131,23 +1131,23 @@
       }
     },
     {
-      "name": "thoughts-analyzer",
-      "description": "Agent: thoughts analyzer",
+      "name": "research-analyzer",
+      "description": "Agent: research analyzer",
       "category": "core-workflow",
       "sources": {
-        "base": "codeflow-agents/core-workflow/thoughts-analyzer.md",
-        "claude-code": ".claude/agents/thoughts-analyzer.md",
-        "opencode": ".opencode/agent/thoughts-analyzer.md"
+        "base": "codeflow-agents/generalist/research-analyzer.md",
+        "claude-code": ".claude/agents/research-analyzer.md",
+        "opencode": ".opencode/agent/research-analyzer.md"
       }
     },
     {
-      "name": "thoughts-locator",
-      "description": "Agent: thoughts locator",
+      "name": "research-locator",
+      "description": "Agent: research locator",
       "category": "core-workflow",
       "sources": {
-        "base": "codeflow-agents/core-workflow/thoughts-locator.md",
-        "claude-code": ".claude/agents/thoughts-locator.md",
-        "opencode": ".opencode/agent/thoughts-locator.md"
+        "base": "codeflow-agents/generalist/research-locator.md",
+        "claude-code": ".claude/agents/research-locator.md",
+        "opencode": ".opencode/agent/research-locator.md"
       }
     },
     {
@@ -1233,11 +1233,7 @@
   ],
   "total_agents": 123,
   "last_updated": "2025-10-19T21:02:34.327Z",
-  "canonical_directories": [
-    "codeflow-agents/",
-    ".claude/agents/",
-    ".opencode/agent/"
-  ],
+  "canonical_directories": ["codeflow-agents/", ".claude/agents/", ".opencode/agent/"],
   "format_info": {
     "base": {
       "description": "Base format for MCP integration",

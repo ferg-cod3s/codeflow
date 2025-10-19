@@ -5,7 +5,7 @@
       "name": "simple-plan-execution",
       "description": "Execute a straightforward implementation plan",
       "context": {
-        "plan_path": "thoughts/plans/add-user-validation.md",
+        "plan_path": "research/plans/add-user-validation.md",
         "current_state": "Clean working directory, dependencies installed",
         "complexity": "Single file changes with clear success criteria"
       },
@@ -16,7 +16,7 @@
       "name": "complex-multi-phase-execution",
       "description": "Execute complex plan with multiple phases and dependencies",
       "context": {
-        "plan_path": "thoughts/plans/refactor-auth-system.md",
+        "plan_path": "research/plans/refactor-auth-system.md",
         "current_state": "Multiple files need changes, database migration required",
         "complexity": "Cross-cutting changes with rollback considerations"
       },
@@ -27,7 +27,7 @@
       "name": "execution-with-mismatch",
       "description": "Handle plan vs implementation mismatch",
       "context": {
-        "plan_path": "thoughts/plans/update-api-endpoints.md",
+        "plan_path": "research/plans/update-api-endpoints.md",
         "current_state": "Codebase evolved since plan was written",
         "complexity": "Plan outdated, requires adaptation"
       },

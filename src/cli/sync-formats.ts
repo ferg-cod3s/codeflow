@@ -35,8 +35,8 @@ const AGENT_CATEGORIES = {
   generalist: [
     'agent-architect',
     'smart-subagent-orchestrator',
-    'thoughts-analyzer',
-    'thoughts-locator',
+    'research-analyzer',
+    'research-locator',
     'web-search-researcher',
   ],
   'ai-innovation': ['ai-integration-expert'],

@@ -58,10 +58,10 @@ The Agentic system follows a structured workflow for implementing features or fi
 
 ### 1. Create a Ticket
 
-Create a ticket file in `thoughts/tickets/` describing what needs to be done:
+Create a ticket file in `research/tickets/` describing what needs to be done:
 
 ```markdown
-# thoughts/tickets/feature-123.md
+# research/tickets/feature-123.md
 
 ## Feature: Add User Authentication
 
@@ -81,10 +81,10 @@ Implement OAuth-based user authentication with Google provider.
 Start a new session in your preferred platform and use the **research** command:
 
 ```
-/research thoughts/tickets/feature-123.md - analyze the authentication system and find all relevant code
+/research research/tickets/feature-123.md - analyze the authentication system and find all relevant code
 ```
 
-This produces a research document in `thoughts/research/` with findings about:
+This produces a research document in `research/research/` with findings about:
 
 - Current implementation details
 - Relevant files and components
@@ -96,10 +96,10 @@ This produces a research document in `thoughts/research/` with findings about:
 Create an implementation plan using the **plan** command:
 
 ```
-/plan thoughts/tickets/feature-123.md thoughts/research/2025-01-15_auth-research.md
+/plan research/tickets/feature-123.md research/research/2025-01-15_auth-research.md
 ```
 
-This creates a detailed plan in `thoughts/plans/` with:
+This creates a detailed plan in `research/plans/` with:
 
 - Phased implementation approach
 - Specific file changes
@@ -111,7 +111,7 @@ This creates a detailed plan in `thoughts/plans/` with:
 Execute the plan using the **execute** command:
 
 ```
-/execute thoughts/plans/auth-implementation.md
+/execute research/plans/auth-implementation.md
 ```
 
 The agent will:
@@ -139,7 +139,7 @@ The agent will:
 Validate that the implementation matches the plan using the **review** command:
 
 ```
-/review thoughts/plans/auth-implementation.md
+/review research/plans/auth-implementation.md
 ```
 
 This ensures:
@@ -156,7 +156,7 @@ Each phase should typically start with a fresh context session to maximize perfo
 
 ### Thoughts Directory
 
-The `thoughts/` directory maintains project knowledge:
+The `research/` directory maintains project knowledge:
 
 - `architecture/` - System design and decisions
 - `tickets/` - Work items and feature requests
@@ -196,4 +196,4 @@ Each platform automatically recognizes these files and makes them available usin
 - Learn about the [Agentic CLI](./agentic.md)
 - Understand [workflow phases](./workflow.md) in detail
 - Explore [agents](./agents.md) and [commands](./commands.md)
-- Set up your [thoughts directory](./thoughts.md)
+- Set up your [research directory](./research.md)

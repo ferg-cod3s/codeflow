@@ -163,7 +163,7 @@ Delegate / escalate when:
 
 - File discovery needed → codebase-locator.
 - Need pattern similarity across multiple modules → codebase-pattern-finder.
-- Need conceptual synthesis across docs → thoughts-analyzer.
+- Need conceptual synthesis across docs → research-analyzer.
 - Request drifts into redesign/architecture → escalate back to orchestrator with boundary reminder.
 
 Escalation Response Template:

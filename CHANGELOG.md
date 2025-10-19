@@ -169,7 +169,7 @@
 
 * **agent:** api-builder upgraded to UATS v1.0 with structured output + contract/DX spec ([eb03e79](https://github.com/ferg-cod3s/codeflow/commit/eb03e79d09bc78899ee1eedc3ca7fccd66569239))
 * **agent:** uats v1.0 upgrade for codebase-analyzer ([a41c3d1](https://github.com/ferg-cod3s/codeflow/commit/a41c3d1981fa1a39c07d5cc7b9406c98c72ad873))
-* **agent:** uats v1.0 upgrade for thoughts-locator with structured discovery schema ([594dc3c](https://github.com/ferg-cod3s/codeflow/commit/594dc3c0d03fe3af5114cfa9387cfcf9e7b64e16))
+* **agent:** uats v1.0 upgrade for research-locator with structured discovery schema ([594dc3c](https://github.com/ferg-cod3s/codeflow/commit/594dc3c0d03fe3af5114cfa9387cfcf9e7b64e16))
 * **agent:** uats v1.0 upgrade web-search-researcher with structured taxonomy & evidence schema ([c3c0205](https://github.com/ferg-cod3s/codeflow/commit/c3c0205de46fb38b7c014364b2a0e084431a4e1a))
 * **agent:** upgrade code-reviewer to UATS v1.0 with structured output & clear boundaries ([cc27c9b](https://github.com/ferg-cod3s/codeflow/commit/cc27c9bc043714edb92c1be86ee7b9e04265686c))
 * **agent:** upgrade security-scanner to UATS v1.0 with structured output & scope boundaries ([0737bcf](https://github.com/ferg-cod3s/codeflow/commit/0737bcf62a6452fce7786da101a28f5a32bacec6))

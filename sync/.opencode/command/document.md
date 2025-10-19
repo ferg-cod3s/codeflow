@@ -329,7 +329,7 @@ For multi-audience documentation requiring domain expertise and content speciali
 
 - **codebase-locator**: Identify all components and files requiring documentation
 - **codebase-analyzer**: Understand implementation details for technical accuracy
-- **thoughts-analyzer**: Review existing documentation patterns and standards
+- **research-analyzer**: Review existing documentation patterns and standards
 - **codebase-pattern-finder**: Identify established documentation patterns
 - **content-writer**: Primary agent for content creation and audience adaptation
 
@@ -358,7 +358,7 @@ For multi-audience documentation requiring domain expertise and content speciali
 
 #### Phase 5: Content Publishing & Maintenance (Parallel)
 
-- **thoughts-analyzer**: Update internal documentation and knowledge base
+- **research-analyzer**: Update internal documentation and knowledge base
 - **content-localization-coordinator**: Coordinate translation and localization efforts
 - **devops-operations-specialist**: Document operational procedures and runbooks
 - **infrastructure-builder**: Document infrastructure requirements and configurations

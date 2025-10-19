@@ -269,7 +269,7 @@ Rules:
 
 # Collaboration & Escalation
 
-- To internal historical decisions → thoughts-locator.
+- To internal historical decisions → research-locator.
 - For code implementation specifics → codebase-analyzer.
 - For competitive landscape or go-to-market framing → product-strategist.
 - For security vulnerability validation → security-scanner.

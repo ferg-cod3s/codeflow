@@ -51,16 +51,18 @@ export interface AgentManifest {
  */
 function getCategoryFromName(name: string): string {
   if (name.includes('codebase')) return 'core-workflow';
-  if (name.includes('thoughts')) return 'core-workflow';
+  if (name.includes('research')) return 'core-workflow';
   if (name.includes('web-search')) return 'core-workflow';
   if (name.includes('operations')) return 'operations';
   if (name.includes('development') || name.includes('migrations')) return 'development';
-  if (name.includes('quality') || name.includes('testing') || name.includes('performance')) return 'quality-testing';
+  if (name.includes('quality') || name.includes('testing') || name.includes('performance'))
+    return 'quality-testing';
   if (name.includes('security')) return 'security';
   if (name.includes('ux') || name.includes('ui')) return 'design-ux';
   if (name.includes('content') || name.includes('localization')) return 'content';
   if (name.includes('growth') || name.includes('seo')) return 'growth';
-  if (name.includes('infrastructure') || name.includes('deployment') || name.includes('devops')) return 'infrastructure';
+  if (name.includes('infrastructure') || name.includes('deployment') || name.includes('devops'))
+    return 'infrastructure';
   return 'specialized';
 }
 
@@ -82,7 +84,7 @@ async function scanAgentsDirectory(projectRoot: string): Promise<string[]> {
     if (!existsSync(categoryPath)) continue;
 
     const files = await readdir(categoryPath);
-    const mdFiles = files.filter(f => f.endsWith('.md'));
+    const mdFiles = files.filter((f) => f.endsWith('.md'));
 
     for (const file of mdFiles) {
       const agentName = file.replace('.md', '');
@@ -101,7 +103,7 @@ export async function buildManifest(options: BuildManifestOptions = {}): Promise
     output = 'AGENT_MANIFEST.json',
     dryRun = false,
     verbose = false,
-    projectRoot = process.cwd()
+    projectRoot = process.cwd(),
   } = options;
 
   if (verbose) {
@@ -117,40 +119,36 @@ export async function buildManifest(options: BuildManifestOptions = {}): Promise
     }
 
     const manifest: AgentManifest = {
-      canonical_agents: agents.map(agentName => ({
+      canonical_agents: agents.map((agentName) => ({
         name: agentName,
         description: `Agent: ${agentName.replace(/-|_/g, ' ')}`,
         category: getCategoryFromName(agentName),
         sources: {
           base: `codeflow-agents/${getCategoryFromName(agentName)}/${agentName}.md`,
           'claude-code': `.claude/agents/${agentName}.md`,
-          opencode: `.opencode/agent/${agentName}.md`
-        }
+          opencode: `.opencode/agent/${agentName}.md`,
+        },
       })),
       total_agents: agents.length,
       last_updated: new Date().toISOString(),
-      canonical_directories: [
-        'codeflow-agents/',
-        '.claude/agents/',
-        '.opencode/agent/'
-      ],
+      canonical_directories: ['codeflow-agents/', '.claude/agents/', '.opencode/agent/'],
       format_info: {
         base: {
           description: 'Base format for MCP integration',
           model_format: 'anthropic/model-name',
-          primary_use: 'MCP server integration'
+          primary_use: 'MCP server integration',
         },
         'claude-code': {
           description: 'Claude Code format',
           model_format: 'anthropic/model-name',
-          primary_use: 'Claude Code client integration'
+          primary_use: 'Claude Code client integration',
         },
         opencode: {
           description: 'OpenCode format',
           model_format: 'provider/model-name',
-          primary_use: 'OpenCode client integration'
-        }
-      }
+          primary_use: 'OpenCode client integration',
+        },
+      },
     };
 
     if (dryRun) {
@@ -173,7 +171,7 @@ export async function buildManifest(options: BuildManifestOptions = {}): Promise
 
     // Display summary by category
     const categories: Record<string, number> = {};
-    manifest.canonical_agents.forEach(agent => {
+    manifest.canonical_agents.forEach((agent) => {
       const cat = agent.category;
       categories[cat] = (categories[cat] || 0) + 1;
     });
@@ -182,7 +180,6 @@ export async function buildManifest(options: BuildManifestOptions = {}): Promise
     Object.entries(categories).forEach(([cat, count]) => {
       console.log(`  ${cat}: ${count} agents`);
     });
-
   } catch (error: any) {
     console.error(`❌ Failed to build manifest: ${error.message}`);
     throw error;

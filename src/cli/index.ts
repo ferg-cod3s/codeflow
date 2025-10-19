@@ -88,8 +88,8 @@ DEVELOPMENT WORKFLOW:
     codebase-locator        - Finds WHERE files and components exist
     codebase-analyzer       - Understands HOW specific code works
     codebase-pattern-finder - Discovers similar implementation patterns
-    thoughts-locator        - Discovers existing documentation about topics
-    thoughts-analyzer       - Extracts insights from specific documents
+    research-locator        - Discovers existing documentation about topics
+    research-analyzer       - Extracts insights from specific documents
     web-search-researcher   - Performs targeted web research
 
   Workflow Philosophy:

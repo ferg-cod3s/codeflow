@@ -451,8 +451,8 @@ function createWorkflowOrchestrator(registry) {
       }
 
       if (domain === 'documentation' || domain === 'thoughts') {
-        locators.push('thoughts-locator');
-        analyzers.push('thoughts-analyzer');
+        locators.push('research-locator');
+        analyzers.push('research-analyzer');
       }
 
       if (domain === 'web' || domain === 'research') {

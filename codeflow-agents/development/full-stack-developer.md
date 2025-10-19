@@ -341,7 +341,7 @@ For complex implementations requiring domain expertise, coordinate with these sp
 - **codebase-locator**: Identify existing patterns and component locations for the feature area
 - **codebase-analyzer**: Understand current implementation details and integration points
 - **codebase-pattern-finder**: Discover established patterns for similar functionality
-- **thoughts-analyzer**: Review existing documentation for implementation guidance
+- **research-analyzer**: Review existing documentation for implementation guidance
 
 ### Domain-Specific Implementation (As Needed)
 - **api-builder**: For new API endpoints, GraphQL schemas, or complex API integrations
@@ -362,7 +362,7 @@ For complex implementations requiring domain expertise, coordinate with these sp
 1. **Early Assessment**: Use locators and analyzers before starting implementation to understand existing patterns
 2. **Escalation Thresholds**: Escalate to domain specialists when implementation complexity exceeds standard patterns
 3. **Validation Gates**: Always use code-reviewer and appropriate testing agents before marking complete
-4. **Documentation Updates**: Coordinate with thoughts-analyzer for documentation updates
+4. **Documentation Updates**: Coordinate with research-analyzer for documentation updates
 
 ### Handoff Patterns
 

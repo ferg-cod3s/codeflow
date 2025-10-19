@@ -328,12 +328,12 @@ For comprehensive architectural analysis, coordinate with these specialized suba
 
 ### Phase 1: Discovery & Context Gathering (Parallel)
 - **codebase-locator**: Map existing component locations, directory structures, and file organization patterns
-- **thoughts-locator**: Discover existing architectural documentation, past decisions, and design rationale
+- **research-locator**: Discover existing architectural documentation, past decisions, and design rationale
 - **codebase-pattern-finder**: Identify recurring architectural patterns and anti-patterns in the codebase
 
 ### Phase 2: Deep Analysis (Sequential)
 - **codebase-analyzer**: Understand current implementation details and data flows within identified components
-- **thoughts-analyzer**: Extract insights from architectural documentation and past technical decisions
+- **research-analyzer**: Extract insights from architectural documentation and past technical decisions
 - **performance-engineer**: Analyze current performance characteristics and scalability bottlenecks
 - **database-expert**: Evaluate data architecture, schema design, and persistence patterns
 
@@ -351,7 +351,7 @@ For comprehensive architectural analysis, coordinate with these specialized suba
 
 ## Coordination Best Practices
 
-1. **Start with Locators**: Always begin with codebase-locator and thoughts-locator in parallel for comprehensive context
+1. **Start with Locators**: Always begin with codebase-locator and research-locator in parallel for comprehensive context
 2. **Sequential Analysis**: Run analyzers only after locators complete to avoid redundant work
 3. **Domain Specialists**: Engage domain-specific agents (security, performance, database) based on architectural concerns
 4. **Validation Gates**: Use full-stack-developer and code-reviewer to validate architectural decisions before implementation

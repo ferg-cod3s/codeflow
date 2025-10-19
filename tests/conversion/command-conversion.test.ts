@@ -179,7 +179,7 @@ inputs:
   - name: scope
     type: string
     required: false
-    description: Research scope hint (codebase|thoughts|both)
+    description: Research scope hint (codebase|research|both)
 outputs:
   - name: research_document
     type: structured
