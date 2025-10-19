@@ -143,7 +143,7 @@ async function checkProjectHealth(projectPath: string) {
 /**
  * Count available agents
  */
-async function countAgents(projectPath: string): Promise<number> {
+async function countAgents(_projectPath: string): Promise<number> {
   const codeflowRoot = join(import.meta.dir, '../..');
   const sourceDir = join(codeflowRoot, 'codeflow-agents');
 
@@ -160,7 +160,7 @@ async function countAgents(projectPath: string): Promise<number> {
 /**
  * Count available commands
  */
-async function countCommands(projectPath: string): Promise<number> {
+async function countCommands(_projectPath: string): Promise<number> {
   const codeflowRoot = join(import.meta.dir, '../..');
   const commandDir = join(codeflowRoot, 'command');
 
@@ -177,7 +177,7 @@ async function countCommands(projectPath: string): Promise<number> {
 /**
  * Get current workflow status (mock data for now)
  */
-async function getWorkflowStatus(projectPath: string) {
+async function getWorkflowStatus(_projectPath: string) {
   // TODO: Implement actual workflow monitoring
   // For now, return empty workflow
   return {

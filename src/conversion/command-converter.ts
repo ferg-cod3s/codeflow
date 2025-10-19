@@ -1,5 +1,5 @@
 import { readFile } from 'fs/promises';
-import { YamlProcessor, ParsedYaml } from '../yaml/yaml-processor.js';
+import { YamlProcessor } from '../yaml/yaml-processor.js';
 import { ParsedEntity } from './agent-parser.js';
 
 export interface CommandMetadata {
@@ -250,7 +250,6 @@ export class CommandConverter {
       last_updated: new Date().toISOString().split('T')[0],
       command_schema_version: '1.0',
     };
-
 
     // Convert params to OpenCode inputs if they exist
     if (frontmatter.params) {

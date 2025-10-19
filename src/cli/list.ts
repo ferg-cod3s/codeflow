@@ -47,7 +47,7 @@ async function extractMetadata(filePath: string): Promise<{ description?: string
     }
 
     return stats;
-  } catch (error) {
+  } catch {
     return { size: 0 };
   }
 }

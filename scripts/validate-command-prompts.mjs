@@ -38,7 +38,6 @@ class ValidationResult {
     this.errors.push({ message, file, line });
   }
 
-
   addWarning(message, file, line = null) {
     this.warnings.push({ message, file, line });
   }
@@ -84,7 +83,7 @@ function validateFrontmatter(content, fileName, result) {
     }
 
     // Check for new fields from optimization
-// Check for disallowed fields
+    // Check for disallowed fields
     const disallowedFields = ['model', 'temperature', 'mode'];
     for (const field of disallowedFields) {
       if (frontmatter.includes(`${field}:`)) {
@@ -94,10 +93,16 @@ function validateFrontmatter(content, fileName, result) {
       }
     }
 
-// Check cache_strategy.type enum
-    const hasValidCacheType = frontmatter.includes('type: agent_specific') || frontmatter.includes('type: shared') || frontmatter.includes('type: hierarchical');
+    // Check cache_strategy.type enum
+    const hasValidCacheType =
+      frontmatter.includes('type: agent_specific') ||
+      frontmatter.includes('type: shared') ||
+      frontmatter.includes('type: hierarchical');
     if (!hasValidCacheType) {
-      result.addError('Invalid or missing cache_strategy.type. Must be one of: agent_specific, shared, hierarchical', fileName);
+      result.addError(
+        'Invalid or missing cache_strategy.type. Must be one of: agent_specific, shared, hierarchical',
+        fileName
+      );
     } else {
       result.incrementScore();
     }
@@ -314,7 +319,6 @@ async function validateAllCommands() {
     files: {},
   };
 
-
   for (const fileName of COMMAND_FILES) {
     const filePath = join(commandDir, fileName);
 
@@ -340,17 +344,15 @@ async function validateAllCommands() {
  * Print validation results
  */
 function printResults(results) {
-
-
-  for (const [fileName, result] of Object.entries(results.files)) {
-
+  for (const [, result] of Object.entries(results.files)) {
     if (result.errors.length > 0) {
+      // Handle errors
     }
 
     if (result.warnings.length > 0) {
+      // Handle warnings
     }
   }
-
 
   // Exit with error code if there are errors
   if (results.summary.totalErrors > 0) {
@@ -358,6 +360,7 @@ function printResults(results) {
   } else if (results.summary.averageScore < 95) {
     process.exit(1);
   } else {
+    // Success case
   }
 }
 

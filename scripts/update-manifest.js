@@ -96,7 +96,7 @@ async function getAgentDescription(filePath) {
     return (
       description || `Agent for ${filePath.split('/').pop().replace('.md', '').replace(/-/g, ' ')}`
     );
-  } catch (_error) {
+  } catch {
     console.warn(`Warning: Could not read description from ${filePath}`);
     return `Agent for ${filePath.split('/').pop().replace('.md', '').replace(/-/g, ' ')}`;
   }

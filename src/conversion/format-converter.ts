@@ -267,9 +267,8 @@ export class FormatConverter {
             return this.claudeCodeToBase(agent);
           case 'opencode':
             return this.claudeCodeToOpenCode(agent);
-          case 'cursor':
-            return this.baseToClaudeCode(agent); // Cursor uses same format as Claude Code
           case 'claude-code':
+            return this.baseToClaudeCode(agent); // Cursor uses same format as Claude Code
           case 'cursor':
             return agent; // Same format
         }
@@ -293,9 +292,9 @@ export class FormatConverter {
    * Convert all agents in a directory to target format
    */
   convertAll(
-    sourceDir: string,
-    targetFormat: 'base' | 'claude-code' | 'opencode' | 'cursor',
-    outputDir: string
+    _sourceDir: string,
+    _targetFormat: 'base' | 'claude-code' | 'opencode' | 'cursor',
+    _outputDir: string
   ): void {
     // Implementation remains the same
   }

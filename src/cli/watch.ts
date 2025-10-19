@@ -1,7 +1,5 @@
-import { join } from 'node:path';
-import { existsSync } from 'node:fs';
 import { sync } from './sync';
-import CLIErrorHandler from "./error-handler.js";
+import CLIErrorHandler from './error-handler.js';
 
 export async function startWatch(projectPath?: string) {
   const resolvedPath = projectPath || process.cwd();
@@ -19,13 +17,10 @@ export async function startWatch(projectPath?: string) {
 
   try {
     await sync(resolvedPath);
-    CLIErrorHandler.displaySuccess(
-      'Initial sync complete',
-      [
-        'Watcher started - files will be synced when this process runs',
-        'Use external tools like nodemon for continuous watching'
-      ]
-    );
+    CLIErrorHandler.displaySuccess('Initial sync complete', [
+      'Watcher started - files will be synced when this process runs',
+      'Use external tools like nodemon for continuous watching',
+    ]);
   } catch (error: any) {
     CLIErrorHandler.displayError(
       CLIErrorHandler.createErrorContext(
@@ -40,8 +35,8 @@ export async function startWatch(projectPath?: string) {
           suggestions: [
             'Verify project directory exists and is accessible',
             'Check file permissions',
-            'Run sync manually to see detailed errors'
-          ]
+            'Run sync manually to see detailed errors',
+          ],
         }
       )
     );

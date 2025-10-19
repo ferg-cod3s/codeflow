@@ -3,7 +3,7 @@
  * Defines color schemes, styling options, and theme presets for CLI output
  */
 
-import type { ChalkInstance } from 'chalk';
+// import type { ChalkInstance } from 'chalk';
 
 /**
  * Color palette for a theme
@@ -13,19 +13,19 @@ export interface ColorPalette {
   primary: string;
   secondary: string;
   accent: string;
-  
+
   // Status colors
   success: string;
   warning: string;
   error: string;
   info: string;
-  
+
   // UI colors
   muted: string;
   subtle: string;
   border: string;
   background: string;
-  
+
   // Semantic colors
   highlight: string;
   dimmed: string;
@@ -50,7 +50,15 @@ export interface Typography {
  */
 export interface BoxStyle {
   borderColor?: string;
-  borderStyle?: 'single' | 'double' | 'round' | 'bold' | 'singleDouble' | 'doubleSingle' | 'classic' | 'arrow';
+  borderStyle?:
+    | 'single'
+    | 'double'
+    | 'round'
+    | 'bold'
+    | 'singleDouble'
+    | 'doubleSingle'
+    | 'classic'
+    | 'arrow';
   padding?: number;
   margin?: number;
   backgroundColor?: string;
@@ -61,10 +69,12 @@ export interface BoxStyle {
  * Spinner configuration
  */
 export interface SpinnerConfig {
-  spinner?: string | {
-    interval: number;
-    frames: string[];
-  };
+  spinner?:
+    | string
+    | {
+        interval: number;
+        frames: string[];
+      };
   color?: string;
   prefixText?: string;
   suffixText?: string;
@@ -112,7 +122,7 @@ export interface Theme {
   spinner: SpinnerConfig;
   progressBar: ProgressBarConfig;
   table: TableStyle;
-  
+
   // Utility methods
   applyStatus: (status: 'success' | 'warning' | 'error' | 'info', text: string) => string;
   formatLabel: (label: string, value: string) => string;

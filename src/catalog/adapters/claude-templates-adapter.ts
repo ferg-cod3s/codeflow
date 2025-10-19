@@ -123,7 +123,7 @@ export class ClaudeTemplatesAdapter extends SourceAdapter {
       if (frontmatterMatch) {
         try {
           metadata = yaml.parse(frontmatterMatch[1]);
-        } catch (_e) {
+        } catch {
           // Ignore YAML parse errors
         }
       }
@@ -242,7 +242,7 @@ export class ClaudeTemplatesAdapter extends SourceAdapter {
 
       try {
         template = yaml.parse(content);
-      } catch (_e) {
+      } catch {
         // If YAML parsing fails, try to extract frontmatter
         const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)/);
         if (frontmatterMatch) {
@@ -364,7 +364,7 @@ ${yaml.stringify(template, null, 2)}
   extractMetadata(content: string, _filePath: string): any {
     try {
       return yaml.parse(content);
-    } catch (error) {
+    } catch (_error) {
       return null;
     }
   }

@@ -1,4 +1,4 @@
-import { readFile, writeFile, mkdir } from 'fs/promises';
+import { writeFile, mkdir } from 'fs/promises';
 import { join, dirname } from 'path';
 import { existsSync } from 'fs';
 import { homedir } from 'os';
@@ -391,9 +391,7 @@ export class CatalogCLI {
       return;
     }
 
-    const content = await readFile(sourcePath, 'utf-8');
-
-    // Parse the content into an Agent object
+    // Parse content into an Agent object
     const sourceFormat = 'base'; // Assuming source is always in base format
     let agent: any;
     try {
@@ -420,7 +418,7 @@ export class CatalogCLI {
           targetFormat,
           item.kind as 'agent' | 'command'
         );
-      } catch (error) {
+      } catch {
         // If conversion fails, use original agent
         console.warn(`⚠️  Conversion failed for ${target}, using original format`);
         convertedAgent = agent;
@@ -547,7 +545,6 @@ export class CatalogCLI {
         console.log(`❌ Missing: ${item.id}`);
       } else {
         try {
-          const __content = await readFile(sourcePath, 'utf-8');
           const agent = await parseAgentFile(sourcePath, 'base');
           if (!agent) {
             invalid++;
@@ -563,7 +560,7 @@ export class CatalogCLI {
             console.log(`⚠️  Invalid: ${item.id}`);
             validation.errors.forEach((err) => console.log(`    - ${err.message}`));
           }
-        } catch (_error) {
+        } catch {
           invalid++;
           console.log(`⚠️  Error reading: ${item.id}`);
         }

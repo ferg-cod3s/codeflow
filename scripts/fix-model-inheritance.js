@@ -1,15 +1,8 @@
 #!/usr/bin/env bun
 
-import { readFileSync, writeFileSync, readdirSync, statSync } from 'fs';
+import { readFileSync, writeFileSync, readdirSync } from 'fs';
 import { join } from 'path';
 import { parse, stringify } from 'yaml';
-
-const VALID_MODELS = {
-  'opencode/grok-code': true,
-  'opencode/gpt-5': true,
-  'opencode/code-supernova': true,
-  'opencode/grok-code-fast-1': true,
-};
 
 const INVALID_MODELS = [
   'opencode/claude-sonnet-4',

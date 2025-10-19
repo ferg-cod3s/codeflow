@@ -37,7 +37,7 @@ async function readConfig(projectPath: string): Promise<AgenticConfig> {
         model: config.agents?.model || 'opencode/grok-code',
       },
     };
-  } catch (_error) {
+  } catch {
     console.warn(`Warning: Could not read config file at ${configPath}, using defaults`);
     return getDefaultConfig();
   }

@@ -1,12 +1,11 @@
 import { existsSync } from 'node:fs';
-import { readFile } from 'node:fs/promises';
 import { readdir, copyFile, mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { parseAgentsFromDirectory, serializeAgent } from '../conversion/agent-parser';
 import { FormatConverter } from '../conversion/format-converter';
 import { CanonicalSyncer } from '../sync/canonical-syncer';
 import { homedir } from 'node:os';
-import { parse as loadYaml } from 'yaml';
+// import { parse as loadYaml } from 'yaml';
 import { CommandValidator } from '../yaml/command-validator.js';
 export interface SyncOptions {
   projectPath?: string;
@@ -229,4 +228,3 @@ export async function checkGlobalSync(): Promise<{
     message: 'Global sync check not fully implemented yet',
   };
 }
-

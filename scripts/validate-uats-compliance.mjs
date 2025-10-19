@@ -63,7 +63,7 @@ function validateAgentFile(filePath) {
     }
 
     const frontmatter = parseYaml(parts[1]);
-    const _body = parts.slice(2).join('---');
+    parts.slice(2).join('---');
 
     // Check required fields
     for (const field of REQUIRED_UATS_FIELDS) {
@@ -171,7 +171,7 @@ function validateEscalationChains() {
           agentNames.add(frontmatter.name);
         }
       }
-    } catch (_error) {
+    } catch {
       // Skip files that can't be parsed
     }
   }

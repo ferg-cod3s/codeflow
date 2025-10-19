@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import url from 'node:url';
-import crypto from 'node:crypto';
+
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { buildAgentRegistry, categorizeAgents, suggestAgents } from './agent-registry.mjs';
@@ -45,13 +45,6 @@ let workflowOrchestrator = null;
 function toSlug(filePath) {
   const base = path.basename(filePath).replace(/\.[^.]+$/, '');
   return base.replace(/[^a-zA-Z0-9]+/g, '_');
-}
-
-function _toUniqueId(prefix, filePath) {
-  const slug = toSlug(filePath);
-  // Use cross-platform crypto for hashing
-  const hash = crypto.createHash('sha1').update(filePath).digest('hex').slice(0, 8);
-  return `${prefix}.${slug}__${hash}`;
 }
 
 /**
@@ -105,7 +98,7 @@ async function loadMarkdownFiles(dir) {
     return entries
       .filter((e) => e.isFile() && e.name.toLowerCase().endsWith('.md'))
       .map((e) => path.join(dir, e.name));
-  } catch (_err) {
+  } catch {
     return [];
   }
 }
@@ -203,23 +196,6 @@ async function buildTools() {
   }
 
   return tools;
-}
-
-function jsonSchemaObject(properties = {}, required = []) {
-  return {
-    type: 'object',
-    properties,
-    required,
-    additionalProperties: false,
-  };
-}
-
-function _toolSpecFromEntry(entry) {
-  return {
-    name: entry.id,
-    description: `${entry.description}. Returns the markdown body.`,
-    inputSchema: jsonSchemaObject({}),
-  };
 }
 
 /**
@@ -382,7 +358,7 @@ async function run() {
         title: entry.id,
         description: entry.description + ' (Enhanced with agent orchestration capabilities)',
       },
-      async (_args = {}) => {
+      async () => {
         const commandContent = await fs.readFile(entry.filePath, 'utf8');
 
         // Enhanced context with available agents
@@ -475,15 +451,21 @@ async function run() {
     // Bun sometimes doesn't keep the event loop alive on stdio alone; explicitly wait.
     try {
       process.stdin.resume();
-    } catch {} // Ignore stdin setup errors
+    } catch {
+      // Ignore stdin setup errors
+    }
     try {
       process.stdin.on('end', onClose);
       process.stdin.on('close', onClose);
-    } catch {} // Ignore stdin event setup errors
+    } catch {
+      // Ignore stdin event setup errors
+    }
     try {
       process.on('SIGINT', onClose);
       process.on('SIGTERM', onClose);
-    } catch {} // Ignore signal setup errors
+    } catch {
+      // Ignore signal setup errors
+    }
   });
 }
 

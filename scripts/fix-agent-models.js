@@ -6,7 +6,6 @@
 
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
 
 // Model mapping from old to new
 const MODEL_MAPPINGS = {

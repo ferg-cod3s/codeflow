@@ -137,16 +137,18 @@ function getFormatDirectory(
     case 'base':
       // Base format refers to the global codeflow agent directory
       return join(codeflowRoot, 'codeflow-agents');
-    case 'claude-code':
+    case 'claude-code': {
       // For projects, use .claude/agents if it exists, otherwise use global
       const projectClaudeDir = join(projectPath, '.claude', 'agents');
       return existsSync(projectClaudeDir) ? projectClaudeDir : join(codeflowRoot, 'claude-agents');
-    case 'opencode':
+    }
+    case 'opencode': {
       // For projects, use .opencode/agent if it exists, otherwise use global
       const projectOpenCodeDir = join(projectPath, '.opencode', 'agent');
       return existsSync(projectOpenCodeDir)
         ? projectOpenCodeDir
         : join(codeflowRoot, 'opencode-agents');
+    }
     default:
       throw new Error(`Unknown format: ${format}`);
   }
@@ -255,7 +257,7 @@ if (values.help || command === 'help' || !command) {
 }
 
 switch (command) {
-  case 'setup':
+  case 'setup': {
     const setupPath = args[1];
     const safeSetupPath = safeResolve(process.cwd(), setupPath || '.', [process.cwd(), homedir()]);
     await setup(safeSetupPath, {
@@ -264,7 +266,8 @@ switch (command) {
       type: values.type,
     });
     break;
-  case 'status':
+  }
+  case 'status': {
     const statusPath = args[1];
     const safeStatusPath = safeResolve(process.cwd(), statusPath || '.', [
       process.cwd(),
@@ -272,7 +275,8 @@ switch (command) {
     ]);
     await status(safeStatusPath);
     break;
-  case 'sync':
+  }
+  case 'sync': {
     const syncPath = args[1];
     const safeSyncPath = safeResolve(process.cwd(), syncPath || '.', [process.cwd(), homedir()]);
     await sync(safeSyncPath, {
@@ -282,7 +286,8 @@ switch (command) {
       verbose: true,
     });
     break;
-  case 'fix-models':
+  }
+  case 'fix-models': {
     // For fix-models, default to global. Check if --local was passed
     const hasLocalFlag = Bun.argv.includes('--local') || Bun.argv.includes('-l');
     await fixModels({
@@ -291,7 +296,8 @@ switch (command) {
       global: !hasLocalFlag, // Default to global unless --local is specified
     });
     break;
-  case 'convert':
+  }
+  case 'convert': {
     // Support flag-based usage: --source, --target, --project
     if (values.source && values.target) {
       const projectPath = values.project || process.cwd();
@@ -336,7 +342,8 @@ switch (command) {
 
     await convert(source, target, format as 'claude-code' | 'opencode');
     break;
-  case 'watch':
+  }
+  case 'watch': {
     const watchAction = args[1];
 
     if (watchAction === 'start') {
@@ -348,8 +355,9 @@ switch (command) {
       process.exit(1);
     }
     break;
+  }
 
-  case 'validate':
+  case 'validate': {
     await validate({
       format: values.format || 'all',
       path: args[1],
@@ -359,8 +367,9 @@ switch (command) {
       verbose: values.verbose,
     });
     break;
+  }
 
-  case 'list':
+  case 'list': {
     const listPath = args[1];
     const safeListPath = safeResolve(process.cwd(), listPath || '.', [process.cwd(), homedir()]);
     await list(safeListPath, {
@@ -370,8 +379,9 @@ switch (command) {
       verbose: values.verbose,
     });
     break;
+  }
 
-  case 'info':
+  case 'info': {
     const itemName = args[1];
     if (!itemName) {
       console.error('Error: info requires an item name');
@@ -385,8 +395,9 @@ switch (command) {
       showContent: values['show-content'],
     });
     break;
+  }
 
-  case 'update':
+  case 'update': {
     const updateAction = args[1];
     await update({
       check: updateAction === 'check' || values.check,
@@ -394,8 +405,9 @@ switch (command) {
       verbose: values.verbose,
     });
     break;
+  }
 
-  case 'clean':
+  case 'clean': {
     const cleanPath = args[1];
     const safeCleanPath = safeResolve(process.cwd(), cleanPath || '.', [process.cwd(), homedir()]);
     await clean(safeCleanPath, {
@@ -405,8 +417,9 @@ switch (command) {
       type: values.type || 'all',
     });
     break;
+  }
 
-  case 'export':
+  case 'export': {
     const exportPath = args[1];
     const safeExportPath = safeResolve(process.cwd(), exportPath || '.', [
       process.cwd(),
@@ -419,8 +432,9 @@ switch (command) {
       verbose: values.verbose,
     });
     break;
+  }
 
-  case 'research':
+  case 'research': {
     const researchQuery = args[1];
     await research(researchQuery, {
       output: values.output,
@@ -430,6 +444,7 @@ switch (command) {
       'min-quality': values['min-quality'],
     });
     break;
+  }
 
   default:
     console.error(`Error: Unknown command '${command}'`);

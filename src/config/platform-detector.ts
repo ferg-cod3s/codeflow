@@ -24,11 +24,11 @@ export interface PlatformDetectionResult {
 
 /**
  * Platform Detector
- * 
+ *
  * Detects which AI development platform the project is using:
  * - Claude Code: File-based agents in .claude/agents/
  * - OpenCode: MCP-based agents in .opencode/agent/ + opencode.json
- * 
+ *
  * Uses multiple detection strategies with confidence scoring.
  */
 export class PlatformDetector {
@@ -40,7 +40,7 @@ export class PlatformDetector {
 
   /**
    * Detect the platform being used
-   * 
+   *
    * Uses a multi-criteria detection strategy:
    * 1. Check for OpenCode-specific files (highest priority)
    * 2. Check for Claude Code-specific files
@@ -57,7 +57,7 @@ export class PlatformDetector {
     // Strategy 1: Check for OpenCode config file (strongest signal)
     const opencodeConfigPath = join(this.projectRoot, 'opencode.json');
     const hasOpencodeConfig = existsSync(opencodeConfigPath);
-    
+
     if (hasOpencodeConfig) {
       evidence.push('Found opencode.json config file');
       platform = Platform.OPENCODE;
@@ -68,16 +68,16 @@ export class PlatformDetector {
     // Strategy 2: Check for .opencode directory
     const opencodeDir = join(this.projectRoot, '.opencode');
     const hasOpencodeDir = existsSync(opencodeDir);
-    
+
     if (hasOpencodeDir) {
       evidence.push('Found .opencode/ directory');
-      
+
       // Check for agent directory
       const opencodeAgentDir = join(opencodeDir, 'agent');
       if (existsSync(opencodeAgentDir)) {
         evidence.push('Found .opencode/agent/ directory');
         agentDirectory = opencodeAgentDir;
-        
+
         // Count agents
         try {
           const agentFiles = await this.countAgentFiles(opencodeAgentDir, '.md');
@@ -86,7 +86,7 @@ export class PlatformDetector {
             platform = Platform.OPENCODE;
             confidence = 'high';
           }
-        } catch (error) {
+        } catch {
           evidence.push('Could not read .opencode/agent/ directory');
         }
       }
@@ -95,16 +95,16 @@ export class PlatformDetector {
     // Strategy 3: Check for Claude Code directory
     const claudeDir = join(this.projectRoot, '.claude');
     const hasClaudeDir = existsSync(claudeDir);
-    
+
     if (hasClaudeDir && platform === Platform.UNKNOWN) {
       evidence.push('Found .claude/ directory');
-      
+
       // Check for agents directory
       const claudeAgentsDir = join(claudeDir, 'agents');
       if (existsSync(claudeAgentsDir)) {
         evidence.push('Found .claude/agents/ directory');
         agentDirectory = claudeAgentsDir;
-        
+
         // Count agents
         try {
           const agentFiles = await this.countAgentFiles(claudeAgentsDir, '.md');
@@ -116,7 +116,7 @@ export class PlatformDetector {
             platform = Platform.CLAUDE_CODE;
             confidence = 'medium';
           }
-        } catch (error) {
+        } catch {
           evidence.push('Could not read .claude/agents/ directory');
           platform = Platform.CLAUDE_CODE;
           confidence = 'low';
@@ -157,7 +157,7 @@ export class PlatformDetector {
    */
   private async detectInParent(): Promise<PlatformDetectionResult> {
     const parentDir = join(this.projectRoot, '..');
-    
+
     // Don't recurse too far up
     if (parentDir === this.projectRoot || parentDir === '/') {
       return {
@@ -177,8 +177,8 @@ export class PlatformDetector {
   private async countAgentFiles(directory: string, extension: string): Promise<number> {
     try {
       const files = await readdir(directory);
-      return files.filter(file => file.endsWith(extension)).length;
-    } catch (error) {
+      return files.filter((file) => file.endsWith(extension)).length;
+    } catch {
       return 0;
     }
   }

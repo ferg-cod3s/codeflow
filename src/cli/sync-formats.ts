@@ -1,6 +1,6 @@
 import { join } from 'node:path';
 import { existsSync } from 'node:fs';
-import { writeFile, readdir, mkdir } from 'node:fs/promises';
+import { writeFile, mkdir } from 'node:fs/promises';
 import { parseAgentsFromDirectory, serializeAgent } from '../conversion/agent-parser';
 import { FormatConverter } from '../conversion/format-converter';
 import { AgentValidator } from '../conversion/validator';
@@ -124,16 +124,16 @@ export async function syncAllFormats(options: SyncFormatsOptions = {}) {
 
     // Create master agent list based on direction
     let masterAgents: any[] = [];
-    let sourceFormat = '';
 
     switch (direction) {
-      case 'from-opencode':
+      case 'from-opencode': {
         masterAgents = agentsByFormat.opencode;
-        sourceFormat = 'opencode';
+        // sourceFormat = 'opencode';
         CLIErrorHandler.displayProgress(`Using OpenCode as master (${masterAgents.length} agents)`);
         break;
+      }
 
-      case 'bidirectional':
+      case 'bidirectional': {
         // Merge all unique agents
         const allAgents = [
           ...agentsByFormat.base,
@@ -150,14 +150,15 @@ export async function syncAllFormats(options: SyncFormatsOptions = {}) {
         }
 
         masterAgents = Array.from(uniqueAgents.values());
-        sourceFormat = 'merged';
+        // sourceFormat = 'merged';
         CLIErrorHandler.displayProgress(
           `Using merged unique agents (${masterAgents.length} total)`
         );
         break;
+      }
 
       case 'to-all':
-      default:
+      default: {
         // Find the format with the most agents
         const counts = {
           base: agentsByFormat.base.length,
@@ -170,11 +171,12 @@ export async function syncAllFormats(options: SyncFormatsOptions = {}) {
         )[0];
 
         masterAgents = agentsByFormat[maxFormat];
-        sourceFormat = maxFormat;
+        // sourceFormat = maxFormat;
         CLIErrorHandler.displayProgress(
           `Using ${maxFormat} as master (${masterAgents.length} agents)`
         );
         break;
+      }
     }
 
     // Show what's missing in each format
@@ -330,10 +332,11 @@ export async function syncAllFormats(options: SyncFormatsOptions = {}) {
       'Format synchronization complete',
       [
         `Summary: ${totalSynced} agents synced, ${totalErrors} errors`,
-        dryRun ? 'Dry run complete - no files were written' : undefined,
-        totalSynced > 0
-          ? 'MCP Server Restart: If you are using MCP integration, restart the server to use updated agents: codeflow mcp restart'
-          : undefined,
+        dryRun
+          ? 'Dry run complete - no files were written' // // sourceFormat = 'opencode';,
+          : totalSynced > 0
+            ? 'MCP Server Restart: If you are using MCP integration, restart the server to use updated agents: codeflow mcp restart'
+            : 'No agents synced',
       ].filter((item): item is string => Boolean(item))
     );
 

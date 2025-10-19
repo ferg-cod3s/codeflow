@@ -30,11 +30,11 @@ function cleanCache(projectPath: string): { files: string[]; size: number } {
               files.push(itemPath);
               totalSize += stats.size;
             }
-          } catch (_error) {
+          } catch {
             // File might have been deleted already
           }
         }
-      } catch (_error) {
+      } catch {
         console.warn(`Warning: Could not read cache directory ${cacheDir}`);
       }
     }
@@ -80,12 +80,12 @@ function cleanTemp(projectPath: string): { files: string[]; size: number } {
                 files.push(itemPath);
                 totalSize += stats.size;
               }
-            } catch (_error) {
+            } catch {
               // File might have been deleted already
             }
           }
         }
-      } catch (_error) {
+      } catch {
         console.warn(`Warning: Could not read directory ${dir}`);
       }
     }
@@ -122,12 +122,12 @@ function cleanOrphaned(projectPath: string): { files: string[]; size: number } {
               const stats = require('fs').statSync(filePath);
               files.push(filePath);
               totalSize += stats.size;
-            } catch (_error) {
+            } catch {
               // File might not exist
             }
           }
         }
-      } catch (_error) {
+      } catch {
         console.warn(`Warning: Could not read directory ${dir}`);
       }
     }

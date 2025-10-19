@@ -1,4 +1,4 @@
-import { join, basename, dirname } from 'node:path';
+import { join } from 'node:path';
 import { existsSync } from 'node:fs';
 import { readdir, mkdir, copyFile, writeFile, readFile } from 'node:fs/promises';
 import {
@@ -6,9 +6,6 @@ import {
   serializeAgent,
   parseCommandFile,
   serializeCommand,
-  Command,
-  BaseCommand,
-  OpenCodeCommand,
 } from '../conversion/agent-parser.ts';
 import { FormatConverter } from '../conversion/format-converter.ts';
 import { CommandConverter } from '../conversion/command-converter.ts';
@@ -84,7 +81,6 @@ export async function copyCommands(
       const sourceDirs = getCommandSourceDirs(sourcePath, setupDir);
       console.log(`Source dirs: ${sourceDirs.join(', ')}`);
       let commandsCopied = 0;
-      let copyErrors = 0;
 
       for (const sourceDir of sourceDirs) {
         if (existsSync(sourceDir)) {
@@ -112,7 +108,7 @@ export async function copyCommands(
                       }
                     } catch (error: any) {
                       console.error(`❌ Failed to convert command ${file.name}: ${error.message}`);
-                      copyErrors++;
+                      // copyErrors++;
                       continue;
                     }
                   } else if (targetDir.includes('.claude')) {
@@ -127,7 +123,7 @@ export async function copyCommands(
                       }
                     } catch (error: any) {
                       console.error(`❌ Failed to convert command ${file.name}: ${error.message}`);
-                      copyErrors++;
+                      // copyErrors++;
                       continue;
                     }
                   } else {
@@ -136,13 +132,13 @@ export async function copyCommands(
                   commandsCopied++;
                 } catch (error: any) {
                   console.error(`❌ Failed to copy command ${file.name}: ${error.message}`);
-                  copyErrors++;
+                  // copyErrors++;
                 }
               }
             }
           } catch (error: any) {
             console.error(`❌ Failed to read source directory ${sourceDir}: ${error.message}`);
-            copyErrors++;
+            // copyErrors++;
           }
         }
       }
@@ -224,7 +220,6 @@ export async function setup(
     console.log(`📁 Target: ${targetPath}`);
 
     // Initialize converters
-    const agentConverter = new FormatConverter();
     const commandConverter = new CommandConverter();
 
     // Copy commands

@@ -107,8 +107,8 @@ export class ThemeManager {
     const typography = this.createTypography(colors);
     const box = this.getBoxStyle(preset, colors);
     const spinner = this.getSpinnerConfig(preset, colors);
-    const progressBar = this.getProgressBarConfig(preset, colors);
-    const table = this.getTableStyle(preset, colors);
+    const progressBar = this.getProgressBarConfig(preset);
+    const table = this.getTableStyle(preset);
 
     return {
       name: preset,
@@ -120,7 +120,7 @@ export class ThemeManager {
       progressBar,
       table,
       applyStatus: this.createStatusApplier(colors),
-      formatLabel: this.createLabelFormatter(colors, typography),
+      formatLabel: this.createLabelFormatter(colors),
       formatSection: this.createSectionFormatter(typography),
     };
   }
@@ -266,7 +266,7 @@ export class ThemeManager {
   /**
    * Get progress bar configuration
    */
-  private getProgressBarConfig(preset: ThemePreset, colors: ColorPalette): ProgressBarConfig {
+  private getProgressBarConfig(preset: ThemePreset): ProgressBarConfig {
     switch (preset) {
       case 'minimal':
         return {
@@ -298,7 +298,7 @@ export class ThemeManager {
   /**
    * Get table style configuration
    */
-  private getTableStyle(preset: ThemePreset, colors: ColorPalette): TableStyle {
+  private getTableStyle(preset: ThemePreset): TableStyle {
     switch (preset) {
       case 'minimal':
         return { compact: true };
@@ -325,7 +325,7 @@ export class ThemeManager {
   /**
    * Create label formatter function
    */
-  private createLabelFormatter(colors: ColorPalette, typography: Typography) {
+  private createLabelFormatter(colors: ColorPalette) {
     return (label: string, value: string): string => {
       return `${(chalk as any)[colors.muted](label)}: ${(chalk as any)[colors.highlight](value)}`;
     };

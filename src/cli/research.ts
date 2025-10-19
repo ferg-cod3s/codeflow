@@ -1,11 +1,11 @@
 import { join } from 'node:path';
 import { existsSync } from 'node:fs';
-import { mkdir, writeFile } from 'node:fs/promises';
+import { writeFile } from 'node:fs/promises';
 import CLIErrorHandler from './error-handler.js';
 
 /**
  * Research CLI - Executes deep research workflows
- * 
+ *
  * Integrates with the workflow orchestrator from agentic-mcp package
  * to provide a user-friendly CLI interface for the /research command.
  */
@@ -37,7 +37,7 @@ export class ResearchCLI {
     this.progressState = {
       currentPhase: '',
       phasesCompleted: 0,
-      totalPhases: 4
+      totalPhases: 4,
     };
   }
 
@@ -48,7 +48,7 @@ export class ResearchCLI {
     try {
       // Load modules from agentic-mcp package
       const agenticMcpPath = join(this.projectRoot, 'packages', 'agentic-mcp', 'dist');
-      
+
       if (!existsSync(agenticMcpPath)) {
         throw new Error('Agentic MCP package not found. Please run: npm run build');
       }
@@ -56,10 +56,10 @@ export class ResearchCLI {
       // Dynamically import the modules
       const { buildSafeAgentRegistry } = await import(`${agenticMcpPath}/agent-registry.js`);
       const { executeResearchWorkflow } = await import(`${agenticMcpPath}/research-workflow.js`);
-      
+
       this.agentRegistry = await buildSafeAgentRegistry();
       this.workflowOrchestrator = { executeResearchWorkflow };
-      
+
       console.log('✅ Research system initialized\n');
     } catch (error) {
       throw new Error(`Failed to initialize research system: ${error}`);
@@ -97,13 +97,12 @@ export class ResearchCLI {
       console.log('\n✅ Research Complete!\n');
 
       // Display results
-      await this.displayResults(result, options);
+      await this.displayResults(result);
 
       // Save to file if requested
       if (options.output) {
         await this.saveResults(result, options.output);
       }
-
     } catch (error) {
       console.error('\n❌ Research failed:', error);
       throw error;
@@ -113,7 +112,7 @@ export class ResearchCLI {
   /**
    * Display research results in a user-friendly format
    */
-  private async displayResults(result: any, options: ResearchOptions): Promise<void> {
+  private async displayResults(result: any): Promise<void> {
     console.log('═'.repeat(80));
     console.log('  RESEARCH REPORT');
     console.log('═'.repeat(80));
@@ -276,7 +275,7 @@ export class ResearchCLI {
     const barLength = 40;
     const filledLength = Math.round((barLength * completed) / total);
     const bar = '█'.repeat(filledLength) + '░'.repeat(barLength - filledLength);
-    
+
     process.stdout.write(`\r[${bar}] ${percentage}% - ${phase}`);
   }
 

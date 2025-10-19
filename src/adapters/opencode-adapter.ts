@@ -105,13 +105,13 @@ export class OpenCodeAdapter extends BasePlatformAdapter {
         const fileAgents = await this.discoverAgentsFromFiles();
         agents.push(...fileAgents);
       }
-    } catch (error) {
+    } catch {
       // Fallback to filesystem if MCP fails
       try {
         const fileAgents = await this.discoverAgentsFromFiles();
         agents.push(...fileAgents);
       } catch (_fsError) {
-        throw new Error(`Failed to discover OpenCode agents: ${error}`);
+        throw new Error(`Failed to discover OpenCode agents: ${_fsError}`);
       }
     }
 
@@ -422,8 +422,8 @@ export class OpenCodeAdapter extends BasePlatformAdapter {
     if (this.mcpClient) {
       try {
         await this.mcpClient.close();
-      } catch (error) {
-        console.warn('Failed to close MCP client:', error);
+      } catch {
+        console.warn('Failed to close MCP client');
       }
     }
 

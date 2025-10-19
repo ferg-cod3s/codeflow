@@ -171,16 +171,16 @@ export function normalizePermissionFormat(frontmatter: any): any {
 
     // Remove individual permission fields and tools to avoid duplication
     const {
-      edit,
-      bash,
-      patch,
-      read,
-      grep,
-      glob,
-      list,
-      webfetch,
-      write,
-      tools,
+      _edit,
+      _bash,
+      _patch,
+      _read,
+      _grep,
+      _glob,
+      _list,
+      _webfetch,
+      _write,
+      _tools,
       ...cleanFrontmatter
     } = frontmatter;
 
@@ -201,8 +201,18 @@ export function normalizePermissionFormat(frontmatter: any): any {
     };
 
     // Remove individual permission fields to avoid duplication
-    const { edit, bash, patch, read, grep, glob, list, webfetch, write, ...cleanFrontmatter } =
-      frontmatter;
+    const {
+      _edit,
+      _bash,
+      _patch,
+      _read,
+      _grep,
+      _glob,
+      _list,
+      _webfetch,
+      _write,
+      ...cleanFrontmatter
+    } = frontmatter;
 
     // Create normalized frontmatter with permission block
     return {
@@ -214,8 +224,18 @@ export function normalizePermissionFormat(frontmatter: any): any {
   // If agent already uses permission: format, remove individual permission fields to avoid duplication
   if (frontmatter.permission && typeof frontmatter.permission === 'object') {
     // Remove individual permission fields that might exist alongside the permission block
-    const { edit, bash, patch, read, grep, glob, list, webfetch, write, ...cleanFrontmatter } =
-      frontmatter;
+    const {
+      _edit,
+      _bash,
+      _patch,
+      _read,
+      _grep,
+      _glob,
+      _list,
+      _webfetch,
+      _write,
+      ...cleanFrontmatter
+    } = frontmatter;
     return cleanFrontmatter;
   }
 
@@ -327,7 +347,7 @@ export async function parseAgentFile(
 
         return agent;
       }
-    } catch (fallbackError) {
+    } catch {
       // Fallback also failed, cache the error
       const parseError: ParseError = {
         message: `Failed to parse agent file ${filePath}: ${error.message}`,
@@ -391,7 +411,7 @@ function parseWithFallback(content: string): {
     }
 
     return { success: true, data: { frontmatter, body } };
-  } catch (error) {
+  } catch {
     return { success: false };
   }
 }
@@ -425,7 +445,6 @@ export async function parseAgentsFromDirectory(
       if (stat.isDirectory()) {
         // This is a subdirectory, parse agents from it recursively
         try {
-          let actualFormat = format as 'base' | 'claude-code' | 'opencode' | 'cursor';
           const subdirAgents = await parseAgentsFromDirectory(itemPath, format);
           agents.push(...subdirAgents.agents);
           errors.push(...subdirAgents.errors);
@@ -616,7 +635,7 @@ export async function parseCommandFile(
 
         return command;
       }
-    } catch (fallbackError) {
+    } catch {
       // Fallback also failed
       throw new Error(`Failed to parse command file ${filePath}: ${error.message}`);
     }

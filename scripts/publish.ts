@@ -221,7 +221,7 @@ await $`git tag v${version}`;
 console.log('Pushing to origin...');
 try {
   await $`git push origin HEAD --tags --no-verify`;
-} catch (_e) {
+} catch {
   console.log('  Warning: Could not push to origin (might be in CI environment)');
 }
 
@@ -243,7 +243,7 @@ try {
     const data = (await response.json()) as { tag_name: string };
     previousReleaseTag = data.tag_name;
   }
-} catch (_e) {
+} catch {
   console.log('  No previous release found');
 }
 
@@ -288,7 +288,7 @@ if (previousReleaseTag) {
         releaseNotes += 'Various improvements and bug fixes';
       }
     }
-  } catch (_e) {
+  } catch {
     console.log('  Could not fetch commit comparison');
     releaseNotes += 'See commit history for changes';
   }
@@ -303,7 +303,7 @@ console.log('Creating GitHub release...');
 try {
   await $`gh release create v${version} --title "v${version}" --notes ${releaseNotes} ./dist/*.zip`;
   console.log(`  Created GitHub release v${version}`);
-} catch (_e) {
+} catch {
   console.log('  Could not create GitHub release (might not have gh CLI or permissions)');
 }
 

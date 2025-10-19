@@ -272,12 +272,12 @@ export async function loadProjectAgents(): Promise<Map<string, Agent>> {
           };
 
           agents.set(agent.id, agent);
-        } catch (_error) {
+        } catch {
           // Skip invalid agent files silently
           console.warn(`Skipping invalid agent file: ${filePath}`);
         }
       }
-    } catch (_error) {
+    } catch {
       // Directory access issues - skip silently
     }
   }

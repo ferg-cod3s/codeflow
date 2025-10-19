@@ -9,7 +9,6 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import {
   buildSafeAgentRegistry,
   categorizeAgents,
-  suggestAgents,
   type Agent,
   type AgentCategories,
 } from './agent-registry.js';
@@ -581,17 +580,23 @@ async function run() {
 
     try {
       process.stdin.resume();
-    } catch {} // Ignore stdin resume errors
+    } catch {
+      // Ignore stdin resume errors
+    }
 
     try {
       process.stdin.on('end', onClose);
       process.stdin.on('close', onClose);
-    } catch {}
+    } catch {
+      // Ignore stdin event setup errors
+    }
 
     try {
       process.on('SIGINT', onClose);
       process.on('SIGTERM', onClose);
-    } catch {}
+    } catch {
+      // Ignore signal setup errors
+    }
   });
 }
 

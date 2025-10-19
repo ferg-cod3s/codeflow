@@ -70,8 +70,6 @@ export class DashboardDisplay {
     }
 
     return sections.join('\n\n');
-
-    return sections.join('\n\n');
   }
 
   /**

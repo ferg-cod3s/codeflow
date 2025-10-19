@@ -52,12 +52,6 @@ function getClaudeConfigPath() {
   }
 }
 
-// Get OpenCode config path
-function _getOpenCodeConfigPath() {
-  const home = homedir();
-  return join(home, '.config', 'opencode', 'config.json');
-}
-
 // Install MCP for Claude Desktop
 async function installClaudeMCP() {
   log('Installing MCP for Claude Desktop...', 'info');
@@ -78,7 +72,7 @@ async function installClaudeMCP() {
       const content = await readFile(configPath, 'utf-8');
       config = JSON.parse(content);
       log('Found existing Claude Desktop configuration', 'step');
-    } catch (_error) {
+    } catch {
       log('Creating new Claude Desktop configuration', 'warning');
       config = {};
     }
@@ -201,7 +195,7 @@ async function installWarpMCP() {
       const content = await readFile(configPath, 'utf-8');
       config = JSON.parse(content);
       log('Found existing Warp configuration', 'step');
-    } catch (_error) {
+    } catch {
       log('Creating new Warp configuration', 'warning');
       config = {};
     }
