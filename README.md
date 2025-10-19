@@ -28,7 +28,8 @@ codeflow research "analyze authentication system"
 
 **Claude Code (v2.x.x)**: Native integration with YAML frontmatter format
 **OpenCode**: Full support with mode, temperature, and allowed_directories
-**MCP Clients**: JSON parameter format for Cursor, VS Code, and other MCP-compatible editors
+**Cursor**: MCP integration with JSON parameter format
+**MCP Clients**: JSON parameter format for VS Code and other MCP-compatible editors
 
 See [COMPLIANCE.md](./COMPLIANCE.md) for detailed format specifications and migration guide.
 
@@ -54,7 +55,8 @@ See [COMPLIANCE.md](./COMPLIANCE.md) for detailed format specifications and migr
 
 - **Claude Code**: Commands in `.claude/commands/` with YAML frontmatter
 - **OpenCode**: Commands in `.opencode/command/` with enhanced YAML configuration
-- **MCP Clients**: JSON parameter format for Cursor, VS Code, and other editors
+- **Cursor**: MCP integration with commands in `.cursor/commands/` and agents in `.cursor/agents/`
+- **MCP Clients**: JSON parameter format for VS Code and other MCP-compatible editors
 
 ## Architecture
 
@@ -79,7 +81,8 @@ The CLI automatically converts BaseAgent format to platform-specific formats:
 
 - **Claude Code**: `.claude/agents/` and `.claude/commands/` (YAML with name, description, tools, model)
 - **OpenCode**: `.opencode/agent/` and `.opencode/command/` (YAML with mode, temperature, allowed_directories)
-- **MCP Clients**: JSON parameter format for Cursor, VS Code, and other MCP-compatible editors
+- **Cursor**: `.cursor/agents/` and `.cursor/commands/` (MCP integration with JSON parameter format)
+- **MCP Clients**: JSON parameter format for VS Code and other MCP-compatible editors
 
 ### Core Workflow Agents
 
@@ -96,7 +99,7 @@ Essential agents for development workflows:
 
 - **123+ Specialized Agents**: Covering development, operations, testing, AI, analytics, design, and business domains
 - **15+ Workflow Commands**: Complete development workflow from research to deployment
-- **Multi-Platform Support**: Claude Code, OpenCode, and MCP-compatible clients
+- **Multi-Platform Support**: Claude Code, OpenCode, Cursor, and MCP-compatible clients
 - **Automatic Validation**: Ensures compliance with platform specifications
 - **Real-time Sync**: Keep projects updated with `codeflow sync` and `codeflow watch start`
 - **Interactive Dashboard**: Monitor agent status and system health
@@ -152,4 +155,4 @@ MIT - See [LICENSE](./LICENSE)
 
 ---
 
-**Version**: 0.14.2 | **Agents**: 123+ | **Commands**: 15+ | **Platforms**: Claude Code, OpenCode, MCP
+**Version**: 0.14.2 | **Agents**: 123+ | **Commands**: 15+ | **Platforms**: Claude Code, OpenCode, Cursor, MCP
