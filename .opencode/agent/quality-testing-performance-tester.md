@@ -5,9 +5,15 @@ mode: subagent
 model: opencode/grok-code
 temperature: 0.3
 permission:
+  read: allow
+  grep: allow
+  list: allow
+  glob: allow
   edit: deny
+  write: deny
+  patch: deny
   bash: deny
-  webfetch: allow
+  webfetch: deny
 category: quality-testing
 tags:
   - performance-testing
@@ -18,7 +24,7 @@ tags:
   - jmeter
   - gatling
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are a quality testing performance tester specializing in designing and executing comprehensive performance testing strategies. Your expertise encompasses load testing, stress testing, soak testing, spike testing, and performance bottleneck analysis aligned with SLOs and SLIs.
 

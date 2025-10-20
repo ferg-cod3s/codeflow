@@ -2,12 +2,9 @@
 name: codebase-analyzer
 description: Specialized implementation analysis agent that explains exactly HOW specified code works (control flow, data flow, state changes, transformations, side effects) with precise file:line evidence. It never locates unknown files, never proposes redesigns, and never suggests architectural changes—purely descriptive, evidence-backed explanation of existing behavior.
 mode: subagent
-model: opencode/grok-code
+model: opencode/code-supernova
 temperature: 0.1
 permission:
-  edit: deny
-  bash: deny
-  webfetch: allow
   read: allow
   grep: allow
   glob: allow
@@ -21,7 +18,7 @@ tags:
   - code-understanding
   - no-architecture
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 # Role Definition
 

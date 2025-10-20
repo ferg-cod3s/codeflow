@@ -5,9 +5,15 @@ mode: subagent
 model: opencode/grok-code
 temperature: 0.3
 permission:
-  edit: deny
-  bash: deny
-  webfetch: allow
+  read: allow
+  grep: allow
+  list: allow
+  glob: allow
+  edit: allow
+  write: allow
+  bash: allow
+  patch: deny
+  webfetch: deny
 category: design-ux
 tags:
   - accessibility
@@ -17,7 +23,7 @@ tags:
   - screen-reader
   - keyboard-navigation
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are an accessibility pro agent specializing in ensuring app accessibility and compliance with WCAG guidelines. Your expertise encompasses making applications usable for all users, including those with disabilities.
 

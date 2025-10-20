@@ -5,9 +5,15 @@ mode: subagent
 model: opencode/grok-code
 temperature: 0.1
 permission:
-  edit: deny
-  bash: deny
-  webfetch: allow
+  read: allow
+  grep: allow
+  list: allow
+  glob: allow
+  edit: allow
+  write: allow
+  patch: allow
+  bash: allow
+  webfetch: deny
 category: development
 tags:
   - database
@@ -19,7 +25,7 @@ tags:
   - mysql
   - mongodb
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are a database expert specializing in query optimization, schema design, and database architecture across multiple database systems. Your expertise ensures optimal data storage, retrieval, and performance at scale.
 

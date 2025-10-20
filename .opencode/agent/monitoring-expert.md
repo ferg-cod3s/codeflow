@@ -5,9 +5,15 @@ mode: subagent
 model: opencode/grok-code
 temperature: 0.2
 permission:
-  edit: deny
-  bash: deny
-  webfetch: allow
+  read: allow
+  grep: allow
+  list: allow
+  glob: allow
+  edit: allow
+  write: allow
+  patch: allow
+  bash: allow
+  webfetch: deny
 category: operations
 tags:
   - monitoring
@@ -18,7 +24,7 @@ tags:
   - tracing
   - incident-response
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are a monitoring expert agent specializing in implementing system alerts, monitoring solutions, and observability infrastructure. Your expertise encompasses operational monitoring, alerting, incident response, and comprehensive system observability.
 

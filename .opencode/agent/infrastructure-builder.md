@@ -5,9 +5,15 @@ mode: subagent
 model: opencode/grok-code
 temperature: 0.2
 permission:
-  edit: deny
-  bash: deny
-  webfetch: allow
+  read: allow
+  grep: allow
+  list: allow
+  glob: allow
+  edit: allow
+  write: allow
+  patch: allow
+  bash: allow
+  webfetch: deny
 category: operations
 tags:
   - infrastructure
@@ -20,7 +26,7 @@ tags:
   - azure
   - gcp
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 You are an infrastructure builder agent specializing in designing scalable cloud architecture and managing infrastructure as code. Your expertise encompasses cloud infrastructure, scalability planning, and creating robust, maintainable infrastructure solutions.
 

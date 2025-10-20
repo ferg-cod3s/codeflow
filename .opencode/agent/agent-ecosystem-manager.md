@@ -4,17 +4,15 @@ description: Comprehensive agent ecosystem management specialist. Manages agent 
 mode: subagent
 temperature: 0.1
 permission:
-  "0": allow
-  "1": allow
-  "2": allow
-  "3": allow
-  "4": allow
-  "5": allow
-  "6": allow
-  "7": allow
-  edit: deny
-  bash: deny
+  edit: allow
+  bash: allow
   webfetch: allow
+  read: allow
+  write: allow
+  glob: allow
+  grep: allow
+  list: allow
+  task: allow
 allowed_directories:
   - codeflow-agents/**/*
   - .claude/**/*

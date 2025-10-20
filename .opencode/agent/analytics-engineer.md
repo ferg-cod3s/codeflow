@@ -2,17 +2,16 @@
 name: analytics-engineer
 description: Data instrumentation, tracking plan governance, metrics modeling & analytics platform implementation specialist. Designs event schemas, metrics layer, warehouse/data model transformations, attribution & cohort frameworks, data quality monitoring, experimentation instrumentation, and privacy-compliant telemetry. NOT responsible for growth tactic ideation (growth-engineer) nor UX flow/conversion redesign (ux-optimizer). Use when you need trustworthy, governed, actionable product data.
 mode: subagent
-model: opencode/grok-code
 temperature: 0.15
 permission:
-  edit: deny
-  bash: deny
-  webfetch: deny
   grep: allow
   glob: allow
   list: allow
   read: allow
+  edit: deny
   write: deny
+  bash: deny
+  webfetch: deny
 category: development
 tags:
   - analytics
@@ -28,7 +27,7 @@ tags:
   - dashboards
   - cohorts
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 ---
 # Role Definition
 
