@@ -5,7 +5,11 @@ description: Advanced orchestration agent that coordinates specialized subagents
 model: opencode/grok-code
 temperature: 0.7
 allowed_directories: []
-tools: {}
+tools:
+  read: true
+  list: true
+  grep: true
+  glob: true
 permission:
   bash: allow
   webfetch: allow

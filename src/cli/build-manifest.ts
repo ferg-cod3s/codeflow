@@ -69,14 +69,19 @@ function getCategoryFromName(name: string): string {
 /**
  * Scan codeflow-agents directory and build manifest
  */
-async function scanAgentsDirectory(projectRoot: string): Promise<string[]> {
+interface DiscoveredAgent {
+  name: string;
+  category: string;
+}
+
+async function scanAgentsDirectory(projectRoot: string): Promise<DiscoveredAgent[]> {
   const agentsDir = join(projectRoot, 'codeflow-agents');
 
   if (!existsSync(agentsDir)) {
     throw new Error(`Codeflow agents directory not found: ${agentsDir}`);
   }
 
-  const agents: string[] = [];
+  const agents: DiscoveredAgent[] = [];
   const categories = await readdir(agentsDir);
 
   for (const category of categories) {
@@ -88,11 +93,11 @@ async function scanAgentsDirectory(projectRoot: string): Promise<string[]> {
 
     for (const file of mdFiles) {
       const agentName = file.replace('.md', '');
-      agents.push(agentName);
+      agents.push({ name: agentName, category });
     }
   }
 
-  return agents.sort();
+  return agents.sort((a, b) => a.name.localeCompare(b.name));
 }
 
 /**
@@ -119,14 +124,15 @@ export async function buildManifest(options: BuildManifestOptions = {}): Promise
     }
 
     const manifest: AgentManifest = {
-      canonical_agents: agents.map((agentName) => ({
-        name: agentName,
-        description: `Agent: ${agentName.replace(/-|_/g, ' ')}`,
-        category: getCategoryFromName(agentName),
+      canonical_agents: agents.map((agent) => ({
+        name: agent.name,
+        description: `Agent: ${agent.name.replace(/-|_/g, ' ')}`,
+        // Prefer the real directory name discovered from filesystem; fallback to heuristic if needed
+        category: agent.category || getCategoryFromName(agent.name),
         sources: {
-          base: `codeflow-agents/${getCategoryFromName(agentName)}/${agentName}.md`,
-          'claude-code': `.claude/agents/${agentName}.md`,
-          opencode: `.opencode/agent/${agentName}.md`,
+          base: `codeflow-agents/${agent.category}/${agent.name}.md`,
+          'claude-code': `.claude/agents/${agent.name}.md`,
+          opencode: `.opencode/agent/${agent.name}.md`,
         },
       })),
       total_agents: agents.length,
