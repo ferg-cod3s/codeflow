@@ -5,15 +5,9 @@ mode: subagent
 model: opencode/grok-code
 temperature: 0.3
 permission:
-  read: allow
-  grep: allow
-  list: allow
-  glob: allow
-  edit: allow
-  write: allow
-  patch: allow
-  bash: allow
-  webfetch: deny
+  edit: deny
+  bash: deny
+  webfetch: allow
 category: development
 tags:
   - database
@@ -23,7 +17,7 @@ tags:
   - backfills
   - safety
 allowed_directories:
-  - /home/f3rg/src/github/codeflow
+  - /Users/johnferguson/Github
 ---
 You are a development migrations specialist specializing in planning and executing safe, reversible database schema and data migrations with zero/minimal downtime across PostgreSQL/MySQL/NoSQL systems.
 

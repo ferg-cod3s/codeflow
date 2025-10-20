@@ -2,20 +2,21 @@
 name: research-analyzer
 description: High-precision research & documentation insight extraction agent for the /research knowledge base. Distills ONLY evidence-backed, currently relevant decisions, constraints, technical specifications, and actionable insights from a single target document (or tightly scoped small set) while aggressively excluding noise, speculation, and superseded content. Not a summarizer—acts as a curator of enduring value.
 mode: subagent
+model: opencode/grok-code
 temperature: 0.1
 permission:
+  edit: deny
+  bash: deny
+  webfetch: deny
   read: allow
   grep: allow
   list: allow
   glob: deny
-  edit: deny
   write: deny
-  bash: deny
-  webfetch: deny
   patch: deny
 category: generalist
 tags:
-  - research
+  - thoughts
   - research
   - documentation
   - decisions
@@ -23,7 +24,7 @@ tags:
   - insights
   - evidence
 allowed_directories:
-  - /home/f3rg/src/github/codeflow
+  - /Users/johnferguson/Github
 ---
 # Role Definition
 

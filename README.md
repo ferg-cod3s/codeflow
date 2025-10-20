@@ -28,10 +28,82 @@ codeflow research "analyze authentication system"
 
 **Claude Code (v2.x.x)**: Native integration with YAML frontmatter format
 **OpenCode**: Full support with mode, temperature, and allowed_directories
-**Cursor**: MCP integration with JSON parameter format
+**Cursor**: Full support for creating agents and commands with built-in modes (Agent, Ask, Plan) and custom modes (Beta) configured through Cursor Settings UI
 **MCP Clients**: JSON parameter format for VS Code and other MCP-compatible editors
 
 See [COMPLIANCE.md](./COMPLIANCE.md) for detailed format specifications and migration guide.
+
+## Platform Integration Details
+
+### Claude Code Integration
+
+Claude Code provides comprehensive AI-powered coding assistance with built-in tools and capabilities:
+
+#### Core Features
+- **File Analysis**: Automatically reads and analyzes your project files as needed
+- **Code Editing**: Makes changes with your approval - always asks permission before modifying files
+- **Built-in Documentation**: Claude has access to its own documentation and can answer questions about features
+- **Text Editor Tool**: Advanced file manipulation with proper error handling and validation
+
+#### Best Practices
+- **Be Specific**: Instead of "fix the bug", try "fix the login bug where users see a blank screen after entering wrong credentials"
+- **Step-by-Step**: Break complex tasks into clear steps
+- **Let Claude Explore**: Use commands like "analyze the database schema" before making changes
+- **Use Shortcuts**: Press `?` for keyboard shortcuts, Tab for completion, ↑ for history, `/` for slash commands
+
+#### File Types
+- **Commands**: YAML frontmatter format in `.claude/commands/`
+- **Agents**: YAML format in `.claude/agents/` with name, description, tools, and model configuration
+
+### OpenCode Integration
+
+OpenCode provides AI coding assistance with distinct modes and workflow capabilities:
+
+#### Built-in Modes
+- **Build Mode**: Default mode for making code changes and implementing features
+- **Plan Mode**: Disables changes and instead suggests implementation plans (switch with Tab key)
+
+#### Core Features
+- **Interactive Planning**: Use Plan mode to create detailed implementation plans before building
+- **Image Analysis**: Can scan and analyze images you provide for design references
+- **Undo/Redo**: Use `/undo` and `/redo` commands to revert or reapply changes
+- **File References**: Use `@filename` syntax to reference specific files in your requests
+
+#### Workflow Examples
+1. **Feature Development**: Switch to Plan mode → Describe feature → Iterate on plan → Switch back to Build mode → Implement
+2. **Code Analysis**: Ask specific questions like "How is authentication handled in @packages/functions/src/api/index.ts"
+3. **Direct Changes**: For straightforward modifications, ask directly in Build mode with clear context
+
+#### File Types
+- **Commands**: Enhanced YAML configuration in `.opencode/command/`
+- **Agents**: YAML format in `.opencode/agent/` with mode, temperature, and allowed_directories
+- **Rules**: Create `AGENTS.md` file (similar to `CLAUDE.md`) for custom project instructions using `/init` command
+
+### Cursor Integration
+
+Cursor provides AI coding assistance with multiple agent modes and customization options:
+
+#### Built-in Agent Modes
+- **Agent**: Default mode with all tools enabled for complex coding tasks
+- **Ask**: Read-only mode with search tools only
+- **Plan**: Creates detailed plans before execution with all tools enabled
+
+#### Custom Modes (Beta)
+You can create custom modes through Cursor Settings UI:
+
+1. **Enable**: Cursor Settings → Chat → Custom Modes
+2. **Configure**:
+   - Select specific tools (Search, Edit & Reapply, Terminal, etc.)
+   - Add custom instructions for behavior
+3. **Example configurations**:
+   - **Learn Mode**: All Search tools + "Focus on explaining concepts thoroughly"
+   - **Debug Mode**: All Search + Terminal + Edit & Reapply + "Investigate thoroughly before fixes"
+   - **Refactor Mode**: Edit & Reapply tools + "Improve structure without new functionality"
+
+#### File Types
+- **Commands**: Plain Markdown (.md) files in `.cursor/commands/`
+- **Custom Modes**: Configured through Cursor Settings UI (not file-based)
+- **Switching**: Use mode picker dropdown in Agent or press `Cmd+.` for quick switching
 
 ## Available Commands
 
@@ -55,7 +127,7 @@ See [COMPLIANCE.md](./COMPLIANCE.md) for detailed format specifications and migr
 
 - **Claude Code**: Commands in `.claude/commands/` with YAML frontmatter
 - **OpenCode**: Commands in `.opencode/command/` with enhanced YAML configuration
-- **Cursor**: MCP integration with commands in `.cursor/commands/` and agents in `.cursor/agents/`
+- **Cursor**: Commands in `.cursor/commands/` as Markdown (.md) files, custom modes configured through Cursor Settings UI
 - **MCP Clients**: JSON parameter format for VS Code and other MCP-compatible editors
 
 ## Architecture
@@ -81,7 +153,7 @@ The CLI automatically converts BaseAgent format to platform-specific formats:
 
 - **Claude Code**: `.claude/agents/` and `.claude/commands/` (YAML with name, description, tools, model)
 - **OpenCode**: `.opencode/agent/` and `.opencode/command/` (YAML with mode, temperature, allowed_directories)
-- **Cursor**: `.cursor/agents/` and `.cursor/commands/` (MCP integration with JSON parameter format)
+- **Cursor**: `.cursor/commands/` (Markdown files), custom modes via Cursor Settings UI
 - **MCP Clients**: JSON parameter format for VS Code and other MCP-compatible editors
 
 ### Core Workflow Agents

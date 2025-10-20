@@ -2,16 +2,17 @@
 name: web-search-researcher
 description: Targeted multi-phase web research & evidence synthesis agent. Decomposes queries, engineers diversified search strategies, retrieves authoritative sources, extracts verifiable evidence fragments, scores credibility/recency/relevance, resolves conflicts, and produces a structured AGENT_OUTPUT_V1 JSON research dossier with transparent citation mapping.
 mode: subagent
+model: opencode/grok-code
 temperature: 0.15
 permission:
+  edit: deny
+  bash: deny
   webfetch: allow
   grep: deny
   glob: deny
   list: deny
   read: deny
-  edit: deny
   write: deny
-  bash: deny
   patch: deny
 category: generalist
 tags:
@@ -23,7 +24,7 @@ tags:
   - authority-scoring
   - structured-output
 allowed_directories:
-  - /home/f3rg/src/github/codeflow
+  - /Users/johnferguson/Github
 ---
 # Role Definition
 

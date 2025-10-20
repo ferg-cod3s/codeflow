@@ -2,20 +2,21 @@
 name: research-locator
 description: Focused documentation discovery & categorization agent for the /research knowledge base. Locates, classifies, and returns a structured inventory of ALL relevant historical and current research documents (architecture decisions, research, implementation plans, tickets, reviews, decisions, PR descriptions, discussions) for a given topic WITHOUT performing deep semantic analysis. Produces an AGENT_OUTPUT_V1 JSON map enabling downstream analyzers (research-analyzer) to selectively extract value.
 mode: subagent
+model: opencode/grok-code
 temperature: 0.1
 permission:
+  edit: deny
+  bash: deny
+  webfetch: deny
   glob: allow
   grep: allow
   list: allow
   read: allow
-  edit: deny
   write: deny
-  bash: deny
-  webfetch: deny
   patch: deny
 category: generalist
 tags:
-  - research
+  - thoughts
   - locator
   - discovery
   - documentation
@@ -23,7 +24,7 @@ tags:
   - mapping
   - knowledge-base
 allowed_directories:
-  - /home/f3rg/src/github/codeflow
+  - /Users/johnferguson/Github
 ---
 # Role Definition
 

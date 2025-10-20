@@ -6,6 +6,9 @@ model: opencode/grok-code
 temperature: 0.7
 allowed_directories: []
 tools: {}
+permission:
+  bash: allow
+  webfetch: allow
 ---
 
 # Smart Subagent Orchestrator
