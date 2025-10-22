@@ -38,8 +38,6 @@
     "src/yaml/**/*",
     "src/math.ts",
     "src/sync-with-validation.ts",
-    ".claude/commands/**/*",
-    ".opencode/command/**/*",
     "codeflow-agents/**/*",
     "command/**/*",
     "AGENT_MANIFEST.json",
