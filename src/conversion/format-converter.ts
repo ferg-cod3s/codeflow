@@ -1,4 +1,12 @@
-import { Agent, BaseAgent, ClaudeCodeAgent, OpenCodeAgent, Command, BaseCommand, OpenCodeCommand } from './agent-parser';
+import {
+  Agent,
+  BaseAgent,
+  ClaudeCodeAgent,
+  OpenCodeAgent,
+  Command,
+  BaseCommand,
+  OpenCodeCommand,
+} from './agent-parser';
 
 /**
  * Format conversion engine for agents
@@ -21,12 +29,12 @@ export class FormatConverter {
     if (baseAgent.tools && typeof baseAgent.tools === 'object') {
       // Convert tools object to comma-separated string
       const enabledTools = Object.entries(baseAgent.tools)
-        .filter(([, enabled]) => enabled)
+        .filter(([, enabled]) => enabled === true)
         .map(([tool]) => tool);
       toolsString = enabledTools.length > 0 ? enabledTools.join(', ') : undefined;
-    } else if ((baseAgent as any).permission && typeof (baseAgent as any).permission === 'object') {
+    } else if (baseAgent.permission && typeof baseAgent.permission === 'object') {
       // Convert permission object to tools string
-      const permissions = (baseAgent as any).permission;
+      const permissions = baseAgent.permission as Record<string, any>;
       const allowedTools = Object.entries(permissions)
         .filter(([, value]) => value === 'allow')
         .map(([tool]) => tool);
@@ -46,6 +54,9 @@ export class FormatConverter {
       ...(toolsString && { tools: toolsString }),
       ...(model && { model }),
     };
+
+    console.log(`DEBUG: toolsString = "${toolsString}", model = "${model}"`);
+    console.log('DEBUG: Final frontmatter:', JSON.stringify(claudeCodeFrontmatter, null, 2));
 
     // Explicitly strips: mode, temperature, capabilities, permission, tags, category, etc.
 
@@ -75,11 +86,7 @@ export class FormatConverter {
       model: baseAgent.model,
       temperature: baseAgent.temperature,
       // Use proper OpenCode permission format - convert from base permissions or tools
-      permission: baseAgent.permissions?.opencode
-        ? this.convertBaseOpenCodePermissions(baseAgent.permissions.opencode)
-        : baseAgent.tools
-          ? this.convertToolsToPermissions(baseAgent.tools)
-          : undefined,
+      permission: this.extractPermissions(baseAgent),
       // Preserve custom fields for compatibility
       ...(baseAgent.category && { category: baseAgent.category }),
       ...(baseAgent.tags && { tags: baseAgent.tags }),
@@ -100,11 +107,13 @@ export class FormatConverter {
         );
       }
     } else {
-      // Add default permissions if none are present
+      // Add default permissions if none are present - following security best practices
       openCodeFrontmatter.permission = {
-        edit: 'deny',
-        bash: 'deny',
-        webfetch: 'allow',
+        edit: 'deny', // Require explicit permission for file editing
+        bash: 'deny', // Require explicit permission for command execution
+        webfetch: 'allow', // Generally safe to allow web fetching
+        read: 'allow', // Allow reading files by default
+        write: 'deny', // Require explicit permission for writing
       };
     }
 
@@ -232,18 +241,35 @@ export class FormatConverter {
   /**
    * Convert agent to target format
    */
-  convert(agent: Agent, targetFormat: 'base' | 'claude-code' | 'opencode'): Agent {
+  convert(agent: Agent, targetFormat: 'base' | 'claude-code' | 'opencode' | 'cursor'): Agent {
     if (agent.format === targetFormat) {
       return agent;
     }
 
+    // Check if this is a command by looking at the frontmatter mode
+    const isCommand = (agent.frontmatter as any).mode === 'command';
+
     switch (agent.format) {
       case 'base':
         switch (targetFormat) {
+          case 'cursor':
+            // Cursor uses same format as Claude Code, but commands need special handling
+            if (isCommand) {
+              const convertedCmd = this.baseCommandToOpenCode(agent as Command);
+              return { ...convertedCmd, format: 'claude-code' } as Agent;
+            }
+            return this.baseToClaudeCode(agent);
           case 'claude-code':
+            // Commands convert to OpenCode format first, then adapt to Claude Code
+            if (isCommand) {
+              const convertedCmd = this.baseCommandToOpenCode(agent as Command);
+              return { ...convertedCmd, format: 'claude-code' } as Agent;
+            }
             return this.baseToClaudeCode(agent);
           case 'opencode':
-            return this.baseToOpenCode(agent);
+            return isCommand
+              ? (this.baseCommandToOpenCode(agent as Command) as Agent)
+              : this.baseToOpenCode(agent);
         }
         break;
       case 'claude-code':
@@ -254,10 +280,25 @@ export class FormatConverter {
             return this.claudeCodeToOpenCode(agent);
         }
         break;
+      case 'cursor':
+        // Cursor uses same format as claude-code
+        switch (targetFormat) {
+          case 'base':
+            return this.claudeCodeToBase(agent);
+          case 'opencode':
+            return this.claudeCodeToOpenCode(agent);
+          case 'claude-code':
+            return this.baseToClaudeCode(agent); // Cursor uses same format as Claude Code
+          case 'cursor':
+            return agent; // Same format
+        }
+        break;
       case 'opencode':
         switch (targetFormat) {
           case 'base':
             return this.openCodeToBase(agent);
+          case 'cursor':
+            return this.baseToClaudeCode(agent); // Cursor uses same format as Claude Code
           case 'claude-code':
             return this.baseToClaudeCode(this.openCodeToBase(agent));
         }
@@ -271,9 +312,9 @@ export class FormatConverter {
    * Convert all agents in a directory to target format
    */
   convertAll(
-    sourceDir: string,
-    targetFormat: 'base' | 'claude-code' | 'opencode',
-    outputDir: string
+    _sourceDir: string,
+    _targetFormat: 'base' | 'claude-code' | 'opencode' | 'cursor',
+    _outputDir: string
   ): void {
     // Implementation remains the same
   }
@@ -281,7 +322,10 @@ export class FormatConverter {
   /**
    * Convert a batch of agents to target format
    */
-  convertBatch(agents: Agent[], targetFormat: 'base' | 'claude-code' | 'opencode'): Agent[] {
+  convertBatch(
+    agents: Agent[],
+    targetFormat: 'base' | 'claude-code' | 'opencode' | 'cursor'
+  ): Agent[] {
     return agents.map((agent) => this.convert(agent, targetFormat));
   }
 
@@ -314,6 +358,47 @@ export class FormatConverter {
         errors: [error.message],
       };
     }
+  }
+
+  /**
+   * Extract permissions from base agent in priority order:
+   * 1. Complex permission objects (bash: {...}, edit: 'allow', etc.)
+   * 2. permissions.opencode field
+   * 3. tools object (boolean flags)
+   */
+  private extractPermissions(baseAgent: BaseAgent): Record<string, any> | undefined {
+    const basePermission = (baseAgent as any).permission;
+
+    // Priority 1: Check if permission field exists with complex objects or simple strings
+    if (basePermission && typeof basePermission === 'object') {
+      const extracted: Record<string, any> = {};
+
+      for (const [key, value] of Object.entries(basePermission)) {
+        if (typeof value === 'object' && value !== null) {
+          // Preserve complex permission objects (e.g., bash wildcard rules)
+          extracted[key] = value;
+        } else if (typeof value === 'string' && ['allow', 'ask', 'deny'].includes(value)) {
+          // Preserve simple permission strings
+          extracted[key] = value;
+        }
+      }
+
+      if (Object.keys(extracted).length > 0) {
+        return extracted;
+      }
+    }
+
+    // Priority 2: Check permissions.opencode field
+    if (baseAgent.permissions?.opencode) {
+      return this.convertBaseOpenCodePermissions(baseAgent.permissions.opencode);
+    }
+
+    // Priority 3: Fall back to tools object
+    if (baseAgent.tools) {
+      return this.convertToolsToPermissions(baseAgent.tools);
+    }
+
+    return undefined;
   }
 
   /**
@@ -392,10 +477,16 @@ export class FormatConverter {
       'anthropic/claude-sonnet-4': 'sonnet',
       'anthropic/claude-opus-4': 'opus',
       'anthropic/claude-haiku-4': 'haiku',
-      'inherit': 'inherit',
-      'sonnet': 'sonnet',
-      'opus': 'opus',
-      'haiku': 'haiku',
+      inherit: 'inherit',
+      sonnet: 'sonnet',
+      opus: 'opus',
+      haiku: 'haiku',
+      // Map OpenCode models to inherit for Claude Code (they're not compatible)
+      'opencode/grok-code': 'inherit',
+      'opencode/code-supernova': 'inherit',
+      'opencode/grok-code-fast-1': 'inherit',
+      'opencode/gpt-5': 'inherit',
+      'github-copilot/gpt-5': 'inherit',
     };
 
     // Check if model is already in valid format
@@ -416,33 +507,60 @@ export class FormatConverter {
 
   /**
    * Convert model format for OpenCode (provider/model format)
+   * Uses free OpenCode models from models.dev by default
    */
   private convertModelForOpenCode(model: string): string {
-    // Map Claude Code models to OpenCode format
+    // Map Claude Code models to free OpenCode models from models.json
     const modelMap: Record<string, string> = {
-      'sonnet': 'anthropic/claude-sonnet-4',
-      'opus': 'anthropic/claude-opus-4',
-      'haiku': 'anthropic/claude-haiku-4',
-      'inherit': 'anthropic/claude-sonnet-4', // Default to sonnet
+      sonnet: 'opencode/grok-code', // Free OpenCode model (default)
+      opus: 'opencode/code-supernova', // More capable free model
+      haiku: 'opencode/grok-code', // Fast free model
+      inherit: 'opencode/grok-code', // Default to free model
+      'anthropic/claude-sonnet-4': 'opencode/grok-code',
+      'anthropic/claude-opus-4': 'opencode/code-supernova',
+      'anthropic/claude-haiku-4': 'opencode/grok-code',
+      'gpt-5': 'github-copilot/gpt-5', // GPT-5 from github-copilot provider
     };
 
-    // If already in provider/model format, return as-is
-    if (model.includes('/')) {
-      return model;
+    // If already in OpenCode format, validate it exists
+    if (model.startsWith('opencode/')) {
+      // Validate against models.json
+      const validModels = [
+        'opencode/grok-code',
+        'opencode/code-supernova',
+        'opencode/grok-code-fast-1',
+      ];
+
+      // Special handling for gpt-5 - redirect to github-copilot provider
+      if (model === 'opencode/gpt-5') {
+        console.warn(
+          `Model '${model}' is not available in opencode provider, using github-copilot provider instead`
+        );
+        return 'github-copilot/gpt-5';
+      }
+
+      if (validModels.includes(model)) {
+        return model;
+      }
+      // If invalid OpenCode model, default to grok-code
+      console.warn(`Unknown OpenCode model '${model}', defaulting to 'opencode/grok-code'`);
+      return 'opencode/grok-code';
     }
 
-    // Try to map from Claude Code format
+    // Try to map from Claude Code or Anthropic format
     const mapped = modelMap[model.toLowerCase()];
     if (mapped) {
       return mapped;
     }
 
-    // If we can't map it, return as-is (might be valid OpenCode format already)
-    return model;
+    // If we can't map it, default to free OpenCode grok-code model
+    console.warn(`Unknown model '${model}', defaulting to 'opencode/grok-code' for OpenCode`);
+    return 'opencode/grok-code';
   }
 
   /**
    * Convert Base command format to OpenCode command format
+   * Ensures compliance with OPENCODE_BEST_PRACTICES.md
    */
   baseCommandToOpenCode(command: Command): Command {
     if (command.format !== 'base') {
@@ -456,12 +574,16 @@ export class FormatConverter {
       name: baseCommand.name,
       description: baseCommand.description,
       mode: 'command',
-      version: baseCommand.version,
+      version: baseCommand.version || '1.0.0',
       inputs: baseCommand.inputs,
       outputs: baseCommand.outputs,
-      cache_strategy: baseCommand.cache_strategy,
-      success_signals: baseCommand.success_signals,
-      failure_modes: baseCommand.failure_modes,
+      cache_strategy: baseCommand.cache_strategy || {
+        type: 'content_based',
+        ttl: 600,
+        max_size: 100,
+      },
+      success_signals: baseCommand.success_signals || ['Command completed successfully'],
+      failure_modes: baseCommand.failure_modes || ['Command execution failed'],
       // Preserve legacy fields
       ...(baseCommand.usage && { usage: baseCommand.usage }),
       ...(baseCommand.examples && { examples: baseCommand.examples }),
@@ -469,11 +591,171 @@ export class FormatConverter {
       ...(baseCommand.intended_followups && { intended_followups: baseCommand.intended_followups }),
     };
 
+    // Ensure command body includes $ARGUMENTS placeholder for best practices
+    let commandBody = command.content || '';
+
+    // CRITICAL: All commands MUST include $ARGUMENTS placeholder
+    if (!commandBody.includes('$ARGUMENTS')) {
+      // If command has no content, create basic structure
+      if (!commandBody.trim()) {
+        commandBody = '# Command execution\n\n$ARGUMENTS ';
+      } else {
+        // Add $ARGUMENTS at the end if not present, with proper spacing
+        commandBody += '\n\n$ARGUMENTS ';
+      }
+    }
+
+    // Add security validation and error handling
+    commandBody = this.addSecurityAndErrorHandling(commandBody);
+
     return {
       ...command,
       format: 'opencode',
       frontmatter: openCodeFrontmatter,
+      content: commandBody,
     };
+  }
+
+  /**
+   * Add security validation and error handling to command content
+   * Ensures compliance with security best practices
+   */
+  private addSecurityAndErrorHandling(commandBody: string): string {
+    let enhancedBody = commandBody;
+
+    // Add error handling at the beginning if missing
+    if (!enhancedBody.includes('set -e') && !enhancedBody.includes('set -euo pipefail')) {
+      enhancedBody = 'set -euo pipefail\n\n' + enhancedBody;
+    }
+
+    // Add argument validation for dangerous operations
+    const dangerousPatterns = [
+      {
+        pattern: /\brm\s+-rf\s+\$ARGUMENTS\b/g,
+        replacement: 'echo "Error: Dangerous rm -rf with $ARGUMENTS not allowed"',
+      },
+      {
+        pattern: /\bsudo\s+/g,
+        replacement: 'echo "Error: sudo commands not allowed in automated execution"',
+      },
+      {
+        pattern: /\bchmod\s+777\b/g,
+        replacement: 'echo "Error: chmod 777 not allowed for security reasons"',
+      },
+    ];
+
+    for (const { pattern, replacement } of dangerousPatterns) {
+      enhancedBody = enhancedBody.replace(pattern, replacement);
+    }
+
+    // Add validation for shell command templates
+    enhancedBody = enhancedBody.replace(/!`([^`]*)`/g, (match, command) => {
+      // Add error handling to shell commands if not present
+      if (!command.includes('||') && !command.includes('&&')) {
+        return '!`' + command + ' || echo "Shell command failed: ' + command + '"`';
+      }
+      return match;
+    });
+
+    // Enhanced template substitution
+    enhancedBody = this.enhanceTemplateSubstitution(enhancedBody);
+
+    // Add recommended patterns if missing
+    enhancedBody = this.addRecommendedPatterns(enhancedBody);
+
+    return enhancedBody;
+  }
+
+  /**
+   * Enhanced template substitution for shell commands and file references
+   * Follows OPENCODE_BEST_PRACTICES.md template patterns
+   */
+  private enhanceTemplateSubstitution(commandBody: string): string {
+    let enhancedBody = commandBody;
+
+    // Handle shell command templates (!`command`)
+    enhancedBody = enhancedBody.replace(/!`([^`]*)`/g, (match, command) => {
+      // Ensure shell commands have proper error handling
+      if (!command.includes('||') && !command.includes('&&') && !command.includes('2>/dev/null')) {
+        return '!`' + command + ' 2>/dev/null || echo "Command failed: ' + command + '"`';
+      }
+      return match;
+    });
+
+    // Handle file references (@file or @path)
+    enhancedBody = enhancedBody.replace(/@([a-zA-Z0-9_\-./]+)/g, (match, filePath) => {
+      // Validate file path to prevent directory traversal
+      if (filePath.includes('..') || filePath.startsWith('/')) {
+        return '# Invalid file path: ' + filePath;
+      }
+      return match; // Keep the reference but add validation in execution
+    });
+
+    // Handle environment variable references (${VAR} or $VAR)
+    enhancedBody = enhancedBody.replace(/\$\{([^}]+)\}/g, (match, varName) => {
+      // Add validation for common environment variables
+      const safeVars = ['HOME', 'PWD', 'USER', 'PATH', 'DATE', 'TIME'];
+      if (safeVars.includes(varName.toUpperCase())) {
+        return match;
+      }
+      return '# Unsafe environment variable: ' + varName;
+    });
+
+    // Add date/time handling patterns
+    enhancedBody = this.addDateTimePatterns(enhancedBody);
+
+    return enhancedBody;
+  }
+
+  /**
+   * Add date/time handling patterns following best practices
+   */
+  private addDateTimePatterns(commandBody: string): string {
+    let enhancedBody = commandBody;
+
+    // Replace DATE and TIME placeholders with proper shell commands
+    if (enhancedBody.includes('DATE') || enhancedBody.includes('TIME')) {
+      if (!enhancedBody.includes('date') && !enhancedBody.includes('$(date')) {
+        enhancedBody = enhancedBody.replace(/\bDATE\b/g, '$(date -u +"%Y-%m-%d")');
+        enhancedBody = enhancedBody.replace(/\bTIME\b/g, '$(date -u +"%Y-%m-%dT%H:%M:%SZ")');
+      }
+    }
+
+    // Add timestamp generation for logging
+    if (enhancedBody.includes('log') || enhancedBody.includes('LOG')) {
+      if (!enhancedBody.includes('TIMESTAMP')) {
+        enhancedBody = enhancedBody.replace(
+          /\bTIMESTAMP\b/g,
+          '$(date -u +"%Y-%m-%dT%H:%M:%S.%3NZ")'
+        );
+      }
+    }
+
+    return enhancedBody;
+  }
+
+  /**
+   * Add recommended patterns for better functionality
+   */
+  private addRecommendedPatterns(commandBody: string): string {
+    let enhancedBody = commandBody;
+
+    // Add shell command example if missing
+    if (!enhancedBody.includes('!`') && !enhancedBody.includes('shell command')) {
+      enhancedBody += '\n\n## Example Usage\n\n!`echo "Processing arguments: $ARGUMENTS"`\n';
+    }
+
+    // Add file reference example if missing
+    if (!enhancedBody.includes('@') && !enhancedBody.includes('file reference')) {
+      enhancedBody += '\n## File References\n\nUse @filename to reference files in arguments\n';
+    }
+
+    // Add error handling example if missing
+    if (!enhancedBody.includes('error') && !enhancedBody.includes('try')) {
+      enhancedBody += '\n## Error Handling\n\nArguments are validated before processing\n';
+    }
+
+    return enhancedBody;
   }
 
   /**
@@ -491,7 +773,17 @@ export class FormatConverter {
     }
 
     for (const [action, value] of Object.entries(permissions)) {
-      if (!['allow', 'ask', 'deny'].includes(value as string)) {
+      // Allow nested objects for complex permission rules (e.g., bash wildcards)
+      if (typeof value === 'object' && value !== null) {
+        // Validate nested permission values
+        for (const [subAction, subValue] of Object.entries(value)) {
+          if (!['allow', 'ask', 'deny'].includes(subValue as string)) {
+            errors.push(
+              `Nested permission for '${action}.${subAction}' must be 'allow', 'ask', or 'deny', got '${subValue}'`
+            );
+          }
+        }
+      } else if (!['allow', 'ask', 'deny'].includes(value as string)) {
         errors.push(`Permission for '${action}' must be 'allow', 'ask', or 'deny', got '${value}'`);
       }
     }

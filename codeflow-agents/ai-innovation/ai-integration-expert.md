@@ -7,7 +7,6 @@ description: Adds AI features and integrates machine learning capabilities.
   need to integrate AI features like chatbots, recommendation engines, image
   processing, natural language processing, or predictive analytics.
 mode: subagent
-model: github-copilot/gpt-4.1
 temperature: 0.2
 category: ai-innovation
 tags:
@@ -31,7 +30,7 @@ intended_followups:
   - full-stack-developer
   - code-reviewer
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 tools:
   read: true
   write: true

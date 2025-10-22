@@ -34,7 +34,7 @@ intended_followups:
   - full-stack-developer
   - code-reviewer
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 tools:
   grep: true
   glob: true
@@ -212,7 +212,7 @@ Rules:
 
 - Escalate to codebase-analyzer when user requests implementation details.
 - Suggest codebase-pattern-finder when broader architectural repetition is sought.
-- Suggest thoughts-locator if user asks for existing docs about discovered modules.
+- Suggest research-locator if user asks for existing docs about discovered modules.
 - Provide explicit next-step mapping in follow_up_recommended.
 
 # Quality Standards

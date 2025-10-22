@@ -153,34 +153,34 @@ CodeFlow supports three different integration approaches depending on your codin
 ### **Claude Code (Native Slash Commands)**
 
 ```
-/research thoughts/tickets/auth-feature.md - analyze authentication requirements
+/research research/tickets/auth-feature.md - analyze authentication requirements
 
-/plan thoughts/research/2025-08-25_auth-research.md - create implementation plan
+/plan research/research/2025-08-25_auth-research.md - create implementation plan
 
-/execute thoughts/plans/auth-implementation-plan.md - implement the feature
+/execute research/plans/auth-implementation-plan.md - implement the feature
 ```
 
 ### **OpenCode (Native Commands)**
 
 ```
-/research thoughts/tickets/auth-feature.md - analyze authentication requirements
+/research research/tickets/auth-feature.md - analyze authentication requirements
 
-/plan thoughts/research/2025-08-25_auth-research.md - create implementation plan
+/plan research/research/2025-08-25_auth-research.md - create implementation plan
 
-/execute thoughts/plans/auth-implementation-plan.md - implement the feature
+/execute research/plans/auth-implementation-plan.md - implement the feature
 ```
 
 ### **Cursor/VS Code (MCP Tools)**
 
 ```
 Use tool: research
-Input: "thoughts/tickets/auth-feature.md - analyze authentication requirements"
+Input: "research/tickets/auth-feature.md - analyze authentication requirements"
 
 Use tool: plan
-Input: "thoughts/research/2025-08-25_auth-research.md - create implementation plan"
+Input: "research/research/2025-08-25_auth-research.md - create implementation plan"
 
 Use tool: execute
-Input: "thoughts/plans/auth-implementation-plan.md - implement the feature"
+Input: "research/plans/auth-implementation-plan.md - implement the feature"
 ```
 
 ## 🛠️ **Development Workflow**

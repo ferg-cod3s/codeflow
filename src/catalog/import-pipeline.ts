@@ -1,6 +1,5 @@
-import { readFile, writeFile, mkdir } from 'fs/promises';
-import { join, dirname } from 'path';
-import { existsSync } from 'fs';
+import { writeFile } from 'fs/promises';
+import { join } from 'path';
 import { CatalogItem, CatalogIndex, CatalogIndexBuilder } from './index-builder.js';
 import { SourceAdapter } from './adapters/base-adapter.js';
 import { ClaudeTemplatesAdapter } from './adapters/claude-templates-adapter.js';
@@ -49,7 +48,7 @@ export class ImportPipeline {
   constructor(projectRoot: string) {
     this.projectRoot = projectRoot;
     this.catalogBuilder = new CatalogIndexBuilder(projectRoot);
-    
+
     // Register available adapters
     this.registerAdapter('claude-templates', ClaudeTemplatesAdapter);
   }
@@ -76,7 +75,7 @@ export class ImportPipeline {
       errors: [],
       warnings: [],
       importedItems: [],
-      dependencyResolution: []
+      dependencyResolution: [],
     };
 
     try {
@@ -98,11 +97,11 @@ export class ImportPipeline {
       const adapter = new (AdapterClass as any)({
         repoUrl: source,
         filter: options.filter,
-        exclude: options.exclude
+        exclude: options.exclude,
       });
 
       console.log(`\n📥 Importing from ${source} using ${adapterName} adapter...`);
-      
+
       if (options.dryRun) {
         console.log('🔍 Dry run mode - no changes will be made\n');
       }
@@ -118,13 +117,17 @@ export class ImportPipeline {
           // Check for version conflicts
           const conflict = await this.checkVersionConflict(item, catalog);
           if (conflict && conflict.resolution === 'error') {
-            report.errors.push(`Version conflict for ${item.id}: ${conflict.existingVersion} vs ${conflict.newVersion}`);
+            report.errors.push(
+              `Version conflict for ${item.id}: ${conflict.existingVersion} vs ${conflict.newVersion}`
+            );
             report.skipped++;
             continue;
           }
 
           if (conflict && conflict.resolution === 'keep') {
-            report.warnings.push(`Keeping existing version of ${item.id} (${conflict.existingVersion})`);
+            report.warnings.push(
+              `Keeping existing version of ${item.id} (${conflict.existingVersion})`
+            );
             report.skipped++;
             continue;
           }
@@ -141,11 +144,13 @@ export class ImportPipeline {
           if (options.resolvedDependencies) {
             const resolution = await this.resolveDependencies(item, catalog);
             report.dependencyResolution.push(resolution);
-            
+
             if (resolution.missing.length > 0) {
-              report.warnings.push(`Missing dependencies for ${item.id}: ${resolution.missing.join(', ')}`);
+              report.warnings.push(
+                `Missing dependencies for ${item.id}: ${resolution.missing.join(', ')}`
+              );
             }
-            
+
             if (resolution.circular) {
               report.warnings.push(`Circular dependency detected for ${item.id}`);
             }
@@ -155,11 +160,11 @@ export class ImportPipeline {
           if (!options.dryRun) {
             const targetPath = join(this.projectRoot, 'imported', item.source, `${item.name}.md`);
             const importResult = await adapter.import(item, targetPath);
-            
+
             if (importResult.success) {
               report.totalImported += importResult.itemsImported;
               report.importedItems.push(item);
-              
+
               // Add to catalog
               catalog.items.push(item);
               catalog.stats.total_items++;
@@ -169,14 +174,13 @@ export class ImportPipeline {
             } else {
               report.errors.push(...importResult.errors);
             }
-            
+
             report.warnings.push(...importResult.warnings);
           } else {
             console.log(`[DRY RUN] Would import ${item.id}`);
             report.totalImported++;
             report.importedItems.push(item);
           }
-
         } catch (error) {
           report.errors.push(`Failed to import ${item.id}: ${error}`);
           report.skipped++;
@@ -190,7 +194,7 @@ export class ImportPipeline {
           description: adapter.description,
           url: source,
           type: 'external',
-          adapter: adapterName
+          adapter: adapterName,
         };
       }
 
@@ -203,7 +207,6 @@ export class ImportPipeline {
 
       // Clean up
       await adapter.cleanup();
-
     } catch (error) {
       report.errors.push(`Import failed: ${error}`);
     }
@@ -219,28 +222,31 @@ export class ImportPipeline {
     if (source.includes('davila7/claude-code-templates')) {
       return 'claude-templates';
     }
-    
+
     // Add more patterns as needed
-    
+
     return null;
   }
 
-  private async checkVersionConflict(item: CatalogItem, catalog: CatalogIndex): Promise<VersionConflict | null> {
-    const existing = catalog.items.find(i => i.id === item.id);
-    
+  private async checkVersionConflict(
+    item: CatalogItem,
+    catalog: CatalogIndex
+  ): Promise<VersionConflict | null> {
+    const existing = catalog.items.find((i) => i.id === item.id);
+
     if (!existing) {
       return null;
     }
 
     const comparison = semver.compare(existing.version, item.version);
-    
+
     if (comparison === 0) {
       // Same version, skip
       return {
         itemId: item.id,
         existingVersion: existing.version,
         newVersion: item.version,
-        resolution: 'keep'
+        resolution: 'keep',
       };
     }
 
@@ -250,7 +256,7 @@ export class ImportPipeline {
         itemId: item.id,
         existingVersion: existing.version,
         newVersion: item.version,
-        resolution: 'keep'
+        resolution: 'keep',
       };
     }
 
@@ -259,17 +265,20 @@ export class ImportPipeline {
       itemId: item.id,
       existingVersion: existing.version,
       newVersion: item.version,
-      resolution: 'update'
+      resolution: 'update',
     };
   }
 
-  private async resolveDependencies(item: CatalogItem, catalog: CatalogIndex): Promise<DependencyResolution> {
+  private async resolveDependencies(
+    item: CatalogItem,
+    catalog: CatalogIndex
+  ): Promise<DependencyResolution> {
     const resolution: DependencyResolution = {
       itemId: item.id,
       dependencies: item.dependencies,
       resolved: [],
       missing: [],
-      circular: false
+      circular: false,
     };
 
     const visited = new Set<string>();
@@ -289,10 +298,8 @@ export class ImportPipeline {
       stack.add(depId);
 
       // Find dependency in catalog
-      const dep = catalog.items.find(i => 
-        i.name === depId || 
-        i.id === depId ||
-        i.id === `codeflow-core/${depId}`
+      const dep = catalog.items.find(
+        (i) => i.name === depId || i.id === depId || i.id === `codeflow-core/${depId}`
       );
 
       if (!dep) {
@@ -326,20 +333,20 @@ export class ImportPipeline {
     console.log(`Total Scanned:  ${report.totalScanned}`);
     console.log(`Total Imported: ${report.totalImported}`);
     console.log(`Skipped:        ${report.skipped}`);
-    
+
     if (report.errors.length > 0) {
       console.log('\n❌ Errors:');
-      report.errors.forEach(err => console.log(`  - ${err}`));
+      report.errors.forEach((err) => console.log(`  - ${err}`));
     }
-    
+
     if (report.warnings.length > 0) {
       console.log('\n⚠️  Warnings:');
-      report.warnings.forEach(warn => console.log(`  - ${warn}`));
+      report.warnings.forEach((warn) => console.log(`  - ${warn}`));
     }
-    
+
     if (report.dependencyResolution.length > 0) {
       console.log('\n🔗 Dependency Resolution:');
-      report.dependencyResolution.forEach(res => {
+      report.dependencyResolution.forEach((res) => {
         console.log(`  ${res.itemId}:`);
         if (res.resolved.length > 0) {
           console.log(`    ✓ Resolved: ${res.resolved.join(', ')}`);
@@ -352,10 +359,10 @@ export class ImportPipeline {
         }
       });
     }
-    
+
     if (report.importedItems.length > 0) {
       console.log('\n📦 Imported Items:');
-      report.importedItems.forEach(item => {
+      report.importedItems.forEach((item) => {
         console.log(`  - ${item.id} (${item.kind})`);
       });
     }
@@ -365,7 +372,7 @@ export class ImportPipeline {
   async generateThirdPartyNotices(): Promise<string> {
     const catalog = await this.loadCatalog();
     const notices: string[] = ['# Third Party Notices\n'];
-    
+
     // Group items by source
     const bySource = new Map<string, CatalogItem[]>();
     for (const item of catalog.items) {
@@ -375,7 +382,7 @@ export class ImportPipeline {
         bySource.set(item.source, items);
       }
     }
-    
+
     // Generate notices for each source
     for (const [source, items] of bySource) {
       const sourceInfo = catalog.sources[source];
@@ -384,29 +391,29 @@ export class ImportPipeline {
         notices.push(`- **Repository**: ${sourceInfo.url}`);
         notices.push(`- **Description**: ${sourceInfo.description}`);
         notices.push(`- **Items**: ${items.length} items imported\n`);
-        
+
         // List unique licenses
-        const licenses = [...new Set(items.map(i => i.license))];
+        const licenses = [...new Set(items.map((i) => i.license))];
         notices.push(`### Licenses`);
-        licenses.forEach(license => {
+        licenses.forEach((license) => {
           notices.push(`- ${license}`);
         });
-        
+
         notices.push('\n### Imported Items');
-        items.forEach(item => {
+        items.forEach((item) => {
           notices.push(`- **${item.name}**: ${item.description.substring(0, 80)}...`);
           notices.push(`  - License: ${item.license}`);
           notices.push(`  - Attribution: ${item.provenance.attribution}`);
         });
-        
+
         notices.push('\n---\n');
       }
     }
-    
+
     const content = notices.join('\n');
     const noticesPath = join(this.projectRoot, 'THIRD_PARTY_NOTICES.md');
     await writeFile(noticesPath, content, 'utf-8');
-    
+
     return content;
   }
 }

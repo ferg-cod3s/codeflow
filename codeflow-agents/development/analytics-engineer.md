@@ -10,7 +10,6 @@ description: Data instrumentation, tracking plan governance, metrics modeling &
   (growth-engineer) nor UX flow/conversion redesign (ux-optimizer). Use when you
   need trustworthy, governed, actionable product data.
 mode: subagent
-model: github-copilot/gpt-4.1
 temperature: 0.15
 category: development
 tags:
@@ -40,7 +39,7 @@ intended_followups:
   - full-stack-developer
   - code-reviewer
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 tools:
   grep: true
   glob: true

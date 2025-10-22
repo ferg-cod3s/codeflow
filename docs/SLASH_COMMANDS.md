@@ -9,12 +9,14 @@ This document explains the slash commands available in the codeflow workflow sys
 **Purpose**: Install all agents and commands to your project
 **Usage**: `codeflow setup [project-path]`
 **Options**:
+
 - `--type claude-code`: Install for Claude Code (.claude/commands)
 - `--type opencode`: Install for OpenCode (.opencode/command)
 - `--global`: Install to global directories
 - `--force`: Force overwrite existing setup
 
 **Examples**:
+
 ```bash
 codeflow setup .                    # Setup current directory
 codeflow setup --type opencode      # Setup for OpenCode
@@ -34,7 +36,7 @@ codeflow setup --global             # Setup global directories
 **Process**:
 
 - Spawns specialized locator and analyzer agents in parallel
-- Searches codebase, thoughts directory, and uses domain-specific agents when relevant
+- Searches codebase, research directory, and uses domain-specific agents when relevant
 - Generates timestamped research document with findings and references
 - Synthesizes insights from multiple sources
 
@@ -146,37 +148,64 @@ model: model_identifier
 Command prompt content with {{variable}} placeholder and !shell commands support.
 ```
 
+### MCP-Compatible Clients (Cursor, VS Code, etc.)
+
+MCP clients use JSON parameter format for tool calls:
+
+```json
+{
+  "tool": "research",
+  "parameters": {
+    "query": "Research question or topic",
+    "scope": "codebase|research|both",
+    "depth": "shallow|medium|deep",
+    "ticket": "path/to/ticket.md"
+  }
+}
+```
+
 ## Usage Examples
 
 ### Research Command
 
 ```bash
 # Claude Code
-/research thoughts/tickets/feature-auth.md
+/research research/tickets/feature-auth.md
+/research "investigate user authentication system" --scope=codebase --depth=deep
 
 # OpenCode
 /research "investigate user authentication system for OAuth integration"
+
+# MCP Client (JSON format)
+{
+  "tool": "research",
+  "parameters": {
+    "query": "investigate user authentication system",
+    "scope": "codebase",
+    "depth": "deep"
+  }
+}
 ```
 
 ### Planning Command
 
 ```bash
 # Both platforms
-/plan thoughts/tickets/feature-auth.md thoughts/research/2025-01-15_auth-research.md
+/plan research/tickets/feature-auth.md research/research/2025-01-15_auth-research.md
 ```
 
 ### Execution Command
 
 ```bash
 # Both platforms
-/execute thoughts/plans/oauth-integration-plan.md
+/execute research/plans/oauth-integration-plan.md
 ```
 
 ### Test Command
 
 ```bash
 # Both platforms
-/test thoughts/plans/oauth-integration-plan.md
+/test research/plans/oauth-integration-plan.md
 /test "user authentication system with OAuth integration"
 ```
 
@@ -184,7 +213,7 @@ Command prompt content with {{variable}} placeholder and !shell commands support
 
 ```bash
 # Both platforms
-/document thoughts/plans/oauth-integration-plan.md
+/document research/plans/oauth-integration-plan.md
 /document "OAuth integration feature and API endpoints"
 ```
 
@@ -199,7 +228,7 @@ Command prompt content with {{variable}} placeholder and !shell commands support
 
 ````bash
 # Both platforms
-/review thoughts/plans/oauth-integration-plan.md
+/review research/plans/oauth-integration-plan.md
 ### Project Documentation Command
 
 ```bash
@@ -220,7 +249,7 @@ Commands automatically select appropriate specialized agents:
 
 - `codebase-locator` - Find WHERE components exist
 - `codebase-analyzer` - Understand HOW code works
-- `thoughts-locator` - Discover existing documentation
+- `research-locator` - Discover existing documentation
 - `operations_incident_commander` - For operational issues
 - `development_migrations_specialist` - For database changes
 - `programmatic_seo_engineer` - For SEO architecture

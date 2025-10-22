@@ -242,7 +242,7 @@ async function buildMcpAgentRegistry() {
 function categorizeMcpAgents(agents) {
   const categories = new Map();
 
-  for (const [id, agent] of agents) {
+  for (const [, agent] of agents) {
     const category = agent.category || 'general';
     if (!categories.has(category)) {
       categories.set(category, []);
@@ -260,7 +260,7 @@ function suggestMcpAgents(agents, taskDescription, maxSuggestions = 5) {
   const suggestions = [];
   const taskLower = taskDescription.toLowerCase();
 
-  for (const [id, agent] of agents) {
+  for (const [, agent] of agents) {
     let score = 0;
 
     // Score based on description relevance

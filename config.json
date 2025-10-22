@@ -1,5 +1,0 @@
-{
-  "pull": {
-    "include": ["codeflow-agents", "command"]
-  }
-}

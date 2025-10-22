@@ -272,8 +272,8 @@ function buildAgentPrompt(agent, task, brief) {
   if (agent.tools && Object.keys(agent.tools).length > 0) {
     sections.push('## Available Tools');
     const enabledTools = Object.entries(agent.tools)
-      .filter(([_, enabled]) => enabled)
-      .map(([tool, _]) => `- ${tool}`)
+      .filter(([, enabled]) => enabled)
+      .map(([tool]) => `- ${tool}`)
       .join('\n');
     if (enabledTools) {
       sections.push(enabledTools);
@@ -451,8 +451,8 @@ function createWorkflowOrchestrator(registry) {
       }
 
       if (domain === 'documentation' || domain === 'thoughts') {
-        locators.push('thoughts-locator');
-        analyzers.push('thoughts-analyzer');
+        locators.push('research-locator');
+        analyzers.push('research-analyzer');
       }
 
       if (domain === 'web' || domain === 'research') {

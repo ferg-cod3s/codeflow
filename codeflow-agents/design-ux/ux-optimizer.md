@@ -8,7 +8,6 @@ description: Simplifies user flows, enhances user experience, and optimizes
   user experience, optimize user interactions, or improve conversion rates
   through UX improvements.
 mode: subagent
-model: github-copilot/gpt-4.1
 temperature: 0.3
 category: design-ux
 tags:
@@ -32,7 +31,7 @@ intended_followups:
   - full-stack-developer
   - code-reviewer
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 tools:
   read: true
   grep: true

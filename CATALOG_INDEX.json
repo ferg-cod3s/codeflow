@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "updated": "2025-09-29T02:02:31.258Z",
-  "sources": {
+    "updated": "2025-10-16T12:00:00.000Z",
+   "sources": {
     "codeflow-core": {
       "name": "Codeflow Core",
       "description": "Official Codeflow agents and commands",
@@ -9,13 +9,13 @@
       "type": "local"
     }
   },
-  "stats": {
-    "total_items": 47,
-    "agents": 34,
-    "commands": 9,
-    "templates": 0,
-    "mcps": 4
-  },
+    "stats": {
+      "total_items": 50,
+      "agents": 34,
+      "commands": 12,
+      "templates": 0,
+      "mcps": 4
+    },
   "items": [
     {
       "id": "codeflow-core/codebase-locator",
@@ -519,11 +519,11 @@
       }
     },
     {
-      "id": "codeflow-core/thoughts-analyzer",
+      "id": "codeflow-core/research-analyzer",
       "kind": "agent",
-      "name": "thoughts-analyzer",
+      "name": "research-analyzer",
       "version": "1.0.0",
-      "description": "High-precision research & documentation insight extraction agent for the /thoughts knowledge base. Distills ONLY evidence-backed, currently relevant decisions, constraints, technical specifications, a",
+      "description": "High-precision research & documentation insight extraction agent for the /research knowledge base. Distills ONLY evidence-backed, currently relevant decisions, constraints, technical specifications, a",
       "tags": [
         "generalist"
       ],
@@ -538,23 +538,23 @@
         "opencode"
       ],
       "conversion_rules": {
-        "base_path": "codeflow-agents/generalist/thoughts-analyzer.md",
+        "base_path": "codeflow-agents/generalist/research-analyzer.md",
         "supports_all_formats": true
       },
       "provenance": {
         "repo": "ferg-cod3s/codeflow",
-        "path": "codeflow-agents/generalist/thoughts-analyzer.md",
+        "path": "codeflow-agents/generalist/research-analyzer.md",
         "sha": "3128294",
         "license": "MIT",
         "attribution": "Codeflow Team"
       }
     },
     {
-      "id": "codeflow-core/thoughts-locator",
+      "id": "codeflow-core/research-locator",
       "kind": "agent",
-      "name": "thoughts-locator",
+      "name": "research-locator",
       "version": "1.0.0",
-      "description": "Focused documentation discovery & categorization agent for the /thoughts knowledge base. Locates, classifies, and returns a structured inventory of ALL relevant historical and current thought document",
+      "description": "Focused documentation discovery & categorization agent for the /research knowledge base. Locates, classifies, and returns a structured inventory of ALL relevant historical and current thought document",
       "tags": [
         "generalist"
       ],
@@ -569,12 +569,12 @@
         "opencode"
       ],
       "conversion_rules": {
-        "base_path": "codeflow-agents/generalist/thoughts-locator.md",
+        "base_path": "codeflow-agents/generalist/research-locator.md",
         "supports_all_formats": true
       },
       "provenance": {
         "repo": "ferg-cod3s/codeflow",
-        "path": "codeflow-agents/generalist/thoughts-locator.md",
+        "path": "codeflow-agents/generalist/research-locator.md",
         "sha": "d7e17c9",
         "license": "MIT",
         "attribution": "Codeflow Team"
@@ -1328,33 +1328,124 @@
         "attribution": "Codeflow Team"
       }
     },
-    {
-      "id": "codeflow-core/cmd-execute",
-      "kind": "command",
-      "name": "/execute",
-      "version": "1.0.0",
-      "description": "Execute a specific implementation plan from docs/plans/",
-      "tags": [
-        "command",
-        "workflow"
-      ],
-      "license": "MIT",
-      "source": "codeflow-core",
-      "dependencies": [],
-      "install_targets": [
-        "claude-code",
-        "opencode"
-      ],
-      "conversion_rules": {
-        "base_path": "command/execute.md",
-        "supports_all_formats": true
-      },
-      "provenance": {
-        "repo": "ferg-cod3s/codeflow",
-        "path": "command/execute.md",
-        "sha": "900600d",
+     {
+       "id": "codeflow-core/cmd-execute",
+       "kind": "command",
+       "name": "/execute",
+       "version": "1.0.0",
+       "description": "Execute a specific implementation plan from docs/plans/",
+       "tags": [
+         "command",
+         "workflow"
+       ],
+       "license": "MIT",
+       "source": "codeflow-core",
+       "dependencies": [],
+       "install_targets": [
+         "claude-code",
+         "opencode"
+       ],
+       "conversion_rules": {
+         "base_path": "command/execute.md",
+         "supports_all_formats": true
+       },
+       "provenance": {
+         "repo": "ferg-cod3s/codeflow",
+         "path": "command/execute.md",
+         "sha": "900600d",
+         "license": "MIT",
+         "attribution": "Codeflow Team"
+       }
+     },
+     {
+       "id": "codeflow-core/cmd-deploy",
+       "kind": "command",
+       "name": "/deploy",
+       "version": "1.0.0",
+       "description": "Execute deployment workflow with pre-deployment validation, deployment execution, and post-deployment verification",
+       "tags": [
+         "command",
+         "workflow",
+         "deployment"
+       ],
+       "license": "MIT",
+       "source": "codeflow-core",
+       "dependencies": [],
+       "install_targets": [
+         "claude-code",
+         "opencode"
+       ],
+       "conversion_rules": {
+         "base_path": "command/deploy.md",
+         "supports_all_formats": true
+       },
+       "provenance": {
+         "repo": "ferg-cod3s/codeflow",
+         "path": "command/deploy.md",
+         "sha": "new",
+         "license": "MIT",
+         "attribution": "Codeflow Team"
+       }
+     },
+      {
+        "id": "codeflow-core/cmd-debug",
+        "kind": "command",
+        "name": "/debug",
+        "version": "1.0.0",
+        "description": "Debug issues with issue reproduction, root cause analysis, fix implementation, and regression testing",
+        "tags": [
+          "command",
+          "workflow",
+          "debugging"
+        ],
         "license": "MIT",
-        "attribution": "Codeflow Team"
+        "source": "codeflow-core",
+        "dependencies": [],
+        "install_targets": [
+          "claude-code",
+          "opencode"
+        ],
+        "conversion_rules": {
+          "base_path": "command/debug.md",
+          "supports_all_formats": true
+        },
+        "provenance": {
+          "repo": "ferg-cod3s/codeflow",
+          "path": "command/debug.md",
+          "sha": "new",
+          "license": "MIT",
+          "attribution": "Codeflow Team"
+        }
+      },
+      {
+        "id": "codeflow-core/cmd-refactor",
+        "kind": "command",
+        "name": "/refactor",
+        "version": "1.0.0",
+        "description": "Refactor code to reduce technical debt and improve maintainability",
+        "tags": [
+          "command",
+          "workflow",
+          "refactoring"
+        ],
+        "license": "MIT",
+        "source": "codeflow-core",
+        "dependencies": [],
+        "install_targets": [
+          "claude-code",
+          "opencode"
+        ],
+        "conversion_rules": {
+          "base_path": "command/refactor.md",
+          "supports_all_formats": true
+        },
+        "provenance": {
+          "repo": "ferg-cod3s/codeflow",
+          "path": "command/refactor.md",
+          "sha": "new",
+          "license": "MIT",
+          "attribution": "Codeflow Team"
+        }
       }
     },
     {

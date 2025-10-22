@@ -6,8 +6,7 @@ import { setup } from './setup';
 import { convert } from './convert';
 import { sync } from './sync';
 import { startWatch } from './watch';
-import { catalog } from './catalog.js';
-import { discover } from './discover.js';
+
 import { fixModels } from './fix-models.js';
 import { validate } from './validate';
 import { list } from './list';
@@ -15,9 +14,117 @@ import { info } from './info';
 import { update } from './update';
 import { clean } from './clean';
 import { exportProject } from './export';
+import { research } from './research';
+import { buildManifest } from './build-manifest';
 import packageJson from '../../package.json';
-import { join } from 'node:path';
+import { join, resolve, sep } from 'node:path';
 import { existsSync } from 'node:fs';
+import { homedir } from 'node:os';
+
+const HELP_TEXT = `codeflow - Intelligent AI workflow management and development automation
+
+CodeFlow is a CLI built with Bun and TypeScript that manages agents and commands for AI-assisted development workflows.
+
+Usage:
+  codeflow <command> [options]
+
+Commands:
+   setup [project-path]       Set up codeflow directory structure and copy agents/commands
+   status [project-path]      Check which files are up-to-date or outdated
+   sync [project-path]        Synchronize agents and commands with global configuration
+   fix-models [options]       Fix model configurations (default: global, use --local for project)
+   convert <source> <target> <format>  Convert agents between formats
+   watch start [options]      Start automatic file synchronization daemon
+   build-manifest [options]   Build or rebuild the agent manifest file
+
+   validate [path]            Validate agents and commands for integrity issues
+   list [path]                List installed agents and commands
+   info <item-name> [path]    Show detailed information about an agent or command
+   update                     Check for and install CLI updates
+   clean [path]               Clean up cache, temp, and orphaned files
+   export [path]              Export project setup to a file
+   research "<query>" [options]  Execute deep research workflow for codebase analysis
+
+
+
+Options:
+  -f, --force               Force overwrite existing setup
+  -t, --type <type>         Project type: claude-code, opencode, general
+  --validate                Validate agents during operations (default: true)
+  --dry-run                 Show what would be changed without writing files
+  -g, --global              Sync to global directories (~/.claude, ~/.config/opencode)
+  --project <path>          Project directory for operations
+  --source <format>         Source format: base, claude-code, opencode
+  --target <format>         Target format: base, claude-code, opencode
+  --source-format <format>  Source format for sync (default: base)
+  --local                   Fix models in current project (for fix-models command)
+
+Examples:
+  codeflow setup ~/my-project
+  codeflow status .
+  codeflow sync                        # Sync to project directories
+  codeflow sync --global               # Sync to global directories (~/.claude, ~/.config/opencode)
+  codeflow sync --global --dry-run     # Preview global sync changes
+  codeflow fix-models                  # Fix model IDs globally
+  codeflow fix-models --local          # Fix model IDs in current project
+  codeflow convert ./codeflow-agents ./claude-agents claude-code
+  codeflow watch start --global
+
+DEVELOPMENT WORKFLOW:
+  Use 'codeflow setup' to initialize agents and commands in your project
+
+  Available slash commands (when using Claude Code or OpenCode):
+    /research  - Comprehensive codebase and documentation analysis
+    /plan      - Creates detailed implementation plans from tickets and research
+    /execute   - Implements plans with proper verification
+    /test      - Generates comprehensive test suites for implemented features
+    /document  - Creates user guides, API docs, and technical documentation
+    /commit    - Creates commits with structured messages
+    /review    - Validates implementations against original plans
+    /continue  - Resume execution from the last completed step
+    /help      - Get detailed development guidance and workflow information
+
+  Core Agent Types:
+    codebase-locator        - Finds WHERE files and components exist
+    codebase-analyzer       - Understands HOW specific code works
+    codebase-pattern-finder - Discovers similar implementation patterns
+    research-locator        - Discovers existing documentation about topics
+    research-analyzer       - Extracts insights from specific documents
+    web-search-researcher   - Performs targeted web research
+
+  Workflow Philosophy:
+    - Always run locator agents first, then analyzers
+    - Use specialized domain agents for complex tasks
+    - Emphasize context compression and fresh analysis
+
+For more detailed guidance, use the /help slash command in Claude Code/OpenCode or see docs/README.md`;
+
+/**
+ * Safely resolve and validate paths to prevent directory traversal attacks
+ */
+function safeResolve(base: string, candidate: string, allowedRoots: string[] = []): string {
+  if (candidate.includes('..')) {
+    throw new Error(`Path traversal detected: ${candidate} contains ".."`);
+  }
+  const resolved = join(base, candidate);
+  const normalized = resolve(resolved);
+
+  // Check if the normalized path is within allowed roots
+  const isAllowed =
+    allowedRoots.length === 0 ||
+    allowedRoots.some((root) => {
+      const rootNormalized = resolve(root);
+      return normalized.startsWith(rootNormalized + sep) || normalized === rootNormalized;
+    });
+
+  if (!isAllowed) {
+    throw new Error(
+      'Path traversal detected: ' + candidate + ' resolves outside allowed directories'
+    );
+  }
+
+  return normalized;
+}
 
 /**
  * Helper function to determine directory path for agent format
@@ -32,16 +139,18 @@ function getFormatDirectory(
     case 'base':
       // Base format refers to the global codeflow agent directory
       return join(codeflowRoot, 'codeflow-agents');
-    case 'claude-code':
+    case 'claude-code': {
       // For projects, use .claude/agents if it exists, otherwise use global
       const projectClaudeDir = join(projectPath, '.claude', 'agents');
       return existsSync(projectClaudeDir) ? projectClaudeDir : join(codeflowRoot, 'claude-agents');
-    case 'opencode':
+    }
+    case 'opencode': {
       // For projects, use .opencode/agent if it exists, otherwise use global
       const projectOpenCodeDir = join(projectPath, '.opencode', 'agent');
       return existsSync(projectOpenCodeDir)
         ? projectOpenCodeDir
         : join(codeflowRoot, 'opencode-agents');
+    }
     default:
       throw new Error(`Unknown format: ${format}`);
   }
@@ -99,6 +208,25 @@ try {
         type: 'string',
         default: 'base',
       },
+      output: {
+        type: 'string',
+        short: 'o',
+      },
+      'include-web': {
+        type: 'boolean',
+        default: false,
+      },
+      specialists: {
+        type: 'string',
+      },
+      verbose: {
+        type: 'boolean',
+        short: 'v',
+        default: false,
+      },
+      'min-quality': {
+        type: 'string',
+      },
     },
     strict: true,
     allowPositionals: true,
@@ -126,136 +254,42 @@ if (values.version) {
 
 // Handle help (both --help flag and help command)
 if (values.help || command === 'help' || !command) {
-  console.log(`
-codeflow - Intelligent AI workflow management and development automation
-
-CodeFlow is a CLI built with Bun and TypeScript that manages agents and commands for AI-assisted development workflows.
-
-Usage:
-  codeflow <command> [options]
-
-Commands:
-   setup [project-path]       Set up codeflow directory structure and copy agents/commands
-   status [project-path]      Check which files are up-to-date or outdated
-   sync [project-path]        Synchronize agents and commands with global configuration
-   fix-models [options]       Fix model configurations (default: global, use --local for project)
-   convert <source> <target> <format>  Convert agents between formats
-   watch start [options]      Start automatic file synchronization daemon
-   catalog <subcommand>       Browse, search, and install catalog items
-   discover [query]           Find agents by use case (e.g., "build API", "fix performance")
-   validate [path]            Validate agents and commands for integrity issues
-   list [path]                List installed agents and commands
-   info <item-name> [path]    Show detailed information about an agent or command
-   update                     Check for and install CLI updates
-   clean [path]               Clean up cache, temp, and orphaned files
-   export [path]              Export project setup to a file
-
-Catalog Subcommands:
-  catalog list [type] [source] [--tags tag1,tag2]    List catalog items (filter by type/source/tags)
-  catalog search <term> [--tags tag1,tag2]           Search catalog items by query
-  catalog info <item-id>                             Show detailed information about an item
-  catalog install <item-id> [--target claude-code,opencode] [--global] [--dry-run]
-                                                     Install item to specified targets
-  catalog install-all [--target claude-code,opencode] [--global] [--dry-run] [--source name]
-                                                     Install all catalog items to specified targets
-  catalog import <source> [--adapter name] [--filter patterns] [--dry-run]
-                                                     Import items from external sources (GitHub repos, etc.)
-  catalog update [item-ids]                          Update installed items to latest versions
-  catalog remove <item-id>                           Remove an installed item
-  catalog build [--force]                            Build or rebuild the catalog index
-  catalog health-check                               Check catalog health and integrity
-  catalog sync [--global] [--dry-run]                Sync catalog items to configured locations
-
-Options:
-  -f, --force               Force overwrite existing setup
-  -t, --type <type>         Project type: claude-code, opencode, general
-  --validate                Validate agents during operations (default: true)
-  --dry-run                 Show what would be changed without writing files
-  -g, --global              Sync to global directories (~/.claude, ~/.config/opencode)
-  --project <path>          Project directory for operations
-  --source <format>         Source format: base, claude-code, opencode
-  --target <format>         Target format: base, claude-code, opencode
-  --source-format <format>  Source format for sync (default: base)
-  --local                   Fix models in current project (for fix-models command)
-
-Examples:
-  codeflow setup ~/my-project
-  codeflow status .
-  codeflow sync                        # Sync to project directories
-  codeflow sync --global               # Sync to global directories (~/.claude, ~/.config/opencode)
-  codeflow sync --global --dry-run     # Preview global sync changes
-  codeflow fix-models                  # Fix model IDs globally
-  codeflow fix-models --local          # Fix model IDs in current project
-  codeflow convert ./codeflow-agents ./claude-agents claude-code
-  codeflow watch start --global
-
-  # Catalog commands:
-  codeflow catalog list agent --tags "code-review,testing"  # List agents with specific tags
-  codeflow catalog search "code review"                     # Search for code review items
-  codeflow catalog info claude-templates/blog-writer        # Show item details
-  codeflow catalog install claude-templates/blog-writer --target claude-code --global
-  codeflow catalog install-all --global --dry-run          # Preview installing all items
-  codeflow catalog import davila7/claude-code-templates     # Import from GitHub repo
-  codeflow catalog import davila7/claude-code-templates --dry-run --adapter github
-  codeflow catalog sync --global                            # Sync to global directories
-
-DEVELOPMENT WORKFLOW:
-  Use 'codeflow setup' to initialize agents and commands in your project, or use the catalog system:
-    codeflow catalog install <item-id> --global    # Install specific agents/commands globally
-    codeflow catalog install-all --global          # Install all available items globally
-    codeflow catalog import <github-repo>          # Import from external catalogs
-
-  Available slash commands (when using Claude Code or OpenCode):
-    /research - Comprehensive codebase and documentation analysis
-    /plan     - Creates detailed implementation plans from tickets and research
-    /execute  - Implements plans with proper verification
-    /test     - Generates comprehensive test suites for implemented features
-    /document - Creates user guides, API docs, and technical documentation
-    /commit   - Creates commits with structured messages
-    /review   - Validates implementations against original plans
-    /help     - Get detailed development guidance and workflow information
-
-  Core Agent Types:
-    codebase-locator        - Finds WHERE files and components exist
-    codebase-analyzer       - Understands HOW specific code works
-    codebase-pattern-finder - Discovers similar implementation patterns
-    thoughts-locator        - Discovers existing documentation about topics
-    thoughts-analyzer       - Extracts insights from specific documents
-    web-search-researcher   - Performs targeted web research
-
-  Workflow Philosophy:
-    - Always run locator agents first, then analyzers
-    - Use specialized domain agents for complex tasks
-    - Emphasize context compression and fresh analysis
-
-For more detailed guidance, use the /help slash command in Claude Code/OpenCode or see docs/README.md
- `);
+  console.log(HELP_TEXT);
   process.exit(0);
 }
 
 switch (command) {
-  case 'setup':
+  case 'setup': {
     const setupPath = args[1];
-    await setup(setupPath, {
+    const safeSetupPath = safeResolve(process.cwd(), setupPath || '.', [process.cwd(), homedir()]);
+    await setup(safeSetupPath, {
       global: values.global,
       force: values.force,
       type: values.type,
     });
     break;
-  case 'status':
+  }
+  case 'status': {
     const statusPath = args[1];
-    await status(statusPath);
+    const safeStatusPath = safeResolve(process.cwd(), statusPath || '.', [
+      process.cwd(),
+      homedir(),
+    ]);
+    await status(safeStatusPath);
     break;
-  case 'sync':
+  }
+  case 'sync': {
     const syncPath = args[1];
-    await sync(syncPath, {
+    const safeSyncPath = safeResolve(process.cwd(), syncPath || '.', [process.cwd(), homedir()]);
+    await sync(safeSyncPath, {
       global: values.global,
       force: values.force,
       dryRun: values['dry-run'],
       verbose: true,
     });
     break;
-  case 'fix-models':
+  }
+  case 'fix-models': {
     // For fix-models, default to global. Check if --local was passed
     const hasLocalFlag = Bun.argv.includes('--local') || Bun.argv.includes('-l');
     await fixModels({
@@ -264,7 +298,8 @@ switch (command) {
       global: !hasLocalFlag, // Default to global unless --local is specified
     });
     break;
-  case 'convert':
+  }
+  case 'convert': {
     // Support flag-based usage: --source, --target, --project
     if (values.source && values.target) {
       const projectPath = values.project || process.cwd();
@@ -309,7 +344,8 @@ switch (command) {
 
     await convert(source, target, format as 'claude-code' | 'opencode');
     break;
-  case 'watch':
+  }
+  case 'watch': {
     const watchAction = args[1];
 
     if (watchAction === 'start') {
@@ -321,35 +357,9 @@ switch (command) {
       process.exit(1);
     }
     break;
-  case 'catalog':
-    const catalogSubcommand = args[1] || 'help';
-    const catalogOptions: any = {
-      type: values.type,
-      source: args[2], // For import command, this is the repository URL
-      tags: values.tags ? values.tags.split(',') : undefined,
-      target: values.target ? values.target.split(',') : undefined,
-      global: values.global,
-      dryRun: values['dry-run'],
-      force: values.force,
-      query: args[2],
-      id: args[2],
-      adapter: values.adapter,
-      filter: values.filter ? values.filter.split(',') : undefined,
-      exclude: values.exclude ? values.exclude.split(',') : undefined,
-    };
-    await catalog(catalogSubcommand, catalogOptions);
-    break;
+  }
 
-  case 'discover':
-    const discoverQuery = args[1];
-    await discover(discoverQuery, {
-      complexity: values.complexity,
-      useCase: values['use-case'],
-      domain: values.domain,
-    });
-    break;
-
-  case 'validate':
+  case 'validate': {
     await validate({
       format: values.format || 'all',
       path: args[1],
@@ -359,18 +369,21 @@ switch (command) {
       verbose: values.verbose,
     });
     break;
+  }
 
-  case 'list':
+  case 'list': {
     const listPath = args[1];
-    await list(listPath, {
+    const safeListPath = safeResolve(process.cwd(), listPath || '.', [process.cwd(), homedir()]);
+    await list(safeListPath, {
       type: values.type || 'all',
       platform: values.platform || 'all',
       format: values.format || 'table',
       verbose: values.verbose,
     });
     break;
+  }
 
-  case 'info':
+  case 'info': {
     const itemName = args[1];
     if (!itemName) {
       console.error('Error: info requires an item name');
@@ -378,13 +391,15 @@ switch (command) {
       process.exit(1);
     }
     const infoPath = args[2];
-    await info(itemName, infoPath, {
+    const safeInfoPath = safeResolve(process.cwd(), infoPath || '.', [process.cwd(), homedir()]);
+    await info(itemName, safeInfoPath, {
       format: values.format || 'detailed',
       showContent: values['show-content'],
     });
     break;
+  }
 
-  case 'update':
+  case 'update': {
     const updateAction = args[1];
     await update({
       check: updateAction === 'check' || values.check,
@@ -392,26 +407,56 @@ switch (command) {
       verbose: values.verbose,
     });
     break;
+  }
 
-  case 'clean':
+  case 'clean': {
     const cleanPath = args[1];
-    await clean(cleanPath, {
+    const safeCleanPath = safeResolve(process.cwd(), cleanPath || '.', [process.cwd(), homedir()]);
+    await clean(safeCleanPath, {
       dryRun: values['dry-run'],
       force: values.force,
       verbose: values.verbose,
       type: values.type || 'all',
     });
     break;
+  }
 
-  case 'export':
+  case 'export': {
     const exportPath = args[1];
-    await exportProject(exportPath, {
+    const safeExportPath = safeResolve(process.cwd(), exportPath || '.', [
+      process.cwd(),
+      homedir(),
+    ]);
+    await exportProject(safeExportPath, {
       format: values.format || 'json',
       output: values.output,
       includeContent: values['include-content'],
       verbose: values.verbose,
     });
     break;
+  }
+
+  case 'research': {
+    const researchQuery = args[1];
+    await research(researchQuery, {
+      output: values.output,
+      'include-web': values['include-web'],
+      specialists: values.specialists,
+      verbose: values.verbose,
+      'min-quality': values['min-quality'],
+    });
+    break;
+  }
+
+  case 'build-manifest': {
+    await buildManifest({
+      output: values.output,
+      dryRun: values['dry-run'],
+      verbose: values.verbose,
+      projectRoot: values.project || process.cwd(),
+    });
+    break;
+  }
 
   default:
     console.error(`Error: Unknown command '${command}'`);

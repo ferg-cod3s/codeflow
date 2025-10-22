@@ -7,7 +7,6 @@ description: Identifies user engagement opportunities and implements growth
   optimization, and viral growth feature development. Use this agent when you
   need to optimize for user growth and engagement.
 mode: subagent
-model: github-copilot/gpt-4.1
 temperature: 0.3
 category: business-analytics
 tags:
@@ -30,7 +29,7 @@ intended_followups:
   - full-stack-developer
   - code-reviewer
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 tools:
   write: true
   edit: true

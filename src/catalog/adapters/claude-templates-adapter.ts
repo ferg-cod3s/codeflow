@@ -1,11 +1,11 @@
 import { readFile, readdir, mkdir, rm, writeFile } from 'fs/promises';
-import { join, relative, dirname, basename } from 'path';
+import { join, dirname, basename } from 'path';
 import { existsSync } from 'fs';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import { tmpdir } from 'os';
 import crypto from 'crypto';
-import { SourceAdapter, AdapterConfig, ImportResult } from './base-adapter.js';
+import { SourceAdapter, ImportResult } from './base-adapter.js';
 import { CatalogItem } from '../index-builder.js';
 import * as yaml from 'yaml';
 
@@ -123,7 +123,7 @@ export class ClaudeTemplatesAdapter extends SourceAdapter {
       if (frontmatterMatch) {
         try {
           metadata = yaml.parse(frontmatterMatch[1]);
-        } catch (e) {
+        } catch {
           // Ignore YAML parse errors
         }
       }
@@ -242,14 +242,14 @@ export class ClaudeTemplatesAdapter extends SourceAdapter {
 
       try {
         template = yaml.parse(content);
-      } catch (e) {
+      } catch {
         // If YAML parsing fails, try to extract frontmatter
         const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)/);
         if (frontmatterMatch) {
           try {
             template = yaml.parse(frontmatterMatch[1]);
             template.content = frontmatterMatch[2];
-          } catch (e2) {
+          } catch (_e2) {
             // If all parsing fails, use raw content
             template = { content: content };
           }
@@ -361,10 +361,10 @@ ${yaml.stringify(template, null, 2)}
     return usage.join('\n');
   }
 
-  extractMetadata(content: string, filePath: string): any {
+  extractMetadata(content: string, _filePath: string): any {
     try {
       return yaml.parse(content);
-    } catch (error) {
+    } catch (_error) {
       return null;
     }
   }

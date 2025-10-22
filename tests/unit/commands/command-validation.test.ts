@@ -17,12 +17,8 @@ function validateClaudeCommand(metadata: any): { valid: boolean; errors: string[
   // Required fields
   if (!metadata.name) errors.push('Missing required field: name');
   if (!metadata.description) errors.push('Missing required field: description');
-  if (!metadata.model) errors.push('Missing required field: model');
   
-  // Model format
-  if (metadata.model && !metadata.model.includes('claude')) {
-    errors.push('Model should be a Claude model');
-  }
+  // Note: Claude Code commands don't use 'model' field in frontmatter, they use 'temperature' instead
   
   // Temperature for commands should be lower (more deterministic)
   if (metadata.temperature !== undefined) {
@@ -353,6 +349,89 @@ describe('Command Validation', () => {
           expect(metadata.tools.edit || false).toBe(false);
           expect(metadata.tools.write || false).toBe(false);
         }
+      }
+    });
+  });
+
+  describe('Continue command validation', () => {
+    test('continue command should exist in both formats', () => {
+      expect(claudeCommands).toContain('continue.md');
+      expect(openCodeCommands).toContain('continue.md');
+    });
+
+    test('continue command should have correct metadata', async () => {
+      // Test Claude format
+      const claudePath = join(testPaths.commands.claude, 'continue.md');
+      if (existsSync(claudePath)) {
+        const claudeMeta = await loadCommandMetadata(claudePath);
+        expect(claudeMeta).toBeTruthy();
+        expect(claudeMeta.name).toBe('continue');
+        expect(claudeMeta.description).toContain('Resume execution');
+        // Note: Claude Code commands don't use 'model' field - configuration is managed by Claude Code platform
+        expect(claudeMeta.temperature).toBeLessThanOrEqual(0.5);
+      }
+
+      // Test OpenCode format
+      const openCodePath = join(testPaths.commands.opencode, 'continue.md');
+      if (existsSync(openCodePath)) {
+        const openCodeMeta = await loadCommandMetadata(openCodePath);
+        expect(openCodeMeta).toBeTruthy();
+        expect(openCodeMeta.name).toBe('continue');
+        expect(openCodeMeta.description).toContain('Resume execution');
+        expect(openCodeMeta.mode).toBe('command');
+        expect(openCodeMeta.model).toContain('anthropic/');
+      }
+    });
+
+    test('continue command should have comprehensive documentation', async () => {
+      const commands = [
+        { path: join(testPaths.commands.claude, 'continue.md'), format: 'claude' },
+        { path: join(testPaths.commands.opencode, 'continue.md'), format: 'opencode' }
+      ];
+
+      for (const { path, format } of commands) {
+        if (existsSync(path)) {
+          const content = await readFile(path, 'utf-8');
+          const body = content.replace(/^---\n[\s\S]*?\n---\n/, '');
+
+          // Should have usage examples
+          expect(body.toLowerCase()).toContain('usage');
+
+          // Should have process phases
+          expect(body.toLowerCase()).toContain('phase');
+
+          // Should have error handling
+          expect(body.toLowerCase()).toContain('error');
+
+          // Should have examples
+          expect(body.toLowerCase()).toContain('example');
+
+          // Should document both OpenCode and Claude Code if Claude format
+          if (format === 'claude') {
+            expect(body.toLowerCase()).toContain('opencode');
+            expect(body.toLowerCase()).toContain('claude code');
+          }
+        }
+      }
+    });
+
+    test('continue command should define proper success criteria', async () => {
+      const openCodePath = join(testPaths.commands.opencode, 'continue.md');
+      if (existsSync(openCodePath)) {
+        const content = await readFile(openCodePath, 'utf-8');
+        const body = content.replace(/^---\n[\s\S]*?\n---\n/, '');
+
+        // Should have success criteria section
+        expect(body.toLowerCase()).toContain('success criteria');
+
+        // Should have error handling section
+        expect(body.toLowerCase()).toContain('error handling');
+
+        // Should have validation criteria
+        expect(body.toLowerCase()).toContain('validation');
+
+        // Should have structured output specification
+        expect(body.toLowerCase()).toContain('structured output');
       }
     });
   });

@@ -1,4 +1,4 @@
-import { join, basename, dirname } from 'node:path';
+import { join } from 'node:path';
 import { existsSync } from 'node:fs';
 import { readdir, mkdir, copyFile, writeFile, readFile } from 'node:fs/promises';
 import {
@@ -6,15 +6,17 @@ import {
   serializeAgent,
   parseCommandFile,
   serializeCommand,
-  Command,
-  BaseCommand,
-  OpenCodeCommand,
+  Agent,
 } from '../conversion/agent-parser.ts';
 import { FormatConverter } from '../conversion/format-converter.ts';
+import { CommandConverter } from '../conversion/command-converter.ts';
 
-export type SupportedFormat = 'claude-code' | 'opencode';
+export type SupportedFormat = 'claude-code' | 'opencode' | 'cursor';
 
 export function getTargetFormat(setupDir: string): SupportedFormat | null {
+  if (setupDir.includes('.cursor')) {
+    return 'cursor';
+  }
   if (setupDir.includes('.claude')) {
     return 'claude-code';
   }
@@ -57,8 +59,8 @@ function getCommandSourceDirs(sourcePath: string, targetDir: string): string[] {
   return sourceDirs;
 }
 
-async function copyCommands(
-  converter: FormatConverter,
+export async function copyCommands(
+  converter: FormatConverter | CommandConverter,
   sourcePath: string,
   targetPath: string,
   setupDirs: string[]
@@ -80,7 +82,6 @@ async function copyCommands(
       const sourceDirs = getCommandSourceDirs(sourcePath, setupDir);
       console.log(`Source dirs: ${sourceDirs.join(', ')}`);
       let commandsCopied = 0;
-      let copyErrors = 0;
 
       for (const sourceDir of sourceDirs) {
         if (existsSync(sourceDir)) {
@@ -93,16 +94,37 @@ async function copyCommands(
                   const sourceFile = join(sourceDir, file.name);
                   const targetFile = join(targetDir, file.name);
 
-                  // Convert command if target is OpenCode
+                  // Convert command based on target format
                   if (targetDir.includes('.opencode')) {
                     try {
-                      const command = await parseCommandFile(sourceFile, 'base');
-                      const convertedCommand = converter.baseCommandToOpenCode(command);
-                      const serialized = serializeCommand(convertedCommand);
-                      await writeFile(targetFile, serialized);
+                      if (converter instanceof CommandConverter) {
+                        const content = await readFile(sourceFile, 'utf-8');
+                        const convertedContent = converter.convertToOpenCode(content, sourceFile);
+                        await writeFile(targetFile, convertedContent);
+                      } else {
+                        const command = await parseCommandFile(sourceFile, 'base');
+                        const convertedCommand = converter.baseCommandToOpenCode(command);
+                        const serialized = serializeCommand(convertedCommand);
+                        await writeFile(targetFile, serialized);
+                      }
                     } catch (error: any) {
                       console.error(`❌ Failed to convert command ${file.name}: ${error.message}`);
-                      copyErrors++;
+                      // copyErrors++;
+                      continue;
+                    }
+                  } else if (targetDir.includes('.claude')) {
+                    try {
+                      if (converter instanceof CommandConverter) {
+                        const content = await readFile(sourceFile, 'utf-8');
+                        const convertedContent = converter.convertToClaudeCode(content, sourceFile);
+                        await writeFile(targetFile, convertedContent);
+                      } else {
+                        // For agent converter, just copy as-is for now
+                        await copyFile(sourceFile, targetFile);
+                      }
+                    } catch (error: any) {
+                      console.error(`❌ Failed to convert command ${file.name}: ${error.message}`);
+                      // copyErrors++;
                       continue;
                     }
                   } else {
@@ -111,13 +133,13 @@ async function copyCommands(
                   commandsCopied++;
                 } catch (error: any) {
                   console.error(`❌ Failed to copy command ${file.name}: ${error.message}`);
-                  copyErrors++;
+                  // copyErrors++;
                 }
               }
             }
           } catch (error: any) {
             console.error(`❌ Failed to read source directory ${sourceDir}: ${error.message}`);
-            copyErrors++;
+            // copyErrors++;
           }
         }
       }
@@ -129,6 +151,16 @@ async function copyCommands(
         console.log(`   Searched: ${sourceDirs.join(', ')}`);
       }
       fileCount += commandsCopied;
+    } else {
+      console.log(`🤖 Converting agents to ${setupDir}...`);
+      const targetFormat = getTargetFormat(setupDir);
+      if (targetFormat) {
+        const agentsConverted = await copyAgentsWithConversion(sourcePath, targetDir, targetFormat);
+        console.log(`✅ Converted ${agentsConverted} agents`);
+        fileCount += agentsConverted;
+      } else {
+        console.error(`❌ Could not determine target format for ${setupDir}`);
+      }
     }
   }
 
@@ -147,7 +179,11 @@ export async function setup(
   const projectTypes: SupportedFormat[] = [];
 
   if (options && options.type) {
-    if (options.type === 'claude-code' || options.type === 'opencode') {
+    if (
+      options.type === 'claude-code' ||
+      options.type === 'opencode' ||
+      options.type === 'cursor'
+    ) {
       projectTypes.push(options.type);
     } else {
       console.error(`❌ Unknown project type: ${options.type}`);
@@ -158,15 +194,22 @@ export async function setup(
     projectTypes.push('claude-code', 'opencode');
   }
 
-  const setupDirs = projectTypes.map((type) => {
+  const setupDirs = projectTypes.flatMap((type) => {
+    const dirs = [];
     switch (type) {
       case 'claude-code':
-        return '.claude/commands';
+        dirs.push('.claude/commands', '.claude/agents');
+        break;
       case 'opencode':
-        return '.opencode/command';
+        dirs.push('.opencode/command', '.opencode/agent');
+        break;
+      case 'cursor':
+        dirs.push('.cursor/commands', '.cursor/agents');
+        break;
       default:
-        return './command';
+        dirs.push('./command');
     }
+    return dirs;
   });
 
   const sourcePath = join(process.cwd(), 'command');
@@ -177,63 +220,65 @@ export async function setup(
     console.log(`📁 Source: ${sourcePath}`);
     console.log(`📁 Target: ${targetPath}`);
 
-    // Initialize converter
-    const converter = new FormatConverter();
+    // Initialize converters
+    const commandConverter = new CommandConverter();
 
     // Copy commands
-    const fileCount = await copyCommands(converter, sourcePath, targetPath, setupDirs);
+    const fileCount = await copyCommands(commandConverter, sourcePath, targetPath, setupDirs);
 
-    // Create agent directories for each platform
-    for (const type of projectTypes) {
-      const agentDir = type === 'claude-code' ? '.claude/agents' : '.opencode/agent';
-      const fullAgentDir = join(targetPath, agentDir);
-      if (!existsSync(fullAgentDir)) {
-        await mkdir(fullAgentDir, { recursive: true });
-        console.log(`  ✓ Created directory: ${agentDir}`);
-      }
-    }
-
-    // Create or update README
+    // Create or update README (skip if this is the main codeflow project)
     const readmePath = join(targetPath, 'README.md');
-    const typeDescription = projectTypes.length > 1 ? 'multi-platform' : projectTypes[0];
-    let readmeContent = '';
+    const isMainProject =
+      targetPath === process.cwd() && existsSync(join(targetPath, 'package.json'));
 
-    if (existsSync(readmePath)) {
-      readmeContent = await readFile(readmePath, 'utf-8');
-      if (readmeContent.includes('Generated by Codeflow CLI')) {
-        // Already updated, skip
+    if (!isMainProject) {
+      const typeDescription = projectTypes.length > 1 ? 'multi-platform' : projectTypes[0];
+      let readmeContent = '';
+
+      if (existsSync(readmePath)) {
+        readmeContent = await readFile(readmePath, 'utf-8');
+        if (readmeContent.includes('Generated by Codeflow CLI')) {
+          // Already updated, skip
+        } else {
+          readmeContent += '\n\n';
+        }
       } else {
-        readmeContent += '\n\n';
+        readmeContent = `# ${typeDescription.charAt(0).toUpperCase() + typeDescription.slice(1)} Project\n\n`;
       }
+
+      readmeContent += '## Codeflow Workflow\n\n';
+      readmeContent += '### Available Commands\n\n';
+      readmeContent += '- `/research` - Comprehensive codebase and documentation analysis\n';
+      readmeContent += '- `/plan` - Create detailed implementation plans\n';
+      readmeContent += '- `/execute` - Implement plans with verification\n';
+      readmeContent += '- `/test` - Generate comprehensive test suites\n';
+      readmeContent += '- `/document` - Create user guides and API documentation\n';
+      readmeContent += '- `/commit` - Create structured git commits\n';
+      readmeContent += '- `/review` - Validate implementations against plans\n';
+      readmeContent += '- `/project-docs` - Generate complete project documentation\n\n';
+
+      if (projectTypes.includes('claude-code')) {
+        readmeContent +=
+          '### Claude Code Integration\n\n' + 'Commands are located in `.claude/commands/`.\n\n';
+      }
+
+      if (projectTypes.includes('opencode')) {
+        readmeContent +=
+          '### OpenCode Integration\n\n' + 'Commands are located in `.opencode/command/`.\n';
+      }
+
+      if (projectTypes.includes('cursor')) {
+        readmeContent +=
+          '### Cursor Integration\n\n' + 'Commands are located in `.cursor/commands/`.\n';
+      }
+
+      readmeContent += '\nGenerated by Codeflow CLI\n';
+
+      await writeFile(readmePath, readmeContent);
+      console.log(`  ✓ Created/updated README.md with ${typeDescription} usage instructions`);
     } else {
-      readmeContent = `# ${typeDescription.charAt(0).toUpperCase() + typeDescription.slice(1)} Project\n\n`;
+      console.log(`  ✓ Skipped README.md update (main project)`);
     }
-
-    readmeContent += '## Codeflow Workflow\n\n';
-    readmeContent += '### Available Commands\n\n';
-    readmeContent += '- `/research` - Comprehensive codebase and documentation analysis\n';
-    readmeContent += '- `/plan` - Create detailed implementation plans\n';
-    readmeContent += '- `/execute` - Implement plans with verification\n';
-    readmeContent += '- `/test` - Generate comprehensive test suites\n';
-    readmeContent += '- `/document` - Create user guides and API documentation\n';
-    readmeContent += '- `/commit` - Create structured git commits\n';
-    readmeContent += '- `/review` - Validate implementations against plans\n';
-    readmeContent += '- `/project-docs` - Generate complete project documentation\n\n';
-
-    if (projectTypes.includes('claude-code')) {
-      readmeContent +=
-        '### Claude Code Integration\n\n' + 'Commands are located in `.claude/commands/`.\n\n';
-    }
-
-    if (projectTypes.includes('opencode')) {
-      readmeContent +=
-        '### OpenCode Integration\n\n' + 'Commands are located in `.opencode/command/`.\n';
-    }
-
-    readmeContent += '\nGenerated by Codeflow CLI\n';
-
-    await writeFile(readmePath, readmeContent);
-    console.log(`  ✓ Created/updated README.md with ${typeDescription} usage instructions`);
 
     console.log(
       `\n✅ Successfully set up ${projectTypes.length > 1 ? 'multi-platform' : projectTypes[0]} project!`
@@ -271,6 +316,13 @@ export function getAgentSourceDirs(sourcePath: string, targetFormat: SupportedFo
     } else {
       sourceDirs.push(join(sourcePath, 'opencode-agents'));
     }
+  } else if (targetFormat === 'cursor') {
+    const cwdCursorAgentsDir = join(process.cwd(), 'cursor-agents');
+    if (existsSync(cwdCursorAgentsDir)) {
+      sourceDirs.push(cwdCursorAgentsDir);
+    } else {
+      sourceDirs.push(join(sourcePath, 'cursor-agents'));
+    }
   }
 
   return sourceDirs;
@@ -288,8 +340,17 @@ export async function copyAgentsWithConversion(
   for (const sourceDir of sourceDirs) {
     if (existsSync(sourceDir)) {
       try {
-        const { agents } = await parseAgentsFromDirectory(sourceDir, 'base');
-        for (const agent of agents) {
+        const { agents, errors } = await parseAgentsFromDirectory(sourceDir, 'base');
+        console.log(`Found ${agents.length} agents in ${sourceDir}`);
+        if (errors.length > 0) {
+          console.error(`Parse errors in ${sourceDir}:`, errors);
+        }
+        for (const item of agents) {
+          // Skip commands, only process agents
+          if ('mode' in item.frontmatter && item.frontmatter.mode === 'command') {
+            continue;
+          }
+          const agent = item as Agent;
           try {
             const convertedAgent = converter.convert(agent, targetFormat);
             const serialized = serializeAgent(convertedAgent);

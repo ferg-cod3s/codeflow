@@ -1,3 +1,94 @@
+## [0.14.2](https://github.com/ferg-cod3s/codeflow/compare/v0.14.1...v0.14.2) (2025-10-19)
+
+
+
+## [0.14.1](https://github.com/ferg-cod3s/codeflow/compare/v0.14.0...v0.14.1) (2025-10-19)
+
+
+### Features
+
+* v0.14.1 final architecture enhancements ([c963cfb](https://github.com/ferg-cod3s/codeflow/commit/c963cfb21a91c35db4220f6d10435bdbaf310863))
+
+
+
+# [0.14.0](https://github.com/ferg-cod3s/codeflow/compare/v0.13.0...v0.14.0) (2025-10-19)
+
+
+### Features
+
+### Code Refactoring
+* migrate thoughts agents to research agents and update documentation ([3a5b98e0fb7abce97651314ba7a40bc32d640fbb](https://github.com/ferg-cod3s/codeflow/commit/3a5b98e0fb7abce97651314ba7a40bc32d640fbb))
+
+* enhance smart-subagent-orchestrator and add new specialized agents ([bf41fd2](https://github.com/ferg-cod3s/codeflow/commit/bf41fd2750bbcb1b690fb065489cc67406aeffc0))
+
+
+
+# [0.13.0](https://github.com/ferg-cod3s/codeflow/compare/v0.12.11...v0.13.0) (2025-10-16)
+
+
+### Bug Fixes
+
+* make command files schema-compliant and extend validator ([9338749](https://github.com/ferg-cod3s/codeflow/commit/9338749b608f6a6a7a4c5c2e920b832d4ba392ce))
+
+
+### Features
+
+* version 0.13.0 - monitoring system and sync improvements ([ce7d6be](https://github.com/ferg-cod3s/codeflow/commit/ce7d6be608f9906f24b14746a358bbb6499ca06a))
+
+
+### BREAKING CHANGES
+
+* None - backward compatible release
+
+
+
+## [0.12.11](https://github.com/ferg-cod3s/codeflow/compare/v0.12.5...v0.12.11) (2025-10-15)
+
+
+### Bug Fixes
+
+* resolve all ESLint errors ([08da258](https://github.com/ferg-cod3s/codeflow/commit/08da25842f3bd9a1f2a477bb955dd407dc976243))
+
+
+
+## [0.12.5](https://github.com/ferg-cod3s/codeflow/compare/v0.12.4...v0.12.5) (2025-10-14)
+
+
+### Bug Fixes
+
+* final cleanup of duplicate README content ([deb8654](https://github.com/ferg-cod3s/codeflow/commit/deb86549cd0ba230caa277e2c28a37c4e56cbcca))
+* remove duplicate content from README.md ([3dcd548](https://github.com/ferg-cod3s/codeflow/commit/3dcd5488ed449ba60dc88c6b5174e74176462bd3))
+
+
+### Features
+
+* comprehensive agent registry expansion and platform enhancements ([c070bb5](https://github.com/ferg-cod3s/codeflow/commit/c070bb512019657314d21e85370fb637efbe047e))
+
+
+
+## [0.1.9](https://github.com/ferg-cod3s/codeflow/compare/v0.1.8...v0.1.9) (2025-09-02)
+
+
+### Bug Fixes
+
+* include agent/command/docs dirs in platform packages ([bac1269](https://github.com/ferg-cod3s/codeflow/commit/bac1269cbad334760c7333f9cb76816fd1ea8b38))
+
+
+
+## [0.1.8](https://github.com/ferg-cod3s/codeflow/compare/v0.6.0...v0.1.8) (2025-09-02)
+
+
+### Features
+
+* add --ignore-frontmatter flag to ignore YAML frontmatter ([8c70654](https://github.com/ferg-cod3s/codeflow/commit/8c7065457073dc0274a738a57f1c54153f15db12))
+* Add init command for project-specific agentic setup ([bb3e7b4](https://github.com/ferg-cod3s/codeflow/commit/bb3e7b4a318b01f296ae16bfd2530c0d681f20cb))
+
+
+
+## 0.1.7 (2025-08-26)
+
+
+
 ## [0.12.4](https://github.com/ferg-cod3s/codeflow/compare/v0.12.3...v0.12.4) (2025-10-01)
 
 
@@ -81,7 +172,7 @@
 
 * **agent:** api-builder upgraded to UATS v1.0 with structured output + contract/DX spec ([eb03e79](https://github.com/ferg-cod3s/codeflow/commit/eb03e79d09bc78899ee1eedc3ca7fccd66569239))
 * **agent:** uats v1.0 upgrade for codebase-analyzer ([a41c3d1](https://github.com/ferg-cod3s/codeflow/commit/a41c3d1981fa1a39c07d5cc7b9406c98c72ad873))
-* **agent:** uats v1.0 upgrade for thoughts-locator with structured discovery schema ([594dc3c](https://github.com/ferg-cod3s/codeflow/commit/594dc3c0d03fe3af5114cfa9387cfcf9e7b64e16))
+* **agent:** uats v1.0 upgrade for research-locator with structured discovery schema ([594dc3c](https://github.com/ferg-cod3s/codeflow/commit/594dc3c0d03fe3af5114cfa9387cfcf9e7b64e16))
 * **agent:** uats v1.0 upgrade web-search-researcher with structured taxonomy & evidence schema ([c3c0205](https://github.com/ferg-cod3s/codeflow/commit/c3c0205de46fb38b7c014364b2a0e084431a4e1a))
 * **agent:** upgrade code-reviewer to UATS v1.0 with structured output & clear boundaries ([cc27c9b](https://github.com/ferg-cod3s/codeflow/commit/cc27c9bc043714edb92c1be86ee7b9e04265686c))
 * **agent:** upgrade security-scanner to UATS v1.0 with structured output & scope boundaries ([0737bcf](https://github.com/ferg-cod3s/codeflow/commit/0737bcf62a6452fce7786da101a28f5a32bacec6))
@@ -107,7 +198,7 @@
 
 
 
-# [0.9.0](https://github.com/ferg-cod3s/codeflow/compare/v0.6.0...v0.9.0) (2025-09-02)
+# [0.9.0](https://github.com/ferg-cod3s/codeflow/compare/v0.1.9...v0.9.0) (2025-09-02)
 
 
 ### Bug Fixes
@@ -150,7 +241,7 @@
 
 
 
-# [0.2.0](https://github.com/ferg-cod3s/codeflow/compare/a7cbf1b46124ab6ae508b217e965a6b6f91f63e8...v0.2.0) (2025-08-29)
+# [0.2.0](https://github.com/ferg-cod3s/codeflow/compare/v0.1.7...v0.2.0) (2025-08-29)
 
 
 ### Bug Fixes
@@ -173,6 +264,85 @@
 * synchronize commands across all locations for consistency ([bc35e84](https://github.com/ferg-cod3s/codeflow/commit/bc35e840d6616bd403346f4101ac168134ab4801))
 * update Cursor MCP config to use published package ([39d24b3](https://github.com/ferg-cod3s/codeflow/commit/39d24b3dda1a6a7475374a7dea3ffc320179d849))
 * update OpenCode agents to use Claude Sonnet 4 with correct provider format ([dac6526](https://github.com/ferg-cod3s/codeflow/commit/dac65262b724e64e33deda1907c8d14c3fb4ddad))
+
+
+
+## [0.1.9](https://github.com/ferg-cod3s/codeflow/compare/v0.1.8...v0.1.9) (2025-09-02)
+
+
+### Bug Fixes
+
+* include agent/command/docs dirs in platform packages ([bac1269](https://github.com/ferg-cod3s/codeflow/commit/bac1269cbad334760c7333f9cb76816fd1ea8b38))
+
+
+
+## [0.1.8](https://github.com/ferg-cod3s/codeflow/compare/v0.6.0...v0.1.8) (2025-09-02)
+
+
+### Features
+
+* add --ignore-frontmatter flag to ignore YAML frontmatter ([8c70654](https://github.com/ferg-cod3s/codeflow/commit/8c7065457073dc0274a738a57f1c54153f15db12))
+* Add init command for project-specific agentic setup ([bb3e7b4](https://github.com/ferg-cod3s/codeflow/commit/bb3e7b4a318b01f296ae16bfd2530c0d681f20cb))
+
+
+
+## 0.1.7 (2025-08-26)
+
+
+
+# [0.6.0](https://github.com/ferg-cod3s/codeflow/compare/v0.2.0...v0.6.0) (2025-09-01)
+
+
+### Bug Fixes
+
+* correct all OpenCode agent model formats for models.dev compatibility ([e9ffe06](https://github.com/ferg-cod3s/codeflow/commit/e9ffe0656c288b779491715282f111c378b22ce8))
+* correct Claude Code global agent directory path ([eb7478c](https://github.com/ferg-cod3s/codeflow/commit/eb7478cfe90cac2c0d21fabbb0da960e40a1a5c1))
+* resolve TypeScript validation errors and format conversion issues ([b53d1cc](https://github.com/ferg-cod3s/codeflow/commit/b53d1ccda8d1b1cb6b56eb84811c3704c273d9a9))
+* update agent files and fix test expectations ([ff8d6ad](https://github.com/ferg-cod3s/codeflow/commit/ff8d6ad83926d3602473bc8c8c6378413d939ad6))
+* update Husky hooks to use modern format ([8b07e69](https://github.com/ferg-cod3s/codeflow/commit/8b07e69d0a2a690b0b21b6e97157d190c0999947))
+* update MCP server to support new global agent directory structure ([3a64a2c](https://github.com/ferg-cod3s/codeflow/commit/3a64a2c7594a4124fd65e47de09cced770e8171a))
+
+
+### Features
+
+* major v0.4.0 architecture refinement and platform integration clarification ([4922962](https://github.com/ferg-cod3s/codeflow/commit/49229621ffb2932108659cd63de525689f83e168))
+* major v0.6.0 - OpenCode compliance and multi-source sync-global ([3b89045](https://github.com/ferg-cod3s/codeflow/commit/3b890450e78967fd25a8514c55aff2d6ae154995))
+* setup Husky with automated changelog generation ([9b76509](https://github.com/ferg-cod3s/codeflow/commit/9b76509168955ccf1e84dbd74e5481718b3a2664))
+
+
+### BREAKING CHANGES
+
+* Global agent directory structure updated for Claude Code compatibility
+
+
+
+# [0.2.0](https://github.com/ferg-cod3s/codeflow/compare/v0.1.7...v0.2.0) (2025-08-29)
+
+
+### Bug Fixes
+
+* handle undefined and null values properly in YAML parser ([1f7b526](https://github.com/ferg-cod3s/codeflow/commit/1f7b52672d8832eb2a55fbce450837647f7c39ca))
+* update binary name to agentic-codeflow-mcp in v0.1.1 ([558eab3](https://github.com/ferg-cod3s/codeflow/commit/558eab3e6443128e17e710088dc33c1c88f934d2))
+* update package name to non-scoped codeflow-mcp-server ([a7cbf1b](https://github.com/ferg-cod3s/codeflow/commit/a7cbf1b46124ab6ae508b217e965a6b6f91f63e8))
+
+
+### Features
+
+* add proper model format conversion for OpenCode agents ([538f84a](https://github.com/ferg-cod3s/codeflow/commit/538f84ac6ddab9742c877d8b30f2c2cbcc0c6de8))
+* complete Phase 4 - Automatic Synchronization system ([c9934f3](https://github.com/ferg-cod3s/codeflow/commit/c9934f36e624616ce8ea66214ecae49f353f4e01))
+* complete Phase 6 - Cross-Platform Testing Framework ([a5da21d](https://github.com/ferg-cod3s/codeflow/commit/a5da21d21267682579560f1cf32b527e53a3fc12))
+* complete Phase 7 - Integration and Validation ✅ ([48803c8](https://github.com/ferg-cod3s/codeflow/commit/48803c8c703f294e7521c4dad7ee79c71860ba3a))
+* implement agent format conversion system - Phase 2 complete ([cd38201](https://github.com/ferg-cod3s/codeflow/commit/cd382019e63ef3f0f899b7b7643a6954795b676b))
+* implement global agent distribution and format sync - Phase 3 complete ([1b8f0cc](https://github.com/ferg-cod3s/codeflow/commit/1b8f0cc968578bd76d953c72a1886cec9ffa2d69))
+* migrate to @agentic-codeflow/mcp-server scoped package ([6ad03da](https://github.com/ferg-cod3s/codeflow/commit/6ad03daf1cc0f3a7f09c578c0b73d67ff6fce1b1))
+* rename CLI from 'agentic' to 'codeflow' - Phase 1 complete ([648febd](https://github.com/ferg-cod3s/codeflow/commit/648febd5687879379d061f25bac6bffe20192250))
+* synchronize commands across all locations for consistency ([bc35e84](https://github.com/ferg-cod3s/codeflow/commit/bc35e840d6616bd403346f4101ac168134ab4801))
+* update Cursor MCP config to use published package ([39d24b3](https://github.com/ferg-cod3s/codeflow/commit/39d24b3dda1a6a7475374a7dea3ffc320179d849))
+* update OpenCode agents to use Claude Sonnet 4 with correct provider format ([dac6526](https://github.com/ferg-cod3s/codeflow/commit/dac65262b724e64e33deda1907c8d14c3fb4ddad))
+
+
+
+## 0.1.7 (2025-08-26)
 
 
 

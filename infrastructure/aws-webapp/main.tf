@@ -16,6 +16,8 @@ terraform {
   }
 }
 
+data "aws_caller_identity" "current" {}
+
 provider "aws" {
   region = var.aws_region
 
@@ -135,11 +137,22 @@ module "route53" {
 module "monitoring" {
   source = "./modules/monitoring"
 
-  project_name = var.project_name
-  environment  = var.environment
+  environment     = var.environment
+  aws_region      = var.aws_region
+  aws_account_id  = data.aws_caller_identity.current.account_id
+  kms_key_arn     = var.kms_key_arn
+
+  # ECS Configuration
   ecs_cluster_name = module.ecs.cluster_name
   ecs_service_name = module.ecs.service_name
-  rds_instance_id  = module.rds.db_instance_id
-  alb_arn_suffix   = module.alb.alb_arn_suffix
-  sns_topic_arn    = var.sns_topic_arn
+
+  # ALB Configuration
+  alb_arn_suffix = module.alb.alb_arn_suffix
+
+  # RDS Configuration (if enabled)
+  enable_rds_alarms = var.enable_database
+  rds_instance_id   = var.enable_database ? module.rds.db_instance_id : ""
+
+  # Codeflow-specific settings
+  codeflow_command_timeout_ms = var.codeflow_command_timeout_ms
 }

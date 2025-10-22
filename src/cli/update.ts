@@ -24,7 +24,7 @@ async function checkForUpdates(): Promise<{
 
     const hasUpdate = latestVersion !== currentVersion;
     return { hasUpdate, latestVersion, currentVersion };
-  } catch (error) {
+  } catch {
     // Fallback: try to check git tags if available
     try {
       const gitTags = execSync('git tag --sort=-version:refname | head -1', {
@@ -34,7 +34,7 @@ async function checkForUpdates(): Promise<{
 
       const hasUpdate = latestVersion !== currentVersion && latestVersion !== '';
       return { hasUpdate, latestVersion, currentVersion };
-    } catch (gitError) {
+    } catch {
       console.warn('Could not check for updates from git or npm');
       return { hasUpdate: false, currentVersion };
     }

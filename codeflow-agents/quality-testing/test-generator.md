@@ -36,7 +36,7 @@ intended_followups:
   - full-stack-developer
   - quality-testing-performance-tester
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 tools:
   read: true
   grep: true
@@ -253,7 +253,7 @@ For comprehensive test suite generation requiring domain expertise:
 #### Pre-Generation Analysis (Parallel)
 - **codebase-locator**: Identify all components and files requiring test coverage
 - **codebase-analyzer**: Understand implementation details and dependencies for test design
-- **thoughts-analyzer**: Review existing testing documentation and patterns
+- **research-analyzer**: Review existing testing documentation and patterns
 - **codebase-pattern-finder**: Identify established testing patterns and anti-patterns
 
 #### Domain-Specific Test Generation (Sequential)

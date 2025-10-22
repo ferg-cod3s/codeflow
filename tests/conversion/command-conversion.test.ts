@@ -136,7 +136,9 @@ This is a test command.
       expect(result).toContain('name: test');
       expect(result).toContain('description: Test command');
       expect(result).toContain('mode: command');
-      expect(result).toContain('model: anthropic/claude-sonnet-4'); // Converted model
+      
+      // OpenCode commands MUST have model field (per MODEL_CONFIGURATION.md)
+      expect(result).toContain('model: anthropic/claude-sonnet-4-20250514');
 
       // Should contain inputs structure
       expect(result).toContain('inputs:');
@@ -154,6 +156,64 @@ This is a test command.
       expect(result).not.toContain('category: testing');
       expect(result).not.toContain('params:');
     });
+
+    test('should preserve inputs when source is already OpenCode format', async () => {
+      // This represents the /command/*.md source files which are already in OpenCode format
+      const alreadyOpenCodeContent = `---
+name: research
+mode: command
+description: Research a ticket or provide a prompt for ad-hoc research
+version: 2.1.0-optimized
+last_updated: 2025-09-17
+command_schema_version: 1.0
+inputs:
+  - name: current_date
+    type: string
+    required: false
+    description: Current date for research document (auto-generated)
+    default: auto
+  - name: ticket
+    type: string
+    required: true
+    description: Path to ticket file or research question/topic
+  - name: scope
+    type: string
+    required: false
+    description: Research scope hint (codebase|research|both)
+outputs:
+  - name: research_document
+    type: structured
+    format: JSON with research findings and document metadata
+cache_strategy:
+  type: content_based
+  ttl: 3600
+---
+
+# Research Command
+
+Test content.
+`;
+
+      const result = converter.convertToOpenCode(alreadyOpenCodeContent, 'research.md');
+
+      // Should preserve all inputs exactly as-is
+      expect(result).toContain('mode: command');
+      expect(result).toContain('inputs:');
+      expect(result).toContain('- name: current_date');
+      expect(result).toContain('- name: ticket');
+      expect(result).toContain('- name: scope');
+      expect(result).toContain('default: auto');
+
+      // Should preserve outputs and cache_strategy
+      expect(result).toContain('outputs:');
+      expect(result).toContain('cache_strategy:');
+
+      // Should NOT have params (not converting from Claude Code)
+      expect(result).not.toContain('params:');
+
+      // OpenCode commands MUST have model field (per MODEL_CONFIGURATION.md)
+      expect(result).toContain('model: anthropic/claude-sonnet-4-20250514');
+    });
   });
 
   describe('Model conversion', () => {
@@ -165,10 +225,10 @@ This is a test command.
       };
 
       const result = (converter as any).convertOpenCodeToClaudeCode(frontmatter);
-      expect(result.model).toBeUndefined(); // Claude Code uses default model from settings
+      expect(result.model).toBeUndefined(); // Claude Code commands don't have models
     });
 
-    test('should convert Claude Code models to OpenCode', () => {
+    test('should include model in OpenCode conversion', () => {
       const frontmatter = {
         name: 'test',
         description: 'test',
@@ -176,7 +236,8 @@ This is a test command.
       };
 
       const result = (converter as any).convertClaudeCodeToOpenCode(frontmatter);
-      expect(result.model).toBe('anthropic/claude-sonnet-4');
+      // OpenCode commands MUST have model field (per MODEL_CONFIGURATION.md)
+      expect(result.model).toBe('anthropic/claude-sonnet-4-20250514');
     });
   });
 
@@ -220,13 +281,14 @@ Test content.
 
       // Convert to Claude Code
       const claudeResult = await converter.convertFile(testCommandPath, 'claude-code');
-      expect(claudeResult).not.toContain('model:'); // Claude Code uses default model
+      expect(claudeResult).not.toContain('model:'); // Claude Code commands don't have models
       expect(claudeResult).not.toContain('mode: command');
 
       // Convert to OpenCode
       const opencodeResult = await converter.convertFile(testCommandPath, 'opencode');
       expect(opencodeResult).toContain('mode: command');
-      expect(opencodeResult).toContain('model: anthropic/claude-sonnet-4');
+      // OpenCode commands MUST have model field (per MODEL_CONFIGURATION.md)
+      expect(opencodeResult).toContain('model: anthropic/claude-sonnet-4-20250514');
     });
   });
 });

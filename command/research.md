@@ -1,7 +1,6 @@
 ---
 name: research
-mode: command
-description: Research a ticket or provide a prompt for ad-hoc research
+description: Research codebase using direct query or ticket file
 version: 2.1.0-optimized
 last_updated: 2025-09-17
 command_schema_version: 1.0
@@ -11,14 +10,18 @@ inputs:
     required: false
     description: Current date for research document (auto-generated)
     default: auto
+  - name: query
+    type: string
+    required: false
+    description: Direct research question or topic
   - name: ticket
     type: string
-    required: true
-    description: Path to ticket file or research question/topic
+    required: false
+    description: Path to ticket file (optional if query provided)
   - name: scope
     type: string
     required: false
-    description: Research scope hint (codebase|thoughts|both)
+    description: Research scope hint (codebase|research|both)
   - name: depth
     type: string
     required: false
@@ -29,7 +32,7 @@ outputs:
     format: JSON with research findings and document metadata
     description: Comprehensive research findings with document path
 cache_strategy:
-  type: content_based
+  type: hierarchical
   ttl: 3600
   invalidation: manual
   scope: command
@@ -41,11 +44,16 @@ failure_modes:
   - 'Ticket file not found or invalid'
   - 'Research agents unable to complete analysis'
   - 'Insufficient findings to answer research question'
+validation_rules:
+  - rule: require_query_or_ticket
+    severity: error
+    message: Either query or ticket parameter must be provided
+    condition: query || ticket
 ---
 
 # Research Codebase
 
-Conduct comprehensive research across the codebase by coordinating specialized agents to explore patterns, context, and insights, then synthesize findings into actionable documentation. Uses intelligent caching for optimization.
+Conduct comprehensive research across the codebase using direct queries or ticket files by coordinating specialized agents to explore patterns, context, and insights, then synthesize findings into actionable documentation. Uses intelligent caching for optimization.
 
 ## Purpose
 
@@ -53,14 +61,14 @@ Multi-dimensional research via agent coordination for codebase patterns, histori
 
 ## Inputs
 
-- **ticket**: Path to ticket file or research question/topic
-- **scope**: Optional scope (codebase|thoughts|both)
+- **ticket**: Path to ticket file (optional if query provided)
+- **scope**: Optional scope (codebase|research|both)
 - **depth**: Optional depth (shallow|medium|deep)
 - **conversation_context**: Related research history
 
 ## Preconditions
 
-- Valid ticket file or clear question
+- Valid ticket file or clear research query
 - Accessible development environment
 - Time for comprehensive analysis
 
@@ -76,9 +84,9 @@ Multi-dimensional research via agent coordination for codebase patterns, histori
 
 ### Phase 2: Parallel Agent Coordination
 
-1. Spawn locators: codebase-locator, thoughts-locator in parallel
+1. Spawn locators: codebase-locator, research-locator in parallel
 2. Pattern analysis: codebase-pattern-finder for examples
-3. Deep analysis: codebase-analyzer, thoughts-analyzer on key findings
+3. Deep analysis: codebase-analyzer, research-analyzer on key findings
 4. Domain agents: Deploy specialized agents as needed
 5. Wait for completion
 
@@ -120,10 +128,10 @@ Multi-dimensional research via agent coordination for codebase patterns, histori
   "status": "success|in_progress|error",
   "timestamp": "ISO-8601",
   "cache": {"hit": true|false, "key": "pattern:{hash}:{scope}", "ttl_remaining": 3600, "savings": 0.25},
-  "research": {"question": "string", "scope": "codebase|thoughts|both", "depth": "shallow|medium|deep"},
+  "research": {"question": "string", "scope": "codebase|research|both", "depth": "shallow|medium|deep"},
   "findings": {"total_files": 23, "codebase": 18, "thoughts": 5, "insights": 7, "patterns": 3},
   "document": {"path": "docs/research/YYYY-MM-DD-topic.md", "sections": ["synopsis", "summary", "findings", "references"], "code_refs": 12, "historical": 3},
-  "agents_used": ["codebase-locator", "codebase-analyzer", "thoughts-locator", "thoughts-analyzer"],
+  "agents_used": ["codebase-locator", "codebase-analyzer", "research-locator", "research-analyzer"],
   "metadata": {"processing_time": 180, "cache_savings": 0.25, "agent_tasks": 6, "follow_up": 0}
 }
 ```
@@ -150,9 +158,9 @@ Multi-dimensional research via agent coordination for codebase patterns, histori
 
 ### Execution Order
 
-1. **Discovery**: Locators in parallel (codebase-locator, thoughts-locator)
+1. **Discovery**: Locators in parallel (codebase-locator, research-locator)
 2. **Pattern Analysis**: codebase-pattern-finder after locators
-3. **Deep Analysis**: Analyzers on key findings (codebase-analyzer, thoughts-analyzer)
+3. **Deep Analysis**: Analyzers on key findings (codebase-analyzer, research-analyzer)
 
 ### Specialized Agents
 

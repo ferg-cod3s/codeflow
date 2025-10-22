@@ -1,10 +1,9 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import url from 'node:url';
-import crypto from 'node:crypto';
+
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import { z } from 'zod';
 import { buildAgentRegistry, categorizeAgents, suggestAgents } from './agent-registry.mjs';
 import {
   spawnAgentTask,
@@ -46,13 +45,6 @@ let workflowOrchestrator = null;
 function toSlug(filePath) {
   const base = path.basename(filePath).replace(/\.[^.]+$/, '');
   return base.replace(/[^a-zA-Z0-9]+/g, '_');
-}
-
-function toUniqueId(prefix, filePath) {
-  const slug = toSlug(filePath);
-  // Use cross-platform crypto for hashing
-  const hash = crypto.createHash('sha1').update(filePath).digest('hex').slice(0, 8);
-  return `${prefix}.${slug}__${hash}`;
 }
 
 /**
@@ -106,7 +98,7 @@ async function loadMarkdownFiles(dir) {
     return entries
       .filter((e) => e.isFile() && e.name.toLowerCase().endsWith('.md'))
       .map((e) => path.join(dir, e.name));
-  } catch (err) {
+  } catch {
     return [];
   }
 }
@@ -114,8 +106,7 @@ async function loadMarkdownFiles(dir) {
 async function buildTools() {
   const tools = [];
 
-  // Only load workflow commands - agents are internal implementation details
-  // Try each command directory in priority order
+  // Load workflow commands
   let commandFiles = [];
   for (const dir of paths.commandDirs) {
     const files = await loadMarkdownFiles(dir);
@@ -125,20 +116,59 @@ async function buildTools() {
     }
   }
 
-  // Define the core 7 workflow commands we want to expose
+  // Load popular service agents from agent directories
+  let agentFiles = [];
+  const agentDirs = [
+    path.join(paths.codeflowRoot, '.opencode', 'agent'),
+    path.join(paths.codeflowRoot, 'codeflow-agents'),
+    path.join(process.cwd(), '.opencode', 'agent'),
+    path.join(process.cwd(), '.claude', 'agents'),
+  ];
+
+  for (const dir of agentDirs) {
+    const files = await loadMarkdownFiles(dir);
+    agentFiles.push(...files);
+  }
+
+  // Define the core workflow commands and popular service agents we want to expose
   const coreCommands = ['research', 'plan', 'execute', 'test', 'document', 'commit', 'review'];
 
+  // Define popular service agents that should be exposed as MCP tools
+  const popularServiceAgents = [
+    'github-operations-specialist',
+    'deployment-engineer',
+    'deployment-wizard',
+    'monitoring-expert',
+    'observability-engineer',
+    'performance-engineer',
+    'error-monitoring-specialist',
+    'devops-troubleshooter',
+    'devops-operations-specialist',
+    'terraform-specialist',
+    'kubernetes-architect',
+    'cloud-architect',
+    'database-admin',
+    'database-optimizer',
+    'security-scanner',
+    'security-auditor',
+    'compliance-expert',
+    'error-detective',
+    'network-engineer',
+    'cost-optimizer',
+  ];
+
+  // Process command files
   for (const filePath of commandFiles) {
     const base = path.basename(filePath, '.md');
 
-    // Only include core workflow commands
+    // Include core workflow commands
     if (!coreCommands.includes(base)) {
       continue;
     }
 
     const slug = toSlug(filePath);
     tools.push({
-      id: base, // Use simple name like "research", "plan", etc.
+      id: base,
       type: 'command',
       slug,
       filePath,
@@ -146,24 +176,26 @@ async function buildTools() {
     });
   }
 
+  // Process agent files
+  for (const filePath of agentFiles) {
+    const base = path.basename(filePath, '.md');
+
+    // Include popular service agents
+    if (!popularServiceAgents.includes(base)) {
+      continue;
+    }
+
+    const slug = toSlug(filePath);
+    tools.push({
+      id: base,
+      type: 'agent',
+      slug,
+      filePath,
+      description: `Codeflow agent: ${base.replace(/-/g, ' ')}`,
+    });
+  }
+
   return tools;
-}
-
-function jsonSchemaObject(properties = {}, required = []) {
-  return {
-    type: 'object',
-    properties,
-    required,
-    additionalProperties: false,
-  };
-}
-
-function toolSpecFromEntry(entry) {
-  return {
-    name: entry.id,
-    description: `${entry.description}. Returns the markdown body.`,
-    inputSchema: jsonSchemaObject({}),
-  };
 }
 
 /**
@@ -326,7 +358,7 @@ async function run() {
         title: entry.id,
         description: entry.description + ' (Enhanced with agent orchestration capabilities)',
       },
-      async (args = {}) => {
+      async () => {
         const commandContent = await fs.readFile(entry.filePath, 'utf8');
 
         // Enhanced context with available agents
@@ -419,15 +451,21 @@ async function run() {
     // Bun sometimes doesn't keep the event loop alive on stdio alone; explicitly wait.
     try {
       process.stdin.resume();
-    } catch {}
+    } catch {
+      // Ignore stdin setup errors
+    }
     try {
       process.stdin.on('end', onClose);
       process.stdin.on('close', onClose);
-    } catch {}
+    } catch {
+      // Ignore stdin event setup errors
+    }
     try {
       process.on('SIGINT', onClose);
       process.on('SIGTERM', onClose);
-    } catch {}
+    } catch {
+      // Ignore signal setup errors
+    }
   });
 }
 

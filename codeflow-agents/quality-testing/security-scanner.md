@@ -10,7 +10,6 @@ description: Defensive application & platform security analysis agent. Performs
   performance, maintainability, compliance). Not a penetration tester—purely
   defensive, static & configuration oriented.
 mode: subagent
-model: github-copilot/gpt-4.1
 temperature: 0.1
 category: quality-testing
 tags:
@@ -40,7 +39,7 @@ intended_followups:
   - compliance-expert
   - performance-engineer
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 tools:
   grep: true
   glob: true

@@ -5,7 +5,7 @@
       "name": "simple-feature-implementation",
       "description": "Create plan for straightforward feature addition",
       "inputs": {
-        "ticket": "thoughts/tickets/add-search-functionality.md",
+        "ticket": "research/tickets/add-search-functionality.md",
         "scope": "Add search input to existing component",
         "complexity": "Single component modification"
       },
@@ -17,7 +17,7 @@
       "name": "complex-system-refactor",
       "description": "Create comprehensive plan for system-wide refactor",
       "inputs": {
-        "ticket": "thoughts/tickets/refactor-state-management.md",
+        "ticket": "research/tickets/refactor-state-management.md",
         "scope": "Replace Redux with Zustand across entire application",
         "complexity": "Multiple components, tests, and migration strategy"
       },
@@ -29,7 +29,7 @@
       "name": "api-integration-plan",
       "description": "Plan integration with third-party API",
       "inputs": {
-        "ticket": "thoughts/tickets/integrate-payment-api.md",
+        "ticket": "research/tickets/integrate-payment-api.md",
         "scope": "Add payment processing with error handling and testing",
         "complexity": "External API integration with security considerations"
       },

@@ -31,7 +31,7 @@ export class ModelFixer {
         const config = JSON.parse(readFileSync(configPath, 'utf-8'));
         return config;
       }
-    } catch (error) {
+    } catch {
       console.warn('⚠️  Could not load model config, using defaults');
     }
 

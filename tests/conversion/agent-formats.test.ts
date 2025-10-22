@@ -27,7 +27,7 @@ describe('Agent Format Parsing', () => {
     const testAgent = `---
 description: Test agent for parsing
 mode: subagent
-model: gpt-4
+model: gpt-4o
 temperature: 0.7
 tools:
   read_file: true
@@ -52,7 +52,7 @@ Follow these steps to test the agent.
     expect(agent.format).toBe('base');
     expect(agent.frontmatter.description).toBe('Test agent for parsing');
     expect(agent.frontmatter.mode).toBe('subagent');
-    expect(agent.frontmatter.model).toBe('gpt-4');
+    expect(agent.frontmatter.model).toBe('gpt-4o');
     expect(agent.frontmatter.temperature).toBe(0.7);
     expect(agent.frontmatter.tools).toEqual({
       read_file: true,
@@ -89,7 +89,7 @@ This agent is specific to Claude Code format.
     const openCodeAgent = `---
 description: OpenCode specific agent
 mode: subagent
-model: gpt-4
+model: gpt-4o
 usage: Use this agent for testing
 do_not_use_when: Never use this agent when testing is not needed
 escalation: escalate to senior-agent if issues arise
@@ -150,7 +150,7 @@ invalid yaml: [unclosed array
   test('requires description field', async () => {
     const agentWithoutDescription = `---
 mode: subagent
-model: gpt-4
+model: gpt-4o
 ---
 
 # Agent Without Description
@@ -419,7 +419,7 @@ describe('Agent Serialization', () => {
         name: 'test-agent',
         description: 'Test agent for serialization',
         mode: 'subagent',
-        model: 'gpt-4',
+        model: 'gpt-4o',
         temperature: 0.7,
         tools: {
           read_file: true,
@@ -435,7 +435,7 @@ describe('Agent Serialization', () => {
     expect(serialized).toContain('---');
     expect(serialized).toContain('description: Test agent for serialization');
     expect(serialized).toContain('mode: subagent');
-    expect(serialized).toContain('model: gpt-4');
+    expect(serialized).toContain('model: gpt-4o');
     expect(serialized).toContain('temperature: 0.7');
     expect(serialized).toContain('tools:');
     expect(serialized).toContain('  read_file: true');
@@ -480,12 +480,12 @@ describe('Round-trip Conversion', () => {
     const originalAgent = `---
 description: Original agent for round-trip test
 mode: subagent
-model: gpt-4
+model: gpt-4o
 temperature: 0.8
 tools:
-  read_file: true
-  write_file: true
-  search: false
+  read: true
+  write: true
+  bash: false
 custom_field: custom_value
 ---
 

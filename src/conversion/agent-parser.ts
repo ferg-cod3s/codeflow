@@ -29,6 +29,7 @@ export interface BaseAgent {
   category?: string;
   tags?: string[];
   allowed_directories?: string[];
+  permission?: Record<string, any>; // OpenCode permission object (singular)
   permissions?: {
     opencode?: Record<string, any>;
     claude?: Record<string, any>;
@@ -86,7 +87,7 @@ export interface OpenCodeAgent {
  * Generic agent interface that can represent any format
  */
 export interface Agent extends ParsedEntity {
-  format: 'base' | 'claude-code' | 'opencode';
+  format: 'base' | 'claude-code' | 'opencode' | 'cursor' | 'cursor';
   frontmatter: BaseAgent | ClaudeCodeAgent | OpenCodeAgent;
 }
 
@@ -143,17 +144,75 @@ function detectFormatFromContent(content: string): 'base' | 'claude-code' | 'ope
  * Normalize permission format between tools: and permission: formats
  */
 export function normalizePermissionFormat(frontmatter: any): any {
-  // If agent uses tools: format, convert to permission: format
+  // If agent uses both tools: and permission: formats, merge them intelligently
+  if (
+    frontmatter.tools &&
+    typeof frontmatter.tools === 'object' &&
+    frontmatter.permission &&
+    typeof frontmatter.permission === 'object'
+  ) {
+    // Preserve complex permission objects (like bash wildcards), only use tools as fallback
+    const permissions = {
+      read:
+        frontmatter.permission.read || booleanToPermissionString(frontmatter.tools.read || false),
+      write:
+        frontmatter.permission.write || booleanToPermissionString(frontmatter.tools.write || false),
+      edit:
+        frontmatter.permission.edit || booleanToPermissionString(frontmatter.tools.edit || false),
+      bash:
+        typeof frontmatter.permission.bash === 'object'
+          ? frontmatter.permission.bash
+          : frontmatter.permission.bash ||
+            booleanToPermissionString(frontmatter.tools.bash || false),
+      webfetch:
+        frontmatter.permission.webfetch ||
+        booleanToPermissionString(frontmatter.tools.webfetch !== false),
+    };
+
+    // Remove individual permission fields and tools to avoid duplication
+    const {
+      _edit,
+      _bash,
+      _patch,
+      _read,
+      _grep,
+      _glob,
+      _list,
+      _webfetch,
+      _write,
+      _tools,
+      ...cleanFrontmatter
+    } = frontmatter;
+
+    return {
+      ...cleanFrontmatter,
+      permission: permissions,
+    };
+  }
+
+  // If agent uses tools: format only, convert to permission: format
   if (frontmatter.tools && typeof frontmatter.tools === 'object') {
     const permissions = {
+      read: booleanToPermissionString(frontmatter.tools.read || false),
+      write: booleanToPermissionString(frontmatter.tools.write || false),
       edit: booleanToPermissionString(frontmatter.tools.edit || false),
       bash: booleanToPermissionString(frontmatter.tools.bash || false),
-      webfetch: booleanToPermissionString(frontmatter.tools.webfetch !== false), // Default to true if not explicitly false
+      webfetch: booleanToPermissionString(frontmatter.tools.webfetch !== false),
     };
 
     // Remove individual permission fields to avoid duplication
-    const { edit, bash, patch, read, grep, glob, list, webfetch, write, ...cleanFrontmatter } =
-      frontmatter;
+    const {
+      _edit,
+      _bash,
+      _patch,
+      _read,
+      _grep,
+      _glob,
+      _list,
+      _webfetch,
+      _write,
+      ...cleanFrontmatter
+    } = frontmatter;
 
     // Create normalized frontmatter with permission block
     return {
@@ -165,20 +224,23 @@ export function normalizePermissionFormat(frontmatter: any): any {
   // If agent already uses permission: format, remove individual permission fields to avoid duplication
   if (frontmatter.permission && typeof frontmatter.permission === 'object') {
     // Remove individual permission fields that might exist alongside the permission block
-    const { edit, bash, patch, read, grep, glob, list, webfetch, write, ...cleanFrontmatter } =
-      frontmatter;
+    const {
+      _edit,
+      _bash,
+      _patch,
+      _read,
+      _grep,
+      _glob,
+      _list,
+      _webfetch,
+      _write,
+      ...cleanFrontmatter
+    } = frontmatter;
     return cleanFrontmatter;
   }
 
-  // If no permission format found, add default permissions
-  return {
-    ...frontmatter,
-    permission: {
-      edit: 'deny',
-      bash: 'deny',
-      webfetch: 'allow',
-    },
-  };
+  // If no permission format found, return as-is (for Claude Code and other formats that don't use permissions)
+  return frontmatter;
 }
 
 /**
@@ -199,11 +261,8 @@ function parseFrontmatter(content: string): { frontmatter: any; body: string } {
     throw new Error(result.error.message);
   }
 
-  // Normalize permission format for compatibility
-  const normalizedFrontmatter = normalizePermissionFormat(result.data.frontmatter);
-
   return {
-    frontmatter: normalizedFrontmatter,
+    frontmatter: result.data.frontmatter,
     body: result.data.body,
   };
 }
@@ -213,12 +272,13 @@ function parseFrontmatter(content: string): { frontmatter: any; body: string } {
  */
 export async function parseAgentFile(
   filePath: string,
-  format: 'base' | 'claude-code' | 'opencode'
+  format: 'base' | 'claude-code' | 'opencode' | 'cursor'
 ): Promise<Agent> {
   const parseCache = globalPerformanceMonitor.getParseCache();
 
   // Check cache first
-  const cached = await parseCache.get(filePath);
+  const cacheKey = `${filePath}:${format}`;
+  const cached = await parseCache.get(cacheKey);
   if (cached) {
     if ('frontmatter' in cached) {
       // Cached successful parse
@@ -245,21 +305,29 @@ export async function parseAgentFile(
       frontmatter.name = basename(filePath, '.md');
     }
 
-    const agent: Agent = {
+    // Normalize permission format only for OpenCode format
+    // Base, Claude Code, and Cursor formats should preserve original tools/permission fields
+    const normalizedFrontmatter =
+      format === 'opencode' ? normalizePermissionFormat(frontmatter) : frontmatter;
+
+    // Check if this is a command by mode field
+    const isCommand = normalizedFrontmatter.mode === 'command';
+
+    const entity: Agent | Command = {
       name: basename(filePath, '.md'),
       format,
-      frontmatter,
+      frontmatter: normalizedFrontmatter,
       content: body,
       filePath,
     };
 
     // Cache successful parse
-    await parseCache.set(filePath, agent);
+    await parseCache.set(cacheKey, entity);
 
     const parseTime = performance.now() - parseStart;
     globalPerformanceMonitor.updateMetrics({ agentParseTime: parseTime });
 
-    return agent;
+    return entity;
   } catch (error: any) {
     // For malformed YAML, try to parse what we can using fallback parsing
     try {
@@ -272,7 +340,10 @@ export async function parseAgentFile(
           throw new Error('Agent must have a description field');
         }
 
-        const agent: Agent = {
+        // Check if this is a command in fallback parsing too
+        const isCommand = frontmatter.mode === 'command';
+
+        const entity: Agent | Command = {
           name: frontmatter.name || basename(filePath, '.md'),
           format,
           frontmatter: frontmatter as any,
@@ -280,9 +351,9 @@ export async function parseAgentFile(
           filePath,
         };
 
-        return agent;
+        return entity;
       }
-    } catch (fallbackError) {
+    } catch {
       // Fallback also failed, cache the error
       const parseError: ParseError = {
         message: `Failed to parse agent file ${filePath}: ${error.message}`,
@@ -346,7 +417,7 @@ function parseWithFallback(content: string): {
     }
 
     return { success: true, data: { frontmatter, body } };
-  } catch (error) {
+  } catch {
     return { success: false };
   }
 }
@@ -356,13 +427,13 @@ function parseWithFallback(content: string): {
  */
 export async function parseAgentsFromDirectory(
   directory: string,
-  format: 'base' | 'claude-code' | 'opencode' | 'auto'
-): Promise<{ agents: Agent[]; errors: ParseError[] }> {
+  format: 'base' | 'claude-code' | 'opencode' | 'cursor' | 'cursor' | 'auto'
+): Promise<{ agents: (Agent | Command)[]; errors: ParseError[] }> {
   const { readdir } = await import('node:fs/promises');
   const { join } = await import('node:path');
   const { existsSync } = await import('node:fs');
 
-  const agents: Agent[] = [];
+  const agents: (Agent | Command)[] = [];
   const errors: ParseError[] = [];
 
   if (!existsSync(directory)) {
@@ -392,17 +463,36 @@ export async function parseAgentsFromDirectory(
       } else if (item.endsWith('.md') && !item.startsWith('README')) {
         // This is a markdown file, parse it
         try {
-          let actualFormat: 'base' | 'claude-code' | 'opencode' = format as
-            | 'base'
-            | 'claude-code'
-            | 'opencode';
+          let actualFormat = format as 'base' | 'claude-code' | 'opencode' | 'cursor';
           if (format === 'auto') {
             // Auto-detect format from file content
             const content = await globalFileReader.readFile(itemPath);
             actualFormat = detectFormatFromContent(content);
           }
-          const agent = await parseAgentFile(itemPath, actualFormat);
-          agents.push(agent);
+
+          // Check if this is likely a command file
+          const content = await globalFileReader.readFile(itemPath);
+          const { frontmatter } = parseFrontmatter(content);
+          const isLikelyCommand =
+            // Check if it's in a command directory
+            itemPath.includes('/command/') ||
+            // Check for command-specific fields
+            frontmatter.inputs ||
+            frontmatter.outputs ||
+            frontmatter.cache_strategy ||
+            frontmatter.success_signals ||
+            frontmatter.failure_modes ||
+            frontmatter.command_schema_version ||
+            frontmatter.mode === 'command';
+
+          let entity: Agent | Command;
+          if (isLikelyCommand && (actualFormat === 'base' || actualFormat === 'opencode')) {
+            entity = await parseCommandFile(itemPath, actualFormat);
+          } else {
+            entity = await parseAgentFile(itemPath, actualFormat);
+          }
+
+          agents.push(entity);
         } catch (error: any) {
           errors.push({
             message: error.message,
@@ -573,7 +663,7 @@ export async function parseCommandFile(
 
         return command;
       }
-    } catch (fallbackError) {
+    } catch {
       // Fallback also failed
       throw new Error(`Failed to parse command file ${filePath}: ${error.message}`);
     }

@@ -135,7 +135,7 @@ class YamlFrontmatterFixer {
           frontmatter.tools = JSON.parse(frontmatter.tools);
           modified = true;
           console.log(`  ✅ Fixed tools format in ${fileName}`);
-        } catch (error) {
+        } catch {
           // If it's a comma-separated string, convert to array
           if (frontmatter.tools.includes(',')) {
             frontmatter.tools = frontmatter.tools.split(',').map((t) => t.trim());

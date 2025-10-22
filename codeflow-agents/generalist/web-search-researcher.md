@@ -8,7 +8,6 @@ description: Targeted multi-phase web research & evidence synthesis agent.
   credibility/recency/relevance, resolves conflicts, and produces a structured
   AGENT_OUTPUT_V1 JSON research dossier with transparent citation mapping.
 mode: subagent
-model: github-copilot/gpt-4.1
 temperature: 0.15
 category: generalist
 tags:
@@ -32,7 +31,7 @@ intended_followups:
   - full-stack-developer
   - code-reviewer
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 tools:
   webfetch: true
   grep: false
@@ -270,7 +269,7 @@ Rules:
 
 # Collaboration & Escalation
 
-- To internal historical decisions → thoughts-locator.
+- To internal historical decisions → research-locator.
 - For code implementation specifics → codebase-analyzer.
 - For competitive landscape or go-to-market framing → product-strategist.
 - For security vulnerability validation → security-scanner.

@@ -19,14 +19,14 @@ async function runCLI(command: string): Promise<{ stdout: string; stderr: string
     const cliPath = join(process.cwd(), 'src', 'cli', 'index.ts');
     const { stdout, stderr } = await execAsync(`bun run "${cliPath}" ${command}`, {
       cwd: process.cwd(),
-      env: { ...process.env, TEST_MODE: 'true', OUTPUT_DIR: TEST_OUTPUT }
+      env: { ...process.env, TEST_MODE: 'true', OUTPUT_DIR: TEST_OUTPUT },
     });
     return { stdout, stderr, code: 0 };
   } catch (error: any) {
-    return { 
-      stdout: error.stdout || '', 
-      stderr: error.stderr || error.message, 
-      code: error.code || 1 
+    return {
+      stdout: error.stdout || '',
+      stderr: error.stderr || error.message,
+      code: error.code || 1,
     };
   }
 }
@@ -40,55 +40,7 @@ describe('CLI Commands', () => {
     await cleanupTests();
   });
 
-  describe('catalog commands', () => {
-    test.skip('catalog list - should list available items', async () => {
-      const result = await runCLI('catalog list');
-      expect(result.stdout).toContain('codeflow');
-      expect(result.stdout).toContain('Catalog Items');
-    });
-
-    test.skip('catalog search - should search for items', async () => {
-      const result = await runCLI('catalog search test');
-      expect(result.stdout).toContain('codeflow');
-      // Should return search results or "no results" message
-      expect(result.stdout.toLowerCase()).toMatch(/(found|no results)/);
-    });
-
-    test('catalog info - should show item details', async () => {
-      const result = await runCLI('catalog info code-reviewer');
-      // May not exist in test environment
-      if (result.code === 0) {
-        expect(result.stdout).toContain('code-reviewer');
-      }
-    });
-
-    test.skip('catalog build - should rebuild catalog index', async () => {
-      const result = await runCLI('catalog build');
-      expect(result.stdout).toContain('codeflow');
-      expect(result.stdout.toLowerCase()).toContain('catalog');
-    });
-
-    test('catalog import - should validate import command', async () => {
-      // Test with invalid source (should fail gracefully)
-      const result = await runCLI('catalog import nonexistent');
-      // Should handle error gracefully
-      expect(result.stderr || result.stdout).toBeTruthy();
-    });
-
-    test.skip('catalog health-check - should check catalog health', async () => {
-      const result = await runCLI('catalog health-check');
-      expect(result.stdout).toContain('codeflow');
-      expect(result.stdout.toLowerCase()).toMatch(/(health|check|status)/);
-    });
-  });
-
   describe('sync commands', () => {
-    test.skip('sync - should sync agents and commands', async () => {
-      const result = await runCLI('sync');
-      expect(result.stdout).toContain('codeflow');
-      expect(result.stdout.toLowerCase()).toContain('sync');
-    });
-
     test('sync --global - should sync to global directories', async () => {
       const result = await runCLI('sync --global');
       // May require permissions
@@ -111,7 +63,7 @@ temperature: 0.7
 # Test Agent
 
 This is a test agent.`;
-      
+
       const testDir = join(TEST_DIR, 'test-agents');
       await mkdir(testDir, { recursive: true });
       await writeFile(join(testDir, 'test-agent.md'), testAgent);
@@ -120,7 +72,7 @@ This is a test agent.`;
     test('convert - should convert between formats', async () => {
       const inputFile = join(TEST_DIR, 'test-agents', 'test-agent.md');
       const outputFile = join(TEST_OUTPUT, 'test-agent-converted.md');
-      
+
       const result = await runCLI(`convert ${inputFile} ${outputFile} --format opencode`);
       // Conversion might not be implemented yet
       if (result.code === 0) {
@@ -133,14 +85,17 @@ This is a test agent.`;
     test('validate - should validate agent/command files', async () => {
       // Create a test file to validate
       const testFile = join(TEST_DIR, 'test-validate.md');
-      await writeFile(testFile, `---
+      await writeFile(
+        testFile,
+        `---
 name: test
 description: Test file
 model: claude-3-5-sonnet-20241022
 ---
 
-Content`);
-      
+Content`
+      );
+
       const result = await runCLI(`validate ${testFile}`);
       // Validation might pass or fail based on schema
       expect(result.stdout || result.stderr).toBeTruthy();
@@ -148,16 +103,18 @@ Content`);
   });
 
   describe('build-manifest command', () => {
-    test.skip('build-manifest - should rebuild agent manifest', async () => {
+    test('build-manifest - should rebuild agent manifest', async () => {
       const result = await runCLI('build-manifest');
-      expect(result.stdout).toContain('codeflow');
-      expect(result.stdout.toLowerCase()).toContain('manifest');
+      expect(result.code).toBe(0);
+      expect(result.stdout).toContain('Agent manifest created successfully');
+      expect(result.stdout).toContain('agents');
     });
   });
 
   describe('help command', () => {
-    test.skip('help - should show available commands', async () => {
+    test('help - should show available commands', async () => {
       const result = await runCLI('--help');
+      expect(result.code).toBe(0);
       expect(result.stdout).toContain('codeflow');
       expect(result.stdout).toContain('Usage');
       expect(result.stdout.toLowerCase()).toContain('command');

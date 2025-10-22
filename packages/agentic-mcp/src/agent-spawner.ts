@@ -229,7 +229,7 @@ export function createWorkflowOrchestrator(registry: Map<string, Agent>): Workfl
         agents.push('web-search-researcher');
       }
 
-      const tasks = agents.map((agentId) => `Research and analyze: ${query}`);
+      const tasks = agents.map((_agentId) => `Research and analyze: ${query}`);
       const results = await executeParallelAgents(agents, tasks, registry);
 
       return {
@@ -327,4 +327,55 @@ export function validateAgentExecution(
       toolCount: Object.keys(agent.tools || {}).length,
     },
   };
+}
+
+/**
+ * Enhanced workflow orchestrator with multi-phase support
+ */
+export function createEnhancedWorkflowOrchestrator(
+  registry: Map<string, Agent>
+): EnhancedWorkflowOrchestrator {
+  return {
+    async executeResearchWorkflow(options: any): Promise<any> {
+      // Dynamic import to avoid circular dependencies
+      const { executeResearchWorkflow: executeResearch } = await import('./research-workflow.js');
+      const { validateWorkflowQuality } = await import('./quality-validator.js');
+
+      const result = await executeResearch(options, registry);
+
+      // Validate workflow quality
+      const validation = validateWorkflowQuality(result.workflow, result.workflow.context);
+
+      return {
+        ...result,
+        validation,
+      };
+    },
+
+    async executeCustomWorkflow(phases: any[], context: any): Promise<any> {
+      const { executeMultiPhaseWorkflow } = await import('./workflow-orchestrator.js');
+      return await executeMultiPhaseWorkflow(phases, context, registry);
+    },
+
+    async executePlanningWorkflow(requirements: string, context: string): Promise<WorkflowResult> {
+      // Use existing implementation
+      const agents = ['codebase-analyzer'];
+      const tasks = [`Create implementation plan for: ${requirements}\n\nContext: ${context}`];
+      const results = await executeParallelAgents(agents, tasks, registry);
+
+      return {
+        workflow: 'planning',
+        requirements,
+        results,
+        timestamp: new Date().toISOString(),
+      };
+    },
+  };
+}
+
+/**
+ * Enhanced workflow orchestrator interface
+ */
+export interface EnhancedWorkflowOrchestrator extends WorkflowOrchestrator {
+  executeCustomWorkflow(phases: any[], context: any): Promise<any>;
 }

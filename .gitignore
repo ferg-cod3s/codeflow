@@ -3,7 +3,9 @@
 node_modules/
 bun.lockb
 .DS_Store
-# .claude/agents/ - Now tracked to ensure proper conversion
+.claude/agents/
+.claude/commands/
+.opencode/command/
 opencode-agents/
 !.opencode/
 !.claude/
@@ -76,3 +78,56 @@ pnpm-debug.log*
 *.temp
 temp/
 tmp/
+bin/
+
+# Environment files
+.env
+.env.local
+
+# Build artifacts
+bun
+codeflow-*.js
+agentic-*.tgz
+*.tgz
+
+# Export files
+codeflow-export-*.json
+
+# Temporary/debug files
+debug-*.js
+temp_*.ts
+test-*.ts
+demo-*.ts
+
+# Test output directories
+test-output/
+home/
+
+# Backup files
+*.backup
+*.bak
+
+# Archived documentation
+docs/archive/
+
+# Session and phase reports
+*_COMPLETION_REPORT.md
+SESSION_SUMMARY_*.md
+*_ENHANCED_FEATURES.md
+ANNOUNCEMENT_*.md
+RELEASE_*.md
+
+# Test and debug outputs
+*_output.log
+test-wildcard-output/
+test-catalog-system/
+
+# Temporary directories
+Users/
+
+# Test integration directories
+test-integration-*/
+
+# Thoughts documentation (personal notes)
+docs/THOUGHTS.md
+docs/thoughts.md

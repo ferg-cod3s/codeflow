@@ -110,14 +110,12 @@ export async function info(
         }
 
         console.log(JSON.stringify(jsonObj, null, 2));
-      } catch (error) {
+      } catch {
         console.log('Could not convert to JSON format');
       }
     }
-  } catch (error) {
-    console.error(
-      `❌ Error reading file: ${error instanceof Error ? error.message : 'Unknown error'}`
-    );
+  } catch {
+    console.error('❌ Error reading file');
     process.exit(1);
   }
 }

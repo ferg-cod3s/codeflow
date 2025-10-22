@@ -19,6 +19,7 @@ tests/
 ## Running Tests
 
 ### Run all tests
+
 ```bash
 bun test
 # or
@@ -26,6 +27,7 @@ bun run test
 ```
 
 ### Run specific test suites
+
 ```bash
 # Unit tests only
 bun run test:unit
@@ -36,6 +38,9 @@ bun run test:integration
 # E2E tests only
 bun run test:e2e
 
+# E2E tests sequentially (recommended)
+bun run test:e2e:sequential
+
 # Specific component tests
 bun run test:agents       # Agent tests
 bun run test:commands     # Command tests
@@ -44,11 +49,13 @@ bun run test:conversion  # Format conversion tests
 ```
 
 ### Run with coverage
+
 ```bash
 bun run test:coverage
 ```
 
 ### Watch mode
+
 ```bash
 bun run test:watch
 ```
@@ -56,15 +63,22 @@ bun run test:watch
 ## Test Coverage Areas
 
 ### 1. CLI Commands (`tests/unit/cli/`)
+
 - ✅ Catalog commands (list, search, info, build, import, etc.)
 - ✅ Sync commands (local and global)
 - ✅ Convert commands
 - ✅ Validate commands
 - ✅ Build manifest
+- ✅ Research command
+- ✅ Clean command
+- ✅ Export command
+- ✅ Update command
+- ✅ Watch command
 - ✅ Help and version
 - ✅ Error handling
 
 ### 2. Agent Validation (`tests/unit/agents/`)
+
 - ✅ Claude format validation
 - ✅ OpenCode format validation
 - ✅ Frontmatter structure
@@ -74,15 +88,55 @@ bun run test:watch
 - ✅ Category validation
 
 ### 3. Command Validation (`tests/unit/commands/`)
+
 - ✅ Claude command format
 - ✅ OpenCode command format
 - ✅ Parameter validation
 - ✅ Temperature settings
 - ✅ Usage documentation
 - ✅ Permission restrictions
+
+### 4. Core Infrastructure (`tests/unit/`)
+
+- ✅ Build Manifest (`build-manifest.test.ts`)
+  - Manifest generation from agent directories
+  - Category detection logic
+  - Dry-run mode
+  - Error handling for missing directories
+  - Output file creation
+  - Manifest structure validation
+
+- ✅ Adapter Factory (`adapters/adapter-factory.test.ts`)
+  - Platform-specific adapter creation
+  - Auto-detection with various directory structures
+  - Error handling for unsupported platforms
+  - Platform validation helpers
+  - Display name generation
+
+- ✅ Cache Manager (`cache/cache-manager.test.ts`)
+  - Cache entry lifecycle (set, get, delete)
+  - TTL expiration
+  - LRU eviction
+  - Tag-based invalidation
+  - Content-based invalidation
+  - Persistence and loading
+  - Statistics tracking
+
+### 5. Integration Tests (`tests/integration/`)
+
+- ✅ Command Variable Conversion (`command-variable-integration.test.ts`)
+  - Conversion in sync workflow
+  - Round-trip conversions preserving semantics
+  - Multi-parameter edge cases
+
+- ✅ Manifest Integration (`manifest-integration.test.ts`)
+  - Manifest rebuild after setup
+  - Manifest validation in sync
+  - Manifest consistency checks
 - ✅ Cross-format consistency
 
 ### 4. Format Conversion (`tests/unit/catalog/`)
+
 - ✅ Claude to OpenCode conversion
 - ✅ OpenCode to Claude conversion
 - ✅ Metadata preservation
@@ -92,6 +146,7 @@ bun run test:watch
 - ✅ Error handling
 
 ### 5. Integration Tests (`tests/e2e/`)
+
 - ✅ Complete workflow (create → convert → sync → deploy)
 - ✅ External template import
 - ✅ Catalog building from multiple sources
@@ -102,6 +157,7 @@ bun run test:watch
 ## Test Requirements
 
 All tests validate:
+
 - **Correctness**: Components work as expected
 - **Format Compliance**: Both Claude and OpenCode formats
 - **Error Handling**: Graceful failure with meaningful messages
@@ -113,23 +169,17 @@ All tests validate:
 Use the provided test helpers in `tests/setup.ts`:
 
 ```typescript
-import { 
-  setupTests, 
-  cleanupTests, 
-  createMockAgent, 
-  createMockCommand,
-  testPaths 
-} from '../setup';
+import { setupTests, cleanupTests, createMockAgent, createMockCommand, testPaths } from '../setup';
 
 describe('My Test Suite', () => {
   beforeAll(async () => {
     await setupTests();
   });
-  
+
   afterAll(async () => {
     await cleanupTests();
   });
-  
+
   test('should do something', () => {
     // Your test here
   });
@@ -139,10 +189,12 @@ describe('My Test Suite', () => {
 ## Test Utilities
 
 ### Mock Data Generators
+
 - `createMockAgent(name, format)` - Creates test agent data
 - `createMockCommand(name, format)` - Creates test command data
 
 ### Path Helpers
+
 - `testPaths.agents.claude` - Claude agents directory
 - `testPaths.agents.opencode` - OpenCode agents directory
 - `testPaths.commands.claude` - Claude commands directory
@@ -151,6 +203,7 @@ describe('My Test Suite', () => {
 - `testPaths.mcp.warp` - Warp MCP directory
 
 ### Async Helpers
+
 - `waitForFile(path, timeout)` - Wait for file to exist
 - `retryAsync(fn, retries, delay)` - Retry async operations
 
@@ -166,11 +219,13 @@ describe('My Test Suite', () => {
 ## CI/CD Integration
 
 Tests run automatically on:
+
 - Pull requests
 - Main branch commits
 - Release builds
 
 Coverage reports are generated in:
+
 - `.coverage/` - Coverage data
 - `test-reports/` - Test results (JSON and Markdown)
 
@@ -183,9 +238,26 @@ Coverage reports are generated in:
 3. **Timeout errors**: Increase timeout for integration tests
 4. **Permission errors**: Some tests may need elevated permissions for global operations
 
+### E2E Test Execution
+
+**Important**: E2E tests use direct module imports with `process.argv` manipulation instead of spawning child processes. This approach:
+
+- ✅ Works reliably in Bun's test environment
+- ✅ Avoids `ENOENT: posix_spawn` errors in parallel execution
+- ✅ Allows proper test isolation with dynamic imports
+
+**Parallel Execution Limitation**: E2E tests share the same CLI module state when run in parallel, causing interference between tests. Use `bun run test:e2e:sequential` to run E2E tests one at a time.
+
+**Why Sequential?**
+
+- Direct module imports share state across parallel test processes
+- Watch mode tests are intentionally skipped in test environment
+- lcov coverage warnings are ignored when all tests pass
+
 ### Debug Mode
 
 Run tests with verbose output:
+
 ```bash
 bun test --verbose
 ```
@@ -193,6 +265,7 @@ bun test --verbose
 ### Clean Test Environment
 
 Remove all test artifacts:
+
 ```bash
 rm -rf .test-tmp .coverage test-reports
 ```

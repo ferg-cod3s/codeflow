@@ -1,6 +1,6 @@
 {
   "name": "@agentic-codeflow/cli",
-  "version": "0.12.4",
+  "version": "0.14.7",
   "description": "AI Agent & Command Distribution Platform - Deploy 33+ specialized AI agents and workflow commands to any project instantly",
   "type": "module",
   "bin": {
@@ -25,21 +25,25 @@
   "bugs": {
     "url": "https://github.com/ferg-cod3s/codeflow/issues"
   },
-  "author": "ferg.cod3s <john.ferguson@jferguson.info>",
+  "author": "Codeflow Team <team@codeflow.dev>",
   "license": "MIT",
   "files": [
-    "src/**/*",
-    ".claude/**/*",
-    ".opencode/**/*",
+    "src/cli/**/*",
+    "src/config/**/*",
+    "src/utils/**/*",
+    "src/sync/**/*",
+    "src/catalog/**/*",
+    "src/adapters/**/*",
+    "src/conversion/**/*",
+    "src/yaml/**/*",
+    "src/math.ts",
+    "src/sync-with-validation.ts",
     "codeflow-agents/**/*",
     "command/**/*",
-    "scripts/sync.js",
-    "scripts/setup.js",
     "AGENT_MANIFEST.json",
     "README.md",
     "LICENSE",
     "docs/README.md",
-    "docs/ARCHITECTURE_OVERVIEW.md",
     "docs/MCP_QUICKSTART.md",
     "docs/SLASH_COMMANDS.md"
   ],
@@ -53,6 +57,7 @@
     "test:unit": "bun run run-tests.ts unit",
     "test:integration": "bun run run-tests.ts integration",
     "test:e2e": "bun run run-tests.ts e2e",
+    "test:e2e:sequential": "bun run scripts/run-e2e-tests.ts",
     "test:watch": "bun test --watch",
     "test:coverage": "bun run run-tests.ts --coverage",
     "test:agents": "bun test tests/unit/agents",
@@ -93,8 +98,16 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@aws-sdk/client-cloudwatch": "^3.911.0",
+    "@aws-sdk/client-sns": "^3.911.0",
     "@modelcontextprotocol/sdk": "^1.18.1",
+    "boxen": "^8.0.1",
+    "chalk": "^5.6.2",
+    "cli-table3": "^0.6.5",
+    "inquirer": "^12.9.6",
+    "ora": "^9.0.0",
     "semver": "^7.7.2",
+    "winston": "^3.18.3",
     "yaml": "^2.8.1",
     "zod": "^4.1.11"
   },

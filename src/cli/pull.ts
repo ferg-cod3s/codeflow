@@ -6,8 +6,8 @@ import {
   applyOpenCodePermissionsToDirectory,
   DEFAULT_OPENCODE_PERMISSIONS,
 } from '../security/opencode-permissions';
-import { applyPermissionInheritance } from '../security/validation';
-import CLIErrorHandler from "./error-handler.js";
+// import { applyPermissionInheritance } from '../security/validation';
+import CLIErrorHandler from './error-handler.js';
 
 async function* walkDir(dir: string): AsyncGenerator<string> {
   const files = await readdir(dir, { withFileTypes: true });
@@ -55,26 +55,20 @@ export async function pull(projectPath: string | undefined) {
 
       // Check if source directory exists
       if (!existsSync(sourceDir)) {
-        CLIErrorHandler.displayWarning(
-          `Skipping '${includeDir}' - directory not found`,
-          [
-            'Check if the directory exists in the codeflow installation',
-            'Verify the pull configuration in config.json'
-          ]
-        );
+        CLIErrorHandler.displayWarning(`Skipping '${includeDir}' - directory not found`, [
+          'Check if the directory exists in the codeflow installation',
+          'Verify the pull configuration in config.json',
+        ]);
         continue;
       }
 
       // Check if it's a directory
       const stats = await stat(sourceDir);
       if (!stats.isDirectory()) {
-        CLIErrorHandler.displayWarning(
-          `Skipping '${includeDir}' - not a directory`,
-          [
-            'Check if the path points to a valid directory',
-            'Verify the pull configuration in config.json'
-          ]
-        );
+        CLIErrorHandler.displayWarning(`Skipping '${includeDir}' - not a directory`, [
+          'Check if the path points to a valid directory',
+          'Verify the pull configuration in config.json',
+        ]);
         continue;
       }
 
@@ -104,37 +98,27 @@ export async function pull(projectPath: string | undefined) {
         await applyOpenCodePermissionsToDirectory(targetBase, DEFAULT_OPENCODE_PERMISSIONS);
         CLIErrorHandler.displaySuccess('Applied OpenCode permissions');
       } catch (error: any) {
-        CLIErrorHandler.displayWarning(
-          `Failed to apply OpenCode permissions: ${error.message}`,
-          [
-            'Check file system permissions',
-            'Verify OpenCode security configuration',
-            'Files were copied but permissions may not be optimal'
-          ]
-        );
+        CLIErrorHandler.displayWarning(`Failed to apply OpenCode permissions: ${error.message}`, [
+          'Check file system permissions',
+          'Verify OpenCode security configuration',
+          'Files were copied but permissions may not be optimal',
+        ]);
       }
     }
 
     if (fileCount === 0) {
-      CLIErrorHandler.displayWarning(
-        'No files found to pull',
-        [
-          'Check the pull configuration in config.json',
-          'Verify the source directories exist',
-          'Run with --verbose for more details'
-        ]
-      );
+      CLIErrorHandler.displayWarning('No files found to pull', [
+        'Check the pull configuration in config.json',
+        'Verify the source directories exist',
+        'Run with --verbose for more details',
+      ]);
     } else {
-      CLIErrorHandler.displaySuccess(
-        `Pulled ${fileCount} file${fileCount === 1 ? '' : 's'}`,
-        [
-          'Files have been copied to the project',
-          'OpenCode permissions have been applied',
-          'You can now use the installed agents and commands'
-        ]
-      );
+      CLIErrorHandler.displaySuccess(`Pulled ${fileCount} file${fileCount === 1 ? '' : 's'}`, [
+        'Files have been copied to the project',
+        'OpenCode permissions have been applied',
+        'You can now use the installed agents and commands',
+      ]);
     }
-
   } catch (error) {
     CLIErrorHandler.handleCommonError(error, 'pull');
   }

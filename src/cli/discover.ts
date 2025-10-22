@@ -16,7 +16,7 @@ export class DiscoveryCLI {
   }
 
   // HumanLayer-inspired agent discovery
-  async discoverByUseCase(useCase: string, options: AgentDiscoveryOptions = {}): Promise<void> {
+  async discoverByUseCase(useCase: string, _options: AgentDiscoveryOptions = {}): Promise<void> {
     console.log(`🔍 Finding agents for: "${useCase}"`);
 
     const useCaseMap = {
@@ -29,7 +29,7 @@ export class DiscoveryCLI {
       'new feature': ['codebase-locator', 'full-stack-developer', 'smart-subagent-orchestrator'],
       'optimize ux': ['ux-optimizer', 'performance-engineer'],
       'scale system': ['infrastructure-builder', 'database-expert', 'performance-engineer'],
-      'incident response': ['operations-incident-commander', 'security-scanner']
+      'incident response': ['operations-incident-commander', 'security-scanner'],
     };
 
     const matchedAgents = this.findBestAgents(useCase, useCaseMap);
@@ -52,28 +52,23 @@ export class DiscoveryCLI {
     console.log(`🎯 Showing ${complexity} agents:\n`);
 
     const complexityMap = {
-      'beginner': [
-        'codebase-locator',
-        'thoughts-locator',
-        'codebase-analyzer',
-        'thoughts-analyzer'
-      ],
-      'intermediate': [
+      beginner: ['codebase-locator', 'research-locator', 'codebase-analyzer', 'research-analyzer'],
+      intermediate: [
         'api-builder',
         'database-expert',
         'performance-engineer',
         'security-scanner',
         'ux-optimizer',
-        'growth-engineer'
+        'growth-engineer',
       ],
-      'advanced': [
+      advanced: [
         'full-stack-developer',
         'operations-incident-commander',
         'infrastructure-builder',
         'ai-integration-expert',
         'programmatic-seo-engineer',
-        'smart-subagent-orchestrator'
-      ]
+        'smart-subagent-orchestrator',
+      ],
     };
 
     const agents = complexityMap[complexity as keyof typeof complexityMap] || [];
@@ -91,26 +86,26 @@ export class DiscoveryCLI {
         name: 'Feature Development',
         pattern: '/research → /plan → /execute → /test → /document → /review → /commit',
         description: 'Complete feature development lifecycle',
-        timeEstimate: '2-4 hours'
+        timeEstimate: '2-4 hours',
       },
       {
         name: 'Bug Investigation',
         pattern: 'codebase-locator → codebase-analyzer → [specialist] → /plan → /execute',
         description: 'Systematic bug investigation and fixing',
-        timeEstimate: '30-90 minutes'
+        timeEstimate: '30-90 minutes',
       },
       {
         name: 'Performance Optimization',
         pattern: 'performance-engineer → database-expert → ux-optimizer → /test',
         description: 'Comprehensive performance improvement',
-        timeEstimate: '1-2 hours'
+        timeEstimate: '1-2 hours',
       },
       {
         name: 'Architecture Review',
-        pattern: 'thoughts-locator → codebase-pattern-finder → smart-subagent-orchestrator',
+        pattern: 'research-locator → codebase-pattern-finder → smart-subagent-orchestrator',
         description: 'Review and improve system architecture',
-        timeEstimate: '2-6 hours'
-      }
+        timeEstimate: '2-6 hours',
+      },
     ];
 
     workflows.forEach((workflow, index) => {
@@ -152,7 +147,7 @@ export class DiscoveryCLI {
     const partialMatches: string[] = [];
     for (const [key, agents] of Object.entries(useCaseMap)) {
       const keywords = key.split(' ');
-      if (keywords.some(keyword => lowerUseCase.includes(keyword))) {
+      if (keywords.some((keyword) => lowerUseCase.includes(keyword))) {
         partialMatches.push(...agents);
       }
     }
@@ -165,39 +160,39 @@ export class DiscoveryCLI {
       'codebase-locator': {
         desc: 'Find files and components instantly',
         time: '2-5 min',
-        complexity: 'Beginner'
+        complexity: 'Beginner',
       },
       'codebase-analyzer': {
         desc: 'Understand how specific code works',
         time: '5-15 min',
-        complexity: 'Beginner'
+        complexity: 'Beginner',
       },
       'api-builder': {
         desc: 'Design and build production-ready APIs',
         time: '15-30 min',
-        complexity: 'Intermediate'
+        complexity: 'Intermediate',
       },
       'database-expert': {
         desc: 'Optimize queries and design schemas',
         time: '20-40 min',
-        complexity: 'Intermediate'
+        complexity: 'Intermediate',
       },
       'performance-engineer': {
         desc: 'Identify bottlenecks and optimize performance',
         time: '15-30 min',
-        complexity: 'Intermediate'
+        complexity: 'Intermediate',
       },
       'full-stack-developer': {
         desc: 'End-to-end feature development',
         time: '30-60 min',
-        complexity: 'Advanced'
-      }
+        complexity: 'Advanced',
+      },
     };
 
     const info = agentDescriptions[agentName as keyof typeof agentDescriptions] || {
       desc: 'Specialized agent',
       time: '15-30 min',
-      complexity: 'Intermediate'
+      complexity: 'Intermediate',
     };
 
     console.log(`${index}. **${agentName}**`);

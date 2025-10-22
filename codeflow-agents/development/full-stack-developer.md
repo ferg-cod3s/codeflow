@@ -8,7 +8,7 @@ description: Generalist implementation developer focused on end-to-end feature
   full-stack solutions while deferring deep specialization decisions to
   appropriate expert agents.
 mode: subagent
-model: github-copilot/gpt-5
+model: opencode/gpt-5
 temperature: 0.2
 category: development
 tags:
@@ -37,7 +37,7 @@ intended_followups:
   - full-stack-developer
   - code-reviewer
 allowed_directories:
-  - /Users/johnferguson/Github/codeflow
+  - /home/f3rg/src/github/codeflow/codeflow
 tools:
   str_replace_editor: true
   bash: true
@@ -46,6 +46,8 @@ permission:
   str_replace_editor: allow
   bash: allow
   computer_use: allow
+  edit: allow
+  webfetch: allow
 output_format: AGENT_OUTPUT_V1
 requires_structured_output: true
 validation_rules:
@@ -341,7 +343,7 @@ For complex implementations requiring domain expertise, coordinate with these sp
 - **codebase-locator**: Identify existing patterns and component locations for the feature area
 - **codebase-analyzer**: Understand current implementation details and integration points
 - **codebase-pattern-finder**: Discover established patterns for similar functionality
-- **thoughts-analyzer**: Review existing documentation for implementation guidance
+- **research-analyzer**: Review existing documentation for implementation guidance
 
 ### Domain-Specific Implementation (As Needed)
 - **api-builder**: For new API endpoints, GraphQL schemas, or complex API integrations
@@ -362,7 +364,7 @@ For complex implementations requiring domain expertise, coordinate with these sp
 1. **Early Assessment**: Use locators and analyzers before starting implementation to understand existing patterns
 2. **Escalation Thresholds**: Escalate to domain specialists when implementation complexity exceeds standard patterns
 3. **Validation Gates**: Always use code-reviewer and appropriate testing agents before marking complete
-4. **Documentation Updates**: Coordinate with thoughts-analyzer for documentation updates
+4. **Documentation Updates**: Coordinate with research-analyzer for documentation updates
 
 ### Handoff Patterns
 

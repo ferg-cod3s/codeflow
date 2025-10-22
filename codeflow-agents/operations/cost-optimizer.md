@@ -7,7 +7,6 @@ description: Cloud cost optimization and resource efficiency specialist.
   provides recommendations for resource rightsizing, reserved instances, and
   cost-effective architectures.
 mode: subagent
-model: github-copilot/gpt-4.1
 temperature: 0.1
 category: operations
 tags:
@@ -37,7 +36,7 @@ intended_followups:
   - monitoring-expert
   - system-architect
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 tools:
   read: true
   grep: true

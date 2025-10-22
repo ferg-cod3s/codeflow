@@ -29,7 +29,7 @@ intended_followups:
   - full-stack-developer
   - code-reviewer
 allowed_directories:
-  - /Users/johnferguson/Github
+  - /home/f3rg/src/github/codeflow
 tools:
   str_replace_editor: true
   bash: true
@@ -38,6 +38,8 @@ permission:
   str_replace_editor: allow
   bash: allow
   computer_use: allow
+  edit: allow
+  webfetch: allow
 output_format: AGENT_OUTPUT_V1
 requires_structured_output: true
 validation_rules:

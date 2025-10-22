@@ -1,5 +1,5 @@
 import { readFile } from 'fs/promises';
-import { YamlProcessor, ParsedYaml } from '../yaml/yaml-processor.js';
+import { YamlProcessor } from '../yaml/yaml-processor.js';
 import { ParsedEntity } from './agent-parser.js';
 
 export interface CommandMetadata {
@@ -69,8 +69,14 @@ export class CommandConverter {
     }
 
     const parsedYaml = parseResult.data;
-    const convertedFrontmatter = this.convertOpenCodeToClaudeCode(
-      parsedYaml.frontmatter as CommandMetadata
+    const frontmatter = parsedYaml.frontmatter as CommandMetadata;
+    const convertedFrontmatter = this.convertOpenCodeToClaudeCode(frontmatter);
+
+    // Transform body content variable syntax
+    const transformedBody = this.transformBodyVariables(
+      parsedYaml.body,
+      'claude-code',
+      frontmatter.inputs
     );
 
     // Create ParsedEntity for serialization
@@ -78,7 +84,7 @@ export class CommandConverter {
       name: convertedFrontmatter.name || 'unknown',
       format: 'claude-code',
       frontmatter: convertedFrontmatter,
-      content: parsedYaml.body,
+      content: transformedBody,
       filePath,
     };
 
@@ -100,8 +106,20 @@ export class CommandConverter {
     }
 
     const parsedYaml = parseResult.data;
-    const convertedFrontmatter = this.convertClaudeCodeToOpenCode(
-      parsedYaml.frontmatter as CommandMetadata
+    const frontmatter = parsedYaml.frontmatter as CommandMetadata;
+
+    // Check if already in OpenCode format (has mode: command and inputs)
+    const isAlreadyOpenCode = frontmatter.mode === 'command' && frontmatter.inputs;
+
+    const convertedFrontmatter = isAlreadyOpenCode
+      ? this.ensureOpenCodeDefaults(frontmatter)
+      : this.convertClaudeCodeToOpenCode(frontmatter);
+
+    // Transform body content variable syntax
+    const transformedBody = this.transformBodyVariables(
+      parsedYaml.body,
+      'opencode',
+      convertedFrontmatter.inputs
     );
 
     // Create ParsedEntity for serialization
@@ -109,7 +127,7 @@ export class CommandConverter {
       name: convertedFrontmatter.name || 'unknown',
       format: 'opencode',
       frontmatter: convertedFrontmatter,
-      content: parsedYaml.body,
+      content: transformedBody,
       filePath,
     };
 
@@ -119,6 +137,69 @@ export class CommandConverter {
     }
 
     return yamlResult.data;
+  }
+
+  /**
+   * Ensure OpenCode format has all required defaults
+   * Used when source is already in OpenCode format
+   */
+  private ensureOpenCodeDefaults(frontmatter: CommandMetadata): CommandMetadata {
+    const converted: CommandMetadata = {
+      ...frontmatter,
+      mode: 'command',
+      model: frontmatter.model || 'anthropic/claude-sonnet-4-20250514',
+      version: frontmatter.version || '2.1.0-optimized',
+      last_updated: frontmatter.last_updated || new Date().toISOString().split('T')[0],
+      command_schema_version: frontmatter.command_schema_version || '1.0',
+    };
+
+    // Preserve inputs as-is
+    if (frontmatter.inputs) {
+      converted.inputs = frontmatter.inputs;
+    }
+
+    // Ensure outputs exist
+    if (!converted.outputs) {
+      converted.outputs = [
+        {
+          name: 'result',
+          type: 'string',
+          description: 'Command execution result',
+        },
+      ];
+    }
+
+    // Ensure cache strategy exists
+    if (!converted.cache_strategy) {
+      converted.cache_strategy = {
+        type: 'content_based',
+        ttl: 3600,
+        scope: 'command',
+      };
+    }
+
+    // Ensure success/failure signals exist
+    if (!converted.success_signals) {
+      converted.success_signals = [
+        'Command completed successfully',
+        'Task executed without errors',
+      ];
+    }
+
+    if (!converted.failure_modes) {
+      converted.failure_modes = [
+        'Command execution failed',
+        'Invalid parameters provided',
+        'System error occurred',
+      ];
+    }
+
+    // Remove Claude-specific fields
+    delete converted.temperature;
+    delete converted.category;
+    delete converted.params;
+
+    return converted;
   }
 
   /**
@@ -154,6 +235,7 @@ export class CommandConverter {
 
     // Remove OpenCode-specific fields
     delete converted.mode;
+    delete converted.model;
     delete converted.inputs;
     delete converted.outputs;
     delete converted.cache_strategy;
@@ -168,12 +250,15 @@ export class CommandConverter {
   /**
    * Convert Claude Code frontmatter to OpenCode format
    */
+  /**
+   * Convert Claude Code frontmatter to OpenCode format
+   */
   private convertClaudeCodeToOpenCode(frontmatter: CommandMetadata): CommandMetadata {
     const converted: CommandMetadata = {
       name: frontmatter.name,
       description: frontmatter.description,
       mode: 'command',
-      model: this.convertModelToOpenCode(frontmatter.model),
+      model: 'anthropic/claude-sonnet-4-20250514',
       version: '2.1.0-optimized',
       last_updated: new Date().toISOString().split('T')[0],
       command_schema_version: '1.0',
@@ -223,9 +308,9 @@ export class CommandConverter {
     ];
 
     // Remove Claude-specific fields
-    delete converted.temperature;
-    delete converted.category;
     delete converted.params;
+    delete converted.category;
+    delete converted.temperature;
 
     return converted;
   }
@@ -249,8 +334,8 @@ export class CommandConverter {
   /**
    * Convert model name to OpenCode format
    */
-  private convertModelToOpenCode(model?: string): string {
-    if (!model) return 'anthropic/claude-sonnet-4';
+  private convertModelToOpenCode(model?: string): string | undefined {
+    if (!model) return undefined;
 
     // Convert Claude model names to OpenCode format
     const modelMap: Record<string, string> = {
@@ -258,7 +343,7 @@ export class CommandConverter {
       'claude-3-5-sonnet': 'anthropic/claude-sonnet-4',
     };
 
-    return modelMap[model] || 'anthropic/claude-sonnet-4';
+    return modelMap[model] || undefined;
   }
 
   /**
@@ -284,6 +369,49 @@ export class CommandConverter {
     if (nameLower.includes('document')) return 'documentation';
 
     return 'utility';
+  }
+
+  /**
+   * Transform variable syntax in command body content
+   * OpenCode uses $ARGUMENTS (single placeholder for all args)
+   * Claude/Cursor use {{variable}} (named parameters)
+   */
+  private transformBodyVariables(
+    body: string,
+    targetFormat: 'claude-code' | 'opencode',
+    inputs?: CommandInput[]
+  ): string {
+    if (targetFormat === 'opencode') {
+      // Convert {{variable}} to $ARGUMENTS
+      // OpenCode limitation: can only pass single argument string
+      let transformed = body;
+      const variablePattern = /\{\{(\w+)\}\}/g;
+      const matches = body.match(variablePattern);
+
+      if (matches && matches.length > 1) {
+        // Multiple variables detected - add warning comment
+        transformed =
+          '<!-- Note: OpenCode only supports $ARGUMENTS placeholder. Multiple parameters from Claude/Cursor may not work as expected. -->\n\n' +
+          transformed;
+      }
+
+      // Replace all {{variable}} with $ARGUMENTS
+      transformed = transformed.replace(variablePattern, '$ARGUMENTS');
+
+      return transformed;
+    } else {
+      // Convert $ARGUMENTS to {{variable}}
+      // Use the first required input, or first input if no required ones
+      let primaryParam = 'arguments'; // fallback
+
+      if (inputs && inputs.length > 0) {
+        const requiredInputs = inputs.filter((i) => i.required);
+        const firstInput = requiredInputs.length > 0 ? requiredInputs[0] : inputs[0];
+        primaryParam = firstInput.name;
+      }
+
+      return body.replace(/\$ARGUMENTS/g, `{{${primaryParam}}}`);
+    }
   }
 
   /**

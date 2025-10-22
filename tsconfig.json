@@ -16,8 +16,7 @@
     "forceConsistentCasingInFileNames": true,
     "allowJs": true,
     "resolveJsonModule": true,
-    "types": [
-      "bun-types"
-    ]
-  }
+    "types": ["bun-types"]
+  },
+  "include": ["src/**/*", "scripts/**/*", "mcp/**/*"]
 }

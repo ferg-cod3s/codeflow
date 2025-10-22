@@ -151,7 +151,7 @@ export class CatalogIndexBuilder {
       const frontmatter = frontmatterMatch[1];
       const description = this.extractField(frontmatter, 'description');
       const tags = this.extractTags(frontmatter, category);
-      const model = this.extractField(frontmatter, 'model');
+      const _model = this.extractField(frontmatter, 'model');
 
       // Generate hash of the file content
       const hash = crypto.createHash('sha256').update(content).digest('hex').substring(0, 7);

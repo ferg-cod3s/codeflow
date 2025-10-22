@@ -98,18 +98,18 @@ These agents are specifically designed for the research workflow system:
 - **Run after**: codebase-locator and codebase-pattern-finder
 - **Format**: BaseAgent (auto-converted to all platforms)
 
-### **thoughts-locator**
+### **research-locator**
 
-- **Purpose**: Discover what documents exist in the thoughts directory
+- **Purpose**: Discover what documents exist in the research directory
 - **When to use**: Finding existing documentation, decisions, and architectural thoughts
-- **Always run before**: thoughts-analyzer
+- **Always run before**: research-analyzer
 - **Format**: BaseAgent (auto-converted to all platforms)
 
-### **thoughts-analyzer**
+### **research-analyzer**
 
 - **Purpose**: Extract key insights from specific documents
-- **When to use**: Analyzing the most relevant documents found by thoughts-locator
-- **Run after**: thoughts-locator
+- **When to use**: Analyzing the most relevant documents found by research-locator
+- **Run after**: research-locator
 - **Format**: BaseAgent (auto-converted to all platforms)
 
 ### **web-search-researcher**
@@ -259,7 +259,7 @@ Additional agents available in the unified format:
 
 ### **For Research Phase**
 
-1. **Always start with locators**: Run codebase-locator and thoughts-locator in parallel
+1. **Always start with locators**: Run codebase-locator and research-locator in parallel
 2. **Then use pattern-finders**: If you need implementation examples
 3. **Finally run analyzers**: For deep understanding of identified code/documents
 4. **Add specialized agents selectively**: Only when the research domain matches their expertise
