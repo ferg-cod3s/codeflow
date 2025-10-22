@@ -430,7 +430,7 @@ For production deployments requiring multi-domain coordination:
 #### Phase 5: Documentation & Communication (Parallel)
 
 - **content-writer**: Update deployment documentation and release notes
-- **thoughts-analyzer**: Document deployment learnings and improvements
+- **research-analyzer**: Document deployment learnings and improvements
 - **devops-operations-specialist**: Update operational runbooks
 
 ### Deployment Orchestration Best Practices

@@ -69,6 +69,11 @@ bun run test:watch
 - ✅ Convert commands
 - ✅ Validate commands
 - ✅ Build manifest
+- ✅ Research command
+- ✅ Clean command
+- ✅ Export command
+- ✅ Update command
+- ✅ Watch command
 - ✅ Help and version
 - ✅ Error handling
 
@@ -90,6 +95,44 @@ bun run test:watch
 - ✅ Temperature settings
 - ✅ Usage documentation
 - ✅ Permission restrictions
+
+### 4. Core Infrastructure (`tests/unit/`)
+
+- ✅ Build Manifest (`build-manifest.test.ts`)
+  - Manifest generation from agent directories
+  - Category detection logic
+  - Dry-run mode
+  - Error handling for missing directories
+  - Output file creation
+  - Manifest structure validation
+
+- ✅ Adapter Factory (`adapters/adapter-factory.test.ts`)
+  - Platform-specific adapter creation
+  - Auto-detection with various directory structures
+  - Error handling for unsupported platforms
+  - Platform validation helpers
+  - Display name generation
+
+- ✅ Cache Manager (`cache/cache-manager.test.ts`)
+  - Cache entry lifecycle (set, get, delete)
+  - TTL expiration
+  - LRU eviction
+  - Tag-based invalidation
+  - Content-based invalidation
+  - Persistence and loading
+  - Statistics tracking
+
+### 5. Integration Tests (`tests/integration/`)
+
+- ✅ Command Variable Conversion (`command-variable-integration.test.ts`)
+  - Conversion in sync workflow
+  - Round-trip conversions preserving semantics
+  - Multi-parameter edge cases
+
+- ✅ Manifest Integration (`manifest-integration.test.ts`)
+  - Manifest rebuild after setup
+  - Manifest validation in sync
+  - Manifest consistency checks
 - ✅ Cross-format consistency
 
 ### 4. Format Conversion (`tests/unit/catalog/`)

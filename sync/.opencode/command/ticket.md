@@ -169,7 +169,7 @@ Extract and organize information specifically for the research phase:
 
 ### Step 5: Ticket Creation
 
-Create the ticket file at: `thoughts/tickets/type_subject.md`
+Create the ticket file at: `research/tickets/type_subject.md`
 
 Use this template structure:
 

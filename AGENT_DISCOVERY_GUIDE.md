@@ -6,7 +6,7 @@
 
 ### 🚀 **Starting a New Feature?**
 ```
-/research "your feature idea" → codebase-locator + thoughts-locator
+/research "your feature idea" → codebase-locator + research-locator
 ↓
 /plan "implementation strategy" → smart-subagent-orchestrator
 ↓
@@ -67,8 +67,8 @@
 |-------|----------|------|------------|
 | `agent-architect` | Creating custom agents | 30-90 min | Advanced |
 | `smart-subagent-orchestrator` | Complex multi-agent workflows | 45-120 min | Expert |
-| `thoughts-locator` | Find documentation | 2-5 min | Beginner |
-| `thoughts-analyzer` | Extract insights from docs | 5-15 min | Beginner |
+| `research-locator` | Find documentation | 2-5 min | Beginner |
+| `research-analyzer` | Extract insights from docs | 5-15 min | Beginner |
 
 ## Workflow Patterns (HumanLayer Inspired)
 
@@ -95,7 +95,7 @@ graph LR
 ### **Pattern 3: Architecture Review**
 ```mermaid
 graph LR
-    A[thoughts-locator] --> B[codebase-pattern-finder]
+    A[research-locator] --> B[codebase-pattern-finder]
     B --> C[smart-subagent-orchestrator]
     C --> D[Multiple Specialists]
     D --> E[/document]
@@ -181,19 +181,19 @@ codebase-locator "find main application entry points"
 codebase-analyzer "explain application structure"
 
 # 3. Find documentation
-thoughts-locator "discover architecture decisions"
+research-locator "discover architecture decisions"
 ```
 
 ## Agent Relationships
 
 ### **Core Workflow Agents** (Use First)
 - `codebase-locator` → Finds everything
-- `thoughts-locator` → Finds documentation
+- `research-locator` → Finds documentation
 - `web-search-researcher` → External research
 
 ### **Analysis Agents** (Use Second)
 - `codebase-analyzer` → Understands code
-- `thoughts-analyzer` → Understands docs
+- `research-analyzer` → Understands docs
 - `codebase-pattern-finder` → Finds patterns
 
 ### **Implementation Agents** (Use Last)

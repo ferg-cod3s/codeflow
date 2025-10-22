@@ -15,14 +15,14 @@ allowed_directories:
   - Cargo.toml
   - package.json
 tools:
-  - bash
-  - edit
-  - read
-  - write
-  - glob
-  - grep
-  - list
-  - task
+  bash: true
+  edit: true
+  read: true
+  write: true
+  glob: true
+  grep: true
+  list: true
+  task: true
 ---
 
 # Tauri Desktop Application Expert

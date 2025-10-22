@@ -52,7 +52,7 @@ export class DiscoveryCLI {
     console.log(`🎯 Showing ${complexity} agents:\n`);
 
     const complexityMap = {
-      beginner: ['codebase-locator', 'thoughts-locator', 'codebase-analyzer', 'thoughts-analyzer'],
+      beginner: ['codebase-locator', 'research-locator', 'codebase-analyzer', 'research-analyzer'],
       intermediate: [
         'api-builder',
         'database-expert',
@@ -102,7 +102,7 @@ export class DiscoveryCLI {
       },
       {
         name: 'Architecture Review',
-        pattern: 'thoughts-locator → codebase-pattern-finder → smart-subagent-orchestrator',
+        pattern: 'research-locator → codebase-pattern-finder → smart-subagent-orchestrator',
         description: 'Review and improve system architecture',
         timeEstimate: '2-6 hours',
       },

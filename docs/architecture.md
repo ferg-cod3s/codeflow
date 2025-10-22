@@ -2,7 +2,7 @@
 
 ## Overview
 
-The `thoughts/architecture/` directory contains the foundational design documents that guide your project's development. These documents serve as the source of truth for architectural decisions and help AI agents understand your system's design principles.
+The `research/architecture/` directory contains the foundational design documents that guide your project's development. These documents serve as the source of truth for architectural decisions and help AI agents understand your system's design principles.
 
 ## Core Architecture Documents
 
@@ -113,7 +113,7 @@ When you run commands like `/research` or `/plan`, the agents:
 
 ### Initial Setup
 When starting a new project:
-1. Create `thoughts/architecture/` directory
+1. Create `research/architecture/` directory
 2. Start with `overview.md` and `system-architecture.md`
 3. Add other documents as the system grows
 
@@ -180,6 +180,6 @@ Planned improvements or known technical debt
 - Missing context: No explanation of decisions
 
 ## Related Documentation
-- [Thoughts Directory Structure](./thoughts.md)
+- [Thoughts Directory Structure](./research.md)
 - [Development Workflow](./workflow.md)
 - [Commands](./commands.md)

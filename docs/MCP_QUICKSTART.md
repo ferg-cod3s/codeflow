@@ -130,7 +130,7 @@ I want to analyze my project's authentication system. Use the research command t
 
 Use tool: research
 
-Input: "Find and analyze all authentication-related code including login/logout, session management, user models, middleware, and any existing OAuth implementations. Also check for authentication documentation in thoughts/ directories."
+Input: "Find and analyze all authentication-related code including login/logout, session management, user models, middleware, and any existing OAuth implementations. Also check for authentication documentation in research/ directories."
 ```
 
 ### Get Specific Command

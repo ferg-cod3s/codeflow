@@ -8,6 +8,8 @@ permission:
   edit: deny
   bash: deny
   webfetch: allow
+  read: allow
+  write: deny
 category: development
 tags:
   - development

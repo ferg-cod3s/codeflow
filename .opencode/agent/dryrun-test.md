@@ -6,5 +6,7 @@ permission:
   edit: deny
   bash: deny
   webfetch: allow
+  read: allow
+  write: deny
 ---
 # Dry Run Test Agent

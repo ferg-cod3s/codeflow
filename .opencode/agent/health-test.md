@@ -7,5 +7,7 @@ permission:
   edit: deny
   bash: deny
   webfetch: allow
+  read: allow
+  write: deny
 ---
 # Health Test Agent

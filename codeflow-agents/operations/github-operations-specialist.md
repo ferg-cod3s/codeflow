@@ -41,27 +41,7 @@ permission:
   read: allow
   edit: deny
   write: deny
-  bash:
-    'gh auth status': allow
-    'gh repo view *': allow
-    'gh repo list *': allow
-    'gh pr list *': allow
-    'gh pr view *': allow
-    'gh pr status *': allow
-    'gh issue list *': allow
-    'gh issue view *': allow
-    'gh workflow list *': allow
-    'gh workflow view *': allow
-    'gh run list *': allow
-    'gh run view *': allow
-    'gh api *': ask
-    'gh pr create *': ask
-    'gh pr merge *': ask
-    'gh pr close *': ask
-    'gh issue create *': ask
-    'gh issue close *': ask
-    'gh workflow run *': ask
-    'gh *': ask
+  bash: allow
   webfetch: deny
 output_format: AGENT_OUTPUT_V1
 requires_structured_output: true

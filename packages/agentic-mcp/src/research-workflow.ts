@@ -138,7 +138,7 @@ async function loadResearchPhases(options: ResearchWorkflowOptions): Promise<Wor
         timeout: '5 minutes',
       },
       {
-        name: 'thoughts-locator',
+        name: 'research-locator',
         purpose: 'Discover existing documentation',
         timeout: '3 minutes',
       },
@@ -157,13 +157,13 @@ async function loadResearchPhases(options: ResearchWorkflowOptions): Promise<Wor
         timeout: '8 minutes',
       },
       {
-        name: 'thoughts-analyzer',
+        name: 'research-analyzer',
         purpose: 'Extract insights from documentation',
-        depends_on: ['thoughts-locator'],
+        depends_on: ['research-locator'],
         timeout: '5 minutes',
       },
     ],
-    depends_on: ['codebase-locator', 'thoughts-locator'],
+    depends_on: ['codebase-locator', 'research-locator'],
   });
 
   // Phase 3: External Research (Optional)
@@ -198,7 +198,7 @@ function createDomainSpecialistPhase(specialists: string[], maxSpecialists: numb
     name: 'Domain Specialist Analysis',
     type: 'conditional',
     agents,
-    depends_on: ['codebase-analyzer', 'thoughts-analyzer'],
+    depends_on: ['codebase-analyzer', 'research-analyzer'],
   };
 }
 

@@ -4,7 +4,7 @@ import { readFile } from 'node:fs/promises';
 import { resolveProjectPath } from './utils';
 
 interface AgenticConfig {
-  thoughts: string;
+  research: string;
   agents: {
     model: string;
   };
@@ -12,7 +12,7 @@ interface AgenticConfig {
 
 function getDefaultConfig(): AgenticConfig {
   return {
-    thoughts: 'thoughts',
+    research: 'research',
     agents: {
       model: 'opencode/grok-code',
     },
@@ -32,7 +32,7 @@ async function readConfig(projectPath: string): Promise<AgenticConfig> {
 
     // Merge with defaults to ensure all fields exist
     return {
-      thoughts: config.thoughts || 'thoughts',
+      research: config.research || 'research',
       agents: {
         model: config.agents?.model || 'opencode/grok-code',
       },

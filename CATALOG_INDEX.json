@@ -519,11 +519,11 @@
       }
     },
     {
-      "id": "codeflow-core/thoughts-analyzer",
+      "id": "codeflow-core/research-analyzer",
       "kind": "agent",
-      "name": "thoughts-analyzer",
+      "name": "research-analyzer",
       "version": "1.0.0",
-      "description": "High-precision research & documentation insight extraction agent for the /thoughts knowledge base. Distills ONLY evidence-backed, currently relevant decisions, constraints, technical specifications, a",
+      "description": "High-precision research & documentation insight extraction agent for the /research knowledge base. Distills ONLY evidence-backed, currently relevant decisions, constraints, technical specifications, a",
       "tags": [
         "generalist"
       ],
@@ -538,23 +538,23 @@
         "opencode"
       ],
       "conversion_rules": {
-        "base_path": "codeflow-agents/generalist/thoughts-analyzer.md",
+        "base_path": "codeflow-agents/generalist/research-analyzer.md",
         "supports_all_formats": true
       },
       "provenance": {
         "repo": "ferg-cod3s/codeflow",
-        "path": "codeflow-agents/generalist/thoughts-analyzer.md",
+        "path": "codeflow-agents/generalist/research-analyzer.md",
         "sha": "3128294",
         "license": "MIT",
         "attribution": "Codeflow Team"
       }
     },
     {
-      "id": "codeflow-core/thoughts-locator",
+      "id": "codeflow-core/research-locator",
       "kind": "agent",
-      "name": "thoughts-locator",
+      "name": "research-locator",
       "version": "1.0.0",
-      "description": "Focused documentation discovery & categorization agent for the /thoughts knowledge base. Locates, classifies, and returns a structured inventory of ALL relevant historical and current thought document",
+      "description": "Focused documentation discovery & categorization agent for the /research knowledge base. Locates, classifies, and returns a structured inventory of ALL relevant historical and current thought document",
       "tags": [
         "generalist"
       ],
@@ -569,12 +569,12 @@
         "opencode"
       ],
       "conversion_rules": {
-        "base_path": "codeflow-agents/generalist/thoughts-locator.md",
+        "base_path": "codeflow-agents/generalist/research-locator.md",
         "supports_all_formats": true
       },
       "provenance": {
         "repo": "ferg-cod3s/codeflow",
-        "path": "codeflow-agents/generalist/thoughts-locator.md",
+        "path": "codeflow-agents/generalist/research-locator.md",
         "sha": "d7e17c9",
         "license": "MIT",
         "attribution": "Codeflow Team"

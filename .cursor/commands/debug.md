@@ -411,7 +411,7 @@ For complex issues requiring multi-domain investigation:
 
 - **codebase-locator**: Identify all components related to the issue
 - **codebase-analyzer**: Understand implementation details of affected code
-- **thoughts-analyzer**: Review historical context and similar past issues
+- **research-analyzer**: Review historical context and similar past issues
 - **error-detective**: Search logs and codebases for error patterns
 - **codebase-pattern-finder**: Identify similar patterns and known issues
 
@@ -441,7 +441,7 @@ For complex issues requiring multi-domain investigation:
 #### Phase 5: Documentation & Knowledge Transfer (Parallel)
 
 - **content-writer**: Document issue resolution and debugging insights
-- **thoughts-analyzer**: Update knowledge base with debugging learnings
+- **research-analyzer**: Update knowledge base with debugging learnings
 - **incident-responder**: Update incident response procedures if applicable
 
 ### Debugging Orchestration Best Practices

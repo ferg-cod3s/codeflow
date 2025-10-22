@@ -300,7 +300,7 @@ For complex refactoring requiring coordinated expertise:
 
 #### Phase 4: Documentation & Knowledge Transfer (Parallel)
 
-- **thoughts-analyzer**: Update technical documentation
+- **research-analyzer**: Update technical documentation
 - **documentation-specialist**: Create refactoring summary and rationale
 
 ### Refactoring Orchestration Best Practices

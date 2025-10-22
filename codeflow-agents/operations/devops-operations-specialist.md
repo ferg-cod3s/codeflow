@@ -38,6 +38,8 @@ permission:
   str_replace_editor: allow
   bash: allow
   computer_use: allow
+  edit: allow
+  webfetch: allow
 output_format: AGENT_OUTPUT_V1
 requires_structured_output: true
 validation_rules:

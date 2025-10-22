@@ -310,7 +310,10 @@ export async function parseAgentFile(
     const normalizedFrontmatter =
       format === 'opencode' ? normalizePermissionFormat(frontmatter) : frontmatter;
 
-    const agent: Agent = {
+    // Check if this is a command by mode field
+    const isCommand = normalizedFrontmatter.mode === 'command';
+
+    const entity: Agent | Command = {
       name: basename(filePath, '.md'),
       format,
       frontmatter: normalizedFrontmatter,
@@ -319,12 +322,12 @@ export async function parseAgentFile(
     };
 
     // Cache successful parse
-    await parseCache.set(cacheKey, agent);
+    await parseCache.set(cacheKey, entity);
 
     const parseTime = performance.now() - parseStart;
     globalPerformanceMonitor.updateMetrics({ agentParseTime: parseTime });
 
-    return agent;
+    return entity;
   } catch (error: any) {
     // For malformed YAML, try to parse what we can using fallback parsing
     try {
@@ -337,7 +340,10 @@ export async function parseAgentFile(
           throw new Error('Agent must have a description field');
         }
 
-        const agent: Agent = {
+        // Check if this is a command in fallback parsing too
+        const isCommand = frontmatter.mode === 'command';
+
+        const entity: Agent | Command = {
           name: frontmatter.name || basename(filePath, '.md'),
           format,
           frontmatter: frontmatter as any,
@@ -345,7 +351,7 @@ export async function parseAgentFile(
           filePath,
         };
 
-        return agent;
+        return entity;
       }
     } catch {
       // Fallback also failed, cache the error
@@ -422,12 +428,12 @@ function parseWithFallback(content: string): {
 export async function parseAgentsFromDirectory(
   directory: string,
   format: 'base' | 'claude-code' | 'opencode' | 'cursor' | 'cursor' | 'auto'
-): Promise<{ agents: Agent[]; errors: ParseError[] }> {
+): Promise<{ agents: (Agent | Command)[]; errors: ParseError[] }> {
   const { readdir } = await import('node:fs/promises');
   const { join } = await import('node:path');
   const { existsSync } = await import('node:fs');
 
-  const agents: Agent[] = [];
+  const agents: (Agent | Command)[] = [];
   const errors: ParseError[] = [];
 
   if (!existsSync(directory)) {
@@ -463,8 +469,30 @@ export async function parseAgentsFromDirectory(
             const content = await globalFileReader.readFile(itemPath);
             actualFormat = detectFormatFromContent(content);
           }
-          const agent = await parseAgentFile(itemPath, actualFormat);
-          agents.push(agent);
+
+          // Check if this is likely a command file
+          const content = await globalFileReader.readFile(itemPath);
+          const { frontmatter } = parseFrontmatter(content);
+          const isLikelyCommand =
+            // Check if it's in a command directory
+            itemPath.includes('/command/') ||
+            // Check for command-specific fields
+            frontmatter.inputs ||
+            frontmatter.outputs ||
+            frontmatter.cache_strategy ||
+            frontmatter.success_signals ||
+            frontmatter.failure_modes ||
+            frontmatter.command_schema_version ||
+            frontmatter.mode === 'command';
+
+          let entity: Agent | Command;
+          if (isLikelyCommand && (actualFormat === 'base' || actualFormat === 'opencode')) {
+            entity = await parseCommandFile(itemPath, actualFormat);
+          } else {
+            entity = await parseAgentFile(itemPath, actualFormat);
+          }
+
+          agents.push(entity);
         } catch (error: any) {
           errors.push({
             message: error.message,

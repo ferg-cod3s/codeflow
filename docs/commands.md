@@ -27,17 +27,17 @@ Example:
 
 **Example**:
 ```
-/research thoughts/tickets/eng-123.md - find all authentication code and analyze the current OAuth implementation
+/research research/tickets/eng-123.md - find all authentication code and analyze the current OAuth implementation
 ```
 
 **Process**:
 1. Reads ticket and mentioned files
 2. Spawns codebase-locator agents for discovery
 3. Spawns analyzer agents for deep dives
-4. Searches thoughts/ for historical context
+4. Searches research/ for historical context
 5. Synthesizes findings into research document
 
-**Output**: `thoughts/research/YYYY-MM-DD_topic.md`
+**Output**: `research/research/YYYY-MM-DD_topic.md`
 
 ### plan command (`/plan`)
 
@@ -47,7 +47,7 @@ Example:
 
 **Example**:
 ```
-/plan thoughts/tickets/eng-123.md thoughts/research/2025-01-15_oauth-research.md
+/plan research/tickets/eng-123.md research/research/2025-01-15_oauth-research.md
 ```
 
 **Process**:
@@ -57,7 +57,7 @@ Example:
 4. Creates phased implementation plan
 5. Defines success criteria
 
-**Output**: `thoughts/plans/descriptive-name.md`
+**Output**: `research/plans/descriptive-name.md`
 
 ### execute command (`/execute`)
 
@@ -67,7 +67,7 @@ Example:
 
 **Example**:
 ```
-/execute thoughts/plans/oauth-implementation.md
+/execute research/plans/oauth-implementation.md
 ```
 
 **Process**:
@@ -107,7 +107,7 @@ Example:
 
 **Example**:
 ```
-/review thoughts/plans/oauth-implementation.md
+/review research/plans/oauth-implementation.md
 ```
 
 **Process**:
@@ -117,7 +117,7 @@ Example:
 4. Documents findings
 5. Provides recommendations
 
-**Output**: `thoughts/reviews/YYYY-MM-DD_review.md`
+**Output**: `research/reviews/YYYY-MM-DD_review.md`
 
 ## Command Structure
 
@@ -226,7 +226,7 @@ Description of what will be produced.
 3. **Spawn research tasks**:
    - Use **codebase-locator** to find relevant files
    - Use **codebase-analyzer** to understand implementation
-   - Use **thoughts-locator** to find documentation
+   - Use **research-locator** to find documentation
 ```
 
 ## Command Invocation
@@ -239,7 +239,7 @@ Commands are invoked with a slash prefix:
 ```
 
 ### Arguments
-- File paths: `thoughts/tickets/eng-123.md`
+- File paths: `research/tickets/eng-123.md`
 - Instructions: Text after dash (`-`)
 - Multiple files: Space-separated
 
@@ -316,4 +316,4 @@ Potential additions:
 - [Agents](./agents.md)
 - [Workflow](./workflow.md)
 - [Usage Guide](./usage.md)
-- [Thoughts Directory](./thoughts.md)
+- [Thoughts Directory](./research.md)

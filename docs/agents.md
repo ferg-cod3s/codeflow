@@ -52,8 +52,8 @@ Agents are specialized AI assistants that perform focused tasks within the Agent
 
 ### Thoughts Agents
 
-#### thoughts-locator
-**Purpose**: Discover relevant documents in thoughts/ directory.
+#### research-locator
+**Purpose**: Discover relevant documents in research/ directory.
 
 **Capabilities**:
 - Searches documentation by topic
@@ -66,8 +66,8 @@ Agents are specialized AI assistants that perform focused tasks within the Agent
 - Discovering related work
 - Understanding decisions
 
-#### thoughts-analyzer
-**Purpose**: Extract insights from specific thought documents.
+#### research-analyzer
+**Purpose**: Extract insights from specific research documents.
 
 **Capabilities**:
 - Deep analysis of documents
@@ -104,11 +104,11 @@ Agents can run in parallel for efficiency:
 ```
 Phase 1: Discovery (parallel)
 - codebase-locator: Find relevant files
-- thoughts-locator: Find relevant docs
+- research-locator: Find relevant docs
 
 Phase 2: Analysis (parallel, after Phase 1)
 - codebase-analyzer: Analyze found code
-- thoughts-analyzer: Analyze found docs
+- research-analyzer: Analyze found docs
 ```
 
 ### Sequential Dependencies
@@ -149,7 +149,7 @@ Detailed prompt explaining:
 
 ### Research Command
 1. Spawns codebase-locator to find files
-2. Spawns thoughts-locator for documentation
+2. Spawns research-locator for documentation
 3. May spawn analyzers for deep dives
 4. Synthesizes all findings
 

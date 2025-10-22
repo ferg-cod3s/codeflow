@@ -145,11 +145,47 @@ main() {
         print_status "Skipping npm publish (use --publish or -p to publish)"
     fi
 
+    # Create GitHub release
+    print_status "Creating GitHub release..."
+    
+    # Generate release notes
+    RELEASE_NOTES="## CodeFlow CLI v$CURRENT_VERSION\n\n"
+    
+    # Get commits since last tag
+    LAST_TAG=$(git describe --tags --abbrev=0 HEAD~1 2>/dev/null || echo "")
+    
+    if [[ -n "$LAST_TAG" ]]; then
+        COMMITS=$(git log --pretty=format:"- %s (%h)" $LAST_TAG..HEAD)
+        RELEASE_NOTES="${RELEASE_NOTES}### Changes since $LAST_TAG\n\n$COMMITS\n"
+    else
+        COMMITS=$(git log --pretty=format:"- %s (%h)" -10)
+        RELEASE_NOTES="${RELEASE_NOTES}### Recent commits\n\n$COMMITS\n"
+    fi
+    
+    RELEASE_NOTES="${RELEASE_NOTES}\n### Installation\n\n\`\`\`bash\nnpm install -g @agentic-codeflow/cli\n\`\`\`\n\n### Quick Start\n\n\`\`\`bash\ncodeflow setup\n\`\`\`\n\n**Full Changelog**: https://github.com/ferg-cod3s/codeflow/compare/${LAST_TAG:-main}...v$CURRENT_VERSION"
+    
+    # Create release using gh CLI
+    if command -v gh &> /dev/null; then
+        echo -e "$RELEASE_NOTES" | gh release create "v$CURRENT_VERSION" \
+            --title "CodeFlow CLI v$CURRENT_VERSION" \
+            --draft=false \
+            --verify-tag \
+            -F -
+        
+        if [[ $? -eq 0 ]]; then
+            print_success "Created GitHub release v$CURRENT_VERSION"
+        else
+            print_warning "Failed to create GitHub release (you can create it manually at: https://github.com/ferg-cod3s/codeflow/releases/new?tag=v$CURRENT_VERSION)"
+        fi
+    else
+        print_warning "GitHub CLI not found. Skipping automatic GitHub release."
+        print_status "Install GitHub CLI with: brew install gh (macOS) or see https://cli.github.com/"
+        print_status "Then create release manually at: https://github.com/ferg-cod3s/codeflow/releases/new?tag=v$CURRENT_VERSION"
+    fi
+
     print_success "Release process completed for version $CURRENT_VERSION"
-    print_status "Next steps:"
-    echo "  - Create GitHub release at: https://github.com/ferg-cod3s/codeflow/releases/new?tag=v$CURRENT_VERSION"
     if [[ "$publish_flag" != "--publish" ]]; then
-        echo "  - Publish to npm with: bun publish"
+        print_status "To publish to npm: bun publish"
     fi
 }
 

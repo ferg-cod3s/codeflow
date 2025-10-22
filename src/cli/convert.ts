@@ -1,9 +1,13 @@
 import { join } from 'node:path';
 import { existsSync } from 'node:fs';
 import { mkdir } from 'node:fs/promises';
-import { parseAgentsFromDirectory, serializeAgent } from '../conversion/agent-parser';
+import { parseAgentsFromDirectory, serializeAgent, Agent } from '../conversion/agent-parser';
 import { FormatConverter } from '../conversion/format-converter';
-import CLIErrorHandler from "./error-handler.js";
+import {
+  applyOpenCodePermissionsToDirectory,
+  DEFAULT_OPENCODE_PERMISSIONS,
+} from '../security/opencode-permissions';
+import CLIErrorHandler from './error-handler.js';
 
 export async function convert(source: string, target: string, format: 'claude-code' | 'opencode') {
   // Validate arguments
@@ -28,33 +32,32 @@ export async function convert(source: string, target: string, format: 'claude-co
     const { agents, errors: parseErrors } = await parseAgentsFromDirectory(source, 'base');
 
     if (parseErrors.length > 0) {
-      CLIErrorHandler.displayWarning(
-        `Failed to parse some agents from ${source}`,
-        [
-          'Check agent file formats and syntax',
-          'Run with --verbose for detailed error information'
-        ]
-      );
+      CLIErrorHandler.displayWarning(`Failed to parse some agents from ${source}`, [
+        'Check agent file formats and syntax',
+        'Run with --verbose for detailed error information',
+      ]);
     }
 
     if (agents.length === 0) {
-      CLIErrorHandler.displayWarning(
-        'No agents found to convert',
-        [
-          'Check that the source directory contains valid agent files',
-          'Verify file extensions (.md, .yaml, .json)'
-        ]
-      );
+      CLIErrorHandler.displayWarning('No agents found to convert', [
+        'Check that the source directory contains valid agent files',
+        'Verify file extensions (.md, .yaml, .json)',
+      ]);
       return;
     }
 
     CLIErrorHandler.displayProgress(`Found ${agents.length} agents to convert`);
 
-    // Convert agents
+    // Convert agents (filter out commands)
     const converter = new FormatConverter();
-    const convertedAgents = converter.convertBatch(agents, format);
+    const agentOnly = agents.filter(
+      (item): item is Agent => 'mode' in item.frontmatter && item.frontmatter.mode !== 'command'
+    );
+    const convertedAgents = converter.convertBatch(agentOnly, format);
 
-    CLIErrorHandler.displayProgress(`Converted ${convertedAgents.length} agents to ${format} format`);
+    CLIErrorHandler.displayProgress(
+      `Converted ${convertedAgents.length} agents to ${format} format`
+    );
 
     // Create target directory if it doesn't exist
     if (!existsSync(target)) {
@@ -88,34 +91,50 @@ export async function convert(source: string, target: string, format: 'claude-co
               suggestions: [
                 'Verify write permissions for target directory',
                 'Check available disk space',
-                'Ensure target directory exists'
-              ]
+                'Ensure target directory exists',
+              ],
             }
           )
         );
       }
     }
 
+    // Apply OpenCode permissions if converting to OpenCode format
+    if (format === 'opencode' && writeCount > 0) {
+      try {
+        CLIErrorHandler.displayProgress(`Applying OpenCode permissions to ${target}`);
+        await applyOpenCodePermissionsToDirectory(target, DEFAULT_OPENCODE_PERMISSIONS);
+        CLIErrorHandler.displaySuccess('Applied OpenCode permissions');
+      } catch (error: any) {
+        CLIErrorHandler.displayWarning(`Failed to apply OpenCode permissions: ${error.message}`, [
+          'Check file system permissions',
+          'Verify OpenCode security configuration',
+          'Files were converted but permissions may not be optimal',
+        ]);
+      }
+    }
+
     CLIErrorHandler.displaySuccess(
       `Successfully converted ${writeCount} agents`,
-      writeErrors > 0 ? [`${writeErrors} agents failed to write - check error details above`] : undefined
+      writeErrors > 0
+        ? [`${writeErrors} agents failed to write - check error details above`]
+        : undefined
     );
 
     if (writeErrors > 0) {
-      CLIErrorHandler.displayWarning(
-        `${writeErrors} agents failed to write`,
-        [
-          'Check the error details above for specific failures',
-          'Verify target directory permissions and disk space'
-        ]
-      );
+      CLIErrorHandler.displayWarning(`${writeErrors} agents failed to write`, [
+        'Check the error details above for specific failures',
+        'Verify target directory permissions and disk space',
+      ]);
     }
 
     console.log(`\n📋 Conversion Summary:`);
     console.log(`  Source: ${source}`);
     console.log(`  Target: ${target} (${format})`);
     console.log(`  Agents: ${agents.length} found, ${convertedAgents.length} converted`);
-
+    if (format === 'opencode') {
+      console.log(`  Permissions: OpenCode runtime permissions applied`);
+    }
   } catch (error) {
     CLIErrorHandler.handleCommonError(error, 'convert');
   }
