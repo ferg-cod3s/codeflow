@@ -19,6 +19,11 @@ This directory contains comprehensive documentation for the Codeflow project. Th
 ## Platform Integration
 
 - **Cross-Repository Setup**: `./CROSS_REPO_SETUP.md` - Use codeflow from any project
+- **Platform Best Practices**:
+  - `./OPENCODE_BEST_PRACTICES.md` - OpenCode command development
+  - `./OPENCODE_CODEFLOW_BEST_PRACTICES.md` - OpenCode for CI/CD workflows
+  - `./CLAUDE_CODE_BEST_PRACTICES.md` - Claude Code slash commands
+  - `./CURSOR_BEST_PRACTICES.md` - Cursor commands and rules
 
 ## Development & Operations
 

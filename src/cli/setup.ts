@@ -6,6 +6,7 @@ import {
   serializeAgent,
   parseCommandFile,
   serializeCommand,
+  Agent,
 } from '../conversion/agent-parser.ts';
 import { FormatConverter } from '../conversion/format-converter.ts';
 import { CommandConverter } from '../conversion/command-converter.ts';
@@ -227,8 +228,9 @@ export async function setup(
 
     // Create or update README (skip if this is the main codeflow project)
     const readmePath = join(targetPath, 'README.md');
-    const isMainProject = targetPath === process.cwd() && existsSync(join(targetPath, 'package.json'));
-    
+    const isMainProject =
+      targetPath === process.cwd() && existsSync(join(targetPath, 'package.json'));
+
     if (!isMainProject) {
       const typeDescription = projectTypes.length > 1 ? 'multi-platform' : projectTypes[0];
       let readmeContent = '';
@@ -343,7 +345,12 @@ export async function copyAgentsWithConversion(
         if (errors.length > 0) {
           console.error(`Parse errors in ${sourceDir}:`, errors);
         }
-        for (const agent of agents) {
+        for (const item of agents) {
+          // Skip commands, only process agents
+          if ('mode' in item.frontmatter && item.frontmatter.mode === 'command') {
+            continue;
+          }
+          const agent = item as Agent;
           try {
             const convertedAgent = converter.convert(agent, targetFormat);
             const serialized = serializeAgent(convertedAgent);

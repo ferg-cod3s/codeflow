@@ -24,6 +24,26 @@ codeflow watch start
 codeflow research "analyze authentication system"
 ```
 
+## Publishing
+
+For maintainers, publishing is streamlined:
+
+```bash
+# Patch release with automatic GitHub release
+npm run release:publish:patch
+
+# Minor release
+npm run release:publish:minor
+
+# Major release
+npm run release:publish:major
+
+# Or use the script directly
+./scripts/release.sh --bump-patch --publish
+```
+
+See [PUBLISHING.md](./PUBLISHING.md) for detailed publishing guide.
+
 ## Platform Support
 
 **Claude Code (v2.x.x)**: Native integration with YAML frontmatter format
@@ -40,18 +60,21 @@ See [COMPLIANCE.md](./COMPLIANCE.md) for detailed format specifications and migr
 Claude Code provides comprehensive AI-powered coding assistance with built-in tools and capabilities:
 
 #### Core Features
+
 - **File Analysis**: Automatically reads and analyzes your project files as needed
 - **Code Editing**: Makes changes with your approval - always asks permission before modifying files
 - **Built-in Documentation**: Claude has access to its own documentation and can answer questions about features
 - **Text Editor Tool**: Advanced file manipulation with proper error handling and validation
 
 #### Best Practices
+
 - **Be Specific**: Instead of "fix the bug", try "fix the login bug where users see a blank screen after entering wrong credentials"
 - **Step-by-Step**: Break complex tasks into clear steps
 - **Let Claude Explore**: Use commands like "analyze the database schema" before making changes
 - **Use Shortcuts**: Press `?` for keyboard shortcuts, Tab for completion, ↑ for history, `/` for slash commands
 
 #### File Types
+
 - **Commands**: YAML frontmatter format in `.claude/commands/`
 - **Agents**: YAML format in `.claude/agents/` with name, description, tools, and model configuration
 
@@ -60,21 +83,25 @@ Claude Code provides comprehensive AI-powered coding assistance with built-in to
 OpenCode provides AI coding assistance with distinct modes and workflow capabilities:
 
 #### Built-in Modes
+
 - **Build Mode**: Default mode for making code changes and implementing features
 - **Plan Mode**: Disables changes and instead suggests implementation plans (switch with Tab key)
 
 #### Core Features
+
 - **Interactive Planning**: Use Plan mode to create detailed implementation plans before building
 - **Image Analysis**: Can scan and analyze images you provide for design references
 - **Undo/Redo**: Use `/undo` and `/redo` commands to revert or reapply changes
 - **File References**: Use `@filename` syntax to reference specific files in your requests
 
 #### Workflow Examples
+
 1. **Feature Development**: Switch to Plan mode → Describe feature → Iterate on plan → Switch back to Build mode → Implement
 2. **Code Analysis**: Ask specific questions like "How is authentication handled in @packages/functions/src/api/index.ts"
 3. **Direct Changes**: For straightforward modifications, ask directly in Build mode with clear context
 
 #### File Types
+
 - **Commands**: Enhanced YAML configuration in `.opencode/command/`
 - **Agents**: YAML format in `.opencode/agent/` with mode, temperature, and allowed_directories
 - **Rules**: Create `AGENTS.md` file (similar to `CLAUDE.md`) for custom project instructions using `/init` command
@@ -84,11 +111,13 @@ OpenCode provides AI coding assistance with distinct modes and workflow capabili
 Cursor provides AI coding assistance with multiple agent modes and customization options:
 
 #### Built-in Agent Modes
+
 - **Agent**: Default mode with all tools enabled for complex coding tasks
 - **Ask**: Read-only mode with search tools only
 - **Plan**: Creates detailed plans before execution with all tools enabled
 
 #### Custom Modes (Beta)
+
 You can create custom modes through Cursor Settings UI:
 
 1. **Enable**: Cursor Settings → Chat → Custom Modes
@@ -101,6 +130,7 @@ You can create custom modes through Cursor Settings UI:
    - **Refactor Mode**: Edit & Reapply tools + "Improve structure without new functionality"
 
 #### File Types
+
 - **Commands**: Plain Markdown (.md) files in `.cursor/commands/`
 - **Custom Modes**: Configured through Cursor Settings UI (not file-based)
 - **Switching**: Use mode picker dropdown in Agent or press `Cmd+.` for quick switching

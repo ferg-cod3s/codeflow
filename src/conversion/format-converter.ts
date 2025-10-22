@@ -29,12 +29,12 @@ export class FormatConverter {
     if (baseAgent.tools && typeof baseAgent.tools === 'object') {
       // Convert tools object to comma-separated string
       const enabledTools = Object.entries(baseAgent.tools)
-        .filter(([, enabled]) => enabled)
+        .filter(([, enabled]) => enabled === true)
         .map(([tool]) => tool);
       toolsString = enabledTools.length > 0 ? enabledTools.join(', ') : undefined;
-    } else if ((baseAgent as any).permission && typeof (baseAgent as any).permission === 'object') {
+    } else if (baseAgent.permission && typeof baseAgent.permission === 'object') {
       // Convert permission object to tools string
-      const permissions = (baseAgent as any).permission;
+      const permissions = baseAgent.permission as Record<string, any>;
       const allowedTools = Object.entries(permissions)
         .filter(([, value]) => value === 'allow')
         .map(([tool]) => tool);
@@ -54,6 +54,9 @@ export class FormatConverter {
       ...(toolsString && { tools: toolsString }),
       ...(model && { model }),
     };
+
+    console.log(`DEBUG: toolsString = "${toolsString}", model = "${model}"`);
+    console.log('DEBUG: Final frontmatter:', JSON.stringify(claudeCodeFrontmatter, null, 2));
 
     // Explicitly strips: mode, temperature, capabilities, permission, tags, category, etc.
 
@@ -104,11 +107,13 @@ export class FormatConverter {
         );
       }
     } else {
-      // Add default permissions if none are present
+      // Add default permissions if none are present - following security best practices
       openCodeFrontmatter.permission = {
-        edit: 'deny',
-        bash: 'deny',
-        webfetch: 'allow',
+        edit: 'deny', // Require explicit permission for file editing
+        bash: 'deny', // Require explicit permission for command execution
+        webfetch: 'allow', // Generally safe to allow web fetching
+        read: 'allow', // Allow reading files by default
+        write: 'deny', // Require explicit permission for writing
       };
     }
 
@@ -241,15 +246,30 @@ export class FormatConverter {
       return agent;
     }
 
+    // Check if this is a command by looking at the frontmatter mode
+    const isCommand = (agent.frontmatter as any).mode === 'command';
+
     switch (agent.format) {
       case 'base':
         switch (targetFormat) {
           case 'cursor':
-            return this.baseToClaudeCode(agent); // Cursor uses same format as Claude Code
+            // Cursor uses same format as Claude Code, but commands need special handling
+            if (isCommand) {
+              const convertedCmd = this.baseCommandToOpenCode(agent as Command);
+              return { ...convertedCmd, format: 'claude-code' } as Agent;
+            }
+            return this.baseToClaudeCode(agent);
           case 'claude-code':
+            // Commands convert to OpenCode format first, then adapt to Claude Code
+            if (isCommand) {
+              const convertedCmd = this.baseCommandToOpenCode(agent as Command);
+              return { ...convertedCmd, format: 'claude-code' } as Agent;
+            }
             return this.baseToClaudeCode(agent);
           case 'opencode':
-            return this.baseToOpenCode(agent);
+            return isCommand
+              ? (this.baseCommandToOpenCode(agent as Command) as Agent)
+              : this.baseToOpenCode(agent);
         }
         break;
       case 'claude-code':
@@ -540,6 +560,7 @@ export class FormatConverter {
 
   /**
    * Convert Base command format to OpenCode command format
+   * Ensures compliance with OPENCODE_BEST_PRACTICES.md
    */
   baseCommandToOpenCode(command: Command): Command {
     if (command.format !== 'base') {
@@ -553,12 +574,16 @@ export class FormatConverter {
       name: baseCommand.name,
       description: baseCommand.description,
       mode: 'command',
-      version: baseCommand.version,
+      version: baseCommand.version || '1.0.0',
       inputs: baseCommand.inputs,
       outputs: baseCommand.outputs,
-      cache_strategy: baseCommand.cache_strategy,
-      success_signals: baseCommand.success_signals,
-      failure_modes: baseCommand.failure_modes,
+      cache_strategy: baseCommand.cache_strategy || {
+        type: 'content_based',
+        ttl: 600,
+        max_size: 100,
+      },
+      success_signals: baseCommand.success_signals || ['Command completed successfully'],
+      failure_modes: baseCommand.failure_modes || ['Command execution failed'],
       // Preserve legacy fields
       ...(baseCommand.usage && { usage: baseCommand.usage }),
       ...(baseCommand.examples && { examples: baseCommand.examples }),
@@ -566,11 +591,171 @@ export class FormatConverter {
       ...(baseCommand.intended_followups && { intended_followups: baseCommand.intended_followups }),
     };
 
+    // Ensure command body includes $ARGUMENTS placeholder for best practices
+    let commandBody = command.content || '';
+
+    // CRITICAL: All commands MUST include $ARGUMENTS placeholder
+    if (!commandBody.includes('$ARGUMENTS')) {
+      // If command has no content, create basic structure
+      if (!commandBody.trim()) {
+        commandBody = '# Command execution\n\n$ARGUMENTS ';
+      } else {
+        // Add $ARGUMENTS at the end if not present, with proper spacing
+        commandBody += '\n\n$ARGUMENTS ';
+      }
+    }
+
+    // Add security validation and error handling
+    commandBody = this.addSecurityAndErrorHandling(commandBody);
+
     return {
       ...command,
       format: 'opencode',
       frontmatter: openCodeFrontmatter,
+      content: commandBody,
     };
+  }
+
+  /**
+   * Add security validation and error handling to command content
+   * Ensures compliance with security best practices
+   */
+  private addSecurityAndErrorHandling(commandBody: string): string {
+    let enhancedBody = commandBody;
+
+    // Add error handling at the beginning if missing
+    if (!enhancedBody.includes('set -e') && !enhancedBody.includes('set -euo pipefail')) {
+      enhancedBody = 'set -euo pipefail\n\n' + enhancedBody;
+    }
+
+    // Add argument validation for dangerous operations
+    const dangerousPatterns = [
+      {
+        pattern: /\brm\s+-rf\s+\$ARGUMENTS\b/g,
+        replacement: 'echo "Error: Dangerous rm -rf with $ARGUMENTS not allowed"',
+      },
+      {
+        pattern: /\bsudo\s+/g,
+        replacement: 'echo "Error: sudo commands not allowed in automated execution"',
+      },
+      {
+        pattern: /\bchmod\s+777\b/g,
+        replacement: 'echo "Error: chmod 777 not allowed for security reasons"',
+      },
+    ];
+
+    for (const { pattern, replacement } of dangerousPatterns) {
+      enhancedBody = enhancedBody.replace(pattern, replacement);
+    }
+
+    // Add validation for shell command templates
+    enhancedBody = enhancedBody.replace(/!`([^`]*)`/g, (match, command) => {
+      // Add error handling to shell commands if not present
+      if (!command.includes('||') && !command.includes('&&')) {
+        return '!`' + command + ' || echo "Shell command failed: ' + command + '"`';
+      }
+      return match;
+    });
+
+    // Enhanced template substitution
+    enhancedBody = this.enhanceTemplateSubstitution(enhancedBody);
+
+    // Add recommended patterns if missing
+    enhancedBody = this.addRecommendedPatterns(enhancedBody);
+
+    return enhancedBody;
+  }
+
+  /**
+   * Enhanced template substitution for shell commands and file references
+   * Follows OPENCODE_BEST_PRACTICES.md template patterns
+   */
+  private enhanceTemplateSubstitution(commandBody: string): string {
+    let enhancedBody = commandBody;
+
+    // Handle shell command templates (!`command`)
+    enhancedBody = enhancedBody.replace(/!`([^`]*)`/g, (match, command) => {
+      // Ensure shell commands have proper error handling
+      if (!command.includes('||') && !command.includes('&&') && !command.includes('2>/dev/null')) {
+        return '!`' + command + ' 2>/dev/null || echo "Command failed: ' + command + '"`';
+      }
+      return match;
+    });
+
+    // Handle file references (@file or @path)
+    enhancedBody = enhancedBody.replace(/@([a-zA-Z0-9_\-./]+)/g, (match, filePath) => {
+      // Validate file path to prevent directory traversal
+      if (filePath.includes('..') || filePath.startsWith('/')) {
+        return '# Invalid file path: ' + filePath;
+      }
+      return match; // Keep the reference but add validation in execution
+    });
+
+    // Handle environment variable references (${VAR} or $VAR)
+    enhancedBody = enhancedBody.replace(/\$\{([^}]+)\}/g, (match, varName) => {
+      // Add validation for common environment variables
+      const safeVars = ['HOME', 'PWD', 'USER', 'PATH', 'DATE', 'TIME'];
+      if (safeVars.includes(varName.toUpperCase())) {
+        return match;
+      }
+      return '# Unsafe environment variable: ' + varName;
+    });
+
+    // Add date/time handling patterns
+    enhancedBody = this.addDateTimePatterns(enhancedBody);
+
+    return enhancedBody;
+  }
+
+  /**
+   * Add date/time handling patterns following best practices
+   */
+  private addDateTimePatterns(commandBody: string): string {
+    let enhancedBody = commandBody;
+
+    // Replace DATE and TIME placeholders with proper shell commands
+    if (enhancedBody.includes('DATE') || enhancedBody.includes('TIME')) {
+      if (!enhancedBody.includes('date') && !enhancedBody.includes('$(date')) {
+        enhancedBody = enhancedBody.replace(/\bDATE\b/g, '$(date -u +"%Y-%m-%d")');
+        enhancedBody = enhancedBody.replace(/\bTIME\b/g, '$(date -u +"%Y-%m-%dT%H:%M:%SZ")');
+      }
+    }
+
+    // Add timestamp generation for logging
+    if (enhancedBody.includes('log') || enhancedBody.includes('LOG')) {
+      if (!enhancedBody.includes('TIMESTAMP')) {
+        enhancedBody = enhancedBody.replace(
+          /\bTIMESTAMP\b/g,
+          '$(date -u +"%Y-%m-%dT%H:%M:%S.%3NZ")'
+        );
+      }
+    }
+
+    return enhancedBody;
+  }
+
+  /**
+   * Add recommended patterns for better functionality
+   */
+  private addRecommendedPatterns(commandBody: string): string {
+    let enhancedBody = commandBody;
+
+    // Add shell command example if missing
+    if (!enhancedBody.includes('!`') && !enhancedBody.includes('shell command')) {
+      enhancedBody += '\n\n## Example Usage\n\n!`echo "Processing arguments: $ARGUMENTS"`\n';
+    }
+
+    // Add file reference example if missing
+    if (!enhancedBody.includes('@') && !enhancedBody.includes('file reference')) {
+      enhancedBody += '\n## File References\n\nUse @filename to reference files in arguments\n';
+    }
+
+    // Add error handling example if missing
+    if (!enhancedBody.includes('error') && !enhancedBody.includes('try')) {
+      enhancedBody += '\n## Error Handling\n\nArguments are validated before processing\n';
+    }
+
+    return enhancedBody;
   }
 
   /**

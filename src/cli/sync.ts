@@ -1,7 +1,7 @@
 import { existsSync } from 'node:fs';
 import { readdir, copyFile, mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
-import { parseAgentsFromDirectory, serializeAgent } from '../conversion/agent-parser';
+import { parseAgentsFromDirectory, serializeAgent, Agent } from '../conversion/agent-parser';
 import { FormatConverter } from '../conversion/format-converter';
 import { CanonicalSyncer } from '../sync/canonical-syncer';
 import { homedir } from 'node:os';
@@ -183,9 +183,12 @@ export async function sync(projectPath?: string, options: SyncOptions = {}) {
         return;
       }
 
-      // Convert to OpenCode format
+      // Convert to OpenCode format (filter out commands)
       const converter = new FormatConverter();
-      const convertedAgents = converter.convertBatch(agents, 'opencode');
+      const agentOnly = agents.filter(
+        (item): item is Agent => 'mode' in item.frontmatter && item.frontmatter.mode !== 'command'
+      );
+      const convertedAgents = converter.convertBatch(agentOnly, 'opencode');
 
       // Write converted agents
       for (const agent of convertedAgents) {
