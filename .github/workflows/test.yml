@@ -2,9 +2,9 @@ name: Cross-Platform Tests
 
 on:
   push:
-    branches: [ master, main, develop ]
+    branches: [master, main, develop]
   pull_request:
-    branches: [ master, main, develop ]
+    branches: [master, main, develop]
   workflow_dispatch: # Allow manual trigger
 
 concurrency:
@@ -21,7 +21,7 @@ jobs:
         include:
           - os: ubuntu-latest
             platform: linux
-          - os: windows-latest  
+          - os: windows-latest
             platform: windows
           - os: macos-latest
             platform: macos
@@ -173,7 +173,7 @@ jobs:
           timeout 30s bun run mcp/codeflow-server.mjs &
           SERVER_PID=$!
           sleep 5
-          
+
           # Test that server is responsive (basic check)
           if ps -p $SERVER_PID > /dev/null; then
             echo "✅ MCP server started successfully"
@@ -211,10 +211,10 @@ jobs:
           # Test file creation, reading, and deletion
           mkdir -p test-workspace
           echo "test content" > test-workspace/test.txt
-          
+
           # Test CLI can handle workspace
           codeflow status test-workspace || echo "Expected: no .opencode directory"
-          
+
           # Clean up
           rm -rf test-workspace
 
@@ -240,40 +240,38 @@ jobs:
         run: |
           echo "## Cross-Platform Test Results" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          
+
           if [ "${{ needs.test.result }}" = "success" ]; then
             echo "✅ Core tests passed on all platforms" >> $GITHUB_STEP_SUMMARY
           else
             echo "❌ Core tests failed" >> $GITHUB_STEP_SUMMARY
           fi
-          
+
           if [ "${{ needs.test-coverage.result }}" = "success" ]; then
             echo "✅ Coverage tests completed" >> $GITHUB_STEP_SUMMARY
           else
             echo "⚠️ Coverage tests had issues" >> $GITHUB_STEP_SUMMARY
           fi
-          
+
           if [ "${{ needs.test-real-agents.result }}" = "success" ]; then
             echo "✅ Real agent validation passed" >> $GITHUB_STEP_SUMMARY
           else
             echo "❌ Real agent validation failed" >> $GITHUB_STEP_SUMMARY
           fi
-          
+
           if [ "${{ needs.test-mcp-integration.result }}" = "success" ]; then
             echo "✅ MCP server integration tests passed" >> $GITHUB_STEP_SUMMARY
           else
             echo "❌ MCP server integration tests failed" >> $GITHUB_STEP_SUMMARY
           fi
-          
+
           if [ "${{ needs.test-file-operations.result }}" = "success" ]; then
             echo "✅ File system operations tests passed" >> $GITHUB_STEP_SUMMARY
           else
             echo "❌ File system operations tests failed" >> $GITHUB_STEP_SUMMARY
           fi
-          
+
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Total test suites:** 5" >> $GITHUB_STEP_SUMMARY
           echo "**Platform coverage:** Linux, Windows, macOS" >> $GITHUB_STEP_SUMMARY
-          echo "**Test categories:** Unit, Integration, Cross-platform, Format conversion, Real agents" >> $GITHUB_STEP_SUMMARY      - job_name: Validate Agent Models
-        run: node scripts/validate-agent-models.js
-        working-directory: .
+          echo "**Test categories:** Unit, Integration, Cross-platform, Format conversion, Real agents" >> $GITHUB_STEP_SUMMARY
