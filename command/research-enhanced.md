@@ -206,7 +206,7 @@ name: research
 mode: command
 scope: codebase
 depth: deep
-model: anthropic/claude-sonnet-4
+model: opencode/grok-code
 temperature: 0.1
 ---
 Analyze the authentication system including user models, session handling, middleware, and security patterns.

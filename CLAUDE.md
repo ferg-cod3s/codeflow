@@ -16,12 +16,23 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Development Commands
 
-- **Type checking**: `npm run typecheck` or `bun run typecheck` - Runs TypeScript compiler without emitting files
+### Bun (Preferred Runtime)
+
+- **Type checking**: `bun run typecheck` - Runs TypeScript compiler without emitting files
 - **Installation**: `bun install && bun run install` - Installs dependencies and links the CLI globally
+
+### Node.js (Compatible Runtime)
+
+- **Type checking**: `npm run typecheck:node` - Runs TypeScript compiler with Node.js configuration
+- **Installation**: `npm install && npm run install:node` - Installs dependencies and links the CLI globally
+
+### Cross-Runtime Compatibility
+
+All scripts have Node.js equivalents with `:node` suffix. The project is fully compatible with both Bun and Node.js runtimes, though Bun is preferred for performance and developer experience.
 
 ## Architecture Overview
 
-This is a **Codeflow Automation Enhancement CLI** built with **Bun** and **TypeScript** that manages agents and commands for AI-assisted development workflows.
+This is a **Codeflow Automation Enhancement CLI** built with **TypeScript** that manages agents and commands for AI-assisted development workflows. It supports both **Bun** (preferred) and **Node.js** runtimes for maximum compatibility.
 
 ### Core Structure
 

@@ -147,7 +147,7 @@ export class CommandConverter {
     const converted: CommandMetadata = {
       ...frontmatter,
       mode: 'command',
-      model: frontmatter.model || 'anthropic/claude-sonnet-4-20250514',
+      model: frontmatter.model || 'opencode/grok-code',
       version: frontmatter.version || '2.1.0-optimized',
       last_updated: frontmatter.last_updated || new Date().toISOString().split('T')[0],
       command_schema_version: frontmatter.command_schema_version || '1.0',
@@ -258,7 +258,7 @@ export class CommandConverter {
       name: frontmatter.name,
       description: frontmatter.description,
       mode: 'command',
-      model: 'anthropic/claude-sonnet-4-20250514',
+      model: 'opencode/grok-code',
       version: '2.1.0-optimized',
       last_updated: new Date().toISOString().split('T')[0],
       command_schema_version: '1.0',
@@ -323,9 +323,9 @@ export class CommandConverter {
 
     // Convert OpenCode model names to Claude format
     const modelMap: Record<string, string> = {
-      'anthropic/claude-sonnet-4': 'claude-3-5-sonnet-20241022',
-      'anthropic/claude-3-5-sonnet': 'claude-3-5-sonnet-20241022',
-      'opencode/grok-code-fast': 'claude-3-5-sonnet-20241022',
+      'opencode/grok-code': 'claude-3-5-sonnet-20241022',
+      'opencode/code-supernova': 'claude-3-5-sonnet-20241022',
+      'opencode/grok-code-fast-1': 'claude-3-5-sonnet-20241022',
     };
 
     return modelMap[model] || 'claude-3-5-sonnet-20241022';
@@ -339,8 +339,8 @@ export class CommandConverter {
 
     // Convert Claude model names to OpenCode format
     const modelMap: Record<string, string> = {
-      'claude-3-5-sonnet-20241022': 'anthropic/claude-sonnet-4',
-      'claude-3-5-sonnet': 'anthropic/claude-sonnet-4',
+      'claude-3-5-sonnet-20241022': 'opencode/grok-code',
+      'claude-3-5-sonnet': 'opencode/grok-code',
     };
 
     return modelMap[model] || undefined;

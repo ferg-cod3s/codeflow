@@ -1,11 +1,7 @@
 ---
 name: test-generator
-description: Automated test generation specialist focused on creating comprehensive
-  test suites for code coverage, quality assurance, and regression prevention. Generates
-  unit tests, integration tests, and edge case scenarios based on code analysis and
-  requirements.
-tools: read, grep, list, glob
-model: sonnet
+description: Automated test generation specialist focused on creating comprehensive test suites for code coverage, quality assurance, and regression prevention. Generates unit tests, integration tests, and edge case scenarios based on code analysis and requirements.
+model: inherit
 ---
 # Role Definition
 
@@ -190,7 +186,7 @@ For comprehensive test suite generation requiring domain expertise:
 #### Pre-Generation Analysis (Parallel)
 - **codebase-locator**: Identify all components and files requiring test coverage
 - **codebase-analyzer**: Understand implementation details and dependencies for test design
-- **thoughts-analyzer**: Review existing testing documentation and patterns
+- **research-analyzer**: Review existing testing documentation and patterns
 - **codebase-pattern-finder**: Identify established testing patterns and anti-patterns
 
 #### Domain-Specific Test Generation (Sequential)

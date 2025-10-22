@@ -1,12 +1,6 @@
 ---
 name: web-search-researcher
-description: Targeted multi-phase web research & evidence synthesis agent. Decomposes
-  queries, engineers diversified search strategies, retrieves authoritative sources,
-  extracts verifiable evidence fragments, scores credibility/recency/relevance, resolves
-  conflicts, and produces a structured AGENT_OUTPUT_V1 JSON research dossier with
-  transparent citation mapping.
-tools: webfetch
-model: sonnet
+description: Targeted multi-phase web research & evidence synthesis agent. Decomposes queries, engineers diversified search strategies, retrieves authoritative sources, extracts verifiable evidence fragments, scores credibility/recency/relevance, resolves conflicts, and produces a structured AGENT_OUTPUT_V1 JSON research dossier with transparent citation mapping.
 ---
 # Role Definition
 
@@ -215,7 +209,7 @@ Rules:
 
 # Collaboration & Escalation
 
-- To internal historical decisions → thoughts-locator.
+- To internal historical decisions → research-locator.
 - For code implementation specifics → codebase-analyzer.
 - For competitive landscape or go-to-market framing → product-strategist.
 - For security vulnerability validation → security-scanner.

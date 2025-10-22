@@ -35,6 +35,7 @@ permission:
   bash: ask
   webfetch: allow
 ---
+
 set -euo pipefail
 
 # Deep Research & Analysis Command
@@ -142,7 +143,7 @@ name: research
 mode: command
 scope: codebase
 depth: deep
-model: anthropic/claude-sonnet-4
+model: opencode/grok-code
 temperature: 0.1
 ---
 Analyze the authentication system including user models, session handling, middleware, and security patterns.
@@ -152,7 +153,7 @@ Analyze the authentication system including user models, session handling, middl
 
 - `scope`: `"both"` (codebase + thoughts)
 - `depth`: `"medium"`
-- `model`: `"anthropic/claude-sonnet-4"`
+- `model`: `"opencode/grok-code"`
 - `temperature`: `0.1`
 
 ### MCP-Compatible Clients (Cursor, VS Code, etc.)
@@ -253,7 +254,7 @@ For complex research requiring deep analysis across multiple domains:
 
 _Ready to dive deep? Ask me anything about your codebase and I'll provide comprehensive insights to guide your next steps._
 
-$ARGUMENTS 
+$ARGUMENTS
 
 ## Example Usage
 

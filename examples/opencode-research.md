@@ -3,7 +3,7 @@ name: research
 mode: command
 scope: both
 depth: deep
-model: anthropic/claude-sonnet-4
+model: opencode/grok-code
 temperature: 0.1
 inputs:
   topic:

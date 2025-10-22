@@ -1,11 +1,7 @@
 ---
 name: codebase-locator
-description: Universal File & Directory Location Specialist - produces a structured,
-  comprehensive, classification-oriented map of all files and directories relevant
-  to a requested feature/topic WITHOUT reading file contents. Use to discover WHERE
-  code, tests, configs, docs, and types live before any deeper analysis.
-tools: grep, glob, list
-model: sonnet
+description: Universal File & Directory Location Specialist - produces a structured, comprehensive, classification-oriented map of all files and directories relevant to a requested feature/topic WITHOUT reading file contents. Use to discover WHERE code, tests, configs, docs, and types live before any deeper analysis.
+model: inherit
 ---
 # Role Definition
 
@@ -154,7 +150,7 @@ Rules:
 
 - Escalate to codebase-analyzer when user requests implementation details.
 - Suggest codebase-pattern-finder when broader architectural repetition is sought.
-- Suggest thoughts-locator if user asks for existing docs about discovered modules.
+- Suggest research-locator if user asks for existing docs about discovered modules.
 - Provide explicit next-step mapping in follow_up_recommended.
 
 # Quality Standards

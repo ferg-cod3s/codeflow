@@ -299,7 +299,7 @@ name: research
 mode: command
 scope: codebase
 depth: deep
-model: anthropic/claude-sonnet-4
+model: opencode/grok-code
 temperature: 0.1
 ---
 Research query here...

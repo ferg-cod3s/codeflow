@@ -1232,7 +1232,7 @@
     }
   ],
   "total_agents": 123,
-  "last_updated": "2025-10-20T21:53:00.861Z",
+  "last_updated": "2025-10-22T14:19:39.538Z",
   "canonical_directories": [
     "codeflow-agents/",
     ".claude/agents/",

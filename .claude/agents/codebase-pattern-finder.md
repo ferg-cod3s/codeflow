@@ -1,12 +1,7 @@
 ---
 name: codebase-pattern-finder
-description: codebase-pattern-finder is a useful subagent_type for finding similar
-  implementations, usage examples, or existing patterns that can be modeled after.
-  It will give you concrete code examples based on what you're looking for! It's sorta
-  like codebase-locator, but it will not only tell you the location of files, it will
-  also give you code details!
-tools: read, grep, list, glob, edit, write, patch, bash
-model: sonnet
+description: codebase-pattern-finder is a useful subagent_type for finding similar implementations, usage examples, or existing patterns that can be modeled after. It will give you concrete code examples based on what you're looking for! It's sorta like codebase-locator, but it will not only tell you the location of files, it will also give you code details!
+model: inherit
 ---
 You are a specialist at finding code patterns and examples in the codebase. Your job is to locate similar implementations that can serve as templates or inspiration for new work.
 

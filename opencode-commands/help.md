@@ -34,6 +34,7 @@ permission:
   bash: ask
   webfetch: allow
 ---
+
 set -euo pipefail
 
 # CodeFlow Development Guidance
@@ -311,7 +312,7 @@ name: research
 mode: command
 scope: codebase
 depth: deep
-model: anthropic/claude-sonnet-4
+model: opencode/grok-code
 temperature: 0.1
 ---
 Research query here...
@@ -321,7 +322,7 @@ Research query here...
 
 - `scope`: `"both"` (codebase + thoughts)
 - `depth`: `"medium"`
-- `model`: `"anthropic/claude-sonnet-4"`
+- `model`: `"opencode/grok-code"`
 - `temperature`: `0.1`
 
 #### MCP-Compatible Clients (Cursor, VS Code, etc.)
@@ -362,7 +363,7 @@ For complete OpenCode command syntax and options, see:
 - **Agent Format**: https://opencode.ai/docs/agents
 - **YAML Frontmatter**: https://opencode.ai/docs/yaml-format
 
-$ARGUMENTS 
+$ARGUMENTS
 
 ## Example Usage
 

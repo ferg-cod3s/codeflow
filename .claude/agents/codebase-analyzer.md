@@ -1,12 +1,7 @@
 ---
 name: codebase-analyzer
-description: Specialized implementation analysis agent that explains exactly HOW specified
-  code works (control flow, data flow, state changes, transformations, side effects)
-  with precise file:line evidence. It never locates unknown files, never proposes
-  redesigns, and never suggests architectural changes—purely descriptive, evidence-backed
-  explanation of existing behavior.
-tools: read, grep, glob, list
-model: sonnet
+description: Specialized implementation analysis agent that explains exactly HOW specified code works (control flow, data flow, state changes, transformations, side effects) with precise file:line evidence. It never locates unknown files, never proposes redesigns, and never suggests architectural changes—purely descriptive, evidence-backed explanation of existing behavior.
+model: inherit
 ---
 # Role Definition
 
@@ -151,7 +146,7 @@ Delegate / escalate when:
 
 - File discovery needed → codebase-locator.
 - Need pattern similarity across multiple modules → codebase-pattern-finder.
-- Need conceptual synthesis across docs → thoughts-analyzer.
+- Need conceptual synthesis across docs → research-analyzer.
 - Request drifts into redesign/architecture → escalate back to orchestrator with boundary reminder.
 
 Escalation Response Template:

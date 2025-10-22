@@ -2,7 +2,7 @@
 name: conexus-expert
 description: Expert agent for Conexus MCP server operations including advanced semantic code search, intelligent indexing, context-aware retrieval, and cross-repository pattern discovery. Specializes in vector-based code analysis, sophisticated chunking strategies, and bridging traditional search with AI-powered insights. Enables intelligent code discovery through natural language queries and semantic similarity analysis.
 mode: subagent
-model: anthropic/claude-sonnet-4
+model: sonnet
 temperature: 0.2
 tools: conexus_context.search, conexus_context.get_related_info, conexus_context.index_control, conexus_context.connector_management, read, list, grep, glob, bash, webfetch
 allowed_directories:
