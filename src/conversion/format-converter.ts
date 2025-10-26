@@ -1,4 +1,12 @@
-import { Agent, BaseAgent, ClaudeCodeAgent, OpenCodeAgent, Command, BaseCommand, OpenCodeCommand } from './agent-parser';
+import {
+  Agent,
+  BaseAgent,
+  ClaudeCodeAgent,
+  OpenCodeAgent,
+  Command,
+  BaseCommand,
+  OpenCodeCommand,
+} from './agent-parser';
 
 /**
  * Format conversion engine for agents
@@ -136,8 +144,11 @@ export class FormatConverter {
       : undefined;
 
     const baseFrontmatter: BaseAgent = {
-      ...claudeAgent,
-      tools,
+      name: claudeAgent.name,
+      description: claudeAgent.description,
+      ...(tools && { tools }),
+      // Note: model, temperature, mode are not preserved in Claude Code format
+      // so they should be undefined in the base format after conversion
     };
 
     return {
@@ -392,10 +403,10 @@ export class FormatConverter {
       'anthropic/claude-sonnet-4': 'sonnet',
       'anthropic/claude-opus-4': 'opus',
       'anthropic/claude-haiku-4': 'haiku',
-      'inherit': 'inherit',
-      'sonnet': 'sonnet',
-      'opus': 'opus',
-      'haiku': 'haiku',
+      inherit: 'inherit',
+      sonnet: 'sonnet',
+      opus: 'opus',
+      haiku: 'haiku',
     };
 
     // Check if model is already in valid format
@@ -420,10 +431,10 @@ export class FormatConverter {
   private convertModelForOpenCode(model: string): string {
     // Map Claude Code models to OpenCode format
     const modelMap: Record<string, string> = {
-      'sonnet': 'anthropic/claude-sonnet-4',
-      'opus': 'anthropic/claude-opus-4',
-      'haiku': 'anthropic/claude-haiku-4',
-      'inherit': 'anthropic/claude-sonnet-4', // Default to sonnet
+      sonnet: 'anthropic/claude-sonnet-4',
+      opus: 'anthropic/claude-opus-4',
+      haiku: 'anthropic/claude-haiku-4',
+      inherit: 'anthropic/claude-sonnet-4', // Default to sonnet
     };
 
     // If already in provider/model format, return as-is

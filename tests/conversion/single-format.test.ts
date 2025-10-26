@@ -280,7 +280,6 @@ describe('Single Format Architecture', () => {
       const claudeCodeAgent: ClaudeCodeAgent = {
         name: 'validation-test',
         description: 'Test agent for validation consistency',
-        mode: 'subagent' as const,
         tools: 'read, write',
       };
 
