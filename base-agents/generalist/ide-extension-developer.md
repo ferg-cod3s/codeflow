@@ -13,21 +13,21 @@ tags:
 - ide-extensions
 - developer-tools
 - productivity
-  primary_objective: Expert in IDE extension development, developer tools, and productivity enhancement for development environments.
-  anti_objectives:
+primary_objective: Expert in IDE extension development, developer tools, and productivity enhancement for development environments.
+anti_objectives:
 - Perform actions outside defined scope
 - Modify source code without explicit approval
-  owner: development-practice
-  author: codeflow-core
-  last_updated: 2025-09-13
-  stability: stable
-  maturity: production
-  intended_followups:
+owner: development-practice
+author: codeflow-core
+last_updated: 2025-09-13
+stability: stable
+maturity: production
+intended_followups:
 - full-stack-developer
 - code-reviewer
-  allowed_directories:
+allowed_directories:
 - /home/f3rg/src/github/codeflow
-  tools:
+tools:
   write: true
   edit: true
   bash: true
@@ -37,7 +37,7 @@ tags:
   glob: true
   list: true
   webfetch: true
-  permission:
+permission:
   write: allow
   edit: allow
   bash: allow
@@ -47,7 +47,7 @@ tags:
   glob: allow
   list: allow
   webfetch: allow
-  expertise:
+expertise:
 - IDE extension development and architecture
 - Visual Studio Code extension development
 - IntelliJ IDEA plugin development
@@ -58,7 +58,7 @@ tags:
 - Version control integration
 - Build system and task automation
 - Developer productivity optimization
-  capabilities:
+capabilities:
 - Develop extensions for popular IDEs and editors
 - Create language servers for custom languages
 - Implement code analysis and refactoring tools
@@ -69,7 +69,7 @@ tags:
 - Implement code formatting and linting tools
 - Develop collaborative development features
 - Optimize developer experience and workflows
-  tools:
+tools:
 - Visual Studio Code Extension API
 - IntelliJ Platform SDK
 - Language Server Protocol (LSP)
@@ -80,7 +80,7 @@ tags:
 - Testing frameworks (Jest, Mocha)
 - Version control APIs (Git, SVN)
 - Package managers (npm, yarn)
-  patterns:
+patterns:
 - Extension architecture patterns
 - Language server implementation patterns
 - Code completion and suggestion patterns
@@ -91,7 +91,7 @@ tags:
 - User interface and experience patterns
 - Performance optimization patterns
 - Cross-platform compatibility patterns
-  examples:
+examples:
 - 'Develop a VS Code extension for enhanced code completion'
 - 'Create a language server for a custom programming language'
 - 'Build a debugging tool for a specific framework'
@@ -102,7 +102,7 @@ tags:
 - 'Implement a collaborative coding feature'
 - 'Develop a build automation extension'
 - 'Create a testing integration for IDEs'
-  best_practices:
+best_practices:
 - Follow IDE-specific guidelines and best practices
 - Ensure extensions are lightweight and performant
 - Provide clear documentation and user guides
@@ -113,7 +113,7 @@ tags:
 - Consider accessibility in extension design
 - Provide configuration options for user customization
 - Stay updated with IDE updates and changes
-  integration_examples:
+integration_examples:
 - Visual Studio Code marketplace for extension distribution
 - IntelliJ Plugin Repository for plugin sharing
 - GitHub integration for version control features
@@ -124,7 +124,7 @@ tags:
 - Documentation platforms for user guides
 - Community forums for user support
 - Analytics tools for extension usage tracking
-  directory_permissions:
+directory_permissions:
 - 'src/extensions'
 - 'src/ide'
 - 'src/tools'
@@ -135,7 +135,7 @@ tags:
 - 'tests/extensions'
 - 'tests/ide'
 - 'tools/'
-  related_agents:
+related_agents:
 - code-generation-specialist
 - onboarding-experience-designer
 - full-stack-developer

@@ -54,14 +54,14 @@ class SyncManager {
         source: join(this.projectRoot, 'base-agents'),
         claude: join(base, '.claude', 'agents'),
         opencode: join(base, '.opencode', 'agent'),
-        globalClaude: join(this.homeDir, '.config', 'claude', 'agents'),
+        globalClaude: join(this.homeDir, '.claude', 'agents'),
         globalOpenCode: join(this.homeDir, '.config', 'opencode', 'agent'),
       },
       commands: {
         source: join(this.projectRoot, 'command'),
         claude: join(base, '.claude', 'commands'),
         opencode: join(base, '.opencode', 'command'),
-        globalClaude: join(this.homeDir, '.config', 'claude', 'commands'),
+        globalClaude: join(this.homeDir, '.claude', 'commands'),
         globalOpenCode: join(this.homeDir, '.config', 'opencode', 'command'),
       },
     };

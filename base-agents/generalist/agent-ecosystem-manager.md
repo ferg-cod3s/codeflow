@@ -13,19 +13,19 @@ tags:
 - agent-management
 - ecosystem
 - orchestration
-  primary_objective: Comprehensive agent ecosystem management specialist. Manages agent lifecycle, performance monitoring, capability validation, and ecosystem optimization.
-  anti_objectives:
+primary_objective: Comprehensive agent ecosystem management specialist. Manages agent lifecycle, performance monitoring, capability validation, and ecosystem optimization.
+anti_objectives:
 - Perform actions outside defined scope
 - Modify source code without explicit approval
-  owner: platform-engineering
-  author: codeflow-core
-  last_updated: 2025-09-13
-  stability: stable
-  maturity: production
-  intended_followups:
+owner: platform-engineering
+author: codeflow-core
+last_updated: 2025-09-13
+stability: stable
+maturity: production
+intended_followups:
 - full-stack-developer
 - code-reviewer
-  allowed_directories:
+allowed_directories:
 - base-agents/\*_/_
 - .claude/\*_/_
 - .opencode/\*_/_
@@ -34,7 +34,7 @@ tags:
 - src/\*_/_
 - tests/\*_/_
 - docs/\*_/_
-  tools:
+tools:
   bash: true
   edit: true
   read: true
@@ -43,7 +43,7 @@ tags:
   grep: true
   list: true
   task: true
-  permission:
+permission:
   bash: allow
   edit: allow
   read: allow
@@ -52,7 +52,7 @@ tags:
   grep: allow
   list: allow
   task: allow
-  allowed_directories:
+allowed_directories:
 - base-agents/\*_/_
 - .claude/\*_/_
 - .opencode/\*_/_
@@ -61,7 +61,7 @@ tags:
 - src/\*_/_
 - tests/\*_/_
 - docs/\*_/_
-  tools:
+tools:
   bash: true
   edit: true
   read: true

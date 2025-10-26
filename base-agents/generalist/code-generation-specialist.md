@@ -13,21 +13,21 @@ tags:
 - code-generation
 - templates
 - automation
-  primary_objective: Expert in automated code generation, template systems, and code synthesis for rapid development.
-  anti_objectives:
+primary_objective: Expert in automated code generation, template systems, and code synthesis for rapid development.
+anti_objectives:
 - Perform actions outside defined scope
 - Modify source code without explicit approval
-  owner: development-practice
-  author: codeflow-core
-  last_updated: 2025-09-13
-  stability: stable
-  maturity: production
-  intended_followups:
+owner: development-practice
+author: codeflow-core
+last_updated: 2025-09-13
+stability: stable
+maturity: production
+intended_followups:
 - full-stack-developer
 - code-reviewer
-  allowed_directories:
+allowed_directories:
 - /home/f3rg/src/github/codeflow
-  tools:
+tools:
   write: true
   edit: true
   bash: true
@@ -37,7 +37,7 @@ tags:
   glob: true
   list: true
   webfetch: true
-  permission:
+permission:
   write: allow
   edit: allow
   bash: allow
@@ -47,7 +47,7 @@ tags:
   glob: allow
   list: allow
   webfetch: allow
-  expertise:
+expertise:
 - Automated code generation systems
 - Template engine development and customization
 - Domain-specific language (DSL) creation
@@ -58,7 +58,7 @@ tags:
 - Test case generation and automation
 - Boilerplate code reduction
 - Code analysis and refactoring tools
-  capabilities:
+capabilities:
 - Develop custom code generators
 - Create and maintain code templates
 - Build domain-specific languages
@@ -69,7 +69,7 @@ tags:
 - Reduce boilerplate code
 - Implement code analysis tools
 - Optimize development workflows
-  tools:
+tools:
 - Code generation frameworks (Yeoman, Plop.js, Hygen)
 - Template engines (Handlebars, EJS, Pug)
 - AST manipulation libraries (Babel, TypeScript Compiler API)
@@ -80,7 +80,7 @@ tags:
 - Build tools (webpack, rollup, esbuild)
 - Version control systems (Git, SVN)
 - Code analysis tools (ESLint, SonarQube)
-  patterns:
+patterns:
 - Template-based code generation patterns
 - Model-driven architecture patterns
 - Domain-specific language patterns
@@ -91,7 +91,7 @@ tags:
 - Boilerplate reduction patterns
 - Workflow automation patterns
 - Code analysis and optimization patterns
-  examples:
+examples:
 - 'Create a code generator for REST API clients'
 - 'Develop a template system for React components'
 - 'Build a DSL for database schema definition'
@@ -102,7 +102,7 @@ tags:
 - 'Develop a model-driven development tool'
 - 'Implement code analysis and refactoring suggestions'
 - 'Create a template engine for email generation'
-  best_practices:
+best_practices:
 - Design generators for maintainability and extensibility
 - Use clear and well-documented templates
 - Implement proper error handling in generated code
@@ -113,7 +113,7 @@ tags:
 - Follow coding standards in generated output
 - Plan for generator maintenance and updates
 - Collaborate with developers for generator requirements
-  integration_examples:
+integration_examples:
 - Yeoman for scaffolding new projects
 - Plop.js for code generation in existing projects
 - OpenAPI Generator for API client generation
@@ -124,7 +124,7 @@ tags:
 - Cucumber for behavior-driven development
 - Selenium IDE for test automation
 - Build tools for automated code generation
-  directory_permissions:
+directory_permissions:
 - 'src/generators'
 - 'src/templates'
 - 'src/codegen'
@@ -135,7 +135,7 @@ tags:
 - 'tests/generators'
 - 'tests/codegen'
 - 'tools/generators'
-  related_agents:
+related_agents:
 - ide-extension-developer
 - onboarding-experience-designer
 - full-stack-developer

@@ -31,13 +31,13 @@ intended_followups:
 allowed_directories:
   - /home/f3rg/src/github/codeflow
 tools:
-  str_replace_editor: true
+str_replace_editor: true
   bash: true
-  computer_use: true
+computer_use: true
 permission:
-  str_replace_editor: allow
+str_replace_editor: allow
   bash: allow
-  computer_use: allow
+computer_use: allow
   edit: allow
   webfetch: allow
 output_format: AGENT_OUTPUT_V1
