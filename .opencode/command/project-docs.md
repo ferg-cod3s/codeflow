@@ -4,7 +4,7 @@ description: Generate comprehensive project documentation including PRD, securit
 mode: command
 model: anthropic/claude-sonnet-4
 version: 2.1.0-optimized
-last_updated: 2025-10-01
+last_updated: 2025-10-26
 command_schema_version: "1.0"
 outputs:
   - name: result

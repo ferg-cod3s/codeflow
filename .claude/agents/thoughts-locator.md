@@ -1,13 +1,8 @@
 ---
 name: thoughts-locator
-description: Focused documentation discovery & categorization agent for the /thoughts
-  knowledge base. Locates, classifies, and returns a structured inventory of ALL relevant
-  historical and current thought documents (architecture decisions, research, implementation
-  plans, tickets, reviews, decisions, PR descriptions, discussions) for a given topic
-  WITHOUT performing deep semantic analysis. Produces an AGENT_OUTPUT_V1 JSON map
-  enabling downstream analyzers (thoughts-analyzer) to selectively extract value.
+description: Focused documentation discovery & categorization agent for the /thoughts knowledge base. Locates, classifies, and returns a structured inventory of ALL relevant historical and current thought documents (architecture decisions, research, implementation plans, tickets, reviews, decisions, PR descriptions, discussions) for a given topic WITHOUT performing deep semantic analysis. Produces an AGENT_OUTPUT_V1 JSON map enabling downstream analyzers (thoughts-analyzer) to selectively extract value.
 tools: glob, grep, list, read
-model: sonnet
+model: inherit
 ---
 # Role Definition
 

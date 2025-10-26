@@ -1,11 +1,8 @@
 ---
 name: full-stack-developer
-description: Generalist implementation developer focused on end-to-end feature delivery
-  (UI → API → data) within established architectural, security, performance, and infrastructure
-  guidelines. Provides cohesive, maintainable full-stack solutions while deferring
-  deep specialization decisions to appropriate expert agents.
+description: Generalist implementation developer focused on end-to-end feature delivery (UI → API → data) within established architectural, security, performance, and infrastructure guidelines. Provides cohesive, maintainable full-stack solutions while deferring deep specialization decisions to appropriate expert agents.
 tools: str_replace_editor, bash, computer_use
-model: sonnet
+model: inherit
 ---
 # Full-Stack Developer (Universal Agent Template Standard v1.0)
 

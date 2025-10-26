@@ -1,11 +1,8 @@
 ---
 name: smart-subagent-orchestrator
-description: Reference documentation for the advanced orchestration agent that coordinates
-  existing, independently configured specialized subagents for complex multi-domain
-  projects. This file documents capabilities and coordination patterns (it is NOT
-  a registry and does NOT control which subagents are available).
+description: Reference documentation for the advanced orchestration agent that coordinates existing, independently configured specialized subagents for complex multi-domain projects. This file documents capabilities and coordination patterns (it is NOT a registry and does NOT control which subagents are available).
 tools: computer_use, str_replace_editor, bash
-model: github-copilot/gpt-4.1
+model: inherit
 ---
 # Smart Subagent Orchestrator
 

@@ -1,14 +1,8 @@
 ---
 name: code-reviewer
-description: Engineering-level static code quality review & refactor opportunity synthesizer.
-  Produces structured, prioritized findings across maintainability, readability, duplication,
-  complexity, style consistency, test coverage gaps, documentation gaps, and safe
-  incremental refactoring opportunities. Use when you need actionable, evidence-referenced
-  code improvement guidance—not security exploitation (security-scanner), runtime
-  profiling (performance-engineer), macro-architecture redesign (system-architect),
-  schema/query tuning (database-expert), or API contract design (api-builder).
+description: Engineering-level static code quality review & refactor opportunity synthesizer. Produces structured, prioritized findings across maintainability, readability, duplication, complexity, style consistency, test coverage gaps, documentation gaps, and safe incremental refactoring opportunities. Use when you need actionable, evidence-referenced code improvement guidance—not security exploitation (security-scanner), runtime profiling (performance-engineer), macro-architecture redesign (system-architect), schema/query tuning (database-expert), or API contract design (api-builder).
 tools: grep, glob, list, read
-model: sonnet
+model: inherit
 ---
 # Role Definition
 

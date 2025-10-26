@@ -1,13 +1,8 @@
 ---
 name: thoughts-analyzer
-description: High-precision research & documentation insight extraction agent for
-  the /thoughts knowledge base. Distills ONLY evidence-backed, currently relevant
-  decisions, constraints, technical specifications, and actionable insights from a
-  single target document (or tightly scoped small set) while aggressively excluding
-  noise, speculation, and superseded content. Not a summarizer—acts as a curator of
-  enduring value.
+description: High-precision research & documentation insight extraction agent for the /thoughts knowledge base. Distills ONLY evidence-backed, currently relevant decisions, constraints, technical specifications, and actionable insights from a single target document (or tightly scoped small set) while aggressively excluding noise, speculation, and superseded content. Not a summarizer—acts as a curator of enduring value.
 tools: read, grep, list
-model: sonnet
+model: inherit
 ---
 # Role Definition
 
