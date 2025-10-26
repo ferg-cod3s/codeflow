@@ -1,4 +1,4 @@
-import { resolve, normalize, isAbsolute, join, sep } from 'node:path';
+import { resolve, normalize, isAbsolute, join } from 'node:path';
 import { access, stat } from 'node:fs/promises';
 import { constants as fsConstants } from 'node:fs';
 
@@ -107,7 +107,7 @@ export async function validatePath(inputPath: string): Promise<SecurityValidatio
       } else {
         sanitizedPath = resolve(sanitizedPath);
       }
-    } catch (error) {
+    } catch {
       return {
         isValid: false,
         error: 'Failed to normalize path',
@@ -203,18 +203,26 @@ export async function checkPermissions(filePath: string): Promise<PermissionChec
     try {
       await access(filePath, fsConstants.R_OK);
       result.readable = true;
-    } catch {}
+    } catch {
+      // File not readable
+    }
 
     try {
       await access(filePath, fsConstants.W_OK);
       result.writable = true;
-    } catch {}
+    } catch {
+      // File not writable
+    }
 
     try {
       await access(filePath, fsConstants.X_OK);
       result.executable = true;
-    } catch {}
-  } catch {}
+    } catch {
+      // File not executable
+    }
+  } catch {
+    // General file access error
+  }
 
   return result;
 }

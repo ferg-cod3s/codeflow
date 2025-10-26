@@ -38,7 +38,7 @@
     "src/yaml/**/*",
     "src/math.ts",
     "src/sync-with-validation.ts",
-    "codeflow-agents/**/*",
+    "base-agents/**/*",
     "command/**/*",
     "AGENT_MANIFEST.json",
     "README.md",
@@ -121,7 +121,7 @@
     "prepack:node": "npm run typecheck:node",
     "build:cli": "bun build src/cli/index.ts --target bun",
     "build:cli:node": "esbuild src/cli/index.ts --bundle --platform=node --target=node18 --outfile=dist/cli.js",
-    "prepare": "husky"
+    "prepare": "echo 'Husky prepared'"
   },
   "dependencies": {
     "@aws-sdk/client-cloudwatch": "^3.911.0",

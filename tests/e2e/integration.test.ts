@@ -6,11 +6,10 @@
 import { describe, test, expect, beforeAll, afterAll } from 'bun:test';
 import { exec } from 'child_process';
 import { promisify } from 'util';
-import { readFile, writeFile, mkdir, rm, readdir, copyFile } from 'fs/promises';
+import { readFile, writeFile, mkdir, readdir, copyFile } from 'fs/promises';
 import { existsSync } from 'fs';
 import { join, dirname } from 'path';
-import * as yaml from 'yaml';
-import { setupTests, cleanupTests, TEST_DIR, TEST_OUTPUT, testPaths, waitForFile } from '../setup';
+import { setupTests, cleanupTests, TEST_DIR } from '../setup';
 
 const execAsync = promisify(exec);
 
@@ -220,7 +219,7 @@ Content`;
           }
 
           return { success: true };
-        } catch (error) {
+        } catch {
           return { error: true };
         }
       };

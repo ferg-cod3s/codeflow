@@ -362,7 +362,7 @@ export class AgentValidator {
     try {
       const discovery = await findAgentManifest();
       manifestPath = discovery.path;
-    } catch (error) {
+    } catch {
       return {
         valid: false,
         manifestAgents: 0,

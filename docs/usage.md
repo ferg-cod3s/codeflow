@@ -195,5 +195,5 @@ Each platform automatically recognizes these files and makes them available usin
 
 - Learn about the [Agentic CLI](./agentic.md)
 - Understand [workflow phases](./workflow.md) in detail
-- Explore [agents](./agents.md) and [commands](./commands.md)
+- Explore [AGENTS](../AGENTS.md) and [commands](./commands.md)
 - Set up your [research directory](./research.md)

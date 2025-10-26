@@ -6,8 +6,8 @@ This directory contains scripts and tools for managing agent synchronization acr
 
 The Codeflow system now supports three agent formats, each with its own directory structure:
 
+- **`base-agents/`** - Base format agents (source of truth, organized in subdirectories by category)
 - **`opencode-agents/`** - OpenCode format agents (flat directory structure)
-- **`codeflow-agents/`** - Codeflow format agents (organized in subdirectories by category)
 - **`claude-agents/`** - Claude Code format agents (organized in subdirectories by category)
 
 ## Automatic Synchronization
@@ -19,6 +19,7 @@ The system automatically keeps all three directories in sync. When you:
 3. **Run the sync command**
 
 The system will automatically:
+
 - Parse the agent from the source directory
 - Convert it to the appropriate format for each target directory
 - Place it in the correct subdirectory structure
@@ -27,6 +28,7 @@ The system will automatically:
 ## CLI Commands
 
 ### Sync All Formats
+
 ```bash
 # Sync all agents across all formats (dry run first)
 bun run codeflow sync-formats --dry-run
@@ -40,12 +42,14 @@ bun run codeflow sync-formats bidirectional
 ```
 
 ### Check Format Differences
+
 ```bash
 # Show detailed differences between formats
 bun run codeflow show-format-differences
 ```
 
 ### Global Synchronization
+
 ```bash
 # Sync to global directories
 bun run codeflow sync-global
@@ -56,9 +60,10 @@ bun run codeflow list-differences
 
 ## Directory Structure
 
-### Codeflow Agents (`codeflow-agents/`)
+### Base Agents (`base-agents/`)
+
 ```
-codeflow-agents/
+base-agents/
 ├── development/           # Development specialists
 ├── generalist/           # Cross-functional agents
 ├── ai-innovation/        # AI/ML specialists
@@ -70,6 +75,7 @@ codeflow-agents/
 ```
 
 ### Claude Agents (`claude-agents/`)
+
 ```
 claude-agents/
 ├── development/           # Development specialists
@@ -83,6 +89,7 @@ claude-agents/
 ```
 
 ### OpenCode Agents (`opencode-agents/`)
+
 ```
 opencode-agents/
 ├── analytics-engineer.md

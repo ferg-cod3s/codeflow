@@ -1,6 +1,6 @@
-import { describe, test, expect, beforeEach, afterEach } from 'bun:test';
+import { describe, test, expect, beforeEach } from 'bun:test';
 import { CommandValidator } from '../../src/yaml/command-validator';
-import { readFile, writeFile, mkdir } from 'node:fs/promises';
+import { writeFile, mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 
@@ -118,8 +118,8 @@ The unused_input is defined but never used.
 
     expect(result.valid).toBe(false);
     expect(result.errors.length).toBeGreaterThan(0);
-    expect(result.errors.some(e => e.code === 'UNDEFINED_VARIABLE')).toBe(true);
-    expect(result.warnings.some(w => w.message.includes('unused_input'))).toBe(true);
+    expect(result.errors.some((e) => e.code === 'UNDEFINED_VARIABLE')).toBe(true);
+    expect(result.warnings.some((w) => w.message.includes('unused_input'))).toBe(true);
   });
 
   test('validates command directory structure', async () => {

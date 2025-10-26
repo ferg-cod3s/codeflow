@@ -154,7 +154,7 @@ describe('OpenCode Argument Handling Validation', () => {
     });
 
     test('validates boolean arguments', () => {
-      const schema = {
+      const _schema = {
         verbose: { type: 'boolean', default: false },
         force: { type: 'boolean', default: false },
       };
@@ -167,7 +167,7 @@ describe('OpenCode Argument Handling Validation', () => {
     });
 
     test('validates number arguments', () => {
-      const schema = {
+      const _schema = {
         port: { type: 'number', default: 3000 },
         timeout: { type: 'number', demandOption: true },
       };
@@ -180,7 +180,7 @@ describe('OpenCode Argument Handling Validation', () => {
     });
 
     test('validates array arguments', () => {
-      const schema = {
+      const _schema = {
         files: { type: 'array', demandOption: true },
         tags: { type: 'array', default: [] },
       };

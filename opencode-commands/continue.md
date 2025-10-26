@@ -2,6 +2,7 @@
 name: continue
 description: Resume execution from the last completed step
 mode: command
+model: anthropic/claude-3-5-sonnet-20241022
 version: 1.0.0
 inputs:
   - name: session_id
@@ -34,6 +35,7 @@ permission:
   bash: ask
   webfetch: allow
 ---
+
 set -euo pipefail
 
 # Continue From Last Step
@@ -382,7 +384,7 @@ opencode run -p continue -s abc-123 -m anthropic/claude-sonnet-4-20250514
 opencode run -c -m openai/gpt-4o
 ```
 
-$ARGUMENTS 
+$ARGUMENTS
 
 ## Example Usage
 

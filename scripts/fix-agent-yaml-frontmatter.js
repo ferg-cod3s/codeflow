@@ -6,7 +6,7 @@ import { existsSync } from 'node:fs';
 import { parse as parseYaml, stringify as stringifyYaml } from 'yaml';
 
 const AGENT_DIRECTORIES = [
-  'codeflow-agents',
+  'base-agents',
   'claude-agents',
   '.opencode/agent',
   'test-setup/.opencode/agent',

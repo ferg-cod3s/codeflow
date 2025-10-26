@@ -438,7 +438,8 @@ switch (command) {
 
   case 'research': {
     const researchQuery = args[1];
-    await research(researchQuery, {
+    await research({
+      query: researchQuery,
       output: values.output,
       'include-web': values['include-web'],
       specialists: values.specialists,

@@ -7,8 +7,8 @@ import { describe, test, expect, beforeAll, afterAll, beforeEach, afterEach } fr
 import { mkdir, writeFile, rm } from 'fs/promises';
 import { existsSync } from 'fs';
 import { join } from 'path';
-import { buildManifest, BuildManifestOptions, AgentManifest } from '../../../src/cli/build-manifest.js';
-import { setupTests, cleanupTests, TEST_DIR } from '../../setup.js';
+import { buildManifest, AgentManifest } from '../../../src/cli/build-manifest';
+import { setupTests, cleanupTests, TEST_DIR } from '../../setup';
 
 describe('Build Manifest', () => {
   let testProjectRoot: string;
@@ -53,7 +53,7 @@ describe('Build Manifest', () => {
 
       const result = await buildManifest({
         projectRoot: testProjectRoot,
-        dryRun: true
+        dryRun: true,
       });
 
       // Check that the function runs without error (dry run)
@@ -63,7 +63,7 @@ describe('Build Manifest', () => {
     test('should handle empty codeflow-agents directory', async () => {
       const result = await buildManifest({
         projectRoot: testProjectRoot,
-        dryRun: true
+        dryRun: true,
       });
 
       expect(result).toBeUndefined();
@@ -72,10 +72,12 @@ describe('Build Manifest', () => {
     test('should handle missing codeflow-agents directory', async () => {
       await rm(agentsDir, { recursive: true, force: true });
 
-      await expect(buildManifest({
-        projectRoot: testProjectRoot,
-        dryRun: true
-      })).rejects.toThrow('Codeflow agents directory not found');
+      await expect(
+        buildManifest({
+          projectRoot: testProjectRoot,
+          dryRun: true,
+        })
+      ).rejects.toThrow('Codeflow agents directory not found');
     });
   });
 
@@ -83,8 +85,12 @@ describe('Build Manifest', () => {
     test('should categorize agents by name patterns', async () => {
       // Create agents with different naming patterns
       const categories = [
-        'core-workflow', 'operations', 'development',
-        'quality-testing', 'security', 'design-ux'
+        'core-workflow',
+        'operations',
+        'development',
+        'quality-testing',
+        'security',
+        'design-ux',
       ];
 
       for (const category of categories) {
@@ -120,7 +126,7 @@ describe('Build Manifest', () => {
 
       const result = await buildManifest({
         projectRoot: testProjectRoot,
-        dryRun: true
+        dryRun: true,
       });
 
       expect(result).toBeUndefined();
@@ -133,7 +139,7 @@ describe('Build Manifest', () => {
 
       const result = await buildManifest({
         projectRoot: testProjectRoot,
-        dryRun: true
+        dryRun: true,
       });
 
       expect(result).toBeUndefined();
@@ -153,7 +159,7 @@ describe('Build Manifest', () => {
       await buildManifest({
         projectRoot: testProjectRoot,
         output: outputFile,
-        verbose: false
+        verbose: false,
       });
 
       expect(existsSync(outputFile)).toBe(true);
@@ -186,7 +192,7 @@ describe('Build Manifest', () => {
       await buildManifest({
         projectRoot: testProjectRoot,
         output: outputFile,
-        dryRun: true
+        dryRun: true,
       });
 
       expect(existsSync(outputFile)).toBe(false);
@@ -202,7 +208,7 @@ describe('Build Manifest', () => {
 
       await buildManifest({
         projectRoot: testProjectRoot,
-        output: outputFile
+        output: outputFile,
       });
 
       expect(existsSync(outputFile)).toBe(true);
@@ -217,10 +223,10 @@ describe('Build Manifest', () => {
 
       await buildManifest({
         projectRoot: testProjectRoot,
-        output: outputFile
+        output: outputFile,
       });
 
-      const manifest = await Bun.file(outputFile).json() as AgentManifest;
+      const manifest = (await Bun.file(outputFile).json()) as AgentManifest;
 
       expect(manifest.format_info).toHaveProperty('base');
       expect(manifest.format_info).toHaveProperty('claude-code');
@@ -248,10 +254,10 @@ describe('Build Manifest', () => {
 
       await buildManifest({
         projectRoot: testProjectRoot,
-        output: outputFile
+        output: outputFile,
       });
 
-      const manifest = await Bun.file(outputFile).json() as AgentManifest;
+      const manifest = (await Bun.file(outputFile).json()) as AgentManifest;
 
       expect(manifest.canonical_directories).toContain('codeflow-agents/');
       expect(manifest.canonical_directories).toContain('.claude/agents/');
@@ -267,10 +273,10 @@ describe('Build Manifest', () => {
 
       await buildManifest({
         projectRoot: testProjectRoot,
-        output: outputFile
+        output: outputFile,
       });
 
-      const manifest = await Bun.file(outputFile).json() as AgentManifest;
+      const manifest = (await Bun.file(outputFile).json()) as AgentManifest;
 
       expect(manifest.total_agents).toBe(1);
       expect(manifest.canonical_agents).toHaveLength(1);
@@ -307,10 +313,10 @@ describe('Build Manifest', () => {
 
       await buildManifest({
         projectRoot: testProjectRoot,
-        output: outputFile
+        output: outputFile,
       });
 
-      const manifest = await Bun.file(outputFile).json() as AgentManifest;
+      const manifest = (await Bun.file(outputFile).json()) as AgentManifest;
 
       expect(manifest.total_agents).toBe(3);
       expect(manifest.canonical_agents[0].name).toBe('apple-agent');
@@ -333,7 +339,7 @@ describe('Build Manifest', () => {
       try {
         await buildManifest({
           projectRoot: testProjectRoot,
-          verbose: true
+          verbose: true,
         });
 
         expect(consoleOutput).toContain('🏗️ Generating agent manifest');
@@ -346,9 +352,11 @@ describe('Build Manifest', () => {
 
     test('should handle errors gracefully', async () => {
       // Test with non-existent project root
-      await expect(buildManifest({
-        projectRoot: '/non/existent/path'
-      })).rejects.toThrow();
+      await expect(
+        buildManifest({
+          projectRoot: '/non/existent/path',
+        })
+      ).rejects.toThrow();
     });
   });
 
@@ -370,7 +378,7 @@ describe('Build Manifest', () => {
       const customOutput = join(testProjectRoot, 'custom-manifest.json');
 
       await buildManifest({
-        output: customOutput
+        output: customOutput,
       });
 
       expect(existsSync(customOutput)).toBe(true);
@@ -387,7 +395,7 @@ describe('Build Manifest', () => {
 
       await buildManifest({
         projectRoot: testProjectRoot,
-        output: outputFile
+        output: outputFile,
       });
 
       expect(existsSync(outputFile)).toBe(true);

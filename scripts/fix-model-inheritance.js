@@ -85,7 +85,7 @@ function fixAgentModel(filePath) {
 function main() {
   console.log('Fixing model configurations in agent files...\n');
 
-  const agentFiles = findMarkdownFiles(join(process.cwd(), 'codeflow-agents'));
+  const agentFiles = findMarkdownFiles(join(process.cwd(), 'base-agents'));
 
   let updated = 0;
   let skipped = 0;

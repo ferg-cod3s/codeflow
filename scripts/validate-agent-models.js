@@ -116,12 +116,7 @@ function validateAgentFile(filePath) {
 function main() {
   console.log('🔍 Validating agent model configurations...\n');
 
-  const directories = [
-    './codeflow-agents',
-    './.opencode/agent',
-    './.claude/agents',
-    './claude-agents',
-  ];
+  const directories = ['./base-agents', './.opencode/agent', './.claude/agents', './claude-agents'];
 
   let totalFiles = 0;
   let validFiles = 0;

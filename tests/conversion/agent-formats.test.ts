@@ -7,8 +7,6 @@ import {
   parseAgentsFromDirectory,
   serializeAgent,
   Agent,
-  BaseAgent,
-  ClaudeCodeAgent,
   OpenCodeAgent,
 } from '../../src/conversion/agent-parser';
 

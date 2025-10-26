@@ -10,6 +10,15 @@ import { existsSync } from 'fs';
 import { join, basename } from 'path';
 import { homedir } from 'os';
 import { validateMarkdownYAML, fixYAMLFile } from './utils/yaml-validator';
+import {
+  parseAgentFile,
+  parseCommandFile,
+  serializeAgent,
+  serializeCommand,
+  Agent,
+  Command,
+} from './conversion/agent-parser';
+import { FormatConverter } from './conversion/format-converter';
 
 interface SyncOptions {
   global?: boolean;
@@ -42,7 +51,7 @@ class SyncManager {
 
     return {
       agents: {
-        source: join(this.projectRoot, 'codeflow-agents'),
+        source: join(this.projectRoot, 'base-agents'),
         claude: join(base, '.claude', 'agents'),
         opencode: join(base, '.opencode', 'agent'),
         globalClaude: join(this.homeDir, '.config', 'claude', 'agents'),
@@ -56,6 +65,70 @@ class SyncManager {
         globalOpenCode: join(this.homeDir, '.config', 'opencode', 'command'),
       },
     };
+  }
+
+  /**
+   * Recursively find all markdown files in a directory
+   */
+  private async findAllMarkdownFiles(dir: string): Promise<string[]> {
+    const files: string[] = [];
+
+    try {
+      const entries = await readdir(dir, { withFileTypes: true });
+
+      for (const entry of entries) {
+        const fullPath = join(dir, entry.name);
+
+        if (entry.isDirectory()) {
+          const subFiles = await this.findAllMarkdownFiles(fullPath);
+          files.push(...subFiles);
+        } else if (entry.isFile() && entry.name.endsWith('.md')) {
+          files.push(fullPath);
+        }
+      }
+    } catch {
+      // Directory doesn't exist or can't be read, skip it
+    }
+
+    return files;
+  }
+
+  /**
+   * Determine target format based on target path
+   */
+  private getTargetFormat(targetPath: string): 'base' | 'claude-code' | 'opencode' | 'cursor' {
+    if (targetPath.includes('.claude')) {
+      return 'claude-code';
+    } else if (targetPath.includes('.opencode')) {
+      return 'opencode';
+    } else if (targetPath.includes('.cursor')) {
+      return 'cursor';
+    }
+    return 'base';
+  }
+
+  /**
+   * Check if a file is a command based on its path
+   */
+  private isCommandFile(filePath: string): boolean {
+    // Check if it's in a command directory
+    if (filePath.includes('/command/') || filePath.includes('\\command\\')) {
+      return true;
+    }
+
+    // Check if it's in the command source directory
+    const paths = this.getPaths();
+    if (filePath.startsWith(paths.commands.source)) {
+      return true;
+    }
+
+    // Check if it's in the base-agents command directory (if it exists)
+    const commandSourcePath = join(this.projectRoot, 'command');
+    if (filePath.startsWith(commandSourcePath)) {
+      return true;
+    }
+
+    return false;
   }
 
   /**
@@ -98,8 +171,31 @@ class SyncManager {
         }
       }
 
-      // Read the (potentially fixed) source file
-      const content = await readFile(sourcePath, 'utf-8');
+      // Determine target format and convert content
+      const targetFormat = this.getTargetFormat(targetPath);
+      const isCommand = this.isCommandFile(sourcePath);
+
+      let convertedContent: string;
+      try {
+        if (isCommand) {
+          const command = await parseCommandFile(sourcePath, 'base');
+          const converter = new FormatConverter();
+          const convertedCommand = converter.convert(command as any, targetFormat);
+          convertedContent = serializeCommand(convertedCommand as Command);
+        } else {
+          const agent = await parseAgentFile(sourcePath, 'base');
+          const converter = new FormatConverter();
+          const convertedAgent = converter.convert(agent, targetFormat);
+          convertedContent = serializeAgent(convertedAgent);
+        }
+      } catch (conversionError: any) {
+        if (options.verbose) {
+          console.error(
+            `  ❌ Conversion failed for ${basename(sourcePath)}: ${conversionError.message}`
+          );
+        }
+        return 'error';
+      }
 
       // Ensure target directory exists
       const targetDir = join(targetPath, '..');
@@ -107,8 +203,8 @@ class SyncManager {
         await mkdir(targetDir, { recursive: true });
       }
 
-      // Write to target
-      await writeFile(targetPath, content, 'utf-8');
+      // Write converted content to target
+      await writeFile(targetPath, convertedContent, 'utf-8');
 
       if (options.verbose) {
         console.log(`  ✅ ${basename(sourcePath)} → ${targetPath}`);
@@ -143,14 +239,21 @@ class SyncManager {
       return result;
     }
 
-    const files = await readdir(sourceDir);
-    const mdFiles = files.filter((f) => f.endsWith('.md'));
+    // Recursively find all .md files in the source directory and subdirectories
+    const mdFiles = await this.findAllMarkdownFiles(sourceDir);
 
     for (const file of mdFiles) {
-      const sourcePath = join(sourceDir, file);
+      // Get the relative path from the source directory to preserve subdirectory structure
+      const relativePath = file.replace(sourceDir + '/', '');
+      const sourcePath = join(sourceDir, relativePath);
 
       for (const targetDir of targetDirs) {
-        const targetPath = join(targetDir, file);
+        // Ensure the target directory exists
+        if (!existsSync(targetDir)) {
+          await mkdir(targetDir, { recursive: true });
+        }
+
+        const targetPath = join(targetDir, relativePath);
         const status = await this.syncFile(sourcePath, targetPath, options);
 
         switch (status) {

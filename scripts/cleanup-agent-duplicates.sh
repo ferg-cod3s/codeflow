@@ -73,8 +73,8 @@ echo ""
 echo "📁 Phase 3: Removing incomplete/problematic agents"
 echo ""
 
-# Remove README.md from codeflow-agents (not an agent)
-safe_remove "codeflow-agents/README.md"
+# Remove README.md from base-agents (not an agent)
+safe_remove "base-agents/README.md"
 
 # Remove test agents that shouldn't be in production
 safe_remove ".claude/agents/force-test.md"
@@ -101,7 +101,7 @@ echo "  • Removed 29 duplicate Claude Code agents from .claude/agents/"
 echo "  • Created opencode-agents/ directory with canonical OpenCode agents"
 echo "  • Removed 1 README file and 1 test agent from canonical directories"
 echo "  • Established clean canonical structure with 3 directories:"
-echo "    - codeflow-agents/ (base format)"
+echo "    - base-agents/ (base format)"
 echo "    - claude-agents/ (Claude Code format)"
 echo "    - opencode-agents/ (OpenCode format)"
 echo ""

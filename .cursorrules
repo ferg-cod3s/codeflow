@@ -1,0 +1,123 @@
+# CodeFlow Project Rules
+
+You are working on the CodeFlow AI agent & command distribution platform. This is a comprehensive TypeScript CLI tool that manages 123+ specialized AI agents and 15+ workflow commands across multiple AI platforms.
+
+## Project Overview
+
+CodeFlow is built with TypeScript and Bun, providing:
+- Agent management and conversion between platforms (Claude Code, OpenCode, MCP)
+- Workflow orchestration with specialized subagents
+- Command distribution system for AI development workflows
+- Comprehensive testing and validation framework
+
+## Architecture
+
+### Core Components
+- `src/cli/` - Main CLI entry point and commands
+- `codeflow-agents/` - Source of truth for all agent definitions (BaseAgent format)
+- `src/` - Core platform logic (conversion, validation, sync)
+- `packages/agentic-mcp/` - MCP server implementation
+- `docs/` - Comprehensive documentation
+
+### Agent System
+- **Base Format**: All agents defined in `codeflow-agents/` using unified BaseAgent format
+- **Platform Conversion**: Auto-conversion to Claude Code (`.claude/agents/`) and OpenCode (`.opencode/agent/`)
+- **Categories**: Development, Operations, Quality Testing, Business Analytics, Design/UX, AI Innovation
+
+### Key Directories
+- `codeflow-agents/` - NEVER edit directly, use conversion scripts
+- `.claude/agents/` - Auto-generated Claude Code format
+- `.opencode/agent/` - Auto-generated OpenCode format
+- `src/` - Core TypeScript implementation
+- `tests/` - Comprehensive test suite
+
+## Development Standards
+
+### Code Style
+- Use TypeScript strict mode
+- Follow existing patterns in `src/`
+- Bun runtime preferred (Node.js compatible)
+- Comprehensive error handling with proper types
+
+### Testing
+- Unit tests in `tests/unit/`
+- Integration tests in `tests/integration/`
+- E2E tests in `tests/e2e/`
+- Always run `bun run typecheck` before commits
+
+### Agent Development
+- Agents defined in `codeflow-agents/` using BaseAgent format
+- Use `codeflow validate` to check agent definitions
+- Use `codeflow convert-all` to generate platform-specific formats
+
+## Key Commands
+
+```bash
+# Development
+bun install && bun run install
+bun run typecheck
+bun run test
+
+# Agent Management
+codeflow validate
+codeflow convert-all
+codeflow setup [project-path]
+
+# Publishing
+npm run release:publish:patch
+```
+
+## Platform Integration
+
+### Claude Code
+- Agents available as native subagents
+- Commands as slash commands (`/research`, `/plan`, `/execute`)
+- YAML frontmatter format
+
+### OpenCode
+- Full MCP integration
+- Mode, temperature, and directory support
+- Advanced agent configuration
+
+### Cursor
+- Commands in `.cursor/commands/`
+- Rules defined in this file
+- MCP server configuration
+
+## Important Notes
+
+- Always validate agents after changes
+- Test across all supported platforms
+- Follow semantic versioning for releases
+- Maintain backward compatibility
+- Use proper TypeScript types throughout
+
+## Common Workflows
+
+### Adding New Agent
+1. Create in `codeflow-agents/` with BaseAgent format
+2. Run `codeflow validate`
+3. Test conversion: `codeflow convert-all --dry-run`
+4. Commit changes
+
+### Debugging Agent Issues
+1. Check agent definition format
+2. Validate with `codeflow validate`
+3. Test platform conversion
+4. Check generated files in `.claude/agents/` and `.opencode/agent/`
+
+### Platform-Specific Issues
+- Claude Code: Check YAML frontmatter
+- OpenCode: Verify MCP compatibility
+- Cursor: Ensure command format compliance
+
+## Documentation
+
+- Main docs in `docs/`
+- Agent registry in `docs/AGENT_REGISTRY.md`
+- Development guide in `DEVELOPMENT.md`
+- Compliance in `COMPLIANCE.md`
+
+---
+
+When working on this project, prioritize agent validation, platform compatibility, and comprehensive testing. The system must maintain consistency across all supported AI platforms.

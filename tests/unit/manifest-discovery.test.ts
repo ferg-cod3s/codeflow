@@ -8,8 +8,6 @@ import {
   copyAgentManifest,
   discoverAndCopyManifest,
   hasValidManifest,
-  type ManifestDiscoveryOptions,
-  type ManifestCopyOptions
 } from '../../src/utils/manifest-discovery';
 
 describe('Manifest Discovery Utilities', () => {
@@ -29,22 +27,26 @@ describe('Manifest Discovery Utilities', () => {
     await mkdir(codeflowDir, { recursive: true });
 
     // Create sample manifest content
-    manifestContent = JSON.stringify({
-      canonical_agents: [
-        {
-          name: 'test-agent',
-          description: 'Test agent for unit tests',
-          category: 'test',
-          sources: {
-            base: 'codeflow-agents/test/test-agent.md',
-            'claude-code': 'claude-agents/test-agent.md',
-            opencode: 'opencode-agents/test-agent.md'
-          }
-        }
-      ],
-      total_agents: 1,
-      last_updated: new Date().toISOString()
-    }, null, 2);
+    manifestContent = JSON.stringify(
+      {
+        canonical_agents: [
+          {
+            name: 'test-agent',
+            description: 'Test agent for unit tests',
+            category: 'test',
+            sources: {
+              base: 'codeflow-agents/test/test-agent.md',
+              'claude-code': 'claude-agents/test-agent.md',
+              opencode: 'opencode-agents/test-agent.md',
+            },
+          },
+        ],
+        total_agents: 1,
+        last_updated: new Date().toISOString(),
+      },
+      null,
+      2
+    );
 
     // Create manifest in codeflow repo
     await writeFile(join(codeflowDir, 'AGENT_MANIFEST.json'), manifestContent);
@@ -68,7 +70,9 @@ describe('Manifest Discovery Utilities', () => {
 
       try {
         const result = await findAgentManifest();
-        expect(result.path.replace('/private', '')).toBe(join(projectDir, 'AGENT_MANIFEST.json').replace('/private', ''));
+        expect(result.path.replace('/private', '')).toBe(
+          join(projectDir, 'AGENT_MANIFEST.json').replace('/private', '')
+        );
         expect(result.isLegacy).toBe(false);
         expect(result.level).toBe(0);
       } finally {
@@ -79,7 +83,7 @@ describe('Manifest Discovery Utilities', () => {
     it('should find manifest in parent directory', async () => {
       // Create manifest in project directory (parent of subDir)
       await writeFile(join(projectDir, 'AGENT_MANIFEST.json'), manifestContent);
-      
+
       // Create subdirectory in project
       const subDir = join(projectDir, 'subproject');
       await mkdir(subDir, { recursive: true });
@@ -90,7 +94,9 @@ describe('Manifest Discovery Utilities', () => {
 
       try {
         const result = await findAgentManifest();
-        expect(result.path.replace('/private', '')).toBe(join(projectDir, 'AGENT_MANIFEST.json').replace('/private', ''));
+        expect(result.path.replace('/private', '')).toBe(
+          join(projectDir, 'AGENT_MANIFEST.json').replace('/private', '')
+        );
         expect(result.isLegacy).toBe(false);
         expect(result.level).toBe(1);
       } finally {
@@ -108,7 +114,9 @@ describe('Manifest Discovery Utilities', () => {
 
       try {
         const result = await findAgentManifest();
-        expect(result.path.replace('/private', '')).toBe(join(projectDir, '.codeflow', 'AGENT_MANIFEST.json').replace('/private', ''));
+        expect(result.path.replace('/private', '')).toBe(
+          join(projectDir, '.codeflow', 'AGENT_MANIFEST.json').replace('/private', '')
+        );
         expect(result.isLegacy).toBe(true);
         expect(result.level).toBe(0);
       } finally {
@@ -136,7 +144,9 @@ describe('Manifest Discovery Utilities', () => {
 
       try {
         // Should not find manifest beyond maxDepth
-        await expect(findAgentManifest({ maxDepth: 2 })).rejects.toThrow('AGENT_MANIFEST.json not found');
+        await expect(findAgentManifest({ maxDepth: 2 })).rejects.toThrow(
+          'AGENT_MANIFEST.json not found'
+        );
       } finally {
         process.chdir(originalCwd);
       }
@@ -157,7 +167,9 @@ describe('Manifest Discovery Utilities', () => {
       const sourcePath = join(codeflowDir, 'non-existent.json');
       const destPath = join(projectDir, 'AGENT_MANIFEST.json');
 
-      await expect(copyAgentManifest(sourcePath, destPath)).rejects.toThrow('Source manifest not found');
+      await expect(copyAgentManifest(sourcePath, destPath)).rejects.toThrow(
+        'Source manifest not found'
+      );
     });
 
     it('should respect overwrite option', async () => {
@@ -168,7 +180,9 @@ describe('Manifest Discovery Utilities', () => {
       await writeFile(destPath, 'existing content');
 
       // Should not overwrite by default
-      await expect(copyAgentManifest(sourcePath, destPath, { overwrite: false })).rejects.toThrow('already exists');
+      await expect(copyAgentManifest(sourcePath, destPath, { overwrite: false })).rejects.toThrow(
+        'already exists'
+      );
 
       // Should overwrite when explicitly set
       await copyAgentManifest(sourcePath, destPath, { overwrite: true });
@@ -180,18 +194,18 @@ describe('Manifest Discovery Utilities', () => {
     it('should discover and copy manifest', async () => {
       // Create manifest in project directory (to be discovered from subDir)
       await writeFile(join(projectDir, 'AGENT_MANIFEST.json'), manifestContent);
-      
+
       // Create a subdirectory to test upward search
       const subDir = join(projectDir, 'subproject');
       await mkdir(subDir, { recursive: true });
-      
+
       // Change to subdirectory and discover from there
       const originalCwd = process.cwd();
       process.chdir(subDir);
 
       try {
         await discoverAndCopyManifest(projectDir);
-        
+
         const copiedManifest = join(projectDir, 'AGENT_MANIFEST.json');
         expect(existsSync(copiedManifest)).toBe(true);
       } finally {

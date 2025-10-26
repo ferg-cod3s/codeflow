@@ -7,9 +7,9 @@
 
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
+// import { fileURLToPath } from 'url';
 
-const __filename = fileURLToPath(import.meta.url);
+// const _filename = fileURLToPath(import.meta.url);
 
 // Best practices validation rules
 const OPENCODE_COMMAND_RULES = {
@@ -50,7 +50,7 @@ function findMarkdownFiles(dir) {
           files.push(fullPath);
         }
       }
-    } catch (error) {
+    } catch {
       // Directory doesn't exist or can't be read
     }
   }

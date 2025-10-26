@@ -99,7 +99,7 @@ async function processDirectory(dirPath) {
 async function main() {
   const codeflowRoot = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
   const agentDirectories = [
-    path.join(codeflowRoot, 'codeflow-agents'),
+    path.join(codeflowRoot, 'base-agents'),
     path.join(codeflowRoot, 'deprecated', 'claude-agents'),
     path.join(codeflowRoot, 'deprecated', 'opencode-agents'),
     path.join(codeflowRoot, '.opencode', 'agent'),

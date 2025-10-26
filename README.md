@@ -104,7 +104,7 @@ OpenCode provides AI coding assistance with distinct modes and workflow capabili
 
 - **Commands**: Enhanced YAML configuration in `.opencode/command/`
 - **Agents**: YAML format in `.opencode/agent/` with mode, temperature, and allowed_directories
-- **Rules**: Create `AGENTS.md` file (similar to `CLAUDE.md`) for custom project instructions using `/init` command
+- **Rules**: See `AGENTS.md` for comprehensive agent documentation and project instructions
 
 ### Cursor Integration
 
@@ -164,7 +164,7 @@ You can create custom modes through Cursor Settings UI:
 
 ### Single Source of Truth
 
-All 123+ agents are defined once in `codeflow-agents/` using a unified BaseAgent format:
+All 135+ agents are defined once in `base-agents/` using a unified BaseAgent format:
 
 **Agent Categories:**
 

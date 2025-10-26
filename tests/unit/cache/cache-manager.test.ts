@@ -7,13 +7,8 @@ import { describe, test, expect, beforeAll, afterAll, beforeEach, afterEach } fr
 import { mkdir, rm } from 'fs/promises';
 import { existsSync } from 'fs';
 import { join } from 'path';
-import {
-  CacheManager,
-  CacheConfig,
-  CacheEntry,
-  CacheStats
-} from '../../../src/cache/CacheManager.js';
-import { setupTests, cleanupTests, TEST_DIR } from '../../setup.js';
+import { CacheManager, CacheConfig } from '../../../src/cache/CacheManager';
+import { setupTests, cleanupTests, TEST_DIR } from '../../setup';
 
 describe('Cache Manager', () => {
   let testCacheDir: string;
@@ -50,7 +45,7 @@ describe('Cache Manager', () => {
       compression: false,
       maxSize: 1024 * 1024, // 1MB
       maxEntries: 100,
-      ...config
+      ...config,
     };
 
     cacheManager = new CacheManager(defaultConfig, testCacheDir);
@@ -184,7 +179,7 @@ describe('Cache Manager', () => {
     test('should respect TTL for time-based invalidation', async () => {
       const manager = createCacheManager({
         ttl: 0.1, // 100ms
-        invalidation: 'time_based'
+        invalidation: 'time_based',
       });
 
       await manager.set('test-key', 'test-value');
@@ -193,7 +188,7 @@ describe('Cache Manager', () => {
       expect(await manager.get('test-key')).toBe('test-value');
 
       // Wait for expiration
-      await new Promise(resolve => setTimeout(resolve, 150));
+      await new Promise((resolve) => setTimeout(resolve, 150));
 
       // Should be expired
       expect(await manager.get('test-key')).toBeNull();
@@ -202,13 +197,13 @@ describe('Cache Manager', () => {
     test('should not expire entries with manual invalidation', async () => {
       const manager = createCacheManager({
         ttl: 0.1,
-        invalidation: 'manual'
+        invalidation: 'manual',
       });
 
       await manager.set('test-key', 'test-value');
 
       // Wait longer than TTL
-      await new Promise(resolve => setTimeout(resolve, 150));
+      await new Promise((resolve) => setTimeout(resolve, 150));
 
       // Should still be available
       expect(await manager.get('test-key')).toBe('test-value');
@@ -216,7 +211,7 @@ describe('Cache Manager', () => {
 
     test('should handle content-based invalidation', async () => {
       const manager = createCacheManager({
-        invalidation: 'content_based'
+        invalidation: 'content_based',
       });
 
       await manager.set('test-key', 'test-value');
@@ -230,7 +225,7 @@ describe('Cache Manager', () => {
     test('should enforce max size limit', async () => {
       const manager = createCacheManager({
         maxSize: 100, // 100 bytes
-        maxEntries: 1000
+        maxEntries: 1000,
       });
 
       // Create entry that exceeds max size
@@ -246,7 +241,7 @@ describe('Cache Manager', () => {
     test('should enforce max entries limit', async () => {
       const manager = createCacheManager({
         maxEntries: 3,
-        maxSize: 1024 * 1024
+        maxSize: 1024 * 1024,
       });
 
       // Add more entries than max
@@ -264,7 +259,7 @@ describe('Cache Manager', () => {
 
     test('should use LRU eviction strategy', async () => {
       const manager = createCacheManager({
-        maxEntries: 2
+        maxEntries: 2,
       });
 
       await manager.set('key1', 'value1');
@@ -389,7 +384,7 @@ describe('Cache Manager', () => {
       await manager.get('test-key');
 
       const stats = manager.getStats();
-      expect(stats.hitRate).toBeCloseTo(2/3, 2);
+      expect(stats.hitRate).toBeCloseTo(2 / 3, 2);
     });
 
     test('should track cache size and entries', async () => {
@@ -405,7 +400,7 @@ describe('Cache Manager', () => {
 
     test('should track evictions', async () => {
       const manager = createCacheManager({
-        maxEntries: 1
+        maxEntries: 1,
       });
 
       await manager.set('key1', 'value1');
@@ -419,16 +414,14 @@ describe('Cache Manager', () => {
   describe('Persistence', () => {
     test('should persist entries to disk for shared cache', async () => {
       const manager = createCacheManager({
-        scope: 'global'
+        scope: 'global',
       });
 
       await manager.set('persistent-key', 'persistent-value');
 
       // Check if file exists on disk
-      const cacheFiles = await import('fs/promises').then(fs =>
-        fs.readdir(testCacheDir).then(files =>
-          files.filter(f => f.endsWith('.json'))
-        )
+      const cacheFiles = await import('fs/promises').then((fs) =>
+        fs.readdir(testCacheDir).then((files) => files.filter((f) => f.endsWith('.json')))
       );
 
       expect(cacheFiles.length).toBeGreaterThan(0);
@@ -436,16 +429,14 @@ describe('Cache Manager', () => {
 
     test('should not persist entries for command scope', async () => {
       const manager = createCacheManager({
-        scope: 'command'
+        scope: 'command',
       });
 
       await manager.set('temp-key', 'temp-value');
 
       // Should not create files for command scope
-      const cacheFiles = await import('fs/promises').then(fs =>
-        fs.readdir(testCacheDir).then(files =>
-          files.filter(f => f.endsWith('.json'))
-        )
+      const cacheFiles = await import('fs/promises').then((fs) =>
+        fs.readdir(testCacheDir).then((files) => files.filter((f) => f.endsWith('.json')))
       );
 
       expect(cacheFiles).toHaveLength(0);
@@ -466,7 +457,7 @@ describe('Cache Manager', () => {
 
     test('should handle corrupted cache files gracefully', async () => {
       // Create corrupted cache file
-      await import('fs/promises').then(fs =>
+      await import('fs/promises').then((fs) =>
         fs.writeFile(join(testCacheDir, 'corrupted.json'), 'invalid json')
       );
 
@@ -479,13 +470,13 @@ describe('Cache Manager', () => {
     test('should cleanup expired entries periodically', async () => {
       const manager = createCacheManager({
         ttl: 0.1,
-        invalidation: 'time_based'
+        invalidation: 'time_based',
       });
 
       await manager.set('expiring-key', 'expiring-value');
 
       // Wait for expiration
-      await new Promise(resolve => setTimeout(resolve, 150));
+      await new Promise((resolve) => setTimeout(resolve, 150));
 
       // Cleanup should have run
       expect(await manager.get('expiring-key')).toBeNull();
@@ -504,7 +495,7 @@ describe('Cache Manager', () => {
   describe('Error Handling', () => {
     test('should handle file system errors gracefully', async () => {
       const manager = createCacheManager({
-        scope: 'global'
+        scope: 'global',
       });
 
       // Remove cache directory to simulate file system error
@@ -530,7 +521,7 @@ describe('Cache Manager', () => {
     test('should work with agent-specific cache', () => {
       const manager = createCacheManager({
         type: 'agent_specific',
-        scope: 'workflow'
+        scope: 'workflow',
       });
 
       expect(manager).toBeDefined();
@@ -539,7 +530,7 @@ describe('Cache Manager', () => {
     test('should work with hierarchical cache', () => {
       const manager = createCacheManager({
         type: 'hierarchical',
-        scope: 'global'
+        scope: 'global',
       });
 
       expect(manager).toBeDefined();
@@ -547,7 +538,7 @@ describe('Cache Manager', () => {
 
     test('should work with compression enabled', () => {
       const manager = createCacheManager({
-        compression: true
+        compression: true,
       });
 
       expect(manager).toBeDefined();

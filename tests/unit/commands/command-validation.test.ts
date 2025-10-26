@@ -13,13 +13,13 @@ import { setupTests, cleanupTests, testPaths } from '../../setup';
 // Command schema validators
 function validateClaudeCommand(metadata: any): { valid: boolean; errors: string[] } {
   const errors: string[] = [];
-  
+
   // Required fields
   if (!metadata.name) errors.push('Missing required field: name');
   if (!metadata.description) errors.push('Missing required field: description');
-  
+
   // Note: Claude Code commands don't use 'model' field in frontmatter, they use 'temperature' instead
-  
+
   // Temperature for commands should be lower (more deterministic)
   if (metadata.temperature !== undefined) {
     if (metadata.temperature < 0 || metadata.temperature > 1) {
@@ -29,34 +29,34 @@ function validateClaudeCommand(metadata: any): { valid: boolean; errors: string[
       errors.push('Commands should use lower temperature (<= 0.5) for consistency');
     }
   }
-  
+
   // Commands should have category
   if (!metadata.category) {
     errors.push('Commands should have a category');
   }
-  
+
   return { valid: errors.length === 0, errors };
 }
 
 function validateOpenCodeCommand(metadata: any): { valid: boolean; errors: string[] } {
   const errors: string[] = [];
-  
+
   // Required fields
   if (!metadata.name) errors.push('Missing required field: name');
   if (!metadata.description) errors.push('Missing required field: description');
   if (!metadata.model) errors.push('Missing required field: model');
   if (!metadata.mode) errors.push('Missing required field: mode');
-  
+
   // Mode must be 'command'
   if (metadata.mode && metadata.mode !== 'command') {
     errors.push(`Commands must have mode: 'command', found: ${metadata.mode}`);
   }
-  
+
   // Model format for OpenCode
   if (metadata.model && !metadata.model.includes('anthropic/')) {
     errors.push('Model should use anthropic/ prefix for OpenCode');
   }
-  
+
   // Parameters validation
   if (metadata.params) {
     if (!metadata.params.required || !Array.isArray(metadata.params.required)) {
@@ -65,13 +65,10 @@ function validateOpenCodeCommand(metadata: any): { valid: boolean; errors: strin
     if (!metadata.params.optional || !Array.isArray(metadata.params.optional)) {
       errors.push('params.optional must be an array');
     }
-    
+
     // Validate parameter structure
-    const allParams = [
-      ...(metadata.params.required || []),
-      ...(metadata.params.optional || [])
-    ];
-    
+    const allParams = [...(metadata.params.required || []), ...(metadata.params.optional || [])];
+
     for (const param of allParams) {
       if (typeof param === 'object') {
         if (!param.name) errors.push('Parameter must have a name');
@@ -80,7 +77,7 @@ function validateOpenCodeCommand(metadata: any): { valid: boolean; errors: strin
       }
     }
   }
-  
+
   return { valid: errors.length === 0, errors };
 }
 
@@ -88,11 +85,11 @@ async function loadCommandMetadata(filePath: string): Promise<any | null> {
   try {
     const content = await readFile(filePath, 'utf-8');
     const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---/);
-    
+
     if (!frontmatterMatch) {
       return null;
     }
-    
+
     return yaml.parse(frontmatterMatch[1]);
   } catch (error) {
     console.error(`Failed to load ${filePath}:`, error);
@@ -103,19 +100,19 @@ async function loadCommandMetadata(filePath: string): Promise<any | null> {
 describe('Command Validation', () => {
   let claudeCommands: string[] = [];
   let openCodeCommands: string[] = [];
-  
+
   beforeAll(async () => {
     await setupTests();
-    
+
     // Load command files
     if (existsSync(testPaths.commands.claude)) {
-      claudeCommands = (await readdir(testPaths.commands.claude))
-        .filter(f => f.endsWith('.md'));
+      claudeCommands = (await readdir(testPaths.commands.claude)).filter((f) => f.endsWith('.md'));
     }
-    
+
     if (existsSync(testPaths.commands.opencode)) {
-      openCodeCommands = (await readdir(testPaths.commands.opencode))
-        .filter(f => f.endsWith('.md'));
+      openCodeCommands = (await readdir(testPaths.commands.opencode)).filter((f) =>
+        f.endsWith('.md')
+      );
     }
   });
 
@@ -133,18 +130,21 @@ describe('Command Validation', () => {
         console.warn('No Claude commands found for testing');
         return;
       }
-      
+
       for (const file of claudeCommands) {
         const filePath = join(testPaths.commands.claude, file);
         const metadata = await loadCommandMetadata(filePath);
-        
+
         if (metadata) {
           const validation = validateClaudeCommand(metadata);
           if (!validation.valid) {
             console.warn(`${file}: ${validation.errors.join(', ')}`);
           }
           // Be more lenient - only fail if major issues
-          if (!validation.valid && validation.errors.filter(e => !e.includes('temperature')).length > 2) {
+          if (
+            !validation.valid &&
+            validation.errors.filter((e) => !e.includes('temperature')).length > 2
+          ) {
             expect(validation.valid).toBeTruthy();
           }
         }
@@ -152,23 +152,25 @@ describe('Command Validation', () => {
     });
 
     test('Claude commands should have proper structure', async () => {
-      for (const file of claudeCommands.slice(0, 5)) { // Test first 5
+      for (const file of claudeCommands.slice(0, 5)) {
+        // Test first 5
         const filePath = join(testPaths.commands.claude, file);
         const content = await readFile(filePath, 'utf-8');
-        
+
         // Should have frontmatter
         expect(content).toContain('---');
         const match = content.match(/^---\n[\s\S]*?\n---\n([\s\S]+)/);
-        
+
         if (match) {
           // Should have command documentation
           const body = match[1];
           expect(body.trim().length).toBeGreaterThan(0);
-          
+
           // Should describe usage or examples
-          const hasUsage = body.toLowerCase().includes('usage') || 
-                           body.toLowerCase().includes('example') ||
-                           body.toLowerCase().includes('command');
+          const hasUsage =
+            body.toLowerCase().includes('usage') ||
+            body.toLowerCase().includes('example') ||
+            body.toLowerCase().includes('command');
           expect(hasUsage).toBe(true);
         }
       }
@@ -178,7 +180,7 @@ describe('Command Validation', () => {
       for (const file of claudeCommands.slice(0, 5)) {
         const filePath = join(testPaths.commands.claude, file);
         const metadata = await loadCommandMetadata(filePath);
-        
+
         if (metadata && metadata.temperature !== undefined) {
           expect(metadata.temperature).toBeLessThanOrEqual(0.5);
         }
@@ -196,11 +198,11 @@ describe('Command Validation', () => {
         console.warn('No OpenCode commands found for testing');
         return;
       }
-      
+
       for (const file of openCodeCommands) {
         const filePath = join(testPaths.commands.opencode, file);
         const metadata = await loadCommandMetadata(filePath);
-        
+
         if (metadata) {
           const validation = validateOpenCodeCommand(metadata);
           if (!validation.valid) {
@@ -218,7 +220,7 @@ describe('Command Validation', () => {
       for (const file of openCodeCommands.slice(0, 5)) {
         const filePath = join(testPaths.commands.opencode, file);
         const metadata = await loadCommandMetadata(filePath);
-        
+
         if (metadata) {
           expect(metadata.mode).toBe('command');
         }
@@ -229,14 +231,15 @@ describe('Command Validation', () => {
       for (const file of openCodeCommands.slice(0, 5)) {
         const filePath = join(testPaths.commands.opencode, file);
         const metadata = await loadCommandMetadata(filePath);
-        
+
         if (metadata) {
           // If command name suggests parameters, check they exist
-          const needsParams = metadata.name.includes('generate') ||
-                            metadata.name.includes('create') ||
-                            metadata.name.includes('analyze') ||
-                            metadata.name.includes('convert');
-          
+          const needsParams =
+            metadata.name.includes('generate') ||
+            metadata.name.includes('create') ||
+            metadata.name.includes('analyze') ||
+            metadata.name.includes('convert');
+
           if (needsParams && metadata.params) {
             expect(metadata.params).toHaveProperty('required');
             expect(metadata.params).toHaveProperty('optional');
@@ -248,12 +251,12 @@ describe('Command Validation', () => {
 
   describe('Cross-format command consistency', () => {
     test('commands should exist in both formats', async () => {
-      const claudeNames = claudeCommands.map(f => f.replace('.md', ''));
-      const openCodeNames = openCodeCommands.map(f => f.replace('.md', ''));
-      
+      const claudeNames = claudeCommands.map((f) => f.replace('.md', ''));
+      const openCodeNames = openCodeCommands.map((f) => f.replace('.md', ''));
+
       // Check for common commands
-      const commonCommands = claudeNames.filter(name => openCodeNames.includes(name));
-      
+      const commonCommands = claudeNames.filter((name) => openCodeNames.includes(name));
+
       if (claudeNames.length > 0 && openCodeNames.length > 0) {
         // At least some commands should be in both formats
         expect(commonCommands.length).toBeGreaterThan(0);
@@ -261,17 +264,17 @@ describe('Command Validation', () => {
     });
 
     test('common commands should have matching metadata', async () => {
-      const claudeNames = claudeCommands.map(f => f.replace('.md', ''));
-      const openCodeNames = openCodeCommands.map(f => f.replace('.md', ''));
-      const commonCommands = claudeNames.filter(name => openCodeNames.includes(name));
-      
+      const claudeNames = claudeCommands.map((f) => f.replace('.md', ''));
+      const openCodeNames = openCodeCommands.map((f) => f.replace('.md', ''));
+      const commonCommands = claudeNames.filter((name) => openCodeNames.includes(name));
+
       for (const commandName of commonCommands.slice(0, 3)) {
         const claudePath = join(testPaths.commands.claude, `${commandName}.md`);
         const openCodePath = join(testPaths.commands.opencode, `${commandName}.md`);
-        
+
         const claudeMeta = await loadCommandMetadata(claudePath);
         const openCodeMeta = await loadCommandMetadata(openCodePath);
-        
+
         if (claudeMeta && openCodeMeta) {
           expect(claudeMeta.name).toBe(openCodeMeta.name);
           expect(claudeMeta.description).toBe(openCodeMeta.description);
@@ -283,25 +286,37 @@ describe('Command Validation', () => {
   describe('Command categories', () => {
     test('commands should have appropriate categories', async () => {
       const validCategories = [
-        'git', 'docker', 'kubernetes', 'database',
-        'testing', 'build', 'deploy', 'utility',
-        'analysis', 'generation', 'conversion',
-        'documentation', 'security', 'monitoring'
+        'git',
+        'docker',
+        'kubernetes',
+        'database',
+        'testing',
+        'build',
+        'deploy',
+        'utility',
+        'analysis',
+        'generation',
+        'conversion',
+        'documentation',
+        'security',
+        'monitoring',
       ];
-      
+
       const allCommands = [
-        ...claudeCommands.slice(0, 3).map(f => ({ file: f, path: testPaths.commands.claude })),
-        ...openCodeCommands.slice(0, 3).map(f => ({ file: f, path: testPaths.commands.opencode }))
+        ...claudeCommands.slice(0, 3).map((f) => ({ file: f, path: testPaths.commands.claude })),
+        ...openCodeCommands
+          .slice(0, 3)
+          .map((f) => ({ file: f, path: testPaths.commands.opencode })),
       ];
-      
+
       for (const { file, path } of allCommands) {
         const filePath = join(path, file);
         const metadata = await loadCommandMetadata(filePath);
-        
+
         if (metadata && metadata.category) {
           const categoryLower = metadata.category.toLowerCase();
-          const isValid = validCategories.some(cat => categoryLower.includes(cat));
-          
+          const isValid = validCategories.some((cat) => categoryLower.includes(cat));
+
           // Category should be meaningful
           expect(isValid || categoryLower.length > 3).toBe(true);
         }
@@ -312,26 +327,26 @@ describe('Command Validation', () => {
   describe('Command content validation', () => {
     test('commands should have usage examples', async () => {
       const testCommands = [...claudeCommands.slice(0, 2), ...openCodeCommands.slice(0, 2)];
-      
+
       for (const file of testCommands) {
         const isOpenCode = openCodeCommands.includes(file);
         const basePath = isOpenCode ? testPaths.commands.opencode : testPaths.commands.claude;
         const filePath = join(basePath, file);
         const content = await readFile(filePath, 'utf-8');
-        
+
         // Extract content after frontmatter
         const match = content.match(/^---\n[\s\S]*?\n---\n([\s\S]+)/);
         if (match) {
           const body = match[1].toLowerCase();
-          
+
           // Should have some form of usage documentation
-          const hasDocumentation = 
+          const hasDocumentation =
             body.includes('usage') ||
             body.includes('example') ||
             body.includes('syntax') ||
             body.includes('parameter') ||
             body.includes('option');
-          
+
           expect(hasDocumentation).toBe(true);
         }
       }
@@ -342,7 +357,7 @@ describe('Command Validation', () => {
       for (const file of openCodeCommands.slice(0, 5)) {
         const filePath = join(testPaths.commands.opencode, file);
         const metadata = await loadCommandMetadata(filePath);
-        
+
         if (metadata && metadata.tools) {
           // Commands generally shouldn't need dangerous tools
           expect(metadata.tools.bash || false).toBe(false);
@@ -379,14 +394,14 @@ describe('Command Validation', () => {
         expect(openCodeMeta.name).toBe('continue');
         expect(openCodeMeta.description).toContain('Resume execution');
         expect(openCodeMeta.mode).toBe('command');
-        expect(openCodeMeta.model).toContain('anthropic/');
+        expect(openCodeMeta.model).toBe('anthropic/claude-3-5-sonnet-20241022');
       }
     });
 
     test('continue command should have comprehensive documentation', async () => {
       const commands = [
         { path: join(testPaths.commands.claude, 'continue.md'), format: 'claude' },
-        { path: join(testPaths.commands.opencode, 'continue.md'), format: 'opencode' }
+        { path: join(testPaths.commands.opencode, 'continue.md'), format: 'opencode' },
       ];
 
       for (const { path, format } of commands) {

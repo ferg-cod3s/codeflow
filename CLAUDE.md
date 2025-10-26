@@ -51,36 +51,14 @@ This is a **Codeflow Automation Enhancement CLI** built with **TypeScript** that
 - `codeflow convert` - Converts agents between different formats
 - `codeflow watch start` - Starts file watching for automatic synchronization
 
-**Core Workflow Agent Types**:
+**Agent Architecture**:
 
-- `codebase-locator` - Finds WHERE files and components exist
-- `codebase-analyzer` - Understands HOW specific code works
-- `codebase-pattern-finder` - Discovers similar implementation patterns
-- `research-locator` - Discovers existing documentation about topics
-- `research-analyzer` - Extracts insights from specific documents
-- `web-search-researcher` - Performs targeted web research
-
-**Specialized Domain Agents** (Claude Code format):
-
-- `operations_incident_commander` - Incident response leadership and coordination
-- `development_migrations_specialist` - Database schema migrations and data backfills
-- `quality-testing_performance_tester` - Performance testing and bottleneck analysis
-- `programmatic_seo_engineer` - Large-scale SEO architecture and content generation
-- `content_localization_coordinator` - i18n/l10n workflow coordination
-
-**Base Agent Architecture**:
-
-- **Source of Truth**: `codeflow-agents/` - Base agents in hierarchical structure by domain
+- **Source of Truth**: `base-agents/` - Base agents in hierarchical structure by domain
 - **Platform Conversion**: Agents are converted to platform-specific formats on setup
 - **Claude Code Format**: Converted to `.claude/agents/` with YAML frontmatter
 - **OpenCode Format**: Converted to `.opencode/agent/` with proper permissions and configuration
 
-**Agent Categories** (Base Format):
-
-- `agent-architect` - Meta-agent for creating specialized AI agents
-- `smart-subagent-orchestrator` - Complex multi-domain project coordination
-- `ai-integration-expert`, `api-builder`, `database-expert`, `full-stack-developer`
-- `growth-engineer`, `security-scanner`, `ux-optimizer` and others
+See @AGENTS.md for complete agent catalog, categories, and usage patterns.
 
 **Command Workflows**:
 
@@ -473,3 +451,209 @@ codeflow setup [project-path]
 # Commands are automatically configured
 # Agents are converted from base format
 ```
+
+## OpenCode Configuration
+
+### Configuration File Structure
+
+OpenCode configuration is stored in `~/.config/opencode/opencode.json` (global) or `opencode.json` (project-level).
+
+#### Complete Configuration Example
+
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "provider/model-name",
+  "small_model": "provider/model-name",
+  "theme": "dark",
+  "autoupdate": true,
+  "share": "manual",
+  "mcp": {
+    "server-name": {
+      "type": "local",
+      "command": ["npx", "server-package"],
+      "enabled": true
+    }
+  },
+  "tools": {
+    "write": true,
+    "bash": true
+  },
+  "permission": {
+    "edit": "ask"
+  },
+  "instructions": ["path/to/instructions.md"]
+}
+```
+
+### Key Configuration Fields
+
+#### Required Fields
+
+- **`$schema`**: `"https://opencode.ai/config.json"` - Enables IDE validation
+- **`model`**: `"provider/model-name"` - Primary model for complex tasks
+- **`small_model`**: `"provider/model-name"` - Lightweight model for simple tasks
+
+#### Agent & Command Configuration
+
+Agents and commands are defined in two ways:
+
+**Option 1: Inline Definition in opencode.json**
+
+```json
+{
+  "agent": {
+    "code-reviewer": {
+      "description": "Reviews code for best practices",
+      "mode": "primary",
+      "model": "anthropic/claude-sonnet-4",
+      "prompt": "You are a code reviewer...",
+      "tools": {
+        "write": false,
+        "edit": false
+      }
+    }
+  },
+  "command": {
+    "test": {
+      "template": "Run the full test suite with coverage report",
+      "description": "Run tests with coverage",
+      "agent": "build",
+      "model": "anthropic/claude-sonnet-4"
+    }
+  }
+}
+```
+
+**Option 2: Markdown Files (Recommended)**
+
+Create agent files in:
+
+- `~/.config/opencode/agent/` (global)
+- `.opencode/agent/` (project-specific)
+
+Create command files in:
+
+- `~/.config/opencode/command/` (global)
+- `.opencode/command/` (project-specific)
+
+**Note**: The codeflow CLI automatically manages these files. Use `codeflow setup [project-path]` to set up the directory structure and sync agents/commands
+
+#### Optional Configuration
+
+**Sharing Mode**:
+
+- `"manual"` - Requires explicit `/share` commands
+- `"auto"` - Shares automatically
+- `"disabled"` - Prevents sharing
+
+**Tools Control**:
+
+```json
+{
+  "tools": {
+    "write": true,
+    "bash": true,
+    "read": true
+  }
+}
+```
+
+**Permissions**:
+
+```json
+{
+  "permission": {
+    "edit": "ask",
+    "write": "ask",
+    "bash": "ask"
+  }
+}
+```
+
+**MCP Servers**:
+
+```json
+{
+  "mcp": {
+    "playwright": {
+      "type": "local",
+      "command": ["npx", "@playwright/mcp@latest"],
+      "enabled": true
+    },
+    "github": {
+      "type": "local",
+      "command": [
+        "docker",
+        "run",
+        "--rm",
+        "-i",
+        "-e",
+        "GITHUB_PERSONAL_ACCESS_TOKEN={env:GITHUB_TOKEN}",
+        "ghcr.io/github/github-mcp-server"
+      ],
+      "enabled": true
+    }
+  }
+}
+```
+
+### Environment Variables & File References
+
+OpenCode supports variable substitution:
+
+- **Environment Variables**: `{env:VARIABLE_NAME}`
+- **File Contents**: `{file:path/to/file}`
+
+**Example**:
+
+```json
+{
+  "mcp": {
+    "github": {
+      "command": ["gh-server", "--token={env:GITHUB_TOKEN}"]
+    }
+  }
+}
+```
+
+### Configuration Priority
+
+1. Custom path via `OPENCODE_CONFIG` environment variable
+2. Project-level `opencode.json` (root directory)
+3. Global `~/.config/opencode/opencode.json`
+
+### Validation & Troubleshooting
+
+**Validate Configuration**:
+
+```bash
+# Check if configuration is valid JSON
+cat ~/.config/opencode/opencode.json | jq .
+
+# Create backup before editing
+cp ~/.config/opencode/opencode.json ~/.config/opencode/opencode.json.backup
+```
+
+**Common Issues**:
+
+1. **Invalid JSON syntax**
+   - Solution: Validate with `jq` or online JSON validator
+
+2. **Incorrect model format**
+   - Solution: Use `"provider/model-name"` format (e.g., `"anthropic/claude-sonnet-4"`)
+
+3. **MCP server configuration errors**
+   - Solution: Ensure `command` is an array of strings
+   - Solution: Use `{env:VAR}` for sensitive values
+
+4. **Agent/Command inline configuration**
+   - If defining agents/commands inline, use the object structure shown above
+   - Most users should use markdown files in `.opencode/agent/` and `.opencode/command/` directories instead
+
+### Documentation References
+
+- **Configuration**: https://opencode.ai/docs/config
+- **Agents**: https://opencode.ai/docs/agents
+- **Commands**: https://opencode.ai/docs/commands
+- **MCP Integration**: https://opencode.ai/docs/mcp

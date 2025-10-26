@@ -2,7 +2,7 @@ import { describe, test, expect } from 'bun:test';
 import { CommandValidator } from '../../src/yaml/command-validator';
 
 describe('OpenCode Variable Substitution', () => {
-  const validator = new CommandValidator();
+  const _validator = new CommandValidator();
 
   const template = `Generate tests for {{scope}}
 Files: {{files}}
@@ -22,7 +22,7 @@ Ticket: {{ticket}}`;
     const variables = {
       scope: 'login component',
       files: 'src/components/Login.tsx',
-      plan: 'auth-plan.md'
+      plan: 'auth-plan.md',
     };
     const result = substituteVariables(template, variables);
     expect(result).toContain('Generate tests for login component');
@@ -49,7 +49,7 @@ Code diff:
 {{/git-diff}}`;
     const variables = {
       'git-status': 'M modified.txt\nA added.txt',
-      'git-diff': '+ new line\n- old line'
+      'git-diff': '+ new line\n- old line',
     };
     const result = substituteVariables(complexTemplate, variables);
     expect(result).toContain('M modified.txt');
@@ -63,7 +63,7 @@ Code diff:
     const variables = {
       prefix: 'test',
       name: 'component',
-      suffix: 'spec'
+      suffix: 'spec',
     };
     const result = substituteVariables(nestedTemplate, variables);
     expect(result).toBe('test_component_spec');
@@ -77,9 +77,9 @@ Code diff:
   });
 
   test('handles special characters in variables', async () => {
-    const variables = { 
+    const variables = {
       scope: 'user-auth & login',
-      files: 'src/components/Login.tsx, src/utils/auth.ts'
+      files: 'src/components/Login.tsx, src/utils/auth.ts',
     };
     const result = substituteVariables(template, variables);
     expect(result).toContain('user-auth & login');

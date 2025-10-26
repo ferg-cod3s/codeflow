@@ -2,7 +2,7 @@
  * Test setup and utilities
  */
 
-import { beforeAll, afterAll, beforeEach, afterEach } from 'bun:test';
+// import { beforeAll, afterAll, beforeEach, afterEach } from 'bun:test';
 import { rm, mkdir } from 'fs/promises';
 import { existsSync } from 'fs';
 import { join } from 'path';
@@ -22,7 +22,7 @@ export const testPaths = {
   },
   commands: {
     claude: join(process.cwd(), '.claude', 'commands'),
-    opencode: join(process.cwd(), '.opencode', 'command'),
+    opencode: join(process.cwd(), 'opencode-commands'),
     source: join(process.cwd(), 'codeflow-commands'),
   },
   mcp: {

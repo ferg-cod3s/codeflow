@@ -1,11 +1,9 @@
-import { describe, test, expect, beforeEach, afterEach, mock } from 'bun:test';
+import { describe, test, expect, beforeEach, afterEach } from 'bun:test';
 import { join } from 'node:path';
 import { mkdir, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { existsSync } from 'node:fs';
 import { getTargetFormat, getAgentSourceDirs, copyAgentsWithConversion } from '../src/cli/setup';
 import { FormatConverter } from '../src/conversion/format-converter';
-import { parseAgentsFromDirectory } from '../src/conversion/agent-parser';
 import { ValidationEngine } from '../src/yaml/validation-engine';
 import { globalPerformanceMonitor } from '../src/optimization/performance';
 
@@ -25,7 +23,7 @@ describe('Setup Agents Functionality', () => {
   afterEach(async () => {
     try {
       await rm(tempDir, { recursive: true, force: true });
-    } catch (error) {
+    } catch {
       // Ignore cleanup errors
     }
   });
@@ -189,7 +187,7 @@ tools:
   describe('FormatConverter batch processing', () => {
     test('should convert batch of agents efficiently', async () => {
       // Create multiple base agents
-      const agents = [];
+      const agents: any[] = [];
       for (let i = 0; i < 10; i++) {
         const baseAgent = {
           name: `batch-agent-${i}`,

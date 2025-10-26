@@ -55,9 +55,6 @@ export class FormatConverter {
       ...(model && { model }),
     };
 
-    console.log(`DEBUG: toolsString = "${toolsString}", model = "${model}"`);
-    console.log('DEBUG: Final frontmatter:', JSON.stringify(claudeCodeFrontmatter, null, 2));
-
     // Explicitly strips: mode, temperature, capabilities, permission, tags, category, etc.
 
     return {

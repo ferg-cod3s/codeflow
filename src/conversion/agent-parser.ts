@@ -311,7 +311,7 @@ export async function parseAgentFile(
       format === 'opencode' ? normalizePermissionFormat(frontmatter) : frontmatter;
 
     // Check if this is a command by mode field
-    const isCommand = normalizedFrontmatter.mode === 'command';
+    const _isCommand = normalizedFrontmatter.mode === 'command';
 
     const entity: Agent | Command = {
       name: basename(filePath, '.md'),
@@ -341,7 +341,7 @@ export async function parseAgentFile(
         }
 
         // Check if this is a command in fallback parsing too
-        const isCommand = frontmatter.mode === 'command';
+        const _isCommand = frontmatter.mode === 'command';
 
         const entity: Agent | Command = {
           name: frontmatter.name || basename(filePath, '.md'),

@@ -75,7 +75,7 @@ interface DiscoveredAgent {
 }
 
 async function scanAgentsDirectory(projectRoot: string): Promise<DiscoveredAgent[]> {
-  const agentsDir = join(projectRoot, 'codeflow-agents');
+  const agentsDir = join(projectRoot, 'base-agents');
 
   if (!existsSync(agentsDir)) {
     throw new Error(`Codeflow agents directory not found: ${agentsDir}`);
@@ -130,14 +130,14 @@ export async function buildManifest(options: BuildManifestOptions = {}): Promise
         // Prefer the real directory name discovered from filesystem; fallback to heuristic if needed
         category: agent.category || getCategoryFromName(agent.name),
         sources: {
-          base: `codeflow-agents/${agent.category}/${agent.name}.md`,
+          base: `base-agents/${agent.category}/${agent.name}.md`,
           'claude-code': `.claude/agents/${agent.name}.md`,
           opencode: `.opencode/agent/${agent.name}.md`,
         },
       })),
       total_agents: agents.length,
       last_updated: new Date().toISOString(),
-      canonical_directories: ['codeflow-agents/', '.claude/agents/', '.opencode/agent/'],
+      canonical_directories: ['base-agents/', '.claude/agents/', '.opencode/agent/'],
       format_info: {
         base: {
           description: 'Base format for MCP integration',

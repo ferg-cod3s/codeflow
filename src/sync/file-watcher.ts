@@ -1,7 +1,6 @@
 import { watch, FSWatcher } from 'node:fs';
-import { join, relative, basename, dirname } from 'node:path';
+import { join, relative, basename } from 'node:path';
 import { existsSync } from 'node:fs';
-import { readFile } from 'node:fs/promises';
 import { syncGlobalAgents } from '../cli/sync';
 import { parseAgentFile } from '../conversion/agent-parser';
 import { FormatConverter } from '../conversion/format-converter';

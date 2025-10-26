@@ -4,11 +4,11 @@
  */
 
 import { describe, test, expect, beforeAll, afterAll, beforeEach, afterEach } from 'bun:test';
-import { mkdir, writeFile, rm, readFile } from 'fs/promises';
+import { mkdir, writeFile, rm } from 'fs/promises';
 import { existsSync } from 'fs';
 import { join } from 'path';
-import { CommandConverter } from '../../../src/conversion/command-converter.js';
-import { setupTests, cleanupTests, TEST_DIR } from '../setup.js';
+import { CommandConverter } from '../../src/conversion/command-converter';
+import { setupTests, cleanupTests, TEST_DIR } from '../setup';
 
 describe('Command Variable Conversion Integration', () => {
   let testProjectRoot: string;
@@ -304,7 +304,10 @@ inputs:
 Call {{base_url}}/{{endpoint}}`;
 
       // Convert to OpenCode
-      const openCodeResult = converter.convertToOpenCode(nestedTemplateCommand, 'nested-template.md');
+      const openCodeResult = converter.convertToOpenCode(
+        nestedTemplateCommand,
+        'nested-template.md'
+      );
       expect(openCodeResult).toContain('$ARGUMENTS');
       expect(openCodeResult).toContain('<!-- Note: OpenCode only supports $ARGUMENTS placeholder');
     });

@@ -116,6 +116,7 @@ export class CommandConverter {
       : this.convertClaudeCodeToOpenCode(frontmatter);
 
     // Transform body content variable syntax
+    // Always apply variable transformation, even for already-OpenCode files
     const transformedBody = this.transformBodyVariables(
       parsedYaml.body,
       'opencode',

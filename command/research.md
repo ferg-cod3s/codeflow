@@ -190,7 +190,7 @@ Multi-dimensional research via agent coordination for codebase patterns, histori
 
 ```markdown
 ---
-date: {{current_date}}
+date: { { current_date } }
 researcher: Assistant
 topic: 'Research Topic'
 tags: [research, tags]
@@ -275,4 +275,4 @@ status: complete
 - Memory <30MB
 - Response <150ms
 
-{{ticket}}
+$ARGUMENTS

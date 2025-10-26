@@ -5,7 +5,7 @@
       "description": "Agent: accessibility pro",
       "category": "design-ux",
       "sources": {
-        "base": "codeflow-agents/design-ux/accessibility-pro.md",
+        "base": "base-agents/design-ux/accessibility-pro.md",
         "claude-code": ".claude/agents/accessibility-pro.md",
         "opencode": ".opencode/agent/accessibility-pro.md"
       }
@@ -15,7 +15,7 @@
       "description": "Agent: agent architect",
       "category": "generalist",
       "sources": {
-        "base": "codeflow-agents/generalist/agent-architect.md",
+        "base": "base-agents/generalist/agent-architect.md",
         "claude-code": ".claude/agents/agent-architect.md",
         "opencode": ".opencode/agent/agent-architect.md"
       }
@@ -25,7 +25,7 @@
       "description": "Agent: agent ecosystem manager",
       "category": "generalist",
       "sources": {
-        "base": "codeflow-agents/generalist/agent-ecosystem-manager.md",
+        "base": "base-agents/generalist/agent-ecosystem-manager.md",
         "claude-code": ".claude/agents/agent-ecosystem-manager.md",
         "opencode": ".opencode/agent/agent-ecosystem-manager.md"
       }
@@ -35,7 +35,7 @@
       "description": "Agent: ai engineer",
       "category": "ai-innovation",
       "sources": {
-        "base": "codeflow-agents/ai-innovation/ai-engineer.md",
+        "base": "base-agents/ai-innovation/ai-engineer.md",
         "claude-code": ".claude/agents/ai-engineer.md",
         "opencode": ".opencode/agent/ai-engineer.md"
       }
@@ -45,7 +45,7 @@
       "description": "Agent: ai integration expert",
       "category": "ai-innovation",
       "sources": {
-        "base": "codeflow-agents/ai-innovation/ai-integration-expert.md",
+        "base": "base-agents/ai-innovation/ai-integration-expert.md",
         "claude-code": ".claude/agents/ai-integration-expert.md",
         "opencode": ".opencode/agent/ai-integration-expert.md"
       }
@@ -55,7 +55,7 @@
       "description": "Agent: analytics engineer",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/analytics-engineer.md",
+        "base": "base-agents/development/analytics-engineer.md",
         "claude-code": ".claude/agents/analytics-engineer.md",
         "opencode": ".opencode/agent/analytics-engineer.md"
       }
@@ -65,7 +65,7 @@
       "description": "Agent: api builder",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/api-builder.md",
+        "base": "base-agents/development/api-builder.md",
         "claude-code": ".claude/agents/api-builder.md",
         "opencode": ".opencode/agent/api-builder.md"
       }
@@ -75,7 +75,7 @@
       "description": "Agent: api builder enhanced",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/api-builder-enhanced.md",
+        "base": "base-agents/development/api-builder-enhanced.md",
         "claude-code": ".claude/agents/api-builder-enhanced.md",
         "opencode": ".opencode/agent/api-builder-enhanced.md"
       }
@@ -85,9 +85,19 @@
       "description": "Agent: api documenter",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/api-documenter.md",
+        "base": "base-agents/development/api-documenter.md",
         "claude-code": ".claude/agents/api-documenter.md",
         "opencode": ".opencode/agent/api-documenter.md"
+      }
+    },
+    {
+      "name": "ar-vr-developer",
+      "description": "Agent: ar vr developer",
+      "category": "ai-innovation",
+      "sources": {
+        "base": "base-agents/ai-innovation/ar-vr-developer.md",
+        "claude-code": ".claude/agents/ar-vr-developer.md",
+        "opencode": ".opencode/agent/ar-vr-developer.md"
       }
     },
     {
@@ -95,7 +105,7 @@
       "description": "Agent: architect review",
       "category": "quality-testing",
       "sources": {
-        "base": "codeflow-agents/quality-testing/architect-review.md",
+        "base": "base-agents/quality-testing/architect-review.md",
         "claude-code": ".claude/agents/architect-review.md",
         "opencode": ".opencode/agent/architect-review.md"
       }
@@ -105,7 +115,7 @@
       "description": "Agent: astro pro",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/astro-pro.md",
+        "base": "base-agents/development/astro-pro.md",
         "claude-code": ".claude/agents/astro-pro.md",
         "opencode": ".opencode/agent/astro-pro.md"
       }
@@ -115,7 +125,7 @@
       "description": "Agent: backend architect",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/backend-architect.md",
+        "base": "base-agents/development/backend-architect.md",
         "claude-code": ".claude/agents/backend-architect.md",
         "opencode": ".opencode/agent/backend-architect.md"
       }
@@ -125,7 +135,7 @@
       "description": "Agent: backend security coder",
       "category": "quality-testing",
       "sources": {
-        "base": "codeflow-agents/quality-testing/backend-security-coder.md",
+        "base": "base-agents/quality-testing/backend-security-coder.md",
         "claude-code": ".claude/agents/backend-security-coder.md",
         "opencode": ".opencode/agent/backend-security-coder.md"
       }
@@ -135,7 +145,7 @@
       "description": "Agent: blockchain developer",
       "category": "business-analytics",
       "sources": {
-        "base": "codeflow-agents/business-analytics/blockchain-developer.md",
+        "base": "base-agents/business-analytics/blockchain-developer.md",
         "claude-code": ".claude/agents/blockchain-developer.md",
         "opencode": ".opencode/agent/blockchain-developer.md"
       }
@@ -145,7 +155,7 @@
       "description": "Agent: business analyst",
       "category": "business-analytics",
       "sources": {
-        "base": "codeflow-agents/business-analytics/business-analyst.md",
+        "base": "base-agents/business-analytics/business-analyst.md",
         "claude-code": ".claude/agents/business-analyst.md",
         "opencode": ".opencode/agent/business-analyst.md"
       }
@@ -155,7 +165,7 @@
       "description": "Agent: c pro",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/c-pro.md",
+        "base": "base-agents/development/c-pro.md",
         "claude-code": ".claude/agents/c-pro.md",
         "opencode": ".opencode/agent/c-pro.md"
       }
@@ -165,9 +175,19 @@
       "description": "Agent: cloud architect",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/cloud-architect.md",
+        "base": "base-agents/development/cloud-architect.md",
         "claude-code": ".claude/agents/cloud-architect.md",
         "opencode": ".opencode/agent/cloud-architect.md"
+      }
+    },
+    {
+      "name": "code-generation-specialist",
+      "description": "Agent: code generation specialist",
+      "category": "generalist",
+      "sources": {
+        "base": "base-agents/generalist/code-generation-specialist.md",
+        "claude-code": ".claude/agents/code-generation-specialist.md",
+        "opencode": ".opencode/agent/code-generation-specialist.md"
       }
     },
     {
@@ -175,7 +195,7 @@
       "description": "Agent: code reviewer",
       "category": "quality-testing",
       "sources": {
-        "base": "codeflow-agents/quality-testing/code-reviewer.md",
+        "base": "base-agents/quality-testing/code-reviewer.md",
         "claude-code": ".claude/agents/code-reviewer.md",
         "opencode": ".opencode/agent/code-reviewer.md"
       }
@@ -185,7 +205,7 @@
       "description": "Agent: codebase analyzer",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/codebase-analyzer.md",
+        "base": "base-agents/development/codebase-analyzer.md",
         "claude-code": ".claude/agents/codebase-analyzer.md",
         "opencode": ".opencode/agent/codebase-analyzer.md"
       }
@@ -195,7 +215,7 @@
       "description": "Agent: codebase locator",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/codebase-locator.md",
+        "base": "base-agents/development/codebase-locator.md",
         "claude-code": ".claude/agents/codebase-locator.md",
         "opencode": ".opencode/agent/codebase-locator.md"
       }
@@ -205,7 +225,7 @@
       "description": "Agent: codebase pattern finder",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/codebase-pattern-finder.md",
+        "base": "base-agents/development/codebase-pattern-finder.md",
         "claude-code": ".claude/agents/codebase-pattern-finder.md",
         "opencode": ".opencode/agent/codebase-pattern-finder.md"
       }
@@ -215,9 +235,19 @@
       "description": "Agent: compliance expert",
       "category": "quality-testing",
       "sources": {
-        "base": "codeflow-agents/quality-testing/compliance-expert.md",
+        "base": "base-agents/quality-testing/compliance-expert.md",
         "claude-code": ".claude/agents/compliance-expert.md",
         "opencode": ".opencode/agent/compliance-expert.md"
+      }
+    },
+    {
+      "name": "computer-vision-engineer",
+      "description": "Agent: computer vision engineer",
+      "category": "ai-innovation",
+      "sources": {
+        "base": "base-agents/ai-innovation/computer-vision-engineer.md",
+        "claude-code": ".claude/agents/computer-vision-engineer.md",
+        "opencode": ".opencode/agent/computer-vision-engineer.md"
       }
     },
     {
@@ -225,7 +255,7 @@
       "description": "Agent: content localization coordinator",
       "category": "product-strategy",
       "sources": {
-        "base": "codeflow-agents/product-strategy/content-localization-coordinator.md",
+        "base": "base-agents/product-strategy/content-localization-coordinator.md",
         "claude-code": ".claude/agents/content-localization-coordinator.md",
         "opencode": ".opencode/agent/content-localization-coordinator.md"
       }
@@ -235,7 +265,7 @@
       "description": "Agent: content marketer",
       "category": "business-analytics",
       "sources": {
-        "base": "codeflow-agents/business-analytics/content-marketer.md",
+        "base": "base-agents/business-analytics/content-marketer.md",
         "claude-code": ".claude/agents/content-marketer.md",
         "opencode": ".opencode/agent/content-marketer.md"
       }
@@ -245,7 +275,7 @@
       "description": "Agent: context manager",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/context-manager.md",
+        "base": "base-agents/development/context-manager.md",
         "claude-code": ".claude/agents/context-manager.md",
         "opencode": ".opencode/agent/context-manager.md"
       }
@@ -255,7 +285,7 @@
       "description": "Agent: cost optimizer",
       "category": "operations",
       "sources": {
-        "base": "codeflow-agents/operations/cost-optimizer.md",
+        "base": "base-agents/operations/cost-optimizer.md",
         "claude-code": ".claude/agents/cost-optimizer.md",
         "opencode": ".opencode/agent/cost-optimizer.md"
       }
@@ -265,7 +295,7 @@
       "description": "Agent: cpp pro",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/cpp-pro.md",
+        "base": "base-agents/development/cpp-pro.md",
         "claude-code": ".claude/agents/cpp-pro.md",
         "opencode": ".opencode/agent/cpp-pro.md"
       }
@@ -275,7 +305,7 @@
       "description": "Agent: csharp pro",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/csharp-pro.md",
+        "base": "base-agents/development/csharp-pro.md",
         "claude-code": ".claude/agents/csharp-pro.md",
         "opencode": ".opencode/agent/csharp-pro.md"
       }
@@ -285,7 +315,7 @@
       "description": "Agent: customer support",
       "category": "business-analytics",
       "sources": {
-        "base": "codeflow-agents/business-analytics/customer-support.md",
+        "base": "base-agents/business-analytics/customer-support.md",
         "claude-code": ".claude/agents/customer-support.md",
         "opencode": ".opencode/agent/customer-support.md"
       }
@@ -295,7 +325,7 @@
       "description": "Agent: data engineer",
       "category": "ai-innovation",
       "sources": {
-        "base": "codeflow-agents/ai-innovation/data-engineer.md",
+        "base": "base-agents/ai-innovation/data-engineer.md",
         "claude-code": ".claude/agents/data-engineer.md",
         "opencode": ".opencode/agent/data-engineer.md"
       }
@@ -305,7 +335,7 @@
       "description": "Agent: data scientist",
       "category": "ai-innovation",
       "sources": {
-        "base": "codeflow-agents/ai-innovation/data-scientist.md",
+        "base": "base-agents/ai-innovation/data-scientist.md",
         "claude-code": ".claude/agents/data-scientist.md",
         "opencode": ".opencode/agent/data-scientist.md"
       }
@@ -315,7 +345,7 @@
       "description": "Agent: database admin",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/database-admin.md",
+        "base": "base-agents/development/database-admin.md",
         "claude-code": ".claude/agents/database-admin.md",
         "opencode": ".opencode/agent/database-admin.md"
       }
@@ -325,7 +355,7 @@
       "description": "Agent: database expert",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/database-expert.md",
+        "base": "base-agents/development/database-expert.md",
         "claude-code": ".claude/agents/database-expert.md",
         "opencode": ".opencode/agent/database-expert.md"
       }
@@ -335,7 +365,7 @@
       "description": "Agent: database optimizer",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/database-optimizer.md",
+        "base": "base-agents/development/database-optimizer.md",
         "claude-code": ".claude/agents/database-optimizer.md",
         "opencode": ".opencode/agent/database-optimizer.md"
       }
@@ -345,7 +375,7 @@
       "description": "Agent: debugger",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/debugger.md",
+        "base": "base-agents/development/debugger.md",
         "claude-code": ".claude/agents/debugger.md",
         "opencode": ".opencode/agent/debugger.md"
       }
@@ -355,7 +385,7 @@
       "description": "Agent: deployment engineer",
       "category": "operations",
       "sources": {
-        "base": "codeflow-agents/operations/deployment-engineer.md",
+        "base": "base-agents/operations/deployment-engineer.md",
         "claude-code": ".claude/agents/deployment-engineer.md",
         "opencode": ".opencode/agent/deployment-engineer.md"
       }
@@ -365,7 +395,7 @@
       "description": "Agent: deployment wizard",
       "category": "operations",
       "sources": {
-        "base": "codeflow-agents/operations/deployment-wizard.md",
+        "base": "base-agents/operations/deployment-wizard.md",
         "claude-code": ".claude/agents/deployment-wizard.md",
         "opencode": ".opencode/agent/deployment-wizard.md"
       }
@@ -375,7 +405,7 @@
       "description": "Agent: development migrations specialist",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/development-migrations-specialist.md",
+        "base": "base-agents/development/development-migrations-specialist.md",
         "claude-code": ".claude/agents/development-migrations-specialist.md",
         "opencode": ".opencode/agent/development-migrations-specialist.md"
       }
@@ -385,7 +415,7 @@
       "description": "Agent: devops operations specialist",
       "category": "operations",
       "sources": {
-        "base": "codeflow-agents/operations/devops-operations-specialist.md",
+        "base": "base-agents/operations/devops-operations-specialist.md",
         "claude-code": ".claude/agents/devops-operations-specialist.md",
         "opencode": ".opencode/agent/devops-operations-specialist.md"
       }
@@ -395,7 +425,7 @@
       "description": "Agent: devops troubleshooter",
       "category": "operations",
       "sources": {
-        "base": "codeflow-agents/operations/devops-troubleshooter.md",
+        "base": "base-agents/operations/devops-troubleshooter.md",
         "claude-code": ".claude/agents/devops-troubleshooter.md",
         "opencode": ".opencode/agent/devops-troubleshooter.md"
       }
@@ -405,7 +435,7 @@
       "description": "Agent: django pro",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/django-pro.md",
+        "base": "base-agents/development/django-pro.md",
         "claude-code": ".claude/agents/django-pro.md",
         "opencode": ".opencode/agent/django-pro.md"
       }
@@ -415,7 +445,7 @@
       "description": "Agent: docs architect",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/docs-architect.md",
+        "base": "base-agents/development/docs-architect.md",
         "claude-code": ".claude/agents/docs-architect.md",
         "opencode": ".opencode/agent/docs-architect.md"
       }
@@ -425,7 +455,7 @@
       "description": "Agent: documentation specialist",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/documentation-specialist.md",
+        "base": "base-agents/development/documentation-specialist.md",
         "claude-code": ".claude/agents/documentation-specialist.md",
         "opencode": ".opencode/agent/documentation-specialist.md"
       }
@@ -435,9 +465,29 @@
       "description": "Agent: dx optimizer",
       "category": "operations",
       "sources": {
-        "base": "codeflow-agents/operations/dx-optimizer.md",
+        "base": "base-agents/operations/dx-optimizer.md",
         "claude-code": ".claude/agents/dx-optimizer.md",
         "opencode": ".opencode/agent/dx-optimizer.md"
+      }
+    },
+    {
+      "name": "ecommerce-specialist",
+      "description": "Agent: ecommerce specialist",
+      "category": "product-strategy",
+      "sources": {
+        "base": "base-agents/product-strategy/ecommerce-specialist.md",
+        "claude-code": ".claude/agents/ecommerce-specialist.md",
+        "opencode": ".opencode/agent/ecommerce-specialist.md"
+      }
+    },
+    {
+      "name": "edge-computing-specialist",
+      "description": "Agent: edge computing specialist",
+      "category": "development",
+      "sources": {
+        "base": "base-agents/development/edge-computing-specialist.md",
+        "claude-code": ".claude/agents/edge-computing-specialist.md",
+        "opencode": ".opencode/agent/edge-computing-specialist.md"
       }
     },
     {
@@ -445,7 +495,7 @@
       "description": "Agent: elixir pro",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/elixir-pro.md",
+        "base": "base-agents/development/elixir-pro.md",
         "claude-code": ".claude/agents/elixir-pro.md",
         "opencode": ".opencode/agent/elixir-pro.md"
       }
@@ -455,7 +505,7 @@
       "description": "Agent: error detective",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/error-detective.md",
+        "base": "base-agents/development/error-detective.md",
         "claude-code": ".claude/agents/error-detective.md",
         "opencode": ".opencode/agent/error-detective.md"
       }
@@ -465,7 +515,7 @@
       "description": "Agent: error monitoring specialist",
       "category": "operations",
       "sources": {
-        "base": "codeflow-agents/operations/error-monitoring-specialist.md",
+        "base": "base-agents/operations/error-monitoring-specialist.md",
         "claude-code": ".claude/agents/error-monitoring-specialist.md",
         "opencode": ".opencode/agent/error-monitoring-specialist.md"
       }
@@ -475,9 +525,19 @@
       "description": "Agent: fastapi pro",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/fastapi-pro.md",
+        "base": "base-agents/development/fastapi-pro.md",
         "claude-code": ".claude/agents/fastapi-pro.md",
         "opencode": ".opencode/agent/fastapi-pro.md"
+      }
+    },
+    {
+      "name": "fintech-engineer",
+      "description": "Agent: fintech engineer",
+      "category": "product-strategy",
+      "sources": {
+        "base": "base-agents/product-strategy/fintech-engineer.md",
+        "claude-code": ".claude/agents/fintech-engineer.md",
+        "opencode": ".opencode/agent/fintech-engineer.md"
       }
     },
     {
@@ -485,7 +545,7 @@
       "description": "Agent: flutter expert",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/flutter-expert.md",
+        "base": "base-agents/development/flutter-expert.md",
         "claude-code": ".claude/agents/flutter-expert.md",
         "opencode": ".opencode/agent/flutter-expert.md"
       }
@@ -495,7 +555,7 @@
       "description": "Agent: frontend developer",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/frontend-developer.md",
+        "base": "base-agents/development/frontend-developer.md",
         "claude-code": ".claude/agents/frontend-developer.md",
         "opencode": ".opencode/agent/frontend-developer.md"
       }
@@ -505,7 +565,7 @@
       "description": "Agent: frontend security coder",
       "category": "quality-testing",
       "sources": {
-        "base": "codeflow-agents/quality-testing/frontend-security-coder.md",
+        "base": "base-agents/quality-testing/frontend-security-coder.md",
         "claude-code": ".claude/agents/frontend-security-coder.md",
         "opencode": ".opencode/agent/frontend-security-coder.md"
       }
@@ -515,7 +575,7 @@
       "description": "Agent: full stack developer",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/full-stack-developer.md",
+        "base": "base-agents/development/full-stack-developer.md",
         "claude-code": ".claude/agents/full-stack-developer.md",
         "opencode": ".opencode/agent/full-stack-developer.md"
       }
@@ -525,7 +585,7 @@
       "description": "Agent: github operations specialist",
       "category": "operations",
       "sources": {
-        "base": "codeflow-agents/operations/github-operations-specialist.md",
+        "base": "base-agents/operations/github-operations-specialist.md",
         "claude-code": ".claude/agents/github-operations-specialist.md",
         "opencode": ".opencode/agent/github-operations-specialist.md"
       }
@@ -535,7 +595,7 @@
       "description": "Agent: golang pro",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/golang-pro.md",
+        "base": "base-agents/development/golang-pro.md",
         "claude-code": ".claude/agents/golang-pro.md",
         "opencode": ".opencode/agent/golang-pro.md"
       }
@@ -545,7 +605,7 @@
       "description": "Agent: graphql architect",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/graphql-architect.md",
+        "base": "base-agents/development/graphql-architect.md",
         "claude-code": ".claude/agents/graphql-architect.md",
         "opencode": ".opencode/agent/graphql-architect.md"
       }
@@ -555,9 +615,19 @@
       "description": "Agent: growth engineer",
       "category": "business-analytics",
       "sources": {
-        "base": "codeflow-agents/business-analytics/growth-engineer.md",
+        "base": "base-agents/business-analytics/growth-engineer.md",
         "claude-code": ".claude/agents/growth-engineer.md",
         "opencode": ".opencode/agent/growth-engineer.md"
+      }
+    },
+    {
+      "name": "healthcare-it-specialist",
+      "description": "Agent: healthcare it specialist",
+      "category": "product-strategy",
+      "sources": {
+        "base": "base-agents/product-strategy/healthcare-it-specialist.md",
+        "claude-code": ".claude/agents/healthcare-it-specialist.md",
+        "opencode": ".opencode/agent/healthcare-it-specialist.md"
       }
     },
     {
@@ -565,7 +635,7 @@
       "description": "Agent: hr pro",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/hr-pro.md",
+        "base": "base-agents/development/hr-pro.md",
         "claude-code": ".claude/agents/hr-pro.md",
         "opencode": ".opencode/agent/hr-pro.md"
       }
@@ -575,9 +645,19 @@
       "description": "Agent: hybrid cloud architect",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/hybrid-cloud-architect.md",
+        "base": "base-agents/development/hybrid-cloud-architect.md",
         "claude-code": ".claude/agents/hybrid-cloud-architect.md",
         "opencode": ".opencode/agent/hybrid-cloud-architect.md"
+      }
+    },
+    {
+      "name": "ide-extension-developer",
+      "description": "Agent: ide extension developer",
+      "category": "generalist",
+      "sources": {
+        "base": "base-agents/generalist/ide-extension-developer.md",
+        "claude-code": ".claude/agents/ide-extension-developer.md",
+        "opencode": ".opencode/agent/ide-extension-developer.md"
       }
     },
     {
@@ -585,7 +665,7 @@
       "description": "Agent: incident responder",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/incident-responder.md",
+        "base": "base-agents/development/incident-responder.md",
         "claude-code": ".claude/agents/incident-responder.md",
         "opencode": ".opencode/agent/incident-responder.md"
       }
@@ -595,7 +675,7 @@
       "description": "Agent: infrastructure builder",
       "category": "operations",
       "sources": {
-        "base": "codeflow-agents/operations/infrastructure-builder.md",
+        "base": "base-agents/operations/infrastructure-builder.md",
         "claude-code": ".claude/agents/infrastructure-builder.md",
         "opencode": ".opencode/agent/infrastructure-builder.md"
       }
@@ -605,9 +685,29 @@
       "description": "Agent: ios developer",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/ios-developer.md",
+        "base": "base-agents/development/ios-developer.md",
         "claude-code": ".claude/agents/ios-developer.md",
         "opencode": ".opencode/agent/ios-developer.md"
+      }
+    },
+    {
+      "name": "iot-device-engineer",
+      "description": "Agent: iot device engineer",
+      "category": "development",
+      "sources": {
+        "base": "base-agents/development/iot-device-engineer.md",
+        "claude-code": ".claude/agents/iot-device-engineer.md",
+        "opencode": ".opencode/agent/iot-device-engineer.md"
+      }
+    },
+    {
+      "name": "iot-security-specialist",
+      "description": "Agent: iot security specialist",
+      "category": "development",
+      "sources": {
+        "base": "base-agents/development/iot-security-specialist.md",
+        "claude-code": ".claude/agents/iot-security-specialist.md",
+        "opencode": ".opencode/agent/iot-security-specialist.md"
       }
     },
     {
@@ -615,7 +715,7 @@
       "description": "Agent: java pro",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/java-pro.md",
+        "base": "base-agents/development/java-pro.md",
         "claude-code": ".claude/agents/java-pro.md",
         "opencode": ".opencode/agent/java-pro.md"
       }
@@ -625,7 +725,7 @@
       "description": "Agent: javascript pro",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/javascript-pro.md",
+        "base": "base-agents/development/javascript-pro.md",
         "claude-code": ".claude/agents/javascript-pro.md",
         "opencode": ".opencode/agent/javascript-pro.md"
       }
@@ -635,7 +735,7 @@
       "description": "Agent: kubernetes architect",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/kubernetes-architect.md",
+        "base": "base-agents/development/kubernetes-architect.md",
         "claude-code": ".claude/agents/kubernetes-architect.md",
         "opencode": ".opencode/agent/kubernetes-architect.md"
       }
@@ -645,7 +745,7 @@
       "description": "Agent: legacy modernizer",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/legacy-modernizer.md",
+        "base": "base-agents/development/legacy-modernizer.md",
         "claude-code": ".claude/agents/legacy-modernizer.md",
         "opencode": ".opencode/agent/legacy-modernizer.md"
       }
@@ -655,7 +755,7 @@
       "description": "Agent: legal advisor",
       "category": "business-analytics",
       "sources": {
-        "base": "codeflow-agents/business-analytics/legal-advisor.md",
+        "base": "base-agents/business-analytics/legal-advisor.md",
         "claude-code": ".claude/agents/legal-advisor.md",
         "opencode": ".opencode/agent/legal-advisor.md"
       }
@@ -665,7 +765,7 @@
       "description": "Agent: mermaid expert",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/mermaid-expert.md",
+        "base": "base-agents/development/mermaid-expert.md",
         "claude-code": ".claude/agents/mermaid-expert.md",
         "opencode": ".opencode/agent/mermaid-expert.md"
       }
@@ -675,7 +775,7 @@
       "description": "Agent: minecraft bukkit pro",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/minecraft-bukkit-pro.md",
+        "base": "base-agents/development/minecraft-bukkit-pro.md",
         "claude-code": ".claude/agents/minecraft-bukkit-pro.md",
         "opencode": ".opencode/agent/minecraft-bukkit-pro.md"
       }
@@ -685,7 +785,7 @@
       "description": "Agent: ml engineer",
       "category": "ai-innovation",
       "sources": {
-        "base": "codeflow-agents/ai-innovation/ml-engineer.md",
+        "base": "base-agents/ai-innovation/ml-engineer.md",
         "claude-code": ".claude/agents/ml-engineer.md",
         "opencode": ".opencode/agent/ml-engineer.md"
       }
@@ -695,7 +795,7 @@
       "description": "Agent: mlops engineer",
       "category": "ai-innovation",
       "sources": {
-        "base": "codeflow-agents/ai-innovation/mlops-engineer.md",
+        "base": "base-agents/ai-innovation/mlops-engineer.md",
         "claude-code": ".claude/agents/mlops-engineer.md",
         "opencode": ".opencode/agent/mlops-engineer.md"
       }
@@ -705,7 +805,7 @@
       "description": "Agent: mobile developer",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/mobile-developer.md",
+        "base": "base-agents/development/mobile-developer.md",
         "claude-code": ".claude/agents/mobile-developer.md",
         "opencode": ".opencode/agent/mobile-developer.md"
       }
@@ -715,7 +815,7 @@
       "description": "Agent: mobile security coder",
       "category": "quality-testing",
       "sources": {
-        "base": "codeflow-agents/quality-testing/mobile-security-coder.md",
+        "base": "base-agents/quality-testing/mobile-security-coder.md",
         "claude-code": ".claude/agents/mobile-security-coder.md",
         "opencode": ".opencode/agent/mobile-security-coder.md"
       }
@@ -725,7 +825,7 @@
       "description": "Agent: monitoring expert",
       "category": "operations",
       "sources": {
-        "base": "codeflow-agents/operations/monitoring-expert.md",
+        "base": "base-agents/operations/monitoring-expert.md",
         "claude-code": ".claude/agents/monitoring-expert.md",
         "opencode": ".opencode/agent/monitoring-expert.md"
       }
@@ -735,7 +835,7 @@
       "description": "Agent: network engineer",
       "category": "operations",
       "sources": {
-        "base": "codeflow-agents/operations/network-engineer.md",
+        "base": "base-agents/operations/network-engineer.md",
         "claude-code": ".claude/agents/network-engineer.md",
         "opencode": ".opencode/agent/network-engineer.md"
       }
@@ -745,9 +845,19 @@
       "description": "Agent: observability engineer",
       "category": "operations",
       "sources": {
-        "base": "codeflow-agents/operations/observability-engineer.md",
+        "base": "base-agents/operations/observability-engineer.md",
         "claude-code": ".claude/agents/observability-engineer.md",
         "opencode": ".opencode/agent/observability-engineer.md"
+      }
+    },
+    {
+      "name": "onboarding-experience-designer",
+      "description": "Agent: onboarding experience designer",
+      "category": "generalist",
+      "sources": {
+        "base": "base-agents/generalist/onboarding-experience-designer.md",
+        "claude-code": ".claude/agents/onboarding-experience-designer.md",
+        "opencode": ".opencode/agent/onboarding-experience-designer.md"
       }
     },
     {
@@ -755,7 +865,7 @@
       "description": "Agent: operations incident commander",
       "category": "operations",
       "sources": {
-        "base": "codeflow-agents/operations/operations-incident-commander.md",
+        "base": "base-agents/operations/operations-incident-commander.md",
         "claude-code": ".claude/agents/operations-incident-commander.md",
         "opencode": ".opencode/agent/operations-incident-commander.md"
       }
@@ -765,7 +875,7 @@
       "description": "Agent: payment integration",
       "category": "business-analytics",
       "sources": {
-        "base": "codeflow-agents/business-analytics/payment-integration.md",
+        "base": "base-agents/business-analytics/payment-integration.md",
         "claude-code": ".claude/agents/payment-integration.md",
         "opencode": ".opencode/agent/payment-integration.md"
       }
@@ -775,7 +885,7 @@
       "description": "Agent: performance engineer",
       "category": "quality-testing",
       "sources": {
-        "base": "codeflow-agents/quality-testing/performance-engineer.md",
+        "base": "base-agents/quality-testing/performance-engineer.md",
         "claude-code": ".claude/agents/performance-engineer.md",
         "opencode": ".opencode/agent/performance-engineer.md"
       }
@@ -785,7 +895,7 @@
       "description": "Agent: php pro",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/php-pro.md",
+        "base": "base-agents/development/php-pro.md",
         "claude-code": ".claude/agents/php-pro.md",
         "opencode": ".opencode/agent/php-pro.md"
       }
@@ -795,7 +905,7 @@
       "description": "Agent: programmatic seo engineer",
       "category": "business-analytics",
       "sources": {
-        "base": "codeflow-agents/business-analytics/programmatic-seo-engineer.md",
+        "base": "base-agents/business-analytics/programmatic-seo-engineer.md",
         "claude-code": ".claude/agents/programmatic-seo-engineer.md",
         "opencode": ".opencode/agent/programmatic-seo-engineer.md"
       }
@@ -805,7 +915,7 @@
       "description": "Agent: prompt engineer",
       "category": "ai-innovation",
       "sources": {
-        "base": "codeflow-agents/ai-innovation/prompt-engineer.md",
+        "base": "base-agents/ai-innovation/prompt-engineer.md",
         "claude-code": ".claude/agents/prompt-engineer.md",
         "opencode": ".opencode/agent/prompt-engineer.md"
       }
@@ -815,7 +925,7 @@
       "description": "Agent: python pro",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/python-pro.md",
+        "base": "base-agents/development/python-pro.md",
         "claude-code": ".claude/agents/python-pro.md",
         "opencode": ".opencode/agent/python-pro.md"
       }
@@ -825,7 +935,7 @@
       "description": "Agent: quality testing performance tester",
       "category": "quality-testing",
       "sources": {
-        "base": "codeflow-agents/quality-testing/quality-testing-performance-tester.md",
+        "base": "base-agents/quality-testing/quality-testing-performance-tester.md",
         "claude-code": ".claude/agents/quality-testing-performance-tester.md",
         "opencode": ".opencode/agent/quality-testing-performance-tester.md"
       }
@@ -835,9 +945,19 @@
       "description": "Agent: quant analyst",
       "category": "ai-innovation",
       "sources": {
-        "base": "codeflow-agents/ai-innovation/quant-analyst.md",
+        "base": "base-agents/ai-innovation/quant-analyst.md",
         "claude-code": ".claude/agents/quant-analyst.md",
         "opencode": ".opencode/agent/quant-analyst.md"
+      }
+    },
+    {
+      "name": "quantum-computing-developer",
+      "description": "Agent: quantum computing developer",
+      "category": "ai-innovation",
+      "sources": {
+        "base": "base-agents/ai-innovation/quantum-computing-developer.md",
+        "claude-code": ".claude/agents/quantum-computing-developer.md",
+        "opencode": ".opencode/agent/quantum-computing-developer.md"
       }
     },
     {
@@ -845,7 +965,7 @@
       "description": "Agent: reference builder",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/reference-builder.md",
+        "base": "base-agents/development/reference-builder.md",
         "claude-code": ".claude/agents/reference-builder.md",
         "opencode": ".opencode/agent/reference-builder.md"
       }
@@ -855,7 +975,7 @@
       "description": "Agent: release manager",
       "category": "operations",
       "sources": {
-        "base": "codeflow-agents/operations/release-manager.md",
+        "base": "base-agents/operations/release-manager.md",
         "claude-code": ".claude/agents/release-manager.md",
         "opencode": ".opencode/agent/release-manager.md"
       }
@@ -865,7 +985,7 @@
       "description": "Agent: research analyzer",
       "category": "generalist",
       "sources": {
-        "base": "codeflow-agents/generalist/research-analyzer.md",
+        "base": "base-agents/generalist/research-analyzer.md",
         "claude-code": ".claude/agents/research-analyzer.md",
         "opencode": ".opencode/agent/research-analyzer.md"
       }
@@ -875,7 +995,7 @@
       "description": "Agent: research locator",
       "category": "generalist",
       "sources": {
-        "base": "codeflow-agents/generalist/research-locator.md",
+        "base": "base-agents/generalist/research-locator.md",
         "claude-code": ".claude/agents/research-locator.md",
         "opencode": ".opencode/agent/research-locator.md"
       }
@@ -885,7 +1005,7 @@
       "description": "Agent: risk manager",
       "category": "business-analytics",
       "sources": {
-        "base": "codeflow-agents/business-analytics/risk-manager.md",
+        "base": "base-agents/business-analytics/risk-manager.md",
         "claude-code": ".claude/agents/risk-manager.md",
         "opencode": ".opencode/agent/risk-manager.md"
       }
@@ -895,7 +1015,7 @@
       "description": "Agent: ruby pro",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/ruby-pro.md",
+        "base": "base-agents/development/ruby-pro.md",
         "claude-code": ".claude/agents/ruby-pro.md",
         "opencode": ".opencode/agent/ruby-pro.md"
       }
@@ -905,7 +1025,7 @@
       "description": "Agent: rust pro",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/rust-pro.md",
+        "base": "base-agents/development/rust-pro.md",
         "claude-code": ".claude/agents/rust-pro.md",
         "opencode": ".opencode/agent/rust-pro.md"
       }
@@ -915,7 +1035,7 @@
       "description": "Agent: sales automator",
       "category": "business-analytics",
       "sources": {
-        "base": "codeflow-agents/business-analytics/sales-automator.md",
+        "base": "base-agents/business-analytics/sales-automator.md",
         "claude-code": ".claude/agents/sales-automator.md",
         "opencode": ".opencode/agent/sales-automator.md"
       }
@@ -925,7 +1045,7 @@
       "description": "Agent: scala pro",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/scala-pro.md",
+        "base": "base-agents/development/scala-pro.md",
         "claude-code": ".claude/agents/scala-pro.md",
         "opencode": ".opencode/agent/scala-pro.md"
       }
@@ -935,7 +1055,7 @@
       "description": "Agent: search specialist",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/search-specialist.md",
+        "base": "base-agents/development/search-specialist.md",
         "claude-code": ".claude/agents/search-specialist.md",
         "opencode": ".opencode/agent/search-specialist.md"
       }
@@ -945,7 +1065,7 @@
       "description": "Agent: security auditor",
       "category": "quality-testing",
       "sources": {
-        "base": "codeflow-agents/quality-testing/security-auditor.md",
+        "base": "base-agents/quality-testing/security-auditor.md",
         "claude-code": ".claude/agents/security-auditor.md",
         "opencode": ".opencode/agent/security-auditor.md"
       }
@@ -955,7 +1075,7 @@
       "description": "Agent: security scanner",
       "category": "quality-testing",
       "sources": {
-        "base": "codeflow-agents/quality-testing/security-scanner.md",
+        "base": "base-agents/quality-testing/security-scanner.md",
         "claude-code": ".claude/agents/security-scanner.md",
         "opencode": ".opencode/agent/security-scanner.md"
       }
@@ -965,7 +1085,7 @@
       "description": "Agent: seo authority builder",
       "category": "design-ux",
       "sources": {
-        "base": "codeflow-agents/design-ux/seo-authority-builder.md",
+        "base": "base-agents/design-ux/seo-authority-builder.md",
         "claude-code": ".claude/agents/seo-authority-builder.md",
         "opencode": ".opencode/agent/seo-authority-builder.md"
       }
@@ -975,7 +1095,7 @@
       "description": "Agent: seo cannibalization detector",
       "category": "business-analytics",
       "sources": {
-        "base": "codeflow-agents/business-analytics/seo-cannibalization-detector.md",
+        "base": "base-agents/business-analytics/seo-cannibalization-detector.md",
         "claude-code": ".claude/agents/seo-cannibalization-detector.md",
         "opencode": ".opencode/agent/seo-cannibalization-detector.md"
       }
@@ -985,7 +1105,7 @@
       "description": "Agent: seo content auditor",
       "category": "business-analytics",
       "sources": {
-        "base": "codeflow-agents/business-analytics/seo-content-auditor.md",
+        "base": "base-agents/business-analytics/seo-content-auditor.md",
         "claude-code": ".claude/agents/seo-content-auditor.md",
         "opencode": ".opencode/agent/seo-content-auditor.md"
       }
@@ -995,7 +1115,7 @@
       "description": "Agent: seo content planner",
       "category": "business-analytics",
       "sources": {
-        "base": "codeflow-agents/business-analytics/seo-content-planner.md",
+        "base": "base-agents/business-analytics/seo-content-planner.md",
         "claude-code": ".claude/agents/seo-content-planner.md",
         "opencode": ".opencode/agent/seo-content-planner.md"
       }
@@ -1005,7 +1125,7 @@
       "description": "Agent: seo content refresher",
       "category": "business-analytics",
       "sources": {
-        "base": "codeflow-agents/business-analytics/seo-content-refresher.md",
+        "base": "base-agents/business-analytics/seo-content-refresher.md",
         "claude-code": ".claude/agents/seo-content-refresher.md",
         "opencode": ".opencode/agent/seo-content-refresher.md"
       }
@@ -1015,7 +1135,7 @@
       "description": "Agent: seo content writer",
       "category": "business-analytics",
       "sources": {
-        "base": "codeflow-agents/business-analytics/seo-content-writer.md",
+        "base": "base-agents/business-analytics/seo-content-writer.md",
         "claude-code": ".claude/agents/seo-content-writer.md",
         "opencode": ".opencode/agent/seo-content-writer.md"
       }
@@ -1025,7 +1145,7 @@
       "description": "Agent: seo keyword strategist",
       "category": "business-analytics",
       "sources": {
-        "base": "codeflow-agents/business-analytics/seo-keyword-strategist.md",
+        "base": "base-agents/business-analytics/seo-keyword-strategist.md",
         "claude-code": ".claude/agents/seo-keyword-strategist.md",
         "opencode": ".opencode/agent/seo-keyword-strategist.md"
       }
@@ -1035,7 +1155,7 @@
       "description": "Agent: seo meta optimizer",
       "category": "business-analytics",
       "sources": {
-        "base": "codeflow-agents/business-analytics/seo-meta-optimizer.md",
+        "base": "base-agents/business-analytics/seo-meta-optimizer.md",
         "claude-code": ".claude/agents/seo-meta-optimizer.md",
         "opencode": ".opencode/agent/seo-meta-optimizer.md"
       }
@@ -1045,7 +1165,7 @@
       "description": "Agent: seo snippet hunter",
       "category": "business-analytics",
       "sources": {
-        "base": "codeflow-agents/business-analytics/seo-snippet-hunter.md",
+        "base": "base-agents/business-analytics/seo-snippet-hunter.md",
         "claude-code": ".claude/agents/seo-snippet-hunter.md",
         "opencode": ".opencode/agent/seo-snippet-hunter.md"
       }
@@ -1055,7 +1175,7 @@
       "description": "Agent: seo structure architect",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/seo-structure-architect.md",
+        "base": "base-agents/development/seo-structure-architect.md",
         "claude-code": ".claude/agents/seo-structure-architect.md",
         "opencode": ".opencode/agent/seo-structure-architect.md"
       }
@@ -1065,7 +1185,7 @@
       "description": "Agent: smart subagent orchestrator",
       "category": "generalist",
       "sources": {
-        "base": "codeflow-agents/generalist/smart-subagent-orchestrator.md",
+        "base": "base-agents/generalist/smart-subagent-orchestrator.md",
         "claude-code": ".claude/agents/smart-subagent-orchestrator.md",
         "opencode": ".opencode/agent/smart-subagent-orchestrator.md"
       }
@@ -1075,7 +1195,7 @@
       "description": "Agent: sql pro",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/sql-pro.md",
+        "base": "base-agents/development/sql-pro.md",
         "claude-code": ".claude/agents/sql-pro.md",
         "opencode": ".opencode/agent/sql-pro.md"
       }
@@ -1085,7 +1205,7 @@
       "description": "Agent: svelte pro",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/svelte-pro.md",
+        "base": "base-agents/development/svelte-pro.md",
         "claude-code": ".claude/agents/svelte-pro.md",
         "opencode": ".opencode/agent/svelte-pro.md"
       }
@@ -1095,7 +1215,7 @@
       "description": "Agent: system architect",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/system-architect.md",
+        "base": "base-agents/development/system-architect.md",
         "claude-code": ".claude/agents/system-architect.md",
         "opencode": ".opencode/agent/system-architect.md"
       }
@@ -1105,7 +1225,7 @@
       "description": "Agent: tauri pro",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/tauri-pro.md",
+        "base": "base-agents/development/tauri-pro.md",
         "claude-code": ".claude/agents/tauri-pro.md",
         "opencode": ".opencode/agent/tauri-pro.md"
       }
@@ -1115,7 +1235,7 @@
       "description": "Agent: tdd orchestrator",
       "category": "quality-testing",
       "sources": {
-        "base": "codeflow-agents/quality-testing/tdd-orchestrator.md",
+        "base": "base-agents/quality-testing/tdd-orchestrator.md",
         "claude-code": ".claude/agents/tdd-orchestrator.md",
         "opencode": ".opencode/agent/tdd-orchestrator.md"
       }
@@ -1125,7 +1245,7 @@
       "description": "Agent: terraform specialist",
       "category": "operations",
       "sources": {
-        "base": "codeflow-agents/operations/terraform-specialist.md",
+        "base": "base-agents/operations/terraform-specialist.md",
         "claude-code": ".claude/agents/terraform-specialist.md",
         "opencode": ".opencode/agent/terraform-specialist.md"
       }
@@ -1135,7 +1255,7 @@
       "description": "Agent: test automator",
       "category": "quality-testing",
       "sources": {
-        "base": "codeflow-agents/quality-testing/test-automator.md",
+        "base": "base-agents/quality-testing/test-automator.md",
         "claude-code": ".claude/agents/test-automator.md",
         "opencode": ".opencode/agent/test-automator.md"
       }
@@ -1145,7 +1265,7 @@
       "description": "Agent: test generator",
       "category": "quality-testing",
       "sources": {
-        "base": "codeflow-agents/quality-testing/test-generator.md",
+        "base": "base-agents/quality-testing/test-generator.md",
         "claude-code": ".claude/agents/test-generator.md",
         "opencode": ".opencode/agent/test-generator.md"
       }
@@ -1155,7 +1275,7 @@
       "description": "Agent: tutorial engineer",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/tutorial-engineer.md",
+        "base": "base-agents/development/tutorial-engineer.md",
         "claude-code": ".claude/agents/tutorial-engineer.md",
         "opencode": ".opencode/agent/tutorial-engineer.md"
       }
@@ -1165,7 +1285,7 @@
       "description": "Agent: typescript pro",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/typescript-pro.md",
+        "base": "base-agents/development/typescript-pro.md",
         "claude-code": ".claude/agents/typescript-pro.md",
         "opencode": ".opencode/agent/typescript-pro.md"
       }
@@ -1175,7 +1295,7 @@
       "description": "Agent: ui ux designer",
       "category": "design-ux",
       "sources": {
-        "base": "codeflow-agents/design-ux/ui-ux-designer.md",
+        "base": "base-agents/design-ux/ui-ux-designer.md",
         "claude-code": ".claude/agents/ui-ux-designer.md",
         "opencode": ".opencode/agent/ui-ux-designer.md"
       }
@@ -1185,7 +1305,7 @@
       "description": "Agent: ui visual validator",
       "category": "design-ux",
       "sources": {
-        "base": "codeflow-agents/design-ux/ui-visual-validator.md",
+        "base": "base-agents/design-ux/ui-visual-validator.md",
         "claude-code": ".claude/agents/ui-visual-validator.md",
         "opencode": ".opencode/agent/ui-visual-validator.md"
       }
@@ -1195,7 +1315,7 @@
       "description": "Agent: unity developer",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/unity-developer.md",
+        "base": "base-agents/development/unity-developer.md",
         "claude-code": ".claude/agents/unity-developer.md",
         "opencode": ".opencode/agent/unity-developer.md"
       }
@@ -1205,7 +1325,7 @@
       "description": "Agent: ux optimizer",
       "category": "design-ux",
       "sources": {
-        "base": "codeflow-agents/design-ux/ux-optimizer.md",
+        "base": "base-agents/design-ux/ux-optimizer.md",
         "claude-code": ".claude/agents/ux-optimizer.md",
         "opencode": ".opencode/agent/ux-optimizer.md"
       }
@@ -1215,7 +1335,7 @@
       "description": "Agent: web search researcher",
       "category": "generalist",
       "sources": {
-        "base": "codeflow-agents/generalist/web-search-researcher.md",
+        "base": "base-agents/generalist/web-search-researcher.md",
         "claude-code": ".claude/agents/web-search-researcher.md",
         "opencode": ".opencode/agent/web-search-researcher.md"
       }
@@ -1225,16 +1345,16 @@
       "description": "Agent: webassembly developer",
       "category": "development",
       "sources": {
-        "base": "codeflow-agents/development/webassembly-developer.md",
+        "base": "base-agents/development/webassembly-developer.md",
         "claude-code": ".claude/agents/webassembly-developer.md",
         "opencode": ".opencode/agent/webassembly-developer.md"
       }
     }
   ],
-  "total_agents": 123,
-  "last_updated": "2025-10-22T14:19:39.538Z",
+  "total_agents": 135,
+  "last_updated": "2025-10-26T12:37:04.286Z",
   "canonical_directories": [
-    "codeflow-agents/",
+    "base-agents/",
     ".claude/agents/",
     ".opencode/agent/"
   ],

@@ -8,16 +8,16 @@ import { mkdir, writeFile, rm } from 'fs/promises';
 import { existsSync } from 'fs';
 import { join } from 'path';
 import { update } from '../../../src/cli/update.js';
-import { setupTests, cleanupTests, TEST_DIR } from '../../setup.js';
+import { setupTests, cleanupTests, TEST_DIR } from '../../setup';
 
 // Mock package.json for testing
-const mockPackageJson = {
+const _mockPackageJson = {
   name: '@agentic-codeflow/cli',
   version: '0.14.2',
   repository: {
     type: 'git',
-    url: 'https://github.com/ferg-cod3s/codeflow.git'
-  }
+    url: 'https://github.com/ferg-cod3s/codeflow.git',
+  },
 };
 
 describe('Update Command', () => {
@@ -46,7 +46,7 @@ describe('Update Command', () => {
     test('should check for updates', async () => {
       const result = await update({
         check: true,
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -56,7 +56,7 @@ describe('Update Command', () => {
     test('should show current version', async () => {
       const result = await update({
         showVersion: true,
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -66,7 +66,7 @@ describe('Update Command', () => {
       const result = await update({
         check: true,
         offline: true,
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -85,7 +85,7 @@ describe('Update Command', () => {
       try {
         const result = await update({
           check: true,
-          verbose: true
+          verbose: true,
         });
 
         expect(result).toBeDefined();
@@ -98,7 +98,7 @@ describe('Update Command', () => {
     test('should handle force update flag', async () => {
       const result = await update({
         force: true,
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -107,7 +107,7 @@ describe('Update Command', () => {
     test('should handle dry-run mode', async () => {
       const result = await update({
         dryRun: true,
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -116,7 +116,7 @@ describe('Update Command', () => {
     test('should handle specific version update', async () => {
       const result = await update({
         version: '0.14.3',
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -127,7 +127,7 @@ describe('Update Command', () => {
     test('should compare current version with latest', async () => {
       const result = await update({
         check: true,
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -141,7 +141,7 @@ describe('Update Command', () => {
       const result = await update({
         check: true,
         mockLatestVersion: '0.15.0',
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -153,7 +153,7 @@ describe('Update Command', () => {
       const result = await update({
         check: true,
         mockLatestVersion: '0.14.2',
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -165,7 +165,7 @@ describe('Update Command', () => {
       const result1 = await update({
         check: true,
         mockLatestVersion: '0.14.2',
-        verbose: false
+        verbose: false,
       });
 
       expect(result1.updateAvailable).toBe(false);
@@ -174,7 +174,7 @@ describe('Update Command', () => {
       const result2 = await update({
         check: true,
         mockLatestVersion: '0.14.1',
-        verbose: false
+        verbose: false,
       });
 
       expect(result2.updateAvailable).toBe(false);
@@ -183,7 +183,7 @@ describe('Update Command', () => {
       const result3 = await update({
         check: true,
         mockLatestVersion: '0.14.3',
-        verbose: false
+        verbose: false,
       });
 
       expect(result3.updateAvailable).toBe(true);
@@ -195,7 +195,7 @@ describe('Update Command', () => {
       const result = await update({
         install: true,
         dryRun: true,
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -206,7 +206,7 @@ describe('Update Command', () => {
       const result = await update({
         install: true,
         mockError: true,
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -217,7 +217,7 @@ describe('Update Command', () => {
       const result = await update({
         install: true,
         validate: true,
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -229,7 +229,7 @@ describe('Update Command', () => {
       const result = await update({
         check: true,
         source: 'npm',
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -239,7 +239,7 @@ describe('Update Command', () => {
       const result = await update({
         check: true,
         source: 'github',
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -249,7 +249,7 @@ describe('Update Command', () => {
       const result = await update({
         check: true,
         sources: ['npm', 'github'],
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -261,7 +261,7 @@ describe('Update Command', () => {
       const result = await update({
         check: true,
         channel: 'stable',
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -271,7 +271,7 @@ describe('Update Command', () => {
       const result = await update({
         check: true,
         channel: 'beta',
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -281,7 +281,7 @@ describe('Update Command', () => {
       const result = await update({
         check: true,
         channel: 'alpha',
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -293,7 +293,7 @@ describe('Update Command', () => {
       const result = await update({
         check: true,
         mockNetworkError: true,
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -303,7 +303,7 @@ describe('Update Command', () => {
     test('should handle invalid version format', async () => {
       const result = await update({
         version: 'invalid-version',
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -314,7 +314,7 @@ describe('Update Command', () => {
       const result = await update({
         install: true,
         mockPermissionError: true,
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -325,7 +325,7 @@ describe('Update Command', () => {
       const result = await update({
         install: true,
         mockCorruptedPackage: true,
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -337,7 +337,7 @@ describe('Update Command', () => {
     test('should rollback to previous version', async () => {
       const result = await update({
         rollback: true,
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -347,7 +347,7 @@ describe('Update Command', () => {
       const result = await update({
         rollback: true,
         version: '0.14.1',
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -357,7 +357,7 @@ describe('Update Command', () => {
       const result = await update({
         rollback: true,
         mockRollbackError: true,
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -367,15 +367,18 @@ describe('Update Command', () => {
 
   describe('Update Configuration', () => {
     test('should respect update configuration', async () => {
-      await writeFile(join(testProjectRoot, 'update-config.json'), JSON.stringify({
-        autoUpdate: false,
-        channel: 'stable',
-        checkInterval: 'daily'
-      }));
+      await writeFile(
+        join(testProjectRoot, 'update-config.json'),
+        JSON.stringify({
+          autoUpdate: false,
+          channel: 'stable',
+          checkInterval: 'daily',
+        })
+      );
 
       const result = await update({
         config: join(testProjectRoot, 'update-config.json'),
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -384,7 +387,7 @@ describe('Update Command', () => {
     test('should handle missing configuration', async () => {
       const result = await update({
         config: '/non/existent/config.json',
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -397,7 +400,7 @@ describe('Update Command', () => {
         notify: true,
         check: true,
         mockLatestVersion: '0.15.0',
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -408,7 +411,7 @@ describe('Update Command', () => {
         notify: false,
         check: true,
         mockLatestVersion: '0.15.0',
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -420,7 +423,7 @@ describe('Update Command', () => {
       const result = await update({
         check: true,
         trackStats: true,
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -431,7 +434,7 @@ describe('Update Command', () => {
       const result = await update({
         check: true,
         trackFrequency: true,
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -443,7 +446,7 @@ describe('Update Command', () => {
       const result = await update({
         install: true,
         verify: true,
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -453,7 +456,7 @@ describe('Update Command', () => {
       const result = await update({
         install: true,
         verifySignature: true,
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -464,7 +467,7 @@ describe('Update Command', () => {
     test('should update dependencies', async () => {
       const result = await update({
         updateDependencies: true,
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -474,7 +477,7 @@ describe('Update Command', () => {
       const result = await update({
         updateDependencies: true,
         dependencies: ['typescript', 'eslint'],
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();

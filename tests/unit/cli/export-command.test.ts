@@ -4,11 +4,11 @@
  */
 
 import { describe, test, expect, beforeAll, afterAll, beforeEach, afterEach } from 'bun:test';
-import { mkdir, writeFile, rm, readdir } from 'fs/promises';
+import { mkdir, writeFile, rm } from 'fs/promises';
 import { existsSync } from 'fs';
 import { join } from 'path';
-import { exportProject } from '../../../src/cli/export.js';
-import { setupTests, cleanupTests, TEST_DIR } from '../../setup.js';
+import { exportProject } from '../../../src/cli/export';
+import { setupTests, cleanupTests, TEST_DIR } from '../../setup';
 
 describe('Export Command', () => {
   let testProjectRoot: string;
@@ -42,10 +42,13 @@ describe('Export Command', () => {
   describe('Basic Export Functionality', () => {
     test('should export project to file', async () => {
       // Create test project structure
-      await writeFile(join(testProjectRoot, 'package.json'), JSON.stringify({
-        name: 'test-project',
-        version: '1.0.0'
-      }));
+      await writeFile(
+        join(testProjectRoot, 'package.json'),
+        JSON.stringify({
+          name: 'test-project',
+          version: '1.0.0',
+        })
+      );
       await writeFile(join(testProjectRoot, 'README.md'), '# Test Project');
 
       const outputFile = join(exportOutputDir, 'test-export.zip');
@@ -53,7 +56,7 @@ describe('Export Command', () => {
       const result = await exportProject({
         projectRoot: testProjectRoot,
         output: outputFile,
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -66,7 +69,7 @@ describe('Export Command', () => {
 
       const result = await exportProject({
         projectRoot: testProjectRoot,
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -78,7 +81,7 @@ describe('Export Command', () => {
       const result = await exportProject({
         projectRoot: testProjectRoot,
         output: outputFile,
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -96,7 +99,7 @@ describe('Export Command', () => {
         projectRoot: testProjectRoot,
         output: outputFile,
         format: 'zip',
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -113,7 +116,7 @@ describe('Export Command', () => {
         projectRoot: testProjectRoot,
         output: outputFile,
         format: 'tar',
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -130,7 +133,7 @@ describe('Export Command', () => {
         projectRoot: testProjectRoot,
         output: outputFile,
         format: 'targz',
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -153,7 +156,7 @@ describe('Export Command', () => {
         projectRoot: testProjectRoot,
         output: outputFile,
         include: ['*.js', '*.json'],
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -174,7 +177,7 @@ describe('Export Command', () => {
         projectRoot: testProjectRoot,
         output: outputFile,
         exclude: ['*.tmp', 'node_modules/**'],
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -194,7 +197,7 @@ describe('Export Command', () => {
       try {
         const result = await exportProject({
           projectRoot: testProjectRoot,
-          verbose: true
+          verbose: true,
         });
 
         expect(result).toBeDefined();
@@ -213,7 +216,7 @@ describe('Export Command', () => {
         projectRoot: testProjectRoot,
         output: outputFile,
         compression: 'high',
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -228,16 +231,25 @@ describe('Export Command', () => {
       await mkdir(join(testProjectRoot, 'src', 'utils'), { recursive: true });
       await mkdir(join(testProjectRoot, 'tests'), { recursive: true });
 
-      await writeFile(join(testProjectRoot, 'src', 'components', 'Button.js'), 'export const Button = () => {};');
-      await writeFile(join(testProjectRoot, 'src', 'utils', 'helpers.js'), 'export const helper = () => {};');
-      await writeFile(join(testProjectRoot, 'tests', 'Button.test.js'), 'describe("Button", () => {});');
+      await writeFile(
+        join(testProjectRoot, 'src', 'components', 'Button.js'),
+        'export const Button = () => {};'
+      );
+      await writeFile(
+        join(testProjectRoot, 'src', 'utils', 'helpers.js'),
+        'export const helper = () => {};'
+      );
+      await writeFile(
+        join(testProjectRoot, 'tests', 'Button.test.js'),
+        'describe("Button", () => {});'
+      );
 
       const outputFile = join(exportOutputDir, 'nested-export.zip');
 
       const result = await exportProject({
         projectRoot: testProjectRoot,
         output: outputFile,
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -251,10 +263,13 @@ describe('Export Command', () => {
       await mkdir(join(testProjectRoot, 'codeflow-agents'), { recursive: true });
       await mkdir(join(testProjectRoot, 'command'), { recursive: true });
 
-      await writeFile(join(testProjectRoot, 'AGENT_MANIFEST.json'), JSON.stringify({
-        canonical_agents: [],
-        total_agents: 0
-      }));
+      await writeFile(
+        join(testProjectRoot, 'AGENT_MANIFEST.json'),
+        JSON.stringify({
+          canonical_agents: [],
+          total_agents: 0,
+        })
+      );
       await writeFile(join(testProjectRoot, '.claude', 'agents', 'test-agent.md'), 'Test agent');
       await writeFile(join(testProjectRoot, '.opencode', 'agent', 'test-agent.md'), 'Test agent');
       await writeFile(join(testProjectRoot, 'command', 'test-command.md'), 'Test command');
@@ -264,7 +279,7 @@ describe('Export Command', () => {
       const result = await exportProject({
         projectRoot: testProjectRoot,
         output: outputFile,
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -283,7 +298,7 @@ describe('Export Command', () => {
       const result = await exportProject({
         projectRoot: testProjectRoot,
         output: outputFile,
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -301,7 +316,7 @@ describe('Export Command', () => {
       const result = await exportProject({
         projectRoot: testProjectRoot,
         output: outputFile,
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -318,7 +333,7 @@ describe('Export Command', () => {
       const result = await exportProject({
         projectRoot: testProjectRoot,
         output: outputFile,
-        verbose: false
+        verbose: false,
       });
 
       // Should handle error gracefully
@@ -331,7 +346,7 @@ describe('Export Command', () => {
       const result = await exportProject({
         projectRoot: '/non/existent/path',
         output: outputFile,
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -343,7 +358,7 @@ describe('Export Command', () => {
       const result = await exportProject({
         projectRoot: testProjectRoot,
         output: '/invalid/path/with/restricted/permissions.zip',
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -360,7 +375,7 @@ describe('Export Command', () => {
         projectRoot: testProjectRoot,
         output: outputFile,
         includeMetadata: true,
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -376,7 +391,7 @@ describe('Export Command', () => {
         projectRoot: testProjectRoot,
         output: outputFile,
         includeTimestamp: true,
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -394,7 +409,7 @@ describe('Export Command', () => {
         projectRoot: testProjectRoot,
         output: outputFile,
         validate: true,
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -410,7 +425,7 @@ describe('Export Command', () => {
         projectRoot: testProjectRoot,
         output: outputFile,
         verify: true,
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -427,7 +442,7 @@ describe('Export Command', () => {
       const result = await exportProject({
         projectRoot: testProjectRoot,
         output: outputFile,
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();
@@ -445,7 +460,7 @@ describe('Export Command', () => {
       const result = await exportProject({
         projectRoot: testProjectRoot,
         output: outputFile,
-        verbose: false
+        verbose: false,
       });
 
       expect(result).toBeDefined();

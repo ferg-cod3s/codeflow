@@ -4,10 +4,9 @@
  */
 
 import { describe, test, expect, beforeAll, afterAll } from 'bun:test';
-import { readFile } from 'fs/promises';
 import { join } from 'path';
 import { CommandConverter } from '../../src/conversion/command-converter';
-import { setupTests, cleanupTests, testPaths, TEST_OUTPUT } from '../setup';
+import { setupTests, cleanupTests, TEST_OUTPUT } from '../setup';
 
 describe('Command Conversion', () => {
   let converter: CommandConverter;
@@ -136,7 +135,7 @@ This is a test command.
       expect(result).toContain('name: test');
       expect(result).toContain('description: Test command');
       expect(result).toContain('mode: command');
-      
+
       // OpenCode commands MUST have model field (per MODEL_CONFIGURATION.md)
       expect(result).toContain('model: anthropic/claude-sonnet-4-20250514');
 

@@ -27,7 +27,7 @@ export type AgentFormat = 'base' | 'claude-code' | 'opencode';
 // Claude Code v2.x.x Specifications
 const CLAUDE_CODE_AGENT_FIELDS = ['name', 'description', 'tools', 'model'] as const;
 const CLAUDE_CODE_MODELS = ['inherit', 'sonnet', 'opus', 'haiku'] as const;
-const CLAUDE_CODE_COMMAND_FIELDS = [
+const _CLAUDE_CODE_COMMAND_FIELDS = [
   'description',
   'allowed-tools',
   'argument-hint',
@@ -131,9 +131,7 @@ export class ValidationEngine {
 
     // Check for invalid fields (Claude Code v2.x.x only allows specific fields)
     const agentKeys = Object.keys(agent) as string[];
-    const invalidFields = agentKeys.filter(
-      (key) => !CLAUDE_CODE_AGENT_FIELDS.includes(key as any)
-    );
+    const invalidFields = agentKeys.filter((key) => !CLAUDE_CODE_AGENT_FIELDS.includes(key as any));
 
     if (invalidFields.length > 0) {
       errors.push({

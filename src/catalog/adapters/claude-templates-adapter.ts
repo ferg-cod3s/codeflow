@@ -249,7 +249,7 @@ export class ClaudeTemplatesAdapter extends SourceAdapter {
           try {
             template = yaml.parse(frontmatterMatch[1]);
             template.content = frontmatterMatch[2];
-          } catch (_e2) {
+          } catch {
             // If all parsing fails, use raw content
             template = { content: content };
           }
@@ -364,7 +364,7 @@ ${yaml.stringify(template, null, 2)}
   extractMetadata(content: string, _filePath: string): any {
     try {
       return yaml.parse(content);
-    } catch (_error) {
+    } catch {
       return null;
     }
   }

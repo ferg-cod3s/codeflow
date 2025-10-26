@@ -4,11 +4,11 @@
  */
 
 import { describe, test, expect, beforeAll, afterAll, beforeEach, afterEach } from 'bun:test';
-import { mkdir, writeFile, rm, readFile, readdir } from 'fs/promises';
+import { mkdir, writeFile, rm } from 'fs/promises';
 import { existsSync } from 'fs';
 import { join } from 'path';
-import { buildManifest } from '../../../src/cli/build-manifest.js';
-import { setupTests, cleanupTests, TEST_DIR } from '../setup.js';
+import { buildManifest } from '../../src/cli/build-manifest';
+import { setupTests, cleanupTests, TEST_DIR } from '../setup';
 
 describe('Manifest Integration', () => {
   let testProjectRoot: string;
@@ -49,7 +49,7 @@ describe('Manifest Integration', () => {
       await buildManifest({
         projectRoot: testProjectRoot,
         output: manifestFile,
-        verbose: false
+        verbose: false,
       });
 
       expect(existsSync(manifestFile)).toBe(true);
@@ -76,7 +76,7 @@ describe('Manifest Integration', () => {
       await buildManifest({
         projectRoot: testProjectRoot,
         output: manifestFile,
-        verbose: false
+        verbose: false,
       });
 
       let manifest = await Bun.file(manifestFile).json();
@@ -91,7 +91,7 @@ describe('Manifest Integration', () => {
       await buildManifest({
         projectRoot: testProjectRoot,
         output: manifestFile,
-        verbose: false
+        verbose: false,
       });
 
       // Verify updated manifest
@@ -119,7 +119,7 @@ describe('Manifest Integration', () => {
       await buildManifest({
         projectRoot: testProjectRoot,
         output: manifestFile,
-        verbose: false
+        verbose: false,
       });
 
       let manifest = await Bun.file(manifestFile).json();
@@ -132,7 +132,7 @@ describe('Manifest Integration', () => {
       await buildManifest({
         projectRoot: testProjectRoot,
         output: manifestFile,
-        verbose: false
+        verbose: false,
       });
 
       // Verify updated manifest
@@ -157,7 +157,7 @@ describe('Manifest Integration', () => {
       await buildManifest({
         projectRoot: testProjectRoot,
         output: manifestFile,
-        verbose: false
+        verbose: false,
       });
 
       // Verify manifest structure
@@ -185,17 +185,20 @@ describe('Manifest Integration', () => {
       await buildManifest({
         projectRoot: testProjectRoot,
         output: manifestFile,
-        verbose: false
+        verbose: false,
       });
 
       // Simulate sync operations by modifying agent files
-      await writeFile(join(agentsDir, 'development', 'consistent-agent.md'), 'Updated agent content');
+      await writeFile(
+        join(agentsDir, 'development', 'consistent-agent.md'),
+        'Updated agent content'
+      );
 
       // Rebuild manifest to ensure consistency
       await buildManifest({
         projectRoot: testProjectRoot,
         output: manifestFile,
-        verbose: false
+        verbose: false,
       });
 
       // Verify manifest is still consistent
@@ -218,7 +221,7 @@ describe('Manifest Integration', () => {
       await buildManifest({
         projectRoot: testProjectRoot,
         output: manifestFile,
-        verbose: false
+        verbose: false,
       });
 
       // Verify manifest is now valid
@@ -244,7 +247,7 @@ describe('Manifest Integration', () => {
       await buildManifest({
         projectRoot: testProjectRoot,
         output: manifestFile,
-        verbose: false
+        verbose: false,
       });
 
       // Verify categorization
@@ -264,9 +267,18 @@ describe('Manifest Integration', () => {
       await mkdir(join(agentsDir, 'mixed-category'), { recursive: true });
 
       // Agents that should be auto-categorized
-      await writeFile(join(agentsDir, 'mixed-category', 'codebase-analyzer.md'), 'Development agent');
-      await writeFile(join(agentsDir, 'mixed-category', 'performance-analyzer.md'), 'Quality agent');
-      await writeFile(join(agentsDir, 'mixed-category', 'deployment-manager.md'), 'Operations agent');
+      await writeFile(
+        join(agentsDir, 'mixed-category', 'codebase-analyzer.md'),
+        'Development agent'
+      );
+      await writeFile(
+        join(agentsDir, 'mixed-category', 'performance-analyzer.md'),
+        'Quality agent'
+      );
+      await writeFile(
+        join(agentsDir, 'mixed-category', 'deployment-manager.md'),
+        'Operations agent'
+      );
       await writeFile(join(agentsDir, 'mixed-category', 'custom-agent.md'), 'Specialized agent');
 
       // Build manifest
@@ -274,7 +286,7 @@ describe('Manifest Integration', () => {
       await buildManifest({
         projectRoot: testProjectRoot,
         output: manifestFile,
-        verbose: false
+        verbose: false,
       });
 
       // Verify mixed categorization
@@ -306,7 +318,7 @@ describe('Manifest Integration', () => {
       await buildManifest({
         projectRoot: testProjectRoot,
         output: manifestFile,
-        verbose: false
+        verbose: false,
       });
 
       // Validate manifest structure
@@ -361,7 +373,7 @@ describe('Manifest Integration', () => {
       await buildManifest({
         projectRoot: testProjectRoot,
         output: manifestFile,
-        verbose: false
+        verbose: false,
       });
 
       // Validate count consistency
@@ -382,7 +394,7 @@ describe('Manifest Integration', () => {
       await buildManifest({
         projectRoot: testProjectRoot,
         output: manifestFile,
-        verbose: false
+        verbose: false,
       });
 
       // Validate timestamp
@@ -414,7 +426,7 @@ describe('Manifest Integration', () => {
       await buildManifest({
         projectRoot: testProjectRoot,
         output: manifestFile,
-        verbose: false
+        verbose: false,
       });
 
       const duration = Date.now() - startTime;
@@ -441,20 +453,23 @@ describe('Manifest Integration', () => {
       await buildManifest({
         projectRoot: testProjectRoot,
         output: manifestFile,
-        verbose: false
+        verbose: false,
       });
 
       // Add more agents incrementally
       const startTime = Date.now();
 
       for (let i = 0; i < 5; i++) {
-        await writeFile(join(agentsDir, 'development', `incremental-${i}.md`), `Incremental agent ${i}`);
+        await writeFile(
+          join(agentsDir, 'development', `incremental-${i}.md`),
+          `Incremental agent ${i}`
+        );
 
         // Rebuild manifest
         await buildManifest({
           projectRoot: testProjectRoot,
           output: manifestFile,
-          verbose: false
+          verbose: false,
         });
       }
 
