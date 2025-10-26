@@ -26,16 +26,26 @@ capabilities:
   - Implement digital identity and KYC systems
   - Optimize financial transaction processing
 tools:
-  - Payment gateways (Stripe, PayPal, Square)
-  - Banking APIs (Plaid, Yodlee, Finicity)
-  - Financial data providers (Bloomberg, Refinitiv)
-  - Blockchain platforms (Ethereum, Hyperledger, Corda)
-  - Trading platforms (Interactive Brokers, MetaTrader)
-  - Risk management software (RiskMetrics, Murex)
-  - Compliance management tools
-  - Financial analytics platforms (Tableau, Qlik)
-  - Cryptocurrency exchanges and wallets
-  - Regulatory reporting systems
+  stripe: true
+  paypal: true
+  square: true
+  plaid: true
+  yodlee: true
+  finicity: true
+  bloomberg: true
+  refinitiv: true
+  ethereum: true
+  hyperledger: true
+  corda: true
+  interactive-brokers: true
+  metatrader: true
+  riskmetrics: true
+  murex: true
+  compliance-management-tools: true
+  tableau: true
+  qlik: true
+  cryptocurrency-exchanges: true
+  regulatory-reporting-systems: true
 patterns:
   - Payment processing and settlement patterns
   - Financial data integration patterns

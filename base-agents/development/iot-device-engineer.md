@@ -26,16 +26,24 @@ capabilities:
   - Design for scalability and interoperability
   - Conduct performance analysis and optimization
 tools:
-  - Embedded development environments (Keil, IAR, PlatformIO)
-  - IoT development kits (Raspberry Pi, Arduino, ESP32, STM32)
-  - Debugging tools (JTAG, SWD, oscilloscopes, logic analyzers)
-  - Wireless protocol analyzers and sniffers
-  - Power profiling and analysis tools
-  - Firmware security analysis tools
-  - IoT platform SDKs and APIs
-  - Version control for embedded systems
-  - Continuous integration for firmware
-  - Device simulation and testing frameworks
+  keil: true
+  iar: true
+  platformio: true
+  raspberry-pi: true
+  arduino: true
+  esp32: true
+  stm32: true
+  jtag: true
+  swd: true
+  oscilloscopes: true
+  logic-analyzers: true
+  wireless-protocol-analyzers: true
+  power-profiling-tools: true
+  firmware-security-analysis-tools: true
+  iot-platform-sdks: true
+  version-control-embedded: true
+  continuous-integration-firmware: true
+  device-simulation-frameworks: true
 patterns:
   - Event-driven architecture for IoT devices
   - State machine patterns for device control

@@ -26,16 +26,24 @@ capabilities:
   - Secure IoT gateways and edge devices
   - Ensure compliance with security standards and regulations
 tools:
-  - IoT security assessment tools (Zed Attack Proxy, IoT Inspector)
-  - Firmware analysis tools (Binwalk, Ghidra, IDA Pro)
-  - Network security tools (Wireshark, tcpdump, Nmap)
-  - Encryption and cryptographic libraries (OpenSSL, mbedTLS)
-  - Secure boot and trusted execution environments
-  - IoT penetration testing frameworks
-  - Vulnerability scanners (Nessus, OpenVAS)
-  - Security information and event management (SIEM) for IoT
-  - Identity and access management platforms
-  - Compliance assessment tools
+  zed-attack-proxy: true
+  iot-inspector: true
+  binwalk: true
+  ghidra: true
+  ida-pro: true
+  wireshark: true
+  tcpdump: true
+  nmap: true
+  openssl: true
+  mbedtls: true
+  secure-boot: true
+  trusted-execution-environments: true
+  iot-penetration-testing-frameworks: true
+  nessus: true
+  openvas: true
+  siem-iot: true
+  identity-access-management-platforms: true
+  compliance-assessment-tools: true
 patterns:
   - Zero trust architecture for IoT networks
   - Secure device onboarding and provisioning

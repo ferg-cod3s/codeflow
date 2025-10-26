@@ -26,16 +26,32 @@ capabilities:
   - Monitor and manage edge infrastructure performance
   - Develop custom edge computing solutions
 tools:
-  - Container platforms (Docker, containerd, Podman)
-  - Orchestration tools (Kubernetes, K3s, OpenShift)
-  - Edge computing platforms (AWS Outposts, Azure Stack, Google Anthos)
-  - CDN and caching solutions (Cloudflare, Akamai, Fastly)
-  - Message brokers (MQTT, Kafka, RabbitMQ)
-  - Time-series databases (InfluxDB, TimescaleDB)
-  - Edge AI frameworks (TensorFlow Lite, ONNX Runtime)
-  - Network monitoring tools (Wireshark, tcpdump)
-  - Load balancers (HAProxy, NGINX, Envoy)
-  - Configuration management (Ansible, Terraform)
+  docker: true
+  containerd: true
+  podman: true
+  kubernetes: true
+  k3s: true
+  openshift: true
+  aws-outposts: true
+  azure-stack: true
+  google-anthos: true
+  cloudflare: true
+  akamai: true
+  fastly: true
+  mqtt: true
+  kafka: true
+  rabbitmq: true
+  influxdb: true
+  timescaledb: true
+  tensorflow-lite: true
+  onnx-runtime: true
+  wireshark: true
+  tcpdump: true
+  haproxy: true
+  nginx: true
+  envoy: true
+  ansible: true
+  terraform: true
 patterns:
   - Edge gateway patterns for data aggregation
   - Content delivery and caching patterns

@@ -26,16 +26,23 @@ capabilities:
   - Conduct quantum simulations and experiments
   - Integrate quantum computing with classical systems
 tools:
-  - Quantum development frameworks (Qiskit, Cirq, Q#, PennyLane)
-  - Quantum cloud platforms (IBM Quantum Experience, AWS Braket, Azure Quantum)
-  - Quantum simulators (Qiskit Aer, Cirq Simulator)
-  - Quantum circuit design tools
-  - Quantum error correction libraries
-  - Quantum machine learning frameworks
-  - Quantum cryptography toolkits
-  - High-performance computing clusters
-  - Mathematical modeling software (MATLAB, Mathematica)
-  - Version control for quantum code
+  qiskit: true
+  cirq: true
+  q-sharp: true
+  pennylane: true
+  ibm-quantum-experience: true
+  aws-braket: true
+  azure-quantum: true
+  qiskit-aer: true
+  cirq-simulator: true
+  quantum-circuit-design-tools: true
+  quantum-error-correction-libraries: true
+  quantum-machine-learning-frameworks: true
+  quantum-cryptography-toolkits: true
+  high-performance-computing-clusters: true
+  matlab: true
+  mathematica: true
+  version-control-quantum-code: true
 patterns:
   - Quantum circuit patterns for common algorithms
   - Hybrid quantum-classical architecture patterns

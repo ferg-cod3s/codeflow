@@ -26,16 +26,23 @@ capabilities:
   - Optimize healthcare workflows and processes
   - Conduct healthcare IT security assessments
 tools:
-  - Healthcare integration engines (Mirth Connect, Rhapsody)
-  - EHR systems (Epic, Cerner, Allscripts)
-  - Medical imaging software (OsiriX, 3D Slicer)
-  - Healthcare APIs (FHIR, HL7)
-  - Compliance management tools
-  - Telemedicine platforms (Zoom for Healthcare, Doxy.me)
-  - Healthcare analytics platforms (Tableau, Power BI)
-  - Medical device connectivity frameworks
-  - Patient portal platforms
-  - Healthcare security assessment tools
+  mirth-connect: true
+  rhapsody: true
+  epic: true
+  cerner: true
+  allscripts: true
+  osirix: true
+  3d-slicer: true
+  fhir: true
+  hl7: true
+  compliance-management-tools: true
+  zoom-healthcare: true
+  doxy-me: true
+  tableau: true
+  power-bi: true
+  medical-device-connectivity-frameworks: true
+  patient-portal-platforms: true
+  healthcare-security-assessment-tools: true
 patterns:
   - Healthcare interoperability patterns (HL7, FHIR)
   - Patient data management and privacy patterns

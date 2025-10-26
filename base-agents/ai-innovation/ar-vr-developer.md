@@ -26,16 +26,26 @@ capabilities:
   - Integrate AR/VR with other technologies (IoT, AI)
   - Conduct user testing and experience optimization
 tools:
-  - AR/VR development platforms (Unity, Unreal Engine, ARCore, ARKit)
-  - 3D modeling software (Blender, Maya, 3ds Max)
-  - Computer vision libraries (OpenCV, Vuforia, ARFoundation)
-  - VR hardware (Oculus, HTC Vive, Valve Index)
-  - AR hardware (HoloLens, mobile AR devices)
-  - Spatial audio tools and libraries
-  - Performance profiling tools for VR/AR
-  - Version control for 3D assets
-  - Cross-platform development frameworks
-  - User experience testing tools
+  unity: true
+  unreal-engine: true
+  arcore: true
+  arkit: true
+  blender: true
+  maya: true
+  3ds-max: true
+  opencv: true
+  vuforia: true
+  arfoundation: true
+  oculus: true
+  htc-vive: true
+  valve-index: true
+  hololens: true
+  mobile-ar-devices: true
+  spatial-audio-tools: true
+  performance-profiling-tools: true
+  version-control-3d-assets: true
+  cross-platform-frameworks: true
+  user-experience-testing-tools: true
 patterns:
   - Spatial interaction design patterns
   - Immersive user interface patterns
