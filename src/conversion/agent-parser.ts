@@ -1,5 +1,5 @@
 import { basename } from 'node:path';
-import { globalPerformanceMonitor, globalFileReader } from '../optimization/performance.js';
+import { globalPerformanceMonitor, globalFileReader } from '../optimization/performance.ts';
 import { YamlProcessor } from '../yaml/yaml-processor.js';
 
 /**

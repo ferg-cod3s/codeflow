@@ -37,6 +37,7 @@
     "src/conversion/**/*",
     "src/yaml/**/*",
     "src/security/**/*",
+    "src/optimization/**/*",
     "src/math.ts",
     "src/sync-with-validation.ts",
     "base-agents/**/*",

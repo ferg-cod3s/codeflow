@@ -4,7 +4,7 @@ import { existsSync } from 'node:fs';
 import { syncGlobalAgents } from '../cli/sync.js';
 import { parseAgentFile } from '../conversion/agent-parser.js';
 import { FormatConverter } from '../conversion/format-converter.js';
-import { globalPerformanceMonitor } from '../optimization/performance.js';
+import { globalPerformanceMonitor } from '../optimization/performance.ts';
 
 export interface WatchConfig {
   /** Root directory containing the codeflow installation */
