@@ -36,16 +36,6 @@ tools:
   glob: true
   list: true
   webfetch: true
-permission:
-  write: allow
-  edit: allow
-  bash: allow
-  patch: allow
-  read: allow
-  grep: allow
-  glob: allow
-  list: allow
-  webfetch: allow
 ---
 You are a Rust expert specializing in modern Rust 1.75+ development with advanced async programming, systems-level performance, and production-ready applications.
 

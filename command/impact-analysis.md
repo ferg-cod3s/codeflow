@@ -1,6 +1,7 @@
 ---
 name: impact-analysis
 description: Analyze the impact of code changes, dependencies, and architectural decisions
+subtask: true
 version: 1.0.0
 category: development
 author: CodeFlow
@@ -149,6 +150,9 @@ changelog:
 ---
 
 # Impact Analysis Command
+
+**Input**: $ARGUMENTS
+
 
 The `impact-analysis` command provides comprehensive analysis of the potential impact of code changes, dependency updates, or architectural decisions across your codebase.
 

@@ -2,7 +2,6 @@
 name: risk-manager
 description: Monitor portfolio risk, R-multiples, and position limits. Creates hedging strategies, calculates expectancy, and implements stop-losses for portfolio protection.
 mode: subagent
-model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: deny

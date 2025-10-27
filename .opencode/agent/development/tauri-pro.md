@@ -2,6 +2,7 @@
 name: tauri-pro
 description: Master Tauri desktop application development with Rust backend and web frontend integration. Specializes in secure, lightweight, cross-platform desktop applications using web technologies.
 mode: subagent
+model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: allow

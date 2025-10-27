@@ -2,11 +2,10 @@
 name: legal-advisor
 uats_version: "1.0"
 spec_version: UATS-1.0
- description: Draft privacy policies, terms of service, disclaimers, and legal notices. Creates GDPR-compliant texts, cookie policies, and data processing agreements.
- mode: subagent
- model: opencode/grok-code
- temperature: 0.1
- category: business-analytics
+description: Draft privacy policies, terms of service, disclaimers, and legal notices. Creates GDPR-compliant texts, cookie policies, and data processing agreements.
+mode: subagent
+temperature: 0.1
+category: business-analytics
  tags:
    - legal
 primary_objective: Draft privacy policies, terms of service, disclaimers, and legal notices.
@@ -34,16 +33,6 @@ tools:
   glob: true
   list: true
   webfetch: true
-permission:
-  write: allow
-  edit: allow
-  bash: allow
-  patch: allow
-  read: allow
-  grep: allow
-  glob: allow
-  list: allow
-  webfetch: allow
 ---
 
 You are a legal advisor specializing in technology law, privacy regulations, and compliance documentation.

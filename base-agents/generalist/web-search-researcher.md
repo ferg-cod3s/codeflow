@@ -2,10 +2,9 @@
 name: web-search-researcher
 uats_version: "1.0"
 spec_version: UATS-1.0
- description: Targeted multi-phase web research and evidence synthesis agent. Decomposes queries, retrieves authoritative sources, and produces structured research dossiers with citation mapping.
- mode: subagent
- model: opencode/grok-code
- temperature: 0.15
+description: Targeted multi-phase web research and evidence synthesis agent. Decomposes queries, retrieves authoritative sources, and produces structured research dossiers with citation mapping.
+mode: subagent
+temperature: 0.15
 category: generalist
 tags:
   - web-search
@@ -38,17 +37,7 @@ tools:
   edit: false
   write: false
   bash: false
-  patch: false
-permission:
-  webfetch: allow
-  grep: deny
-  glob: deny
-  list: deny
-  read: deny
-  edit: deny
-  write: deny
-  bash: deny
-  patch: deny
+  patch: false  grep: deny
 output_format: AGENT_OUTPUT_V1
 requires_structured_output: true
 validation_rules:
@@ -86,7 +75,7 @@ Each capability lists: purpose, inputs, method, outputs, constraints.
 3. query_variant_engineering
    purpose: Produce optimized search queries & operators.
    inputs: core_terms, taxonomy
-   method: Expand synonyms, include year filters (recent), apply operators ("\"phrase\"", site:, intitle:, filetype:, -exclude), craft domain-targeted queries.
+   method: Expand synonyms, include year filters (recent), apply operators ("\"phrase\"", site: , intitle: , filetype: , -exclude), craft domain-targeted queries.
    outputs: query_set[]
    constraints: ≤ 25 total queries initial pass; prioritize high-yield.
 
@@ -332,8 +321,8 @@ Always explicitly enumerate unresolved facets in gaps AND open_questions. Provid
   "agent": "web-search-researcher",
   "version": "1.0",
   "request": { "raw_query": "compare vector DBs for RAG latency", "decomposed_subqueries": ["vector database latency benchmarks","RAG retrieval performance tuning"], "scope_notes": "Focus on 2024–2025 benchmarks" },
-  "strategy": { "primary_objectives": ["Latency factors","Comparative tradeoffs"], "search_taxonomy": [ { "dimension": "comparative", "queries": ["2025 vector database latency benchmark","milvus vs weaviate latency 2025"], "rationale": "Direct system comparison" } ], "site_focus": [ { "domain": "milvus.io", "reason": "Official docs", "priority": "high" } ], "exclusion_filters": ["site:reddit.com"] },
-  "sources": [ { "id": "S1", "url": "https://milvus.io/docs/performance", "domain": "milvus.io", "title": "Performance Benchmarks", "publication_date": "2025-03-10", "content_type": "official-doc", "authority_score": 0.9, "recency_score": 1.0, "relevance_score": 0.8, "reliability_flags": [], "retrieval_status": "fetched" } ],
+  "strategy": { "primary_objectives": ["Latency factors","Comparative tradeoffs"], "search_taxonomy": [ { "dimension": "comparative", "queries": ["2025 vector database latency benchmark","milvus vs weaviate latency 2025"], "rationale": "Direct system comparison" } ], "site_focus": [ { "domain": "milvus.io", "reason": "Official docs", "priority": "high" } ], "exclusion_filters": ["site: reddit.com"] },
+  "sources": [ { "id": "S1", "url": "https: //milvus.io/docs/performance", "domain": "milvus.io", "title": "Performance Benchmarks", "publication_date": "2025-03-10", "content_type": "official-doc", "authority_score": 0.9, "recency_score": 1.0, "relevance_score": 0.8, "reliability_flags": [], "retrieval_status": "fetched" } ],
   "evidence": [ { "source_id": "S1", "fragment": "Milvus achieves sub-50ms recall for...", "claim_type": "stat", "normalized_claim": "Milvus median recall latency <50ms under benchmark conditions", "citation": "S1" } ],
   "synthesis": { "executive_summary": "...", "key_findings": [], "comparative_analysis": [], "best_practices": [], "risks_or_limitations": [], "open_questions": [], "gaps": [] },
   "metrics": { "total_queries_run": 8, "total_sources_considered": 14, "total_sources_used": 6, "coverage_assessment": "Most taxonomy dimensions covered except risk/security", "breadth_score": 0.8, "depth_score": 0.7 },

@@ -2,10 +2,9 @@
 name: tdd-orchestrator
 uats_version: "1.0"
 spec_version: UATS-1.0
- description: Master TDD orchestrator specializing in red-green-refactor discipline, multi-agent workflow coordination, and comprehensive test-driven development practices.
- mode: subagent
- model: opencode/grok-code
- temperature: 0.1
+description: Master TDD orchestrator specializing in red-green-refactor discipline, multi-agent workflow coordination, and comprehensive test-driven development practices.
+mode: subagent
+temperature: 0.1
 category: quality-testing
 tags:
   - testing
@@ -36,16 +35,6 @@ tools:
   glob: true
   list: true
   webfetch: true
-permission:
-  write: allow
-  edit: allow
-  bash: allow
-  patch: allow
-  read: allow
-  grep: allow
-  glob: allow
-  list: allow
-  webfetch: allow
 ---
 
 You are an expert TDD orchestrator specializing in comprehensive test-driven development coordination, modern TDD practices, and multi-agent workflow management.

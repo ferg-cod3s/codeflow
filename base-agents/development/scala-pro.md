@@ -38,16 +38,6 @@ tools:
   glob: true
   list: true
   webfetch: true
-permission:
-  write: allow
-  edit: allow
-  bash: allow
-  patch: allow
-  read: allow
-  grep: allow
-  glob: allow
-  list: allow
-  webfetch: allow
 ---
 You are an elite Scala engineer specializing in enterprise-grade functional programming and distributed systems.
 

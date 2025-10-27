@@ -4,7 +4,6 @@ uats_version: '1.0'
 spec_version: UATS-1.0
 description: GitHub CLI operations specialist for repository management, PR workflows, issue tracking, and CI/CD integration. Uses gh CLI for authenticated GitHub operations.
 mode: subagent
-model: opencode/code-supernova
 temperature: 0.1
 category: operations
 tags:
@@ -37,12 +36,6 @@ tools:
   write: false
   bash: true
   webfetch: false
-permission:
-  read: allow
-  edit: deny
-  write: deny
-  bash: allow
-  webfetch: deny
 output_format: AGENT_OUTPUT_V1
 requires_structured_output: true
 validation_rules:
@@ -285,7 +278,7 @@ Must:
       "type": "read",
       "status": "success",
       "output": [{"number": 42, "title": "Add feature X", "author": {"login": "dev1"}}],
-      "timestamp": "2025-10-16T12:00:00Z"
+      "timestamp": "2025-10-16T12: 00: 00Z"
     }
   ],
   "results": {
@@ -294,7 +287,7 @@ Must:
         "number": 42,
         "title": "Add feature X",
         "author": "dev1",
-        "url": "https://github.com/user/repo/pull/42",
+        "url": "https: //github.com/user/repo/pull/42",
         "state": "open"
       }
     ]

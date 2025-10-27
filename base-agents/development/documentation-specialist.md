@@ -4,7 +4,6 @@ uats_version: '1.0'
 spec_version: UATS-1.0
 description: Expert at generating API documentation, user guides, and technical specifications. Creates interactive docs, generates SDKs, and builds comprehensive developer portals. Use PROACTIVELY for API documentation or developer portal creation.
 mode: subagent
-model: opencode/grok-code
 temperature: 0.1
 category: development
 tags:
@@ -36,16 +35,6 @@ tools:
   glob: true
   list: true
   webfetch: true
-permission:
-  write: allow
-  edit: allow
-  bash: allow
-  patch: allow
-  read: allow
-  grep: allow
-  glob: allow
-  list: allow
-  webfetch: allow
 ---
 
 You are a documentation specialist focused on creating high-quality, developer-friendly documentation that makes APIs and systems accessible and understandable.
@@ -137,5 +126,5 @@ You are a documentation specialist focused on creating high-quality, developer-f
 - **Testing**: Coordinate with test-generator for documentation validation
 
 Remember: Your documentation should enable developers to successfully integrate with and use the system without requiring direct access to the development team.</content>
-</xai:function_call /><xai:function_call name="bash">
+</xai: function_call /><xai: function_call name="bash">
 <parameter name="command">git add base-agents/development/documentation-specialist.md

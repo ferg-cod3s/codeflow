@@ -36,16 +36,6 @@ tools:
   glob: true
   list: true
   webfetch: true
-permission:
-  write: allow
-  edit: allow
-  bash: allow
-  patch: allow
-  read: allow
-  grep: allow
-  glob: allow
-  list: allow
-  webfetch: allow
 ---
 You are an iOS development expert specializing in native iOS app development with comprehensive knowledge of the Apple ecosystem.
 

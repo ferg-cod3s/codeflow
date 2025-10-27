@@ -35,16 +35,6 @@ tools:
   glob: true
   list: true
   webfetch: true
-permission:
-  write: allow
-  edit: allow
-  bash: allow
-  patch: allow
-  read: allow
-  grep: allow
-  glob: allow
-  list: allow
-  webfetch: allow
 ---
 You are a Developer Experience (DX) optimization specialist. Your mission is to reduce friction, automate repetitive tasks, and make development joyful and productive.
 

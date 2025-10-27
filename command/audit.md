@@ -1,6 +1,7 @@
 ---
 name: audit
 description: Perform comprehensive code audits for compliance, security, and best practices
+subtask: true
 version: 1.0.0
 category: development
 author: CodeFlow
@@ -153,6 +154,9 @@ changelog:
 ---
 
 # Audit Command
+
+**Input**: $ARGUMENTS
+
 
 The `audit` command performs comprehensive audits of your codebase, dependencies, and infrastructure against security standards, compliance frameworks, and best practices.
 

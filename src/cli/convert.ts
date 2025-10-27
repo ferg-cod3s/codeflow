@@ -1,12 +1,12 @@
 import { join } from 'node:path';
 import { existsSync } from 'node:fs';
 import { mkdir } from 'node:fs/promises';
-import { parseAgentsFromDirectory, serializeAgent, Agent } from '../conversion/agent-parser';
-import { FormatConverter } from '../conversion/format-converter';
+import { parseAgentsFromDirectory, serializeAgent, Agent } from '../conversion/agent-parser.js';
+import { FormatConverter } from '../conversion/format-converter.js';
 import {
   applyOpenCodePermissionsToDirectory,
   DEFAULT_OPENCODE_PERMISSIONS,
-} from '../security/opencode-permissions';
+} from '../security/opencode-permissions.js';
 import CLIErrorHandler from './error-handler.js';
 
 export async function convert(source: string, target: string, format: 'claude-code' | 'opencode') {

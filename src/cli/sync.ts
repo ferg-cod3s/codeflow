@@ -1,9 +1,9 @@
 import { existsSync } from 'node:fs';
 import { readdir, copyFile, mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
-import { parseAgentsFromDirectory, serializeAgent, Agent } from '../conversion/agent-parser';
-import { FormatConverter } from '../conversion/format-converter';
-import { CanonicalSyncer } from '../sync/canonical-syncer';
+import { parseAgentsFromDirectory, serializeAgent, Agent } from '../conversion/agent-parser.js';
+import { FormatConverter } from '../conversion/format-converter.js';
+import { CanonicalSyncer } from '../sync/canonical-syncer.js';
 import { homedir } from 'node:os';
 // import { parse as loadYaml } from 'yaml';
 import { CommandValidator } from '../yaml/command-validator.js';

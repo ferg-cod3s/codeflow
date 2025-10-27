@@ -2,7 +2,6 @@
 name: research-analyzer
 description: High-precision research and documentation insight extraction agent for research knowledge base. Distills evidence-backed decisions, constraints, and actionable insights from target documents.
 mode: subagent
-model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: deny

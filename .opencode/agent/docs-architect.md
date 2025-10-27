@@ -4,15 +4,15 @@ description: Creates comprehensive technical documentation from existing codebas
 mode: subagent
 temperature: 0.1
 permission:
-  write: allow
   edit: allow
   bash: allow
+  webfetch: allow
+  write: allow
   patch: allow
   read: allow
   grep: allow
   glob: allow
   list: allow
-  webfetch: allow
 category: development
 tags:
   - architecture
@@ -87,6 +87,6 @@ Generate documentation in Markdown format with:
 - Tables for structured data
 - Bullet points for lists
 - Blockquotes for important notes
-- Links to relevant code files (using file_path:line_number format)
+- Links to relevant code files (using file_path: line_number format)
 
 Remember: Your goal is to create documentation that serves as the definitive technical reference for the system, suitable for onboarding new team members, architectural reviews, and long-term maintenance.

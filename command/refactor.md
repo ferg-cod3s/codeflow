@@ -2,6 +2,7 @@
 name: refactor
 mode: command
 description: Refactor code to reduce technical debt and improve maintainability
+subtask: true
 version: 2.0.0-internal
 last_updated: 2025-09-13
 command_schema_version: 1.0
@@ -39,6 +40,9 @@ failure_modes:
 ---
 
 # Refactor Code for Technical Debt Reduction
+
+**Input**: $ARGUMENTS
+
 
 You are tasked with refactoring code to reduce technical debt while maintaining functionality and improving code quality. This command uses intelligent analysis to identify refactoring opportunities and implements changes safely.
 

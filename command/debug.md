@@ -2,6 +2,7 @@
 name: debug
 mode: command
 description: Debug issues with issue reproduction, root cause analysis, fix implementation, and regression testing
+subtask: true
 version: 1.0.0
 last_updated: 2025-10-16
 command_schema_version: 1.0
@@ -50,6 +51,9 @@ validation_rules:
 ---
 
 # Debug Issue
+
+**Input**: $ARGUMENTS
+
 
 Execute a comprehensive debugging workflow with systematic issue reproduction, root cause analysis, fix implementation, and regression test creation to resolve issues effectively.
 

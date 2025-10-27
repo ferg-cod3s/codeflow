@@ -2,11 +2,10 @@
 name: risk-manager
 uats_version: "1.0"
 spec_version: UATS-1.0
- description: Monitor portfolio risk, R-multiples, and position limits. Creates hedging strategies, calculates expectancy, and implements stop-losses for portfolio protection.
- mode: subagent
- model: opencode/grok-code
- temperature: 0.1
- category: business-analytics
+description: Monitor portfolio risk, R-multiples, and position limits. Creates hedging strategies, calculates expectancy, and implements stop-losses for portfolio protection.
+mode: subagent
+temperature: 0.1
+category: business-analytics
  tags:
    - risk-management
 primary_objective: Monitor portfolio risk, R-multiples, and position limits.
@@ -34,16 +33,6 @@ tools:
   glob: true
   list: true
   webfetch: true
-permission:
-  write: allow
-  edit: allow
-  bash: allow
-  patch: allow
-  read: allow
-  grep: allow
-  glob: allow
-  list: allow
-  webfetch: allow
 ---
 
 You are a risk manager specializing in portfolio protection and risk measurement.

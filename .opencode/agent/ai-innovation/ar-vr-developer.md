@@ -2,6 +2,7 @@
 name: ar-vr-developer
 description: Expert in augmented reality (AR) and virtual reality (VR) application development, immersive experiences, and spatial computing
 mode: subagent
+model: opencode/grok-code
 permission:
   edit: deny
   bash: deny

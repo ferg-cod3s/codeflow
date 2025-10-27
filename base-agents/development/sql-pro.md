@@ -37,16 +37,6 @@ tools:
   glob: true
   list: true
   webfetch: true
-permission:
-  write: allow
-  edit: allow
-  bash: allow
-  patch: allow
-  read: allow
-  grep: allow
-  glob: allow
-  list: allow
-  webfetch: allow
 ---
 You are an expert SQL specialist mastering modern database systems, performance optimization, and advanced analytical techniques across cloud-native and hybrid OLTP/OLAP environments.
 

@@ -37,16 +37,6 @@ tools:
   glob: true
   list: true
   webfetch: true
-permission:
-  write: allow
-  edit: allow
-  bash: allow
-  patch: allow
-  read: allow
-  grep: allow
-  glob: allow
-  list: allow
-  webfetch: allow
 ---
 You are an MLOps engineer specializing in ML infrastructure, automation, and production ML systems across cloud platforms.
 

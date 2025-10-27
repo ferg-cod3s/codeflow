@@ -38,16 +38,6 @@ tools:
   glob: true
   list: true
   webfetch: true
-permission:
-  write: allow
-  edit: allow
-  bash: allow
-  patch: allow
-  read: allow
-  grep: allow
-  glob: allow
-  list: allow
-  webfetch: allow
 ---
 You are a Flutter expert specializing in high-performance, multi-platform applications with deep knowledge of the Flutter 2025 ecosystem.
 

@@ -35,93 +35,78 @@ This document provides a comprehensive overview of all agents available in the C
 - **agent-architect** - Create custom agents
 - **system-architect** - System design and architecture
 
-## Directory Structure
+## Agent Configuration
 
+### OpenCode Model Inheritance
+
+All agents are configured as `subagents` with `mode: subagent`. They **do not specify model fields** and instead inherit the model from:
+- Global OpenCode configuration (via TUI or CLI)
+- Parent `build` or `plan` agents in `opencode.jsonc`
+
+**Benefits:**
+- ✅ Easily switch models globally without editing 135+ agent files
+- ✅ Test different models across all agents instantly
+- ✅ Consistent model usage across the entire agent ecosystem
+- ✅ Simpler agent definitions and maintenance
+
+**To change the model for all agents:**
+```bash
+# OpenCode CLI
+opencode config set model provider/model-name
+
+# Or edit ~/.config/opencode/opencode.jsonc
+{
+  "model": "anthropic/claude-sonnet-4",
+  "agent": {
+    "build": { "mode": "primary" },
+    "plan": { "mode": "primary" }
+  }
+}
 ```
-base-agents/             # Source of truth (base format)
-├── ai-innovation/        # AI/ML specialized agents
-├── design-ux/           # Design and UX agents
-├── development/          # Core development agents
-├── generalist/          # Research and orchestration agents
-├── operations/          # DevOps and infrastructure agents
-├── product-strategy/    # Business and product agents
-└── quality-testing/      # Testing and security agents
 
-.claude/agents/          # Claude Code format (auto-generated)
-.opencode/agent/         # OpenCode format (auto-generated)
+## Build/Lint/Test Commands
+
+```bash
+# Build
+bun build src/cli/index.ts --target bun
+esbuild src/cli/index.ts --bundle --platform=node --target=node18 --outfile=dist/cli.js
+
+# Lint & Format
+eslint . --fix && prettier --write .
+
+# Type Check
+bun run typecheck  # or: tsc --noEmit
+
+# Test All
+bun run test
+
+# Single Test (by name/type)
+bun run run-tests.ts [filter]  # e.g., bun run run-tests.ts unit
+bun run test:unit              # Unit tests only
+bun run test:integration       # Integration tests only
+bun run test:e2e              # E2E tests only
+bun run test --coverage       # With coverage report
+
+# Agent Management
+codeflow validate             # Validate agent definitions
+codeflow convert-all         # Generate platform formats
 ```
 
-## Agent Categories
+## Code Style Guidelines
 
-### **Code & Implementation**
+**TypeScript**: Strict mode, ESNext, bundler resolution, composite projects
+**Formatting**: Single quotes, semicolons, trailing commas (es5), 100 char width
+**Imports**: ES modules, synthetic defaults allowed, JSON modules enabled
+**Naming**: camelCase (vars/functions), PascalCase (types/interfaces), \_prefix (unused)
+**Error Handling**: Comprehensive typed errors, proper async/await patterns
+**Testing**: Unit (tests/unit/), Integration (tests/integration/), E2E (tests/e2e/)
 
-| Agent                   | Purpose                       | Complexity   |
-| ----------------------- | ----------------------------- | ------------ |
-| `full-stack-developer`  | Complete feature development  | Advanced     |
-| `api-builder`           | API design and implementation | Intermediate |
-| `database-expert`       | Database optimization         | Intermediate |
-| `ai-integration-expert` | AI/ML capabilities            | Advanced     |
+## Cursor Rules (.cursorrules)
 
-### **Analysis & Discovery**
-
-| Agent                     | Purpose                      | Complexity   |
-| ------------------------- | ---------------------------- | ------------ |
-| `codebase-locator`        | Find files and components    | Beginner     |
-| `codebase-analyzer`       | Understand specific code     | Beginner     |
-| `codebase-pattern-finder` | Find similar implementations | Beginner     |
-| `performance-engineer`    | Performance analysis         | Intermediate |
-
-### **Operations & Scale**
-
-| Agent                               | Purpose             | Complexity   |
-| ----------------------------------- | ------------------- | ------------ |
-| `operations-incident-commander`     | Incident response   | Advanced     |
-| `infrastructure-builder`            | Cloud architecture  | Advanced     |
-| `security-scanner`                  | Security assessment | Intermediate |
-| `development-migrations-specialist` | Database migrations | Intermediate |
-
-### **Business & Growth**
-
-| Agent                              | Purpose                 | Complexity   |
-| ---------------------------------- | ----------------------- | ------------ |
-| `growth-engineer`                  | User acquisition        | Intermediate |
-| `programmatic-seo-engineer`        | SEO at scale            | Advanced     |
-| `ux-optimizer`                     | User experience         | Intermediate |
-| `content-localization-coordinator` | International expansion | Advanced     |
-
-## Usage Patterns
-
-### **Research Phase**
-
-1. Start with locators: `codebase-locator` + `research-locator`
-2. Add pattern-finder if needed: `codebase-pattern-finder`
-3. Deep analysis: `codebase-analyzer` + `research-analyzer`
-
-### **Implementation Phase**
-
-1. Simple features: Use domain-specific agents directly
-2. Complex systems: `smart-subagent-orchestrator`
-3. Quality assurance: `code-reviewer` + `security-scanner`
-
-### **Incident Response**
-
-1. Immediate assessment: `operations-incident-commander`
-2. Technical investigation: Domain specialists
-3. Resolution and documentation: Full workflow
-
-## Model Tiers
-
-- **Strategic/Ops**: github-copilot/gpt-5
-- **Deep Technical**: opencode/grok-code-fast
-- **General Research**: Built-in routing
-
-## Platform Support
-
-All agents are automatically converted to:
-
-- **Claude Code** (`.claude/agents/`) - Native subagents
-- **OpenCode** (`.opencode/agent/`) - MCP tools
-- **Other MCP** - Universal compatibility
+- **Agent Management**: Define in `base-agents/`, validate with `codeflow validate`
+- **Platform Conversion**: Auto-generate Claude/OpenCode formats via `codeflow convert-all`
+- **Development**: TypeScript strict, Bun runtime, comprehensive testing required
+- **Architecture**: CLI core in `src/cli/`, agents in `base-agents/`, docs in `docs/`
 
 ## Getting Started
 
@@ -138,9 +123,17 @@ All agents are automatically converted to:
 
 ## Documentation
 
+### CodeFlow Documentation
 - [Agent Registry](./docs/AGENT_REGISTRY.md) - Complete agent catalog
-- [Agent Discovery Guide](./AGENT_DISCOVERY_GUIDE.md) - Interactive selection guide
 - [Development Standards](./docs/) - Coding guidelines and best practices
+- [Cursor Rules](./.cursorrules) - Project development standards
+
+### Official Platform Documentation
+- [OpenCode Agents](https://opencode.ai/docs/agents/) - OpenCode agent configuration and usage
+- [OpenCode Commands](https://opencode.ai/docs/commands/) - OpenCode command syntax and patterns
+- [Claude Code Documentation](https://docs.claude.com/en/docs/claude-code/overview) - Claude Code features and guides
+- [Cursor Agent Modes](https://cursor.com/docs/agent/modes) - Cursor agent modes and subagent configuration
+- [Cursor Commands](https://cursor.com/docs/agent/chat/commands) - Cursor chat commands and slash command syntax
 
 ---
 

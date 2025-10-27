@@ -2,17 +2,18 @@
 name: php-pro
 description: Write idiomatic PHP code with generators, iterators, SPL data structures, and modern OOP features. Use PROACTIVELY for high-performance PHP applications.
 mode: subagent
+model: opencode/grok-code
 temperature: 0.1
 permission:
-  write: allow
   edit: allow
   bash: allow
+  webfetch: allow
+  write: allow
   patch: allow
   read: allow
   grep: allow
   glob: allow
   list: allow
-  webfetch: allow
 category: development
 tags:
   - php

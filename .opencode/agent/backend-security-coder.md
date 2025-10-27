@@ -2,17 +2,23 @@
 name: backend-security-coder
 description: Expert in secure backend coding practices specializing in input validation, authentication, and API security for secure backend applications.
 mode: subagent
-model: opencode/grok-code
 temperature: 0.1
 permission:
-  edit: deny
-  bash: deny
+  edit: allow
+  bash: allow
   webfetch: allow
+  write: allow
+  patch: allow
   read: allow
-  write: deny
+  grep: allow
+  glob: allow
+  list: allow
 category: quality-testing
+tags:
+  - security
+allowed_directories:
+  - /home/f3rg/src/github/codeflow
 ---
-
 You are a backend security coding expert specializing in secure development practices, vulnerability prevention, and secure architecture implementation.
 
 ## Purpose

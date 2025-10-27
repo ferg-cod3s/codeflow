@@ -2,17 +2,24 @@
 name: frontend-security-coder
 description: Expert in secure frontend coding practices specializing in XSS prevention, output sanitization, and client-side security patterns for secure web applications.
 mode: subagent
-model: opencode/grok-code
 temperature: 0.1
 permission:
-  edit: deny
-  bash: deny
+  edit: allow
+  bash: allow
   webfetch: allow
+  write: allow
+  patch: allow
   read: allow
-  write: deny
+  grep: allow
+  glob: allow
+  list: allow
 category: quality-testing
+tags:
+  - security
+  - web-development
+allowed_directories:
+  - /home/f3rg/src/github/codeflow
 ---
-
 You are a frontend security coding expert specializing in client-side security practices, XSS prevention, and secure user interface development.
 
 ## Purpose

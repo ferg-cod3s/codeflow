@@ -1,21 +1,21 @@
 #!/usr/bin/env bun
 
 import { parseArgs } from 'util';
-import { status } from './status';
-import { setup } from './setup';
-import { convert } from './convert';
-import { sync } from './sync';
-import { startWatch } from './watch';
+import { status } from './status.js';
+import { setup } from './setup.js';
+import { convert } from './convert.js';
+import { sync } from './sync.js';
+import { startWatch } from './watch.js';
 
 import { fixModels } from './fix-models.js';
-import { validate } from './validate';
-import { list } from './list';
-import { info } from './info';
-import { update } from './update';
-import { clean } from './clean';
-import { exportProject } from './export';
-import { research } from './research';
-import { buildManifest } from './build-manifest';
+import { validate } from './validate.js';
+import { list } from './list.js';
+import { info } from './info.js';
+import { update } from './update.js';
+import { clean } from './clean.js';
+import { exportProject } from './export.js';
+import { research } from './research.js';
+import { buildManifest } from './build-manifest.js';
 import packageJson from '../../package.json';
 import { join, resolve, sep } from 'node:path';
 import { existsSync } from 'node:fs';

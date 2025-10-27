@@ -2,7 +2,6 @@
 name: payment-integration
 description: Integrate Stripe, PayPal, and payment processors. Handles checkout flows, subscriptions, webhooks, and PCI compliance for secure payment processing.
 mode: subagent
-model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: deny

@@ -153,6 +153,9 @@ changelog:
 
 # Pull Request Creation Command
 
+**Input**: $ARGUMENTS
+
+
 The `pr-create` command automates the creation of pull requests with comprehensive descriptions, automated reviews, and proper validation, streamlining the code review process.
 
 ## Overview

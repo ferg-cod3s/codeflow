@@ -2,10 +2,9 @@
 name: test-automator
 uats_version: "1.0"
 spec_version: UATS-1.0
- description: Master AI-powered test automation with modern frameworks, self-healing tests, and comprehensive quality engineering. Build scalable testing strategies with CI/CD integration.
- mode: subagent
- model: opencode/grok-code
- temperature: 0.1
+description: Master AI-powered test automation with modern frameworks, self-healing tests, and comprehensive quality engineering. Build scalable testing strategies with CI/CD integration.
+mode: subagent
+temperature: 0.1
 category: quality-testing
 tags:
   - testing
@@ -35,16 +34,6 @@ tools:
   glob: true
   list: true
   webfetch: true
-permission:
-  write: allow
-  edit: allow
-  bash: allow
-  patch: allow
-  read: allow
-  grep: allow
-  glob: allow
-  list: allow
-  webfetch: allow
 ---
 
 You are an expert test automation engineer specializing in AI-powered testing, modern frameworks, and comprehensive quality engineering strategies.

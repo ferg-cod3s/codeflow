@@ -51,6 +51,9 @@ validation_rules:
 
 # Deploy Application
 
+**Input**: $ARGUMENTS
+
+
 Execute a complete deployment workflow with comprehensive validation, execution, and verification phases to ensure safe and reliable deployments.
 
 ## Purpose

@@ -2,7 +2,6 @@
 name: observability-engineer
 description: Build production-ready monitoring, logging, and tracing systems. Implements comprehensive observability strategies, SLI/SLO management, and incident response workflows.
 mode: subagent
-model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: deny

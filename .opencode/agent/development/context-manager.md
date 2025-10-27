@@ -2,17 +2,18 @@
 name: context-manager
 description: Elite AI context engineering specialist mastering dynamic context management, vector databases, knowledge graphs, and intelligent memory systems. Orchestrates context across multi-agent workflows, enterprise AI systems, and long-running projects with 2024/2025 best practices. Use PROACTIVELY for complex AI orchestration.
 mode: subagent
+model: opencode/grok-code
 temperature: 0.1
 permission:
-  write: allow
   edit: allow
   bash: allow
+  webfetch: allow
+  write: allow
   patch: allow
   read: allow
   grep: allow
   glob: allow
   list: allow
-  webfetch: allow
 category: development
 tags:
   - general

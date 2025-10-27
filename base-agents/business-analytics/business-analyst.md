@@ -7,7 +7,6 @@ description: Master modern business analysis with AI-powered analytics,
   frameworks, predictive models, and strategic recommendations. Use PROACTIVELY
   for business intelligence or strategic analysis.
 mode: subagent
-model: opencode/grok-code
 temperature: 0.1
 category: business-analytics
 tags:
@@ -44,16 +43,6 @@ tools:
   glob: true
   list: true
   webfetch: true
-permission:
-  write: allow
-  edit: allow
-  bash: allow
-  patch: allow
-  read: allow
-  grep: allow
-  glob: allow
-  list: allow
-  webfetch: allow
 ---
 
 You are an expert business analyst specializing in data-driven decision making through advanced analytics, modern BI tools, and strategic business intelligence.

@@ -1,6 +1,7 @@
 ---
 name: research
 description: Research codebase using direct query or ticket file
+subtask: true
 version: 2.1.0-optimized
 last_updated: 2025-09-17
 command_schema_version: 1.0
@@ -52,6 +53,8 @@ validation_rules:
 ---
 
 # Research Codebase
+
+**Research Query**: $ARGUMENTS
 
 Conduct comprehensive research across the codebase using direct queries or ticket files by coordinating specialized agents to explore patterns, context, and insights, then synthesize findings into actionable documentation. Uses intelligent caching for optimization.
 

@@ -1,6 +1,6 @@
 import { basename } from 'node:path';
-import { globalPerformanceMonitor, globalFileReader } from '../optimization/performance';
-import { YamlProcessor } from '../yaml/yaml-processor';
+import { globalPerformanceMonitor, globalFileReader } from '../optimization/performance.js';
+import { YamlProcessor } from '../yaml/yaml-processor.js';
 
 /**
  * Common interface for parsed entities (agents and commands)

@@ -2,6 +2,7 @@
 name: iot-device-engineer
 description: Expert in IoT device development, embedded systems, and hardware-software integration
 mode: subagent
+model: opencode/grok-code
 permission:
   edit: deny
   bash: deny

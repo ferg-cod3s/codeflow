@@ -2,17 +2,18 @@
 name: unity-developer
 description: Build Unity games with optimized C# scripts, efficient rendering, and proper asset management. Masters Unity 6 LTS, URP/HDRP pipelines, and cross-platform deployment. Handles gameplay systems, UI implementation, and platform optimization. Use PROACTIVELY for Unity performance issues, game mechanics, or cross-platform builds.
 mode: subagent
+model: opencode/grok-code
 temperature: 0.1
 permission:
-  write: allow
   edit: allow
   bash: allow
+  webfetch: allow
+  write: allow
   patch: allow
   read: allow
   grep: allow
   glob: allow
   list: allow
-  webfetch: allow
 category: development
 tags:
   - general

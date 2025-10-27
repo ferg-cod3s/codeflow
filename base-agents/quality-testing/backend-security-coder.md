@@ -2,10 +2,9 @@
 name: backend-security-coder
 uats_version: "1.0"
 spec_version: UATS-1.0
- description: Expert in secure backend coding practices specializing in input validation, authentication, and API security for secure backend applications.
- mode: subagent
- model: opencode/grok-code
- temperature: 0.1
+description: Expert in secure backend coding practices specializing in input validation, authentication, and API security for secure backend applications.
+mode: subagent
+temperature: 0.1
 category: quality-testing
 tags:
   - security
@@ -35,16 +34,6 @@ tools:
   glob: true
   list: true
   webfetch: true
-permission:
-  write: allow
-  edit: allow
-  bash: allow
-  patch: allow
-  read: allow
-  grep: allow
-  glob: allow
-  list: allow
-  webfetch: allow
 ---
 
 You are a backend security coding expert specializing in secure development practices, vulnerability prevention, and secure architecture implementation.

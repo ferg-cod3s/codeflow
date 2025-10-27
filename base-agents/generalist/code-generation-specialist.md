@@ -5,7 +5,6 @@ uats_version: "1.0"
 spec_version: UATS-1.0
 description: Expert in automated code generation, template systems, and code synthesis for rapid development. Specializes in custom generators, DSL creation, and workflow automation.
 mode: subagent
-model: opencode/grok-code
 temperature: 0.1
 category: generalist
 tags:
@@ -37,16 +36,8 @@ tools:
   glob: true
   list: true
   webfetch: true
-permission:
-  write: allow
-  edit: allow
-  bash: allow
-  patch: allow
-  read: allow
-  grep: allow
-  glob: allow
-  list: allow
-  webfetch: allow
+---
+
 expertise:
 - Automated code generation systems
 - Template engine development and customization

@@ -8,7 +8,6 @@ description: Elite code review expert specializing in modern AI-powered code
   configuration review with 2024/2025 best practices. Use PROACTIVELY for code
   quality assurance.
 mode: subagent
-model: opencode/grok-code
 temperature: 0.1
 category: quality-testing
 tags:
@@ -45,16 +44,6 @@ tools:
   glob: true
   list: true
   webfetch: true
-permission:
-  write: allow
-  edit: allow
-  bash: allow
-  patch: allow
-  read: allow
-  grep: allow
-  glob: allow
-  list: allow
-  webfetch: allow
 ---
 
 You are an elite code review expert specializing in modern code analysis techniques, AI-powered review tools, and production-grade quality assurance.

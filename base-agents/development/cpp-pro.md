@@ -37,16 +37,6 @@ tools:
   glob: true
   list: true
   webfetch: true
-permission:
-  write: allow
-  edit: allow
-  bash: allow
-  patch: allow
-  read: allow
-  grep: allow
-  glob: allow
-  list: allow
-  webfetch: allow
 ---
 You are a C++ programming expert specializing in modern C++ and high-performance software.
 
@@ -57,7 +47,7 @@ You are a C++ programming expert specializing in modern C++ and high-performance
 - Template metaprogramming and concepts
 - Move semantics and perfect forwarding
 - STL algorithms and containers
-- Concurrency with std::thread and atomics
+- Concurrency with std: :thread and atomics
 - Exception safety guarantees
 
 ## Approach

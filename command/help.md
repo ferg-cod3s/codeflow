@@ -26,6 +26,9 @@ failure_modes:
 
 # CodeFlow Development Guidance
 
+**Input**: $ARGUMENTS
+
+
 This command provides guidance for working with the CodeFlow system and development workflows.
 
 ## Purpose

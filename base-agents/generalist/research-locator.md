@@ -2,11 +2,10 @@
 name: research-locator
 uats_version: '1.0'
 spec_version: UATS-1.0
- description: Focused documentation discovery and categorization agent for research knowledge base. Locates and classifies relevant historical and current research documents without deep semantic analysis.
- mode: subagent
- model: opencode/grok-code-fast
- temperature: 0.1
- category: generalist
+description: Focused documentation discovery and categorization agent for research knowledge base. Locates and classifies relevant historical and current research documents without deep semantic analysis.
+mode: subagent
+temperature: 0.1
+category: generalist
  tags:
    - research
    - locator
@@ -39,16 +38,6 @@ tools:
   bash: false
   webfetch: false
   patch: false
-permission:
-  glob: allow
-  grep: allow
-  list: allow
-  read: allow
-  edit: deny
-  write: deny
-  bash: deny
-  webfetch: deny
-  patch: deny
 output_format: AGENT_OUTPUT_V1
 requires_structured_output: true
 validation_rules:

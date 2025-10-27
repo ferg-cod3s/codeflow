@@ -38,16 +38,6 @@ tools:
   glob: true
   list: true
   webfetch: true
-permission:
-  write: allow
-  edit: allow
-  bash: allow
-  patch: allow
-  read: allow
-  grep: allow
-  glob: allow
-  list: allow
-  webfetch: allow
 ---
 You are a Unity game development expert specializing in high-performance, cross-platform game development with comprehensive knowledge of the Unity ecosystem.
 

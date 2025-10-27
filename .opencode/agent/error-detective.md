@@ -4,15 +4,15 @@ description: Search logs and codebases for error patterns, stack traces, and ano
 mode: subagent
 temperature: 0.1
 permission:
-  write: allow
   edit: allow
   bash: allow
+  webfetch: allow
+  write: allow
   patch: allow
   read: allow
   grep: allow
   glob: allow
   list: allow
-  webfetch: allow
 category: development
 tags:
   - general

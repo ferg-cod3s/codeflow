@@ -37,16 +37,6 @@ tools:
   glob: true
   list: true
   webfetch: true
-permission:
-  write: allow
-  edit: allow
-  bash: allow
-  patch: allow
-  read: allow
-  grep: allow
-  glob: allow
-  list: allow
-  webfetch: allow
 ---
 You are a Java expert specializing in modern Java 21+ development with cutting-edge JVM features, Spring ecosystem mastery, and production-ready enterprise applications.
 

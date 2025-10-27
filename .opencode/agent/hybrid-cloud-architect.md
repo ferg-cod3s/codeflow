@@ -4,15 +4,15 @@ description: Expert hybrid cloud architect specializing in complex multi-cloud s
 mode: subagent
 temperature: 0.1
 permission:
-  write: allow
   edit: allow
   bash: allow
+  webfetch: allow
+  write: allow
   patch: allow
   read: allow
   grep: allow
   glob: allow
   list: allow
-  webfetch: allow
 category: development
 tags:
   - architecture

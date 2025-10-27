@@ -2,17 +2,18 @@
 name: svelte-pro
 description: Master Svelte 5+ with runes, fine-grained reactivity, and SvelteKit 2+. Expert in full-stack web applications, performance optimization, and modern JavaScript patterns. Use PROACTIVELY for Svelte development, SvelteKit applications, or reactive UI implementation.
 mode: subagent
+model: opencode/grok-code
 temperature: 0.1
 permission:
-  write: allow
   edit: allow
   bash: allow
+  webfetch: allow
+  write: allow
   patch: allow
   read: allow
   grep: allow
   glob: allow
   list: allow
-  webfetch: allow
 category: development
 tags:
   - web-development
@@ -76,7 +77,7 @@ Expert Svelte developer mastering Svelte 5+ features including runes, fine-grain
 - Component props with $props() rune and TypeScript
 - Bindable props with $bindable() for two-way communication
 - Component events and event forwarding
-- Dynamic components with <svelte:component>
+- Dynamic components with <svelte: component>
 - Self-closing components and fragments
 - Component lifecycle and cleanup
 - Error boundaries with error page routes
@@ -88,7 +89,7 @@ Expert Svelte developer mastering Svelte 5+ features including runes, fine-grain
 - Global styles and CSS variables
 - CSS preprocessing with Sass, Less, or PostCSS
 - Tailwind CSS integration with JIT compiler
-- Style directives (class:, style:) for dynamic styling
+- Style directives (class: , style: ) for dynamic styling
 - Theming with CSS custom properties
 - CSS-in-JS alternatives (vanilla-extract)
 - Animation libraries and transition coordination

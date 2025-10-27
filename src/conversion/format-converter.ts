@@ -42,9 +42,13 @@ export class FormatConverter {
     }
 
     // Validate and convert model to Claude Code format
-    let model: string | undefined;
+    // Default to 'inherit' so agents use whatever model is active (Sonnet in plan, Haiku in code, etc.)
+    let model: string = 'inherit';
     if (baseAgent.model) {
-      model = this.convertModelForClaudeCode(baseAgent.model);
+      const convertedModel = this.convertModelForClaudeCode(baseAgent.model);
+      if (convertedModel) {
+        model = convertedModel;
+      }
     }
 
     // STRICT: Only include Claude Code v2.x.x allowed fields
@@ -52,7 +56,7 @@ export class FormatConverter {
       name: baseAgent.name,
       description: baseAgent.description,
       ...(toolsString && { tools: toolsString }),
-      ...(model && { model }),
+      model, // Always include model (defaults to 'inherit')
     };
 
     // Explicitly strips: mode, temperature, capabilities, permission, tags, category, etc.

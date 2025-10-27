@@ -4,15 +4,15 @@ description: Expert cloud architect specializing in AWS/Azure/GCP multi-cloud in
 mode: subagent
 temperature: 0.1
 permission:
-  write: allow
   edit: allow
   bash: allow
+  webfetch: allow
+  write: allow
   patch: allow
   read: allow
   grep: allow
   glob: allow
   list: allow
-  webfetch: allow
 category: development
 tags:
   - security

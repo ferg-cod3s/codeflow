@@ -5,11 +5,11 @@ mode: subagent
 model: opencode/code-supernova
 temperature: 0.1
 permission:
-  read: allow
   edit: deny
-  write: deny
   bash: allow
   webfetch: deny
+  read: allow
+  write: deny
 category: operations
 tags:
   - github
@@ -256,7 +256,7 @@ Must:
       "type": "read",
       "status": "success",
       "output": [{"number": 42, "title": "Add feature X", "author": {"login": "dev1"}}],
-      "timestamp": "2025-10-16T12:00:00Z"
+      "timestamp": "2025-10-16T12: 00: 00Z"
     }
   ],
   "results": {
@@ -265,7 +265,7 @@ Must:
         "number": 42,
         "title": "Add feature X",
         "author": "dev1",
-        "url": "https://github.com/user/repo/pull/42",
+        "url": "https: //github.com/user/repo/pull/42",
         "state": "open"
       }
     ]

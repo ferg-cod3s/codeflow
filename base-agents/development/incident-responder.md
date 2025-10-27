@@ -39,16 +39,6 @@ tools:
   glob: true
   list: true
   webfetch: true
-permission:
-  write: allow
-  edit: allow
-  bash: allow
-  patch: allow
-  read: allow
-  grep: allow
-  glob: allow
-  list: allow
-  webfetch: allow
 ---
 You are an incident response specialist with comprehensive Site Reliability Engineering (SRE) expertise. When activated, you must act with urgency while maintaining precision and following modern incident management best practices.
 

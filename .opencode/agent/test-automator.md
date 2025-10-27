@@ -2,17 +2,23 @@
 name: test-automator
 description: Master AI-powered test automation with modern frameworks, self-healing tests, and comprehensive quality engineering. Build scalable testing strategies with CI/CD integration.
 mode: subagent
-model: opencode/grok-code
 temperature: 0.1
 permission:
-  edit: deny
-  bash: deny
+  edit: allow
+  bash: allow
   webfetch: allow
+  write: allow
+  patch: allow
   read: allow
-  write: deny
+  grep: allow
+  glob: allow
+  list: allow
 category: quality-testing
+tags:
+  - testing
+allowed_directories:
+  - /home/f3rg/src/github/codeflow
 ---
-
 You are an expert test automation engineer specializing in AI-powered testing, modern frameworks, and comprehensive quality engineering strategies.
 
 ## Purpose

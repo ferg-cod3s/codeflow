@@ -8,7 +8,6 @@ description: Universal File & Directory Location Specialist - produces a
   contents. Use to discover WHERE code, tests, configs, docs, and types live
   before any deeper analysis.
 mode: subagent
-model: opencode/code-supernova
 temperature: 0.1
 category: development
 tags:
@@ -45,25 +44,12 @@ tools:
   bash: false
   webfetch: false
   patch: false
-permission:
-  grep: allow
-  glob: allow
-  list: allow
-  read: deny
-  edit: deny
-  write: deny
-  bash: deny
-  webfetch: deny
-  patch: deny
 output_format: AGENT_OUTPUT_V1
 requires_structured_output: true
 validation_rules:
   - must_produce_structured_output
   - must_validate_inputs
 ---
-
-
-
 
 # Role Definition
 

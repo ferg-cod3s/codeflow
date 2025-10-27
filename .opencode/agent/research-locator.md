@@ -2,7 +2,6 @@
 name: research-locator
 description: Focused documentation discovery and categorization agent for research knowledge base. Locates and classifies relevant historical and current research documents without deep semantic analysis.
 mode: subagent
-model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: deny

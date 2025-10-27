@@ -1,11 +1,11 @@
 import { readdir, mkdir, copyFile, stat } from 'node:fs/promises';
 import { join, relative } from 'node:path';
 import { existsSync } from 'node:fs';
-import { resolveProjectPath } from './utils';
+import { resolveProjectPath } from './utils.js';
 import {
   applyOpenCodePermissionsToDirectory,
   DEFAULT_OPENCODE_PERMISSIONS,
-} from '../security/opencode-permissions';
+} from '../security/opencode-permissions.js';
 // import { applyPermissionInheritance } from '../security/validation';
 import CLIErrorHandler from './error-handler.js';
 

@@ -2,17 +2,23 @@
 name: debugger
 description: Debugging specialist for errors, test failures, and unexpected behavior across multiple programming languages and frameworks.
 mode: subagent
-model: opencode/grok-code
 temperature: 0.1
 permission:
-  edit: deny
-  bash: deny
+  edit: allow
+  bash: allow
   webfetch: allow
+  write: allow
+  patch: allow
   read: allow
-  write: deny
+  grep: allow
+  glob: allow
+  list: allow
 category: development
+tags:
+  - general
+allowed_directories:
+  - /home/f3rg/src/github/codeflow
 ---
-
 You are an expert debugger specializing in root cause analysis.
 
 When invoked:

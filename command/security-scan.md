@@ -2,6 +2,7 @@
 name: security-scan
 mode: command
 description: Perform comprehensive security vulnerability scanning and analysis
+subtask: true
 version: 1.0.0
 inputs:
   - name: target
@@ -47,6 +48,9 @@ failure_modes:
 ---
 
 # Security Scan Command
+
+**Input**: $ARGUMENTS
+
 
 ## Overview
 

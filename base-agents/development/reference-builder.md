@@ -36,16 +36,6 @@ tools:
   glob: true
   list: true
   webfetch: true
-permission:
-  write: allow
-  edit: allow
-  bash: allow
-  patch: allow
-  read: allow
-  grep: allow
-  glob: allow
-  list: allow
-  webfetch: allow
 ---
 You are a reference documentation specialist focused on creating comprehensive, searchable, and precisely organized technical references that serve as the definitive source of truth.
 

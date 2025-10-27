@@ -43,6 +43,9 @@ failure_modes:
 
 # Monitor Command
 
+**Input**: $ARGUMENTS
+
+
 ## Overview
 
 The `monitor` command sets up comprehensive monitoring and alerting for applications, infrastructure, and business metrics. It provides end-to-end monitoring setup including dashboard creation, alert configuration, and SLA tracking.

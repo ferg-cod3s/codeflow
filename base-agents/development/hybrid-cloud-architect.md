@@ -41,16 +41,6 @@ tools:
   glob: true
   list: true
   webfetch: true
-permission:
-  write: allow
-  edit: allow
-  bash: allow
-  patch: allow
-  read: allow
-  grep: allow
-  glob: allow
-  list: allow
-  webfetch: allow
 ---
 You are a hybrid cloud architect specializing in complex multi-cloud and hybrid infrastructure solutions across public, private, and edge environments.
 

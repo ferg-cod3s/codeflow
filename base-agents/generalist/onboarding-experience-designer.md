@@ -5,7 +5,6 @@ uats_version: "1.0"
 spec_version: UATS-1.0
 description: Expert in designing developer onboarding experiences, documentation, and learning systems for technology products. Specializes in interactive tutorials, documentation architecture, and developer portals.
 mode: subagent
-model: opencode/grok-code-fast
 temperature: 0.1
 category: generalist
 tags:
@@ -37,16 +36,8 @@ tools:
   glob: true
   list: true
   webfetch: true
-permission:
-  write: allow
-  edit: allow
-  bash: allow
-  patch: allow
-  read: allow
-  grep: allow
-  glob: allow
-  list: allow
-  webfetch: allow
+---
+
 expertise:
 - Developer onboarding experience design
 - Technical documentation and guides

@@ -2,17 +2,16 @@
 name: analytics-engineer
 description: Data instrumentation, tracking plan governance, metrics modeling & analytics platform implementation specialist. Designs event schemas, metrics layer, warehouse/data model transformations, attribution & cohort frameworks, data quality monitoring, experimentation instrumentation, and privacy-compliant telemetry. NOT responsible for growth tactic ideation (growth-engineer) nor UX flow/conversion redesign (ux-optimizer). Use when you need trustworthy, governed, actionable product data.
 mode: subagent
-model: opencode/grok-code
 temperature: 0.15
 permission:
+  edit: deny
+  bash: deny
+  webfetch: deny
   grep: allow
   glob: allow
   list: allow
   read: allow
-  edit: deny
   write: deny
-  bash: deny
-  webfetch: deny
 category: development
 tags:
   - analytics
@@ -371,7 +370,7 @@ Prohibited:
   "pipeline_health": { "freshness_issues":["fct_signups >2h stale"], "volume_anomalies":[], "schema_drift_events":[], "missing_alerts":["signup freshness"], "monitoring_gaps":["No null check on signup_method"], "data_quality_issues":[] },
   "experimentation_support": { "readiness_gaps":["No exposure event"], "exposure_event_issues":[], "guardrail_gaps":["No error_rate guardrail"], "metric_readiness_issues":["Activation ambiguous"], "stats_risk_notes":["Low daily volume"] },
   "attribution_and_cohorts": { "attribution_models":["first_touch"], "model_gaps":["No multi_touch"], "identity_risks":["Anonymous session linking weak"], "cohort_definitions":["new_users_week"], "segmentation_opportunities":["signup_method"], "misinterpretation_risks":["Over-credit first_touch"] },
-  "privacy_compliance": { "pii_flags":["user_id"], "redaction_recommendations":[], "retention_policies":["user_id:3y"], "consent_flow_gaps":["Marketing opt-in captured only post-signup"], "privacy_risks":["Potential referrer URL leakage"] },
+  "privacy_compliance": { "pii_flags":["user_id"], "redaction_recommendations":[], "retention_policies":["user_id: 3y"], "consent_flow_gaps":["Marketing opt-in captured only post-signup"], "privacy_risks":["Potential referrer URL leakage"] },
   "opportunities": [ { "id":"O1","category":"instrumentation","gap_refs":["missing_events","activation_event undefined"],"recommendation":"Define and implement activation_event with clear criteria","expected_impact":{"metric":"activation_rate","type":"accuracy","estimate":"clarity +15% definition precision","confidence":0.6},"complexity":"medium","risk":"Mis-specified activation inflates rate","prerequisites":["Agree activation definition"],"owner_suggested":"product+analytics" } ],
   "prioritization": { "method":"ICE","ranked_ids":["O1"], "rationale":"Unlocks multiple downstream metrics" },
   "plan": { "phases":[ { "phase":"P1","objective":"Define activation","actions":["Workshop criteria","Add activation_event"],"success_criteria":["Event emitted"],"validation_steps":["Compare against historical proxy"],"rollback_considerations":["Revert event name"],"handoffs":["growth-engineer"] } ], "instrumentation_additions":[{"event":"activation_event","reason":"Enable activation rate"}], "model_changes":[{"model":"fct_activation","change_type":"create","purpose":"Store activation rows"}], "governance_updates":["Add event versioning policy"], "success_metrics":["Activation event coverage>=98% of true activations"] },

@@ -5,7 +5,6 @@ uats_version: "1.0"
 spec_version: UATS-1.0
 description: Expert in e-commerce platforms, online retail systems, and digital commerce optimization. Specializes in platform architecture, payment integration, and conversion optimization.
 mode: subagent
-model: opencode/grok-code
 temperature: 0.1
 category: product-strategy
 tags:
@@ -37,16 +36,8 @@ tools:
   glob: true
   list: true
   webfetch: true
-permission:
-  write: allow
-  edit: allow
-  bash: allow
-  patch: allow
-  read: allow
-  grep: allow
-  glob: allow
-  list: allow
-  webfetch: allow
+---
+
 expertise:
 - E-commerce platform architecture and design
 - Online shopping cart and checkout systems

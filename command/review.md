@@ -2,6 +2,7 @@
 name: review
 mode: command
 description: Validate that an implementation plan was correctly executed
+subtask: true
 version: 2.0.0-internal
 last_updated: 2025-09-13
 command_schema_version: 1.0
@@ -39,6 +40,9 @@ failure_modes:
 ---
 
 # Validate Implementation
+
+**Input**: $ARGUMENTS
+
 
 You are tasked with validating that an implementation plan was correctly executed, verifying all success criteria and identifying any deviations or issues. This command uses intelligent caching to optimize validation workflows and maintain consistency across similar verification scenarios.
 

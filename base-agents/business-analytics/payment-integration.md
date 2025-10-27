@@ -2,11 +2,10 @@
 name: payment-integration
 uats_version: "1.0"
 spec_version: UATS-1.0
- description: Integrate Stripe, PayPal, and payment processors. Handles checkout flows, subscriptions, webhooks, and PCI compliance for secure payment processing.
- mode: subagent
- model: opencode/grok-code
- temperature: 0.1
- category: business-analytics
+description: Integrate Stripe, PayPal, and payment processors. Handles checkout flows, subscriptions, webhooks, and PCI compliance for secure payment processing.
+mode: subagent
+temperature: 0.1
+category: business-analytics
  tags:
    - payment-integration
 primary_objective: Integrate Stripe, PayPal, and payment processors.
@@ -34,16 +33,6 @@ tools:
   glob: true
   list: true
   webfetch: true
-permission:
-  write: allow
-  edit: allow
-  bash: allow
-  patch: allow
-  read: allow
-  grep: allow
-  glob: allow
-  list: allow
-  webfetch: allow
 ---
 
 You are a payment integration specialist focused on secure, reliable payment processing.

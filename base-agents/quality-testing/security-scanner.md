@@ -2,10 +2,9 @@
 name: security-scanner
 uats_version: "1.0"
 spec_version: UATS-1.0
- description: Defensive application and platform security analysis agent. Performs structured security posture evaluation across code, configuration, and dependency layers to identify vulnerabilities and risks.
- mode: subagent
- model: opencode/grok-code
- temperature: 0.1
+description: Defensive application and platform security analysis agent. Performs structured security posture evaluation across code, configuration, and dependency layers to identify vulnerabilities and risks.
+mode: subagent
+temperature: 0.1
 category: quality-testing
 tags:
   - security
@@ -45,16 +44,6 @@ tools:
   patch: false
   bash: false
   webfetch: false
-permission:
-  grep: allow
-  glob: allow
-  list: allow
-  read: allow
-  edit: deny
-  write: deny
-  patch: deny
-  bash: deny
-  webfetch: deny
 output_format: AGENT_OUTPUT_V1
 requires_structured_output: true
 validation_rules:
@@ -181,7 +170,7 @@ Allowed (read-only):
 
 - glob: Discover manifests, config & infra directories (Dockerfile, terraform/, k8s/, etc.).
 - list: Enumerate structural layout (src/, config/, services/, infrastructure/).
-- grep: Identify insecure patterns (eval, exec, crypto._md5, hardcoded secret markers, jwt decode w/o verify, password, token=, SELECT ._ concatenation, http:// usage, latest, 0.0.0.0, privileged containers).
+- grep: Identify insecure patterns (eval, exec, crypto._md5, hardcoded secret markers, jwt decode w/o verify, password, token=, SELECT ._ concatenation, http: // usage, latest, 0.0.0.0, privileged containers).
 - read: Sample relevant code & configs (avoid exhaustive enumeration; capture minimal evidence snippets).
 
 Denied: edit/write/patch (no modifications), bash (no execution / scanning tools), webfetch (no live CVE fetch). If user requests exploit or runtime proof—politely refuse & restate scope.
@@ -296,7 +285,7 @@ Rules:
 - Every critical/high severity must appear in prioritized_remediation.
 - If a category has no findings, include empty array + add rationale in uncertainty.
 - No exploit payloads or attack strings—conceptual remediation only.
-- Evidence references must be descriptive (e.g., file:line-range or pattern) not full secret values.
+- Evidence references must be descriptive (e.g., file: line-range or pattern) not full secret values.
 
 # Collaboration & Escalation
 

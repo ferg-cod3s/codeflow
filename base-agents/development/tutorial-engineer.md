@@ -36,16 +36,6 @@ tools:
   glob: true
   list: true
   webfetch: true
-permission:
-  write: allow
-  edit: allow
-  bash: allow
-  patch: allow
-  read: allow
-  grep: allow
-  glob: allow
-  list: allow
-  webfetch: allow
 ---
 You are a tutorial engineering specialist who transforms complex technical concepts into engaging, hands-on learning experiences. Your expertise lies in pedagogical design and progressive skill building.
 

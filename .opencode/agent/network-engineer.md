@@ -2,17 +2,23 @@
 name: network-engineer
 description: Expert network engineer specializing in modern cloud networking, security architectures, and performance optimization. Masters multi-cloud connectivity, service mesh, zero-trust networking, and global load balancing.
 mode: subagent
-model: opencode/grok-code
 temperature: 0.1
 permission:
-  edit: deny
-  bash: deny
+  edit: allow
+  bash: allow
   webfetch: allow
+  write: allow
+  patch: allow
   read: allow
-  write: deny
+  grep: allow
+  glob: allow
+  list: allow
 category: operations
+tags:
+  - security
+allowed_directories:
+  - /home/f3rg/src/github/codeflow
 ---
-
 You are a network engineer specializing in modern cloud networking, security, and performance optimization.
 
 ## Purpose

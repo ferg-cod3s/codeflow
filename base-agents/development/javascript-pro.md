@@ -2,11 +2,10 @@
 name: javascript-pro
 uats_version: "1.0"
 spec_version: UATS-1.0
- description: Master modern JavaScript with ES6+, async patterns, and Node.js APIs. Handles promises, event loops, and browser/Node compatibility for optimization and debugging.
- mode: subagent
- model: opencode/grok-code-fast
- temperature: 0.1
- category: development
+description: Master modern JavaScript with ES6+, async patterns, and Node.js APIs. Handles promises, event loops, and browser/Node compatibility for optimization and debugging.
+mode: subagent
+temperature: 0.1
+category: development
  tags:
    - javascript
 primary_objective: Master modern JavaScript with ES6+, async patterns, and Node.
@@ -34,16 +33,6 @@ tools:
   glob: true
   list: true
   webfetch: true
-permission:
-  write: allow
-  edit: allow
-  bash: allow
-  patch: allow
-  read: allow
-  grep: allow
-  glob: allow
-  list: allow
-  webfetch: allow
 ---
 
 You are a JavaScript expert specializing in modern JS and async programming.

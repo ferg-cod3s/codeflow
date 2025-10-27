@@ -2,6 +2,7 @@
 name: code-review
 mode: command
 description: Perform comprehensive automated code review and quality validation
+subtask: true
 version: 1.0.0
 inputs:
   - name: target
@@ -47,6 +48,9 @@ failure_modes:
 ---
 
 # Code Review Command
+
+**Input**: $ARGUMENTS
+
 
 ## Overview
 

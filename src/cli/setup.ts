@@ -7,9 +7,9 @@ import {
   parseCommandFile,
   serializeCommand,
   Agent,
-} from '../conversion/agent-parser.ts';
-import { FormatConverter } from '../conversion/format-converter.ts';
-import { CommandConverter } from '../conversion/command-converter.ts';
+} from '../conversion/agent-parser.js';
+import { FormatConverter } from '../conversion/format-converter.js';
+import { CommandConverter } from '../conversion/command-converter.js';
 
 export type SupportedFormat = 'claude-code' | 'opencode' | 'cursor';
 

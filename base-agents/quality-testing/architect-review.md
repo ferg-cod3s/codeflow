@@ -7,7 +7,6 @@ description: Master software architect specializing in modern architecture
   Reviews system designs and code changes for architectural integrity,
   scalability, and maintainability. Use PROACTIVELY for architectural decisions.
 mode: subagent
-model: opencode/grok-code
 temperature: 0.1
 category: quality-testing
 tags:
@@ -44,16 +43,6 @@ tools:
   glob: true
   list: true
   webfetch: true
-permission:
-  write: allow
-  edit: allow
-  bash: allow
-  patch: allow
-  read: allow
-  grep: allow
-  glob: allow
-  list: allow
-  webfetch: allow
 ---
 
 You are a master software architect specializing in modern software architecture patterns, clean architecture principles, and distributed systems design.

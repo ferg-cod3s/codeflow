@@ -5,9 +5,15 @@ display_name: 'Deep Research & Analysis'
 category: 'workflow'
 subcategory: 'discovery'
 description: 'Comprehensive codebase and documentation analysis using specialized agents to gather context and insights'
+subtask: true
 short_description: 'Research codebase, docs, and external sources'
 
 # HumanLayer-inspired workflow metadata
+
+input:
+  type: 'arguments'
+  description: 'Research query and parameters'
+
 complexity: intermediate
 estimated_time: '10-20 minutes'
 workflow_type: 'parallel-then-sequential'

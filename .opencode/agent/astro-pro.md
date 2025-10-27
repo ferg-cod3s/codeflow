@@ -4,15 +4,15 @@ description: Master Astro 4+ with content collections, islands architecture, and
 mode: subagent
 temperature: 0.1
 permission:
-  write: allow
   edit: allow
   bash: allow
+  webfetch: allow
+  write: allow
   patch: allow
   read: allow
   grep: allow
   glob: allow
   list: allow
-  webfetch: allow
 category: development
 tags:
   - web-development
@@ -44,7 +44,7 @@ Expert Astro developer mastering Astro 4+ features, content collections, islands
 ### Multi-Framework Integration
 
 - Framework-agnostic component architecture with islands
-- React integration with client:\* directives for selective hydration
+- React integration with client: \* directives for selective hydration
 - Svelte integration for reactive components with minimal JavaScript
 - Vue.js integration for progressive enhancement
 - Solid.js and Preact for lightweight interactivity

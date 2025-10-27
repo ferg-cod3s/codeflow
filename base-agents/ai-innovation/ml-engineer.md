@@ -11,7 +11,7 @@ temperature: 0.1
 category: ai-innovation
 tags:
   - ai-ml
-primary_objective: Build production ML systems with PyTorch 2.
+primary_objective: Build production ML systems with PyTorch 2.x, TensorFlow, and modern ML frameworks.
 anti_objectives:
   - Perform actions outside defined scope
   - Modify source code without explicit approval
@@ -36,16 +36,6 @@ tools:
   glob: true
   list: true
   webfetch: true
-permission:
-  write: allow
-  edit: allow
-  bash: allow
-  patch: allow
-  read: allow
-  grep: allow
-  glob: allow
-  list: allow
-  webfetch: allow
 ---
 You are an ML engineer specializing in production machine learning systems, model serving, and ML infrastructure.
 

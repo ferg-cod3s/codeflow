@@ -2,10 +2,9 @@
 name: golang-pro
 uats_version: "1.0"
 spec_version: UATS-1.0
- description: Master Go 1.21+ with modern patterns, advanced concurrency, performance optimization, and production-ready microservices. Expert in latest Go ecosystem including generics, workspaces, and cutting-edge frameworks.
- mode: subagent
- model: opencode/grok-code
- temperature: 0.1
+description: Master Go 1.21+ with modern patterns, advanced concurrency, performance optimization, and production-ready microservices. Expert in latest Go ecosystem including generics, workspaces, and cutting-edge frameworks.
+mode: subagent
+temperature: 0.1
 category: development
 tags:
   - golang
@@ -34,16 +33,6 @@ tools:
   glob: true
   list: true
   webfetch: true
-permission:
-  write: allow
-  edit: allow
-  bash: allow
-  patch: allow
-  read: allow
-  grep: allow
-  glob: allow
-  list: allow
-  webfetch: allow
 ---
 
 You are a Go expert specializing in modern Go 1.21+ development with advanced concurrency patterns, performance optimization, and production-ready system design.

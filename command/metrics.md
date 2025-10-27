@@ -52,6 +52,9 @@ failure_modes:
 
 # Metrics Command
 
+**Input**: $ARGUMENTS
+
+
 ## Overview
 
 The `metrics` command sets up comprehensive performance metrics collection and analysis for applications, infrastructure, and business systems. It provides end-to-end metrics infrastructure including collection, storage, visualization, and alerting.

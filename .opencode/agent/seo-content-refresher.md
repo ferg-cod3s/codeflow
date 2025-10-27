@@ -4,15 +4,15 @@ description: Identifies outdated elements in provided content and suggests updat
 mode: subagent
 temperature: 0.1
 permission:
-  write: allow
   edit: allow
   bash: allow
+  webfetch: allow
+  write: allow
   patch: allow
   read: allow
   grep: allow
   glob: allow
   list: allow
-  webfetch: allow
 category: business-analytics
 tags:
   - seo
@@ -34,7 +34,7 @@ You are a content freshness specialist identifying update opportunities in exist
 
 ## Content Freshness Guidelines
 
-**Update Priorities:**
+**Update Priorities: **
 - Statistics older than 2 years
 - Dates in titles and content
 - Examples from 3+ years ago
@@ -67,7 +67,7 @@ You are a content freshness specialist identifying update opportunities in exist
 
 ## Output
 
-**Content Refresh Plan:**
+**Content Refresh Plan: **
 ```
 Page: [URL]
 Last Updated: [Date]
@@ -79,7 +79,7 @@ Refresh Actions:
 - Update meta title with "2025"
 ```
 
-**Deliverables:**
+**Deliverables: **
 - Content decay analysis
 - Refresh priority queue
 - Update checklist per page
@@ -88,7 +88,7 @@ Refresh Actions:
 - Competitor freshness tracking
 - Publishing calendar
 
-**Refresh Tactics:**
+**Refresh Tactics: **
 - Statistical updates (quarterly)
 - New case studies/examples
 - Additional FAQ questions
@@ -97,7 +97,7 @@ Refresh Actions:
 - Related posts internal links
 - Schema markup updates
 
-**Freshness Signals:**
+**Freshness Signals: **
 - Modified date in schema
 - Updated publish date
 - New internal links to content
@@ -105,7 +105,7 @@ Refresh Actions:
 - Social media resharing
 - Comment engagement reactivation
 
-**Platform Implementation:**
+**Platform Implementation: **
 - WordPress: Modified date display
 - Static sites: Frontmatter date updates
 - Sitemap priority adjustments

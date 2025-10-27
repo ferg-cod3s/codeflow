@@ -5,7 +5,6 @@ uats_version: "1.0"
 spec_version: UATS-1.0
 description: Expert in IDE extension development, developer tools, and productivity enhancement for development environments. Specializes in VS Code extensions, language servers, and developer productivity tools.
 mode: subagent
-model: opencode/grok-code
 temperature: 0.1
 category: generalist
 tags:
@@ -37,16 +36,8 @@ tools:
   glob: true
   list: true
   webfetch: true
-permission:
-  write: allow
-  edit: allow
-  bash: allow
-  patch: allow
-  read: allow
-  grep: allow
-  glob: allow
-  list: allow
-  webfetch: allow
+---
+
 expertise:
 - IDE extension development and architecture
 - Visual Studio Code extension development

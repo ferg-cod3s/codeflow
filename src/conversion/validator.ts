@@ -1,5 +1,5 @@
-import { Agent, BaseAgent, ClaudeCodeAgent, OpenCodeAgent } from './agent-parser';
-import { ValidationEngine } from '../yaml/validation-engine';
+import { Agent, BaseAgent, ClaudeCodeAgent, OpenCodeAgent } from './agent-parser.js';
+import { ValidationEngine } from '../yaml/validation-engine.js';
 import { readFile, readdir, stat } from 'fs/promises';
 import { existsSync } from 'fs';
 import path from 'path';

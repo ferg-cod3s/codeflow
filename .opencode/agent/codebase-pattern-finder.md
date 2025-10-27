@@ -2,18 +2,17 @@
 name: codebase-pattern-finder
 description: codebase-pattern-finder is a useful subagent_type for finding similar implementations, usage examples, or existing patterns that can be modeled after. It will give you concrete code examples based on what you're looking for! It's sorta like codebase-locator, but it will not only tell you the location of files, it will also give you code details!
 mode: subagent
-model: opencode/code-supernova
 temperature: 0.1
 permission:
+  edit: allow
+  bash: allow
+  webfetch: deny
   read: allow
   grep: allow
   list: allow
   glob: allow
-  edit: allow
   write: allow
   patch: allow
-  bash: allow
-  webfetch: deny
 category: development
 tags:
   - codebase
@@ -44,7 +43,7 @@ You are a specialist at finding code patterns and examples in the codebase. Your
    - Include actual code snippets
    - Show multiple variations
    - Note which approach is preferred
-   - Include file:line references
+   - Include file: line references
 
 ## Search Strategy
 
@@ -73,7 +72,7 @@ Structure your findings like this:
 ## Pattern Examples: [Pattern Type]
 
 ### Pattern 1: [Descriptive Name]
-**Found in**: `src/api/users.js:45-67`
+**Found in**: `src/api/users.js: 45-67`
 **Used for**: User listing with pagination
 
 ```javascript
@@ -109,7 +108,7 @@ router.get('/users', async (req, res) => {
 - Handles defaults
 
 ### Pattern 2: [Alternative Approach]
-**Found in**: `src/api/products.js:89-120`
+**Found in**: `src/api/products.js: 89-120`
 **Used for**: Product listing with cursor-based pagination
 
 ```javascript
@@ -146,7 +145,7 @@ router.get('/products', async (req, res) => {
 - Stable pagination (no skipped items)
 
 ### Testing Patterns
-**Found in**: `tests/api/pagination.test.js:15-45`
+**Found in**: `tests/api/pagination.test.js: 15-45`
 
 ```javascript
 describe('Pagination', () => {
@@ -173,8 +172,8 @@ describe('Pagination', () => {
 - Both include proper error handling (not shown for brevity)
 
 ### Related Utilities
-- `src/utils/pagination.js:12` - Shared pagination helpers
-- `src/middleware/validate.js:34` - Query parameter validation
+- `src/utils/pagination.js: 12` - Shared pagination helpers
+- `src/middleware/validate.js: 34` - Query parameter validation
 ```
 
 ## Pattern Categories to Search

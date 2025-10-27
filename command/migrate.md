@@ -52,6 +52,9 @@ failure_modes:
 
 # Migrate Command
 
+**Input**: $ARGUMENTS
+
+
 ## Overview
 
 The `migrate` command performs database schema and data migrations with zero downtime capabilities. It provides comprehensive migration planning, execution, validation, and rollback procedures for safe database changes.

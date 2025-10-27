@@ -4,7 +4,6 @@ uats_version: '1.0'
 spec_version: UATS-1.0
 description: Expert in computer vision, image processing, and visual AI systems for real-world applications. Specializes in deep learning, object detection, and video analysis.
 mode: subagent
-model: opencode/grok-code
 temperature: 0.1
 category: ai-innovation
 tags:
@@ -35,16 +34,8 @@ tools:
   glob: true
   list: true
   webfetch: true
-permission:
-  write: allow
-  edit: allow
-  bash: allow
-  patch: allow
-  read: allow
-  grep: allow
-  glob: allow
-  list: allow
-  webfetch: allow
+---
+
 expertise:
   - Computer vision algorithm development
   - Deep learning for image and video analysis

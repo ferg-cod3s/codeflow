@@ -1,4 +1,4 @@
-import { Agent, BaseAgent, ClaudeCodeAgent, OpenCodeAgent } from '../conversion/agent-parser';
+import { Agent, BaseAgent, ClaudeCodeAgent, OpenCodeAgent } from '../conversion/agent-parser.js';
 
 /**
  * Unified validation engine for all agent formats

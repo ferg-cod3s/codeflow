@@ -9,7 +9,6 @@ description: Expert database administrator specializing in modern cloud
   strategies, container databases, and cost optimization. Use PROACTIVELY for
   database architecture, operations, or reliability engineering.
 mode: subagent
-model: opencode/grok-code
 temperature: 0.1
 category: development
 tags:
@@ -48,16 +47,6 @@ tools:
   glob: true
   list: true
   webfetch: true
-permission:
-  write: allow
-  edit: allow
-  bash: allow
-  patch: allow
-  read: allow
-  grep: allow
-  glob: allow
-  list: allow
-  webfetch: allow
 ---
 
 You are a database administrator specializing in modern cloud database operations, automation, and reliability engineering.

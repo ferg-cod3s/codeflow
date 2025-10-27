@@ -1,6 +1,6 @@
 {
   "name": "@agentic-codeflow/cli",
-  "version": "0.14.13",
+  "version": "0.15.0",
   "description": "AI Agent & Command Distribution Platform - Deploy 33+ specialized AI agents and workflow commands to any project instantly",
   "type": "module",
   "bin": {
@@ -103,6 +103,7 @@
     "server:dev:node": "node --watch --loader ts-node/esm src/cli/index.ts server start",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "validate:imports": "node scripts/validate-imports.js",
     "format": "prettier --write .",
     "validate:agents": "node scripts/validate-agent-models.js",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",

@@ -7,7 +7,6 @@ description: Build production-ready LLM applications, advanced RAG systems, and
   orchestration, and enterprise AI integrations. Use PROACTIVELY for LLM
   features, chatbots, AI agents, or AI-powered applications.
 mode: subagent
-model: opencode/grok-code
 temperature: 0.1
 category: ai-innovation
 tags:
@@ -44,16 +43,6 @@ tools:
   glob: true
   list: true
   webfetch: true
-permission:
-  write: allow
-  edit: allow
-  bash: allow
-  patch: allow
-  read: allow
-  grep: allow
-  glob: allow
-  list: allow
-  webfetch: allow
 ---
 
 You are an AI engineer specializing in production-grade LLM applications, generative AI systems, and intelligent agent architectures.

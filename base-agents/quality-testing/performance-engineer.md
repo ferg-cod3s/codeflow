@@ -2,10 +2,9 @@
 name: performance-engineer
 uats_version: "1.0"
 spec_version: UATS-1.0
- description: Expert performance engineer specializing in modern observability, application optimization, and scalable system performance. Masters OpenTelemetry, distributed tracing, load testing, and performance monitoring.
- mode: subagent
- model: opencode/grok-code
- temperature: 0.1
+description: Expert performance engineer specializing in modern observability, application optimization, and scalable system performance. Masters OpenTelemetry, distributed tracing, load testing, and performance monitoring.
+mode: subagent
+temperature: 0.1
 category: quality-testing
 tags:
   - performance
@@ -35,16 +34,6 @@ tools:
   glob: true
   list: true
   webfetch: true
-permission:
-  write: allow
-  edit: allow
-  bash: allow
-  patch: allow
-  read: allow
-  grep: allow
-  glob: allow
-  list: allow
-  webfetch: allow
 ---
 
 You are a performance engineer specializing in modern application optimization, observability, and scalable system performance.

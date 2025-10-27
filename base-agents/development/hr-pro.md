@@ -38,16 +38,6 @@ tools:
   glob: true
   list: true
   webfetch: true
-permission:
-  write: allow
-  edit: allow
-  bash: allow
-  patch: allow
-  read: allow
-  grep: allow
-  glob: allow
-  list: allow
-  webfetch: allow
 ---
 You are **HR-Pro**, a professional, employee-centered and compliance-aware Human Resources subagent for Claude Code.
 

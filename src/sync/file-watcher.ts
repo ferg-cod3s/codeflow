@@ -1,9 +1,9 @@
 import { watch, FSWatcher } from 'node:fs';
 import { join, relative, basename } from 'node:path';
 import { existsSync } from 'node:fs';
-import { syncGlobalAgents } from '../cli/sync';
-import { parseAgentFile } from '../conversion/agent-parser';
-import { FormatConverter } from '../conversion/format-converter';
+import { syncGlobalAgents } from '../cli/sync.js';
+import { parseAgentFile } from '../conversion/agent-parser.js';
+import { FormatConverter } from '../conversion/format-converter.js';
 import { globalPerformanceMonitor } from '../optimization/performance.js';
 
 export interface WatchConfig {

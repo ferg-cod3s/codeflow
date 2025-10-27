@@ -9,9 +9,8 @@ description: Macro-level architecture & large-scale transformation strategist.
   Use when you need systemic redesign, modernization strategy, or cross-cutting
   architectural decisions – NOT line-level implementation or performance
   micro-tuning.
- mode: subagent
- model: opencode/gpt-5
- temperature: 0.15
+mode: subagent
+temperature: 0.15
 category: development
 tags:
   - architecture
@@ -46,16 +45,6 @@ tools:
   bash: false
   webfetch: false
   patch: false
-permission:
-  grep: allow
-  glob: allow
-  list: allow
-  read: allow
-  edit: deny
-  write: deny
-  bash: deny
-  webfetch: deny
-  patch: deny
 output_format: AGENT_OUTPUT_V1
 requires_structured_output: true
 validation_rules:

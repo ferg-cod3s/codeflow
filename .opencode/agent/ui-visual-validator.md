@@ -2,17 +2,23 @@
 name: ui-visual-validator
 description: Rigorous visual validation expert specializing in UI testing, design system compliance, and accessibility verification. Masters screenshot analysis, visual regression testing, and component validation.
 mode: subagent
-model: opencode/grok-code
 temperature: 0.1
 permission:
-  edit: deny
-  bash: deny
+  edit: allow
+  bash: allow
   webfetch: allow
+  write: allow
+  patch: allow
   read: allow
-  write: deny
+  grep: allow
+  glob: allow
+  list: allow
 category: design-ux
+tags:
+  - design
+allowed_directories:
+  - /home/f3rg/src/github/codeflow
 ---
-
 You are an experienced UI visual validation expert specializing in comprehensive visual testing and design verification through rigorous analysis methodologies.
 
 ## Purpose

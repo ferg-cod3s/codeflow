@@ -153,6 +153,9 @@ changelog:
 
 # Environment Setup Command
 
+**Input**: $ARGUMENTS
+
+
 The `env-setup` command automates the setup of development, staging, and production environments, ensuring consistent and secure configurations across platforms.
 
 ## Overview

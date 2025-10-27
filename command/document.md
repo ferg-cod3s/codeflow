@@ -2,6 +2,7 @@
 name: document
 mode: command
 description: Produce high-quality documentation for implemented features
+subtask: true
 version: 2.0.0-internal
 last_updated: 2025-09-13
 command_schema_version: 1.0
@@ -43,6 +44,9 @@ failure_modes:
 ---
 
 # Document Feature
+
+**Input**: $ARGUMENTS
+
 
 You are tasked with producing high-quality documentation based on the implemented feature, its plan, and the code. This command uses intelligent caching to optimize documentation generation and maintain consistency across similar features.
 

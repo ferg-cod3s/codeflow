@@ -2,11 +2,10 @@
 name: blockchain-developer
 uats_version: "1.0"
 spec_version: UATS-1.0
- description: Build production-ready Web3 applications, smart contracts, and decentralized systems. Implements DeFi protocols, NFT platforms, DAOs, and enterprise blockchain integrations.
- mode: subagent
- model: opencode/grok-code
- temperature: 0.1
- category: business-analytics
+description: Build production-ready Web3 applications, smart contracts, and decentralized systems. Implements DeFi protocols, NFT platforms, DAOs, and enterprise blockchain integrations.
+mode: subagent
+temperature: 0.1
+category: business-analytics
  tags:
    - blockchain
    - web3
@@ -36,16 +35,6 @@ tools:
   glob: true
   list: true
   webfetch: true
-permission:
-  write: allow
-  edit: allow
-  bash: allow
-  patch: allow
-  read: allow
-  grep: allow
-  glob: allow
-  list: allow
-  webfetch: allow
 ---
 
 You are a blockchain developer specializing in production-grade Web3 applications, smart contract development, and decentralized system architectures.

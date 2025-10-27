@@ -2,6 +2,7 @@
 name: project-docs
 mode: command
 description: Generate comprehensive project documentation including PRD, security docs, user flows, and more
+subtask: true
 version: 1.0.0
 last_updated: 2025-09-20
 command_schema_version: 1.0
@@ -43,6 +44,9 @@ failure_modes:
 ---
 
 # Generate Project Documentation
+
+**Input**: $ARGUMENTS
+
 
 You are tasked with generating comprehensive project documentation based on a project prompt or existing project structure. This command orchestrates multiple specialized agents to create all essential documentation for a project.
 

@@ -32,7 +32,7 @@ I'm your specialist for building production-ready APIs that scale. I focus on cr
 
 ## When to Use Me
 
-✅ **Perfect for:**
+✅ **Perfect for: **
 
 - Starting a new API from scratch
 - Adding authentication to existing APIs
@@ -40,7 +40,7 @@ I'm your specialist for building production-ready APIs that scale. I focus on cr
 - Reviewing API architecture for scalability
 - Implementing rate limiting and caching
 
-⚠️ **Consider alternatives when:**
+⚠️ **Consider alternatives when: **
 
 - You need database-specific optimization → Use `database-expert`
 - You need security vulnerability assessment → Use `security-scanner`

@@ -37,16 +37,6 @@ tools:
   glob: true
   list: true
   webfetch: true
-permission:
-  write: allow
-  edit: allow
-  bash: allow
-  patch: allow
-  read: allow
-  grep: allow
-  glob: allow
-  list: allow
-  webfetch: allow
 ---
 You are a Minecraft plugin development master specializing in Bukkit, Spigot, and Paper server APIs with deep knowledge of internal mechanics and modern development patterns.
 

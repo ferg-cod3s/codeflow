@@ -5,7 +5,6 @@ uats_version: "1.0"
 spec_version: UATS-1.0
 description: Comprehensive agent ecosystem management specialist. Manages agent lifecycle, performance monitoring, capability validation, and ecosystem optimization for large-scale AI agent deployments.
 mode: subagent
-model: opencode/gpt-5
 temperature: 0.1
 category: generalist
 tags:
@@ -43,15 +42,6 @@ tools:
   grep: true
   list: true
   task: true
-permission:
-  bash: allow
-  edit: allow
-  read: allow
-  write: allow
-  glob: allow
-  grep: allow
-  list: allow
-  task: allow
 allowed_directories:
 - base-agents/\*_/_
 - .claude/\*_/_
