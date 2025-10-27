@@ -1,0 +1,261 @@
+#!/usr/bin/env tsx
+
+/**
+ * CodeFlow Publish Script
+ *
+ * This script handles the automated publishing process for CodeFlow CLI.
+ * It's designed to be called from the GitHub release workflow.
+ *
+ * Usage:
+ *   AGENTIC_VERSION=1.0.0 ./scripts/publish.ts
+ */
+
+import { execSync } from 'child_process';
+import { readFileSync, writeFileSync } from 'fs';
+import { join } from 'path';
+
+// Colors for output
+const colors = {
+  reset: '\x1b[0m',
+  red: '\x1b[31m',
+  green: '\x1b[32m',
+  yellow: '\x1b[33m',
+  blue: '\x1b[34m',
+};
+
+function log(message: string, color: keyof typeof colors = 'reset'): void {
+  console.log(`${colors[color]}${message}${colors.reset}`);
+}
+
+function logInfo(message: string): void {
+  log(`[INFO] ${message}`, 'blue');
+}
+
+function logSuccess(message: string): void {
+  log(`[SUCCESS] ${message}`, 'green');
+}
+
+function logWarning(message: string): void {
+  log(`[WARNING] ${message}`, 'yellow');
+}
+
+function logError(message: string): void {
+  log(`[ERROR] ${message}`, 'red');
+}
+
+function execCommand(command: string, options?: { silent?: boolean }): string {
+  try {
+    const result = execSync(command, {
+      encoding: 'utf8',
+      stdio: options?.silent ? 'pipe' : 'inherit',
+    });
+    return result;
+  } catch (error) {
+    logError(`Command failed: ${command}`);
+    if (error instanceof Error) {
+      logError(error.message);
+    }
+    process.exit(1);
+  }
+}
+
+function validateVersion(version: string): boolean {
+  const versionRegex = /^\d+\.\d+\.\d+$/;
+  return versionRegex.test(version);
+}
+
+function updatePackageVersion(version: string): void {
+  try {
+    const packageJsonPath = join(process.cwd(), 'package.json');
+    const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8'));
+
+    const oldVersion = packageJson.version;
+    packageJson.version = version;
+
+    writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2) + '\n');
+
+    logSuccess(`Updated package.json version from ${oldVersion} to ${version}`);
+  } catch (error) {
+    logError('Failed to update package.json version');
+    if (error instanceof Error) {
+      logError(error.message);
+    }
+    process.exit(1);
+  }
+}
+
+function createGitTag(version: string): void {
+  const tagName = `v${version}`;
+
+  // Check if tag already exists
+  try {
+    execSync(`git rev-parse --verify refs/tags/${tagName}`, { stdio: 'pipe' });
+    logWarning(`Tag ${tagName} already exists`);
+
+    // Check if it's on the current commit
+    const currentCommit = execSync('git rev-parse HEAD', { encoding: 'utf8' }).trim();
+    const tagCommit = execSync(`git rev-list -n 1 ${tagName}`, { encoding: 'utf8' }).trim();
+
+    if (currentCommit === tagCommit) {
+      logSuccess(`Tag ${tagName} is already on current commit`);
+      return;
+    } else {
+      logError(`Tag ${tagName} exists but points to a different commit`);
+      logError(`Current commit: ${currentCommit}`);
+      logError(`Tag commit: ${tagCommit}`);
+      process.exit(1);
+    }
+  } catch (error) {
+    // Tag doesn't exist, create it
+    logInfo(`Creating tag ${tagName}`);
+    execSync(`git tag ${tagName}`);
+    logSuccess(`Created tag ${tagName}`);
+  }
+}
+
+function pushGitTag(version: string): void {
+  const tagName = `v${version}`;
+  logInfo(`Pushing tag ${tagName} to remote`);
+  execSync(`git push origin ${tagName}`);
+  logSuccess(`Pushed tag ${tagName} to remote`);
+}
+
+function publishToNpm(): void {
+  logInfo('Publishing to npm registry');
+
+  try {
+    // Use bun publish if available, otherwise npm
+    const publishCommand = process.env.USE_NPM === 'true' ? 'npm publish' : 'bun publish';
+    execSync(publishCommand, { stdio: 'inherit' });
+    logSuccess('Successfully published to npm');
+  } catch (error) {
+    logError('Failed to publish to npm');
+    if (error instanceof Error) {
+      logError(error.message);
+    }
+    process.exit(1);
+  }
+}
+
+function createGitHubRelease(version: string): void {
+  logInfo('Creating GitHub release');
+
+  try {
+    // Generate release notes
+    const tagName = `v${version}`;
+    const lastTag = execSync('git describe --tags --abbrev=0 HEAD~1 2>/dev/null || echo ""', {
+      encoding: 'utf8',
+    }).trim();
+
+    let releaseNotes = `## CodeFlow CLI v${version}\n\n`;
+
+    if (lastTag) {
+      const commits = execSync(`git log --pretty=format:"- %s (%h)" ${lastTag}..HEAD`, {
+        encoding: 'utf8',
+      });
+      releaseNotes += `### Changes since ${lastTag}\n\n${commits}\n`;
+    } else {
+      const commits = execSync('git log --pretty=format:"- %s (%h)" -10', {
+        encoding: 'utf8',
+      });
+      releaseNotes += `### Recent commits\n\n${commits}\n`;
+    }
+
+    releaseNotes += `\n### Installation\n\n\`\`\`bash\nnpm install -g @agentic-codeflow/cli\n\`\`\`\n\n`;
+    releaseNotes += `### Quick Start\n\n\`\`\`bash\ncodeflow setup\n\`\`\`\n\n`;
+    releaseNotes += `**Full Changelog**: https://github.com/ferg-cod3s/codeflow/compare/${lastTag || 'main'}...${tagName}`;
+
+    // Create release using gh CLI
+    execSync(
+      `echo "${releaseNotes}" | gh release create "${tagName}" --title "CodeFlow CLI v${version}" --draft=false --verify-tag -F -`
+    );
+    logSuccess(`Created GitHub release ${tagName}`);
+  } catch (error) {
+    logWarning('Failed to create GitHub release automatically');
+    logWarning(
+      'You can create it manually at: https://github.com/ferg-cod3s/codeflow/releases/new'
+    );
+    if (error instanceof Error) {
+      logWarning(error.message);
+    }
+  }
+}
+
+function main(): void {
+  logInfo('Starting CodeFlow publish process...');
+
+  // Get version from environment variable
+  const version = process.env.AGENTIC_VERSION;
+
+  if (!version) {
+    logError('AGENTIC_VERSION environment variable is required');
+    logError('Usage: AGENTIC_VERSION=1.0.0 ./scripts/publish.ts');
+    process.exit(1);
+  }
+
+  if (!validateVersion(version)) {
+    logError(`Invalid version format: ${version}`);
+    logError('Expected format: x.y.z (e.g., 1.0.0)');
+    process.exit(1);
+  }
+
+  logInfo(`Publishing version: ${version}`);
+
+  // Check if working directory is clean
+  try {
+    const status = execSync('git status --porcelain', { encoding: 'utf8' });
+    if (status.trim()) {
+      logError('Working directory is not clean. Please commit or stash changes first.');
+      process.exit(1);
+    }
+  } catch (error) {
+    logError('Failed to check git status');
+    process.exit(1);
+  }
+
+  // Update package.json version
+  updatePackageVersion(version);
+
+  // Commit the version change
+  execSync('git add package.json');
+  execSync(`git commit --no-verify -m "Bump version to ${version}"`);
+  logSuccess(`Committed version bump to ${version}`);
+
+  // Create and push git tag
+  createGitTag(version);
+  pushGitTag(version);
+
+  // Publish to npm (if NPM_TOKEN is available)
+  if (process.env.NODE_AUTH_TOKEN) {
+    publishToNpm();
+  } else {
+    logWarning('NODE_AUTH_TOKEN not found, skipping npm publish');
+  }
+
+  // Create GitHub release (if GITHUB_TOKEN is available)
+  if (process.env.GITHUB_TOKEN) {
+    createGitHubRelease(version);
+  } else {
+    logWarning('GITHUB_TOKEN not found, skipping GitHub release');
+  }
+
+  logSuccess(`Publish process completed for version ${version}`);
+}
+
+// Handle uncaught exceptions
+process.on('uncaughtException', (error) => {
+  logError(`Uncaught exception: ${error.message}`);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  logError(`Unhandled rejection at: ${promise}, reason: ${reason}`);
+  process.exit(1);
+});
+
+// Run main function
+if (require.main === module) {
+  main();
+}
+
+export { main };
