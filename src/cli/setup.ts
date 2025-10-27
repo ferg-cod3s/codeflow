@@ -185,13 +185,16 @@ export async function setup(
       options.type === 'cursor'
     ) {
       projectTypes.push(options.type);
+    } else if (options.type === 'all') {
+      projectTypes.push('claude-code', 'opencode', 'cursor');
     } else {
       console.error(`❌ Unknown project type: ${options.type}`);
+      console.error(`Valid types: claude-code, opencode, cursor, all`);
       process.exit(1);
     }
   } else {
-    // Default to both if no type specified
-    projectTypes.push('claude-code', 'opencode');
+    // Default to all platforms if no type specified
+    projectTypes.push('claude-code', 'opencode', 'cursor');
   }
 
   const setupDirs = projectTypes.flatMap((type) => {

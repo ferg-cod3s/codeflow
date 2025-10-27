@@ -45,11 +45,9 @@ Commands:
    export [path]              Export project setup to a file
    research "<query>" [options]  Execute deep research workflow for codebase analysis
 
-
-
 Options:
   -f, --force               Force overwrite existing setup
-  -t, --type <type>         Project type: claude-code, opencode, general
+  -t, --type <type>         Project type: claude-code, opencode, cursor, or all
   --validate                Validate agents during operations (default: true)
   --dry-run                 Show what would be changed without writing files
   -g, --global              Sync to global directories (~/.claude, ~/.config/opencode)
@@ -61,6 +59,9 @@ Options:
 
 Examples:
   codeflow setup ~/my-project
+  codeflow setup --type claude-code    # Setup for Claude Code only
+  codeflow setup --type opencode       # Setup for OpenCode only  
+  codeflow setup --type all            # Setup for all platforms
   codeflow status .
   codeflow sync                        # Sync to project directories
   codeflow sync --global               # Sync to global directories (~/.claude, ~/.config/opencode)
@@ -69,35 +70,87 @@ Examples:
   codeflow fix-models --local          # Fix model IDs in current project
   codeflow convert ./codeflow-agents ./claude-agents claude-code
   codeflow watch start --global
+  codeflow list                        # List all available agents and commands
+  codeflow list --type agents          # List only agents
+  codeflow list --platform claude-code # List Claude Code items only
 
-DEVELOPMENT WORKFLOW:
+SETUP OPTIONS:
   Use 'codeflow setup' to initialize agents and commands in your project
+  
+  Platform Types:
+    claude-code    - Setup for Claude Code (.claude/ directory)
+    opencode       - Setup for OpenCode (.opencode/ directory)  
+    cursor         - Setup for Cursor (.cursor/ directory)
+    all (default)  - Setup for all platforms
+  
+  Global vs Project:
+    --global       - Install to global directories (~/.claude, ~/.config/opencode)
+    (no flag)      - Install to project directory
 
-  Available slash commands (when using Claude Code or OpenCode):
-    /research  - Comprehensive codebase and documentation analysis
-    /plan      - Creates detailed implementation plans from tickets and research
-    /execute   - Implements plans with proper verification
-    /test      - Generates comprehensive test suites for implemented features
-    /document  - Creates user guides, API docs, and technical documentation
-    /commit    - Creates commits with structured messages
-    /review    - Validates implementations against original plans
-    /continue  - Resume execution from the last completed step
-    /help      - Get detailed development guidance and workflow information
+AVAILABLE COMMANDS (25 total):
+  /audit        - Audit codebase for issues and improvements
+  /benchmark    - Performance benchmarking and analysis
+  /code-review  - Comprehensive code review and analysis
+  /commit       - Create structured git commits
+  /continue     - Resume execution from last step
+  /debug        - Debug and troubleshoot issues
+  /deploy       - Deploy applications and infrastructure
+  /document     - Create documentation and guides
+  /env-setup    - Set up development environments
+  /execute      - Implement plans with verification
+  /help         - Get development guidance and workflow info
+  /impact-analysis - Analyze impact of changes
+  /migrate      - Migrate code and configurations
+  /monitor      - Set up monitoring and observability
+  /plan         - Create detailed implementation plans
+  /project-docs - Generate complete project documentation
+  /refactor     - Refactor and improve code structure
+  /research     - Comprehensive codebase analysis
+  /review       - Validate implementations against plans
+  /security-scan - Security vulnerability scanning
+  /test         - Generate and run test suites
+  /ticket       - Work with tickets and issues
 
-  Core Agent Types:
+CORE AGENT TYPES (135 total):
+  Research & Analysis:
     codebase-locator        - Finds WHERE files and components exist
     codebase-analyzer       - Understands HOW specific code works
     codebase-pattern-finder - Discovers similar implementation patterns
-    research-locator        - Discovers existing documentation about topics
+    research-locator        - Finds existing documentation and decisions
     research-analyzer       - Extracts insights from specific documents
     web-search-researcher   - Performs targeted web research
 
-  Workflow Philosophy:
-    - Always run locator agents first, then analyzers
-    - Use specialized domain agents for complex tasks
-    - Emphasize context compression and fresh analysis
+  Development & Engineering:
+    full-stack-developer    - Cross-functional development
+    api-builder            - API design and implementation
+    database-expert        - Database optimization and design
+    security-scanner       - Vulnerability assessment
+    ux-optimizer          - User experience optimization
+    frontend-developer     - React/Next.js/UI development
+    backend-architect     - System design and architecture
 
-For more detailed guidance, use the /help slash command in Claude Code/OpenCode or see docs/README.md`;
+  Specialized Domains:
+    ai-engineer           - LLM applications and AI integration
+    cloud-architect       - Multi-cloud infrastructure design
+    devops-operations-specialist - Operations and deployment
+    quality-testing-performance-tester - Performance testing
+    ml-engineer          - Machine learning systems
+    blockchain-developer  - Web3 and smart contracts
+
+  Meta & Orchestration:
+    smart-subagent-orchestrator - Complex multi-agent workflows
+    agent-architect       - Create custom agents
+    system-architect      - System design and architecture
+
+Workflow Philosophy:
+  - Always run locator agents first, then analyzers
+  - Use specialized domain agents for complex tasks
+  - Emphasize context compression and fresh analysis
+
+For more detailed guidance:
+  - Use 'codeflow list' to see all available agents and commands
+  - Use 'codeflow info <name>' to get details about specific items
+  - See docs/README.md for comprehensive documentation`;
 
 /**
  * Safely resolve and validate paths to prevent directory traversal attacks
@@ -225,6 +278,12 @@ try {
         default: false,
       },
       'min-quality': {
+        type: 'string',
+      },
+      platform: {
+        type: 'string',
+      },
+      format: {
         type: 'string',
       },
     },
