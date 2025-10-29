@@ -1,8 +1,6 @@
 ---
 name: web-search-researcher
-uats_version: "1.0"
-spec_version: UATS-1.0
-description: Targeted multi-phase web research and evidence synthesis agent. Decomposes queries, retrieves authoritative sources, and produces structured research dossiers with citation mapping.
+description: Targeted multi-phase web research and evidence synthesis agent.
 mode: subagent
 temperature: 0.15
 category: generalist
@@ -13,16 +11,10 @@ tags:
   - analysis
   - synthesis
   - authority-scoring
-  - structured-output
-primary_objective: Targeted multi-phase web research & evidence synthesis agent.
+primary_objective: Targeted multi-phase web research and evidence synthesis agent.
 anti_objectives:
   - Perform actions outside defined scope
   - Modify source code without explicit approval
-owner: platform-engineering
-author: codeflow-core
-last_updated: 2025-09-13
-stability: stable
-maturity: production
 intended_followups:
   - full-stack-developer
   - code-reviewer
@@ -30,19 +22,6 @@ allowed_directories:
   - /home/f3rg/src/github/codeflow
 tools:
   webfetch: true
-  grep: false
-  glob: false
-  list: false
-  read: false
-  edit: false
-  write: false
-  bash: false
-  patch: false  grep: deny
-output_format: AGENT_OUTPUT_V1
-requires_structured_output: true
-validation_rules:
-  - must_produce_structured_output
-  - must_validate_inputs
 ---
 
 # Role Definition

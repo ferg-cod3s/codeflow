@@ -1,32 +1,25 @@
 ---
 name: frontend-developer
-uats_version: "1.0"
-spec_version: UATS-1.0
-description: Build React components, implement responsive layouts, and handle
-  client-side state management. Masters React 19, Next.js 15, and modern
-  frontend architecture. Optimizes performance and ensures accessibility. Use
-  PROACTIVELY when creating UI components or fixing frontend issues.
+description: Build React components, implement responsive layouts, and handle client-side
+  state management. Masters React 19, Next.js 15, and modern frontend architecture.
+  Optimizes performance and ensures accessibility. Use PROACTIVELY when creating UI
+  components or fixing frontend issues.
 mode: subagent
 temperature: 0.1
 category: development
 tags:
-  - web-development
-primary_objective: Build React components, implement responsive layouts, and
-  handle client-side state management.
+- web-development
+primary_objective: Build React components, implement responsive layouts, and handle
+  client-side state management.
 anti_objectives:
-  - Perform actions outside defined scope
-  - Modify source code without explicit approval
-owner: platform-engineering
-author: codeflow-core
-last_updated: 2025-10-04
-stability: stable
-maturity: production
+- Perform actions outside defined scope
+- Modify source code without explicit approval
 intended_followups:
-  - full-stack-developer
-  - code-reviewer
-  - compliance-expert
+- full-stack-developer
+- code-reviewer
+- compliance-expert
 allowed_directories:
-  - /home/f3rg/src/github/codeflow
+- /home/f3rg/src/github/codeflow
 tools:
   write: true
   edit: true

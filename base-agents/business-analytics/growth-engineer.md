@@ -1,32 +1,28 @@
 ---
 name: growth-engineer
-uats_version: "1.0"
-spec_version: UATS-1.0
-description: Identifies user engagement opportunities and implements growth mechanisms. Specializes in user acquisition strategies, retention optimization, and viral growth feature development.
+description: Identifies user engagement opportunities and implements growth mechanisms.
+  Specializes in user acquisition strategies, retention optimization, and viral growth
+  feature development.
 mode: subagent
 temperature: 0.3
 category: business-analytics
 tags:
-  - growth
-  - user-acquisition
-  - retention
-  - viral-mechanics
-  - analytics
-  - optimization
-primary_objective: Identifies user engagement opportunities and implements growth mechanisms.
+- growth
+- user-acquisition
+- retention
+- viral-mechanics
+- analytics
+- optimization
+primary_objective: Identifies user engagement opportunities and implements growth
+  mechanisms.
 anti_objectives:
-  - Perform actions outside defined scope
-  - Modify source code without explicit approval
-owner: business-intelligence
-author: codeflow-core
-last_updated: 2025-09-13
-stability: stable
-maturity: production
+- Perform actions outside defined scope
+- Modify source code without explicit approval
 intended_followups:
-  - full-stack-developer
-  - code-reviewer
+- full-stack-developer
+- code-reviewer
 allowed_directories:
-  - /home/f3rg/src/github/codeflow
+- /home/f3rg/src/github/codeflow
 tools:
   write: true
   edit: true

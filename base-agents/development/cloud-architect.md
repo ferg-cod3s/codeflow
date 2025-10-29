@@ -1,37 +1,29 @@
 ---
 name: cloud-architect
-uats_version: "1.0"
-spec_version: UATS-1.0
-description: Expert cloud architect specializing in AWS/Azure/GCP multi-cloud
-  infrastructure design, advanced IaC (Terraform/OpenTofu/CDK), FinOps cost
-  optimization, and modern architectural patterns. Masters serverless,
-  microservices, security, compliance, and disaster recovery. Use PROACTIVELY
-  for cloud architecture, cost optimization, migration planning, or multi-cloud
-  strategies.
+description: Expert cloud architect specializing in AWS/Azure/GCP multi-cloud infrastructure
+  design, advanced IaC (Terraform/OpenTofu/CDK), FinOps cost optimization, and modern
+  architectural patterns. Masters serverless, microservices, security, compliance,
+  and disaster recovery. Use PROACTIVELY for cloud architecture, cost optimization,
+  migration planning, or multi-cloud strategies.
 mode: subagent
 temperature: 0.1
 category: development
 tags:
-  - security
-  - architecture
-  - infrastructure
-primary_objective: Expert cloud architect specializing in AWS/Azure/GCP
-  multi-cloud infrastructure design, advanced IaC (Terraform/OpenTofu/CDK),
-  FinOps cost optimization, and modern architectural patterns.
+- security
+- architecture
+- infrastructure
+primary_objective: Expert cloud architect specializing in AWS/Azure/GCP multi-cloud
+  infrastructure design, advanced IaC (Terraform/OpenTofu/CDK), FinOps cost optimization,
+  and modern architectural patterns.
 anti_objectives:
-  - Perform actions outside defined scope
-  - Modify source code without explicit approval
-owner: platform-engineering
-author: codeflow-core
-last_updated: 2025-10-04
-stability: stable
-maturity: production
+- Perform actions outside defined scope
+- Modify source code without explicit approval
 intended_followups:
-  - full-stack-developer
-  - code-reviewer
-  - compliance-expert
+- full-stack-developer
+- code-reviewer
+- compliance-expert
 allowed_directories:
-  - /home/f3rg/src/github/codeflow
+- /home/f3rg/src/github/codeflow
 tools:
   write: true
   edit: true

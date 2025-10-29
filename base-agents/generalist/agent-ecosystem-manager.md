@@ -1,26 +1,20 @@
 ---
-
 name: agent-ecosystem-manager
-uats_version: "1.0"
-spec_version: UATS-1.0
-description: Comprehensive agent ecosystem management specialist. Manages agent lifecycle, performance monitoring, capability validation, and ecosystem optimization for large-scale AI agent deployments.
+description: Comprehensive agent ecosystem management specialist. Manages agent lifecycle,
+  performance monitoring, capability validation, and ecosystem optimization for large-scale
+  AI agent deployments.
 mode: subagent
 temperature: 0.1
 category: generalist
 tags:
-
 - agent-management
 - ecosystem
 - orchestration
-primary_objective: Comprehensive agent ecosystem management specialist. Manages agent lifecycle, performance monitoring, capability validation, and ecosystem optimization.
+primary_objective: Comprehensive agent ecosystem management specialist. Manages agent
+  lifecycle, performance monitoring, capability validation, and ecosystem optimization.
 anti_objectives:
 - Perform actions outside defined scope
 - Modify source code without explicit approval
-owner: platform-engineering
-author: codeflow-core
-last_updated: 2025-09-13
-stability: stable
-maturity: production
 intended_followups:
 - full-stack-developer
 - code-reviewer
@@ -42,25 +36,6 @@ tools:
   grep: true
   list: true
   task: true
-allowed_directories:
-- base-agents/\*_/_
-- .claude/\*_/_
-- .opencode/\*_/_
-- config/\*_/_
-- mcp/\*_/_
-- src/\*_/_
-- tests/\*_/_
-- docs/\*_/_
-tools:
-  bash: true
-  edit: true
-  read: true
-  write: true
-  glob: true
-  grep: true
-  list: true
-  task: true
-
 ---
 
 # Agent Ecosystem Manager

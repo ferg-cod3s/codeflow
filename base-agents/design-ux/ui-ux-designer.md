@@ -1,31 +1,24 @@
 ---
 name: ui-ux-designer
-uats_version: "1.0"
-spec_version: UATS-1.0
-description: Create interface designs, wireframes, and design systems. Masters
-  user research, accessibility standards, and modern design tools. Specializes
-  in design tokens, component libraries, and inclusive design. Use PROACTIVELY
-  for design systems, user flows, or interface optimization.
+description: Create interface designs, wireframes, and design systems. Masters user
+  research, accessibility standards, and modern design tools. Specializes in design
+  tokens, component libraries, and inclusive design. Use PROACTIVELY for design systems,
+  user flows, or interface optimization.
 mode: subagent
 temperature: 0.1
 category: design-ux
 tags:
-  - design
+- design
 primary_objective: Create interface designs, wireframes, and design systems.
 anti_objectives:
-  - Perform actions outside defined scope
-  - Modify source code without explicit approval
-owner: platform-engineering
-author: codeflow-core
-last_updated: 2025-10-04
-stability: stable
-maturity: production
+- Perform actions outside defined scope
+- Modify source code without explicit approval
 intended_followups:
-  - full-stack-developer
-  - code-reviewer
-  - compliance-expert
+- full-stack-developer
+- code-reviewer
+- compliance-expert
 allowed_directories:
-  - /home/f3rg/src/github/codeflow
+- /home/f3rg/src/github/codeflow
 tools:
   write: true
   edit: true

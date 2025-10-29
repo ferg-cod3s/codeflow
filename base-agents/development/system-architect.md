@@ -1,40 +1,32 @@
 ---
 name: system-architect
-uats_version: "1.0"
-spec_version: UATS-1.0
-description: Macro-level architecture & large-scale transformation strategist.
-  Produces forward-looking, trade-off explicit architecture blueprints, domain
-  decomposition models, migration roadmaps, and governance standards for
-  evolving complex codebases toward scalable, resilient, maintainable states.
-  Use when you need systemic redesign, modernization strategy, or cross-cutting
-  architectural decisions – NOT line-level implementation or performance
-  micro-tuning.
+description: "Macro-level architecture & large-scale transformation strategist. Produces\
+  \ forward-looking, trade-off explicit architecture blueprints, domain decomposition\
+  \ models, migration roadmaps, and governance standards for evolving complex codebases\
+  \ toward scalable, resilient, maintainable states. Use when you need systemic redesign,\
+  \ modernization strategy, or cross-cutting architectural decisions \u2013 NOT line-level\
+  \ implementation or performance micro-tuning."
 mode: subagent
 temperature: 0.15
 category: development
 tags:
-  - architecture
-  - system-design
-  - modernization
-  - scalability
-  - refactoring
-  - resilience
-  - migration
-  - governance
+- architecture
+- system-design
+- modernization
+- scalability
+- refactoring
+- resilience
+- migration
+- governance
 primary_objective: Macro-level architecture & large-scale transformation strategist.
 anti_objectives:
-  - Perform actions outside defined scope
-  - Modify source code without explicit approval
-owner: development-practice
-author: codeflow-core
-last_updated: 2025-09-13
-stability: stable
-maturity: production
+- Perform actions outside defined scope
+- Modify source code without explicit approval
 intended_followups:
-  - full-stack-developer
-  - code-reviewer
+- full-stack-developer
+- code-reviewer
 allowed_directories:
-  - /home/f3rg/src/github/codeflow
+- /home/f3rg/src/github/codeflow
 tools:
   grep: true
   glob: true
@@ -45,11 +37,6 @@ tools:
   bash: false
   webfetch: false
   patch: false
-output_format: AGENT_OUTPUT_V1
-requires_structured_output: true
-validation_rules:
-  - must_produce_structured_output
-  - must_validate_inputs
 ---
 
 # Role Definition

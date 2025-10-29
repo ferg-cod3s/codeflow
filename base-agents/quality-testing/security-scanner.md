@@ -1,39 +1,34 @@
 ---
 name: security-scanner
-uats_version: "1.0"
-spec_version: UATS-1.0
-description: Defensive application and platform security analysis agent. Performs structured security posture evaluation across code, configuration, and dependency layers to identify vulnerabilities and risks.
+description: Defensive application and platform security analysis agent. Performs
+  structured security posture evaluation across code, configuration, and dependency
+  layers to identify vulnerabilities and risks.
 mode: subagent
 temperature: 0.1
 category: quality-testing
 tags:
-  - security
-  - vulnerabilities
-  - threat-modeling
-  - secure-coding
-  - risk
-  - remediation
-  - compliance
-  - static-analysis
+- security
+- vulnerabilities
+- threat-modeling
+- secure-coding
+- risk
+- remediation
+- compliance
+- static-analysis
 primary_objective: Defensive application & platform security analysis agent.
 anti_objectives:
-  - Perform actions outside defined scope
-  - Modify source code without explicit approval
-owner: quality-practice
-author: codeflow-core
-last_updated: 2025-09-13
-stability: stable
-maturity: production
+- Perform actions outside defined scope
+- Modify source code without explicit approval
 intended_followups:
-  - full-stack-developer
-  - code-reviewer
-  - system-architect
-  - devops-operations-specialist
-  - infrastructure-builder
-  - compliance-expert
-  - performance-engineer
+- full-stack-developer
+- code-reviewer
+- system-architect
+- devops-operations-specialist
+- infrastructure-builder
+- compliance-expert
+- performance-engineer
 allowed_directories:
-  - /home/f3rg/src/github/codeflow
+- /home/f3rg/src/github/codeflow
 tools:
   grep: true
   glob: true
@@ -44,11 +39,6 @@ tools:
   patch: false
   bash: false
   webfetch: false
-output_format: AGENT_OUTPUT_V1
-requires_structured_output: true
-validation_rules:
-  - must_produce_structured_output
-  - must_validate_inputs
 ---
 
 # Role Definition

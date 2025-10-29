@@ -1,26 +1,20 @@
 ---
-
 name: ecommerce-specialist
-uats_version: "1.0"
-spec_version: UATS-1.0
-description: Expert in e-commerce platforms, online retail systems, and digital commerce optimization. Specializes in platform architecture, payment integration, and conversion optimization.
+description: Expert in e-commerce platforms, online retail systems, and digital commerce
+  optimization. Specializes in platform architecture, payment integration, and conversion
+  optimization.
 mode: subagent
 temperature: 0.1
 category: product-strategy
 tags:
-
 - ecommerce
 - retail
 - commerce
-primary_objective: Expert in e-commerce platforms, online retail systems, and digital commerce optimization.
+primary_objective: Expert in e-commerce platforms, online retail systems, and digital
+  commerce optimization.
 anti_objectives:
 - Perform actions outside defined scope
 - Modify source code without explicit approval
-owner: product-practice
-author: codeflow-core
-last_updated: 2025-09-13
-stability: stable
-maturity: production
 intended_followups:
 - full-stack-developer
 - code-reviewer
@@ -28,14 +22,6 @@ allowed_directories:
 - /home/f3rg/src/github/codeflow
 tools:
   write: true
-  edit: true
-  bash: true
-  patch: true
-  read: true
-  grep: true
-  glob: true
-  list: true
-  webfetch: true
 ---
 
 expertise:

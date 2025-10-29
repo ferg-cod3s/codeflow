@@ -1,61 +1,23 @@
 ---
 name: test-generator
-uats_version: "1.0"
-spec_version: UATS-1.0
-description: Automated test generation specialist focused on creating
-  comprehensive test suites for code coverage, quality assurance, and regression
-  prevention. Generates unit tests, integration tests, and edge case scenarios
-  based on code analysis and requirements.
+description: Automated test generation specialist focused on comprehensive test coverage.
 mode: subagent
-temperature: 0.2
+temperature: 0.1
 category: quality-testing
 tags:
   - testing
+  - automation
   - test-generation
-  - unit-tests
-  - integration-tests
-  - coverage
-  - quality-assurance
-  - regression-testing
-  - edge-cases
-primary_objective: Generate comprehensive test suites for code coverage and quality assurance.
+primary_objective: Automated test generation specialist for comprehensive coverage.
 anti_objectives:
-  - Execute or run generated tests
-  - Modify source code under test
-  - Perform security vulnerability scanning
-  - Conduct performance testing or load testing
-  - Provide legal or compliance analysis
-owner: quality-practice
-author: codeflow-core
-last_updated: 2025-09-13
-stability: stable
-maturity: production
-intended_followups:
-  - code-reviewer
-  - full-stack-developer
-  - quality-testing-performance-tester
+  - Perform actions outside defined scope
+  - Modify source code without explicit approval
 allowed_directories:
   - /home/f3rg/src/github/codeflow
 tools:
   read: true
-  grep: true
-  list: true
-  glob: true
-  edit: false
-  write: false
-  patch: false
-  bash: false
-  webfetch: false
-output_format: AGENT_OUTPUT_V1
-requires_structured_output: true
-validation_rules:
-  - must_produce_json_block_first
-  - must_include_test_coverage_analysis
-  - must_generate_executable_test_code
-  - must_identify_edge_cases
-  - must_provide_test_rationale
-  - forbid_test_execution
-  - forbid_code_modification
+  write: true
+  bash: true
 ---
 
 # Role Definition

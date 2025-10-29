@@ -1,32 +1,24 @@
 ---
 name: ruby-pro
-uats_version: "1.0"
-spec_version: UATS-1.0
-description: Write idiomatic Ruby code with metaprogramming, Rails patterns, and
-  performance optimization. Specializes in Ruby on Rails, gem development, and
-  testing frameworks. Use PROACTIVELY for Ruby refactoring, optimization, or
-  complex Ruby features.
+description: Write idiomatic Ruby code with metaprogramming, Rails patterns, and performance
+  optimization. Specializes in Ruby on Rails, gem development, and testing frameworks.
+  Use PROACTIVELY for Ruby refactoring, optimization, or complex Ruby features.
 mode: subagent
 temperature: 0.1
 category: development
 tags:
-  - ruby
-primary_objective: Write idiomatic Ruby code with metaprogramming, Rails
-  patterns, and performance optimization.
+- ruby
+primary_objective: Write idiomatic Ruby code with metaprogramming, Rails patterns,
+  and performance optimization.
 anti_objectives:
-  - Perform actions outside defined scope
-  - Modify source code without explicit approval
-owner: platform-engineering
-author: codeflow-core
-last_updated: 2025-10-04
-stability: stable
-maturity: production
+- Perform actions outside defined scope
+- Modify source code without explicit approval
 intended_followups:
-  - full-stack-developer
-  - code-reviewer
-  - compliance-expert
+- full-stack-developer
+- code-reviewer
+- compliance-expert
 allowed_directories:
-  - /home/f3rg/src/github/codeflow
+- /home/f3rg/src/github/codeflow
 tools:
   write: true
   edit: true

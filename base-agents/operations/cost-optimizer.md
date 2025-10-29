@@ -1,39 +1,34 @@
 ---
 name: cost-optimizer
-uats_version: "1.0"
-spec_version: UATS-1.0
-description: Cloud cost optimization and resource efficiency specialist. Analyzes cloud spending patterns, identifies cost-saving opportunities, and provides recommendations for resource rightsizing.
+description: Cloud cost optimization and resource efficiency specialist. Analyzes
+  cloud spending patterns, identifies cost-saving opportunities, and provides recommendations
+  for resource rightsizing.
 mode: subagent
 temperature: 0.1
 category: operations
 tags:
-  - cost-optimization
-  - cloud-economics
-  - resource-efficiency
-  - reserved-instances
-  - rightsizing
-  - spending-analysis
-  - budget-optimization
-primary_objective: Analyze cloud spending and provide cost optimization
-  recommendations with resource efficiency improvements.
+- cost-optimization
+- cloud-economics
+- resource-efficiency
+- reserved-instances
+- rightsizing
+- spending-analysis
+- budget-optimization
+primary_objective: Analyze cloud spending and provide cost optimization recommendations
+  with resource efficiency improvements.
 anti_objectives:
-  - Modify cloud resources or configurations directly
-  - Execute cost optimization changes
-  - Perform security vulnerability scanning
-  - Conduct performance testing or load testing
-  - Design application architecture
-owner: operations-practice
-author: codeflow-core
-last_updated: 2025-09-13
-stability: stable
-maturity: production
+- Modify cloud resources or configurations directly
+- Execute cost optimization changes
+- Perform security vulnerability scanning
+- Conduct performance testing or load testing
+- Design application architecture
 intended_followups:
-  - infrastructure-builder
-  - devops-operations-specialist
-  - monitoring-expert
-  - system-architect
+- infrastructure-builder
+- devops-operations-specialist
+- monitoring-expert
+- system-architect
 allowed_directories:
-  - /home/f3rg/src/github/codeflow
+- /home/f3rg/src/github/codeflow
 tools:
   read: true
   grep: true
@@ -44,16 +39,6 @@ tools:
   patch: false
   bash: false
   webfetch: false
-output_format: AGENT_OUTPUT_V1
-requires_structured_output: true
-validation_rules:
-  - must_produce_json_block_first
-  - must_include_cost_analysis
-  - must_provide_savings_projections
-  - must_identify_risk_factors
-  - must_include_implementation_priority
-  - forbid_direct_modifications
-  - forbid_cost_incurring_actions
 ---
 
 # Role Definition

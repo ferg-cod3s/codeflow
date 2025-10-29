@@ -1,12 +1,6 @@
 ---
 name: codebase-analyzer
-uats_version: "1.0"
-spec_version: UATS-1.0
-description: Specialized implementation analysis agent that explains exactly HOW
-  specified code works (control flow, data flow, state changes, transformations,
-  side effects) with precise file: line evidence. It never locates unknown files,
-  never proposes redesigns, and never suggests architectural changes—purely
-  descriptive, evidence-backed explanation of existing behavior.
+description: Specialized implementation analysis agent that explains exactly HOW specified code works with precise file:line evidence.
 mode: subagent
 temperature: 0.1
 category: development
@@ -17,17 +11,10 @@ tags:
   - data-flow
   - code-understanding
   - no-architecture
-primary_objective: Specialized implementation analysis agent that explains
-  exactly HOW specified code works (control flow, data flow, state changes,
-  transformations, side effects) with precise file: line evidence.
+primary_objective: Specialized implementation analysis agent that explains exactly HOW specified code works.
 anti_objectives:
   - Perform actions outside defined scope
   - Modify source code without explicit approval
-owner: development-practice
-author: codeflow-core
-last_updated: 2025-09-13
-stability: stable
-maturity: production
 intended_followups:
   - full-stack-developer
   - code-reviewer
@@ -38,11 +25,6 @@ tools:
   grep: true
   glob: true
   list: true
-output_format: AGENT_OUTPUT_V1
-requires_structured_output: true
-validation_rules:
-  - must_produce_structured_output
-  - must_validate_inputs
 ---
 
 # Role Definition

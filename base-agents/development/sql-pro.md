@@ -1,32 +1,25 @@
 ---
 name: sql-pro
-uats_version: "1.0"
-spec_version: UATS-1.0
-description: Master modern SQL with cloud-native databases, OLTP/OLAP
-  optimization, and advanced query techniques. Expert in performance tuning,
-  data modeling, and hybrid analytical systems. Use PROACTIVELY for database
-  optimization or complex analysis.
+description: Master modern SQL with cloud-native databases, OLTP/OLAP optimization,
+  and advanced query techniques. Expert in performance tuning, data modeling, and
+  hybrid analytical systems. Use PROACTIVELY for database optimization or complex
+  analysis.
 mode: subagent
 temperature: 0.1
 category: development
 tags:
-  - sql
-primary_objective: Master modern SQL with cloud-native databases, OLTP/OLAP
-  optimization, and advanced query techniques.
+- sql
+primary_objective: Master modern SQL with cloud-native databases, OLTP/OLAP optimization,
+  and advanced query techniques.
 anti_objectives:
-  - Perform actions outside defined scope
-  - Modify source code without explicit approval
-owner: platform-engineering
-author: codeflow-core
-last_updated: 2025-10-04
-stability: stable
-maturity: production
+- Perform actions outside defined scope
+- Modify source code without explicit approval
 intended_followups:
-  - full-stack-developer
-  - code-reviewer
-  - compliance-expert
+- full-stack-developer
+- code-reviewer
+- compliance-expert
 allowed_directories:
-  - /home/f3rg/src/github/codeflow
+- /home/f3rg/src/github/codeflow
 tools:
   write: true
   edit: true

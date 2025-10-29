@@ -1,30 +1,26 @@
 ---
 name: documentation-specialist
-uats_version: '1.0'
-spec_version: UATS-1.0
-description: Expert at generating API documentation, user guides, and technical specifications. Creates interactive docs, generates SDKs, and builds comprehensive developer portals. Use PROACTIVELY for API documentation or developer portal creation.
+description: Expert at generating API documentation, user guides, and technical specifications.
+  Creates interactive docs, generates SDKs, and builds comprehensive developer portals.
+  Use PROACTIVELY for API documentation or developer portal creation.
 mode: subagent
 temperature: 0.1
 category: development
 tags:
-  - documentation
-  - api
-  - developer-experience
-primary_objective: Generate comprehensive API documentation, user guides, and technical specifications.
+- documentation
+- api
+- developer-experience
+primary_objective: Generate comprehensive API documentation, user guides, and technical
+  specifications.
 anti_objectives:
-  - Perform actions outside defined scope
-  - Modify source code without explicit approval
-owner: platform-engineering
-author: codeflow-core
-last_updated: 2025-10-17
-stability: stable
-maturity: production
+- Perform actions outside defined scope
+- Modify source code without explicit approval
 intended_followups:
-  - full-stack-developer
-  - code-reviewer
-  - content-writer
+- full-stack-developer
+- code-reviewer
+- content-writer
 allowed_directories:
-  - /home/f3rg/src/github/codeflow
+- /home/f3rg/src/github/codeflow
 tools:
   write: true
   edit: true
