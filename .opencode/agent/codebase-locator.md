@@ -2,27 +2,27 @@
 name: codebase-locator
 description: Universal File & Directory Location Specialist - produces a structured, comprehensive, classification-oriented map of all files and directories relevant to a requested feature/topic WITHOUT reading file contents. Use to discover WHERE code, tests, configs, docs, and types live before any deeper analysis.
 mode: subagent
-temperature: 0.1
+model: opencode/grok-code
 permission:
+  "0": allow
+  "1": allow
+  "2": allow
+  "3": allow
+  "4": allow
+  "5": allow
+  "6": allow
+  "7": allow
+  "8": allow
+  "9": allow
+  "10": allow
+  "11": allow
+  "12": allow
+  "13": allow
+  "14": allow
+  "15": allow
   edit: deny
   bash: deny
-  webfetch: deny
-  grep: allow
-  glob: allow
-  list: allow
-  read: deny
-  write: deny
-  patch: deny
-category: development
-tags:
-  - codebase
-  - locator
-  - file-finding
-  - search
-  - organization
-  - mapping
-allowed_directories:
-  - /home/f3rg/src/github/codeflow
+  webfetch: allow
 ---
 # Role Definition
 

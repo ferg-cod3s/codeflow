@@ -2,7 +2,6 @@
 name: golang-pro
 description: Master Go 1.21+ with modern patterns, advanced concurrency, performance optimization, and production-ready microservices. Expert in latest Go ecosystem including generics, workspaces, and cutting-edge frameworks.
 mode: subagent
-model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: allow

@@ -2,7 +2,6 @@
 name: documentation-specialist
 description: Expert at generating API documentation, user guides, and technical specifications. Creates interactive docs, generates SDKs, and builds comprehensive developer portals. Use PROACTIVELY for API documentation or developer portal creation.
 mode: subagent
-model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: allow

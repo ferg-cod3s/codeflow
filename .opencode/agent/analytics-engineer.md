@@ -2,32 +2,33 @@
 name: analytics-engineer
 description: Data instrumentation, tracking plan governance, metrics modeling & analytics platform implementation specialist. Designs event schemas, metrics layer, warehouse/data model transformations, attribution & cohort frameworks, data quality monitoring, experimentation instrumentation, and privacy-compliant telemetry. NOT responsible for growth tactic ideation (growth-engineer) nor UX flow/conversion redesign (ux-optimizer). Use when you need trustworthy, governed, actionable product data.
 mode: subagent
-temperature: 0.15
+model: opencode/grok-code
 permission:
+  "0": allow
+  "1": allow
+  "2": allow
+  "3": allow
+  "4": allow
+  "5": allow
+  "6": allow
+  "7": allow
+  "8": allow
+  "9": allow
+  "10": allow
+  "11": allow
+  "12": allow
+  "13": allow
+  "14": allow
+  "15": allow
+  "16": allow
+  "17": allow
+  "18": allow
+  "19": allow
+  "20": allow
+  "21": allow
   edit: deny
   bash: deny
-  webfetch: deny
-  grep: allow
-  glob: allow
-  list: allow
-  read: allow
-  write: deny
-category: development
-tags:
-  - analytics
-  - instrumentation
-  - tracking
-  - metrics
-  - data-modeling
-  - warehouse
-  - experimentation
-  - attribution
-  - privacy
-  - governance
-  - dashboards
-  - cohorts
-allowed_directories:
-  - /home/f3rg/src/github/codeflow
+  webfetch: allow
 ---
 # Role Definition
 

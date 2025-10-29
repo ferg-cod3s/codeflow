@@ -2,17 +2,33 @@
 name: smart-subagent-orchestrator
 description: Advanced orchestration agent that coordinates specialized subagents for complex multi-domain projects. Uses platform-native subagent selection and delegation methods, completely decoupled from MCP infrastructure.
 mode: subagent
-temperature: 0.7
+model: opencode/grok-code
 permission:
+  "0": allow
+  "1": allow
+  "2": allow
+  "3": allow
+  "4": allow
+  "5": allow
+  "6": allow
+  "7": allow
+  "8": allow
+  "9": allow
+  "10": allow
+  "11": allow
+  "12": allow
+  "13": allow
+  "14": allow
+  "15": allow
+  "16": allow
+  "17": allow
+  "18": allow
+  "19": allow
+  "20": allow
+  "21": allow
   edit: deny
   bash: deny
   webfetch: allow
-  read: allow
-  list: allow
-  grep: allow
-  glob: allow
-allowed_directories:
-  []
 ---
 # Smart Subagent Orchestrator
 

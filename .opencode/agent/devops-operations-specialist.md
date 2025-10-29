@@ -2,16 +2,14 @@
 name: devops-operations-specialist
 description: Expert DevOps and operations specialist focused on infrastructure
 mode: subagent
-temperature: 0.1
+model: opencode/grok-code
 permission:
   edit: deny
   bash: deny
   webfetch: allow
   read: allow
   write: deny
-category: operations
 ---
-
 output_format: AGENT_OUTPUT_V1
 requires_structured_output: true
 validation_rules:

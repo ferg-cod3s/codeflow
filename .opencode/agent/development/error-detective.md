@@ -2,7 +2,6 @@
 name: error-detective
 description: Search logs and codebases for error patterns, stack traces, and anomalies. Correlates errors across systems and identifies root causes. Use PROACTIVELY when debugging issues, analyzing logs, or investigating production errors.
 mode: subagent
-model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: allow

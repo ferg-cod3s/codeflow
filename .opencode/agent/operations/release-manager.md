@@ -1,29 +1,20 @@
 ---
 name: release-manager
-description: CI/CD release coordination and deployment management specialist. Manages release pipelines, version control, deployment strategies, and rollback procedures.
+description: CI/CD release coordination and deployment management specialist.
 mode: subagent
-model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: deny
   bash: deny
-  webfetch: deny
+  webfetch: allow
   read: allow
   grep: allow
   list: allow
-  glob: allow
-  write: deny
-  patch: deny
 category: operations
 tags:
-  - release-management
-  - ci-cd
+  - release
   - deployment
-  - versioning
-  - pipelines
-  - rollback
-  - staging
-  - production
+  - ci-cd
 allowed_directories:
   - /home/f3rg/src/github/codeflow
 ---

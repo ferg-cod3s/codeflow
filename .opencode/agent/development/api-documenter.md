@@ -2,7 +2,6 @@
 name: api-documenter
 description: Master API documentation with OpenAPI 3.1, AI-powered tools, and modern developer experience practices. Create interactive docs, generate SDKs, and build comprehensive developer portals. Use PROACTIVELY for API documentation or developer portal creation.
 mode: subagent
-model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: allow

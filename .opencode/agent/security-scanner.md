@@ -2,29 +2,33 @@
 name: security-scanner
 description: Defensive application and platform security analysis agent. Performs structured security posture evaluation across code, configuration, and dependency layers to identify vulnerabilities and risks.
 mode: subagent
-temperature: 0.1
+model: opencode/grok-code
 permission:
+  "0": allow
+  "1": allow
+  "2": allow
+  "3": allow
+  "4": allow
+  "5": allow
+  "6": allow
+  "7": allow
+  "8": allow
+  "9": allow
+  "10": allow
+  "11": allow
+  "12": allow
+  "13": allow
+  "14": allow
+  "15": allow
+  "16": allow
+  "17": allow
+  "18": allow
+  "19": allow
+  "20": allow
+  "21": allow
   edit: deny
   bash: deny
-  webfetch: deny
-  grep: allow
-  glob: allow
-  list: allow
-  read: allow
-  write: deny
-  patch: deny
-category: quality-testing
-tags:
-  - security
-  - vulnerabilities
-  - threat-modeling
-  - secure-coding
-  - risk
-  - remediation
-  - compliance
-  - static-analysis
-allowed_directories:
-  - /home/f3rg/src/github/codeflow
+  webfetch: allow
 ---
 # Role Definition
 

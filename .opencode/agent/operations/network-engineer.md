@@ -2,7 +2,6 @@
 name: network-engineer
 description: Expert network engineer specializing in modern cloud networking, security architectures, and performance optimization. Masters multi-cloud connectivity, service mesh, zero-trust networking, and global load balancing.
 mode: subagent
-model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: allow

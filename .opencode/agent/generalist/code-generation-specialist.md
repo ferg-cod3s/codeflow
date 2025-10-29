@@ -2,7 +2,6 @@
 name: code-generation-specialist
 description: Expert in automated code generation, template systems, and code synthesis for rapid development. Specializes in custom generators, DSL creation, and workflow automation.
 mode: subagent
-model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: allow

@@ -2,7 +2,6 @@
 name: seo-meta-optimizer
 description: Creates optimized meta titles, descriptions, and URL suggestions based on character limits and best practices. Generates compelling, keyword-rich metadata.
 mode: subagent
-model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: allow

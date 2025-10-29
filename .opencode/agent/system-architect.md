@@ -2,29 +2,33 @@
 name: system-architect
 description: Macro-level architecture & large-scale transformation strategist. Produces forward-looking, trade-off explicit architecture blueprints, domain decomposition models, migration roadmaps, and governance standards for evolving complex codebases toward scalable, resilient, maintainable states. Use when you need systemic redesign, modernization strategy, or cross-cutting architectural decisions – NOT line-level implementation or performance micro-tuning.
 mode: subagent
-temperature: 0.15
+model: opencode/grok-code
 permission:
+  "0": allow
+  "1": allow
+  "2": allow
+  "3": allow
+  "4": allow
+  "5": allow
+  "6": allow
+  "7": allow
+  "8": allow
+  "9": allow
+  "10": allow
+  "11": allow
+  "12": allow
+  "13": allow
+  "14": allow
+  "15": allow
+  "16": allow
+  "17": allow
+  "18": allow
+  "19": allow
+  "20": allow
+  "21": allow
   edit: deny
   bash: deny
-  webfetch: deny
-  grep: allow
-  glob: allow
-  list: allow
-  read: allow
-  write: deny
-  patch: deny
-category: development
-tags:
-  - architecture
-  - system-design
-  - modernization
-  - scalability
-  - refactoring
-  - resilience
-  - migration
-  - governance
-allowed_directories:
-  - /home/f3rg/src/github/codeflow
+  webfetch: allow
 ---
 # Role Definition
 

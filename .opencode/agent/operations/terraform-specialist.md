@@ -2,7 +2,6 @@
 name: terraform-specialist
 description: Expert Terraform/OpenTofu specialist mastering advanced IaC automation, state management, and enterprise infrastructure patterns. Handles complex module design, multi-cloud deployments, GitOps workflows, and policy as code.
 mode: subagent
-model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: allow

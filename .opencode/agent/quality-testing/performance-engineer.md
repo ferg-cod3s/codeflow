@@ -2,7 +2,6 @@
 name: performance-engineer
 description: Expert performance engineer specializing in modern observability, application optimization, and scalable system performance. Masters OpenTelemetry, distributed tracing, load testing, and performance monitoring.
 mode: subagent
-model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: allow

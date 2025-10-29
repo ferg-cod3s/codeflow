@@ -2,7 +2,6 @@
 name: deployment-engineer
 description: Expert deployment engineer specializing in modern CI/CD pipelines, GitOps workflows, and advanced deployment automation. Masters GitHub Actions, ArgoCD/Flux, progressive delivery, container security, and platform engineering.
 mode: subagent
-model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: allow

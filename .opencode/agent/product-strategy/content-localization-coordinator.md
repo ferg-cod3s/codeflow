@@ -2,7 +2,6 @@
 name: content-localization-coordinator
 description: Coordinate localization and internationalization workflows including translation management, locale setup, and cultural adaptation processes.
 mode: subagent
-model: opencode/grok-code
 temperature: 0.3
 permission:
   edit: allow
