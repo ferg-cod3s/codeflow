@@ -1,28 +1,20 @@
 ---
 name: research-analyzer
-uats_version: '1.0'
-spec_version: UATS-1.0
-description: High-precision research and documentation insight extraction agent for research knowledge base. Distills evidence-backed decisions, constraints, and actionable insights from target documents.
+description: High-precision research and documentation insight extraction agent for research knowledge base.
 mode: subagent
 temperature: 0.1
 category: generalist
- tags:
-   - research
-   - documentation
+tags:
+  - research
+  - documentation
   - decisions
   - constraints
   - insights
   - evidence
-primary_objective: High-precision research & documentation insight extraction
-  agent for the /research knowledge base.
+primary_objective: High-precision research and documentation insight extraction agent.
 anti_objectives:
   - Perform actions outside defined scope
   - Modify source code without explicit approval
-owner: platform-engineering
-author: codeflow-core
-last_updated: 2025-09-13
-stability: stable
-maturity: production
 intended_followups:
   - full-stack-developer
   - code-reviewer
@@ -32,17 +24,6 @@ tools:
   read: true
   grep: true
   list: true
-  glob: false
-  edit: false
-  write: false
-  bash: false
-  webfetch: false
-  patch: false
-output_format: AGENT_OUTPUT_V1
-requires_structured_output: true
-validation_rules:
-  - must_produce_structured_output
-  - must_validate_inputs
 ---
 
 # Role Definition

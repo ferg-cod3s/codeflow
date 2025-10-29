@@ -1,42 +1,37 @@
 ---
 name: compliance-expert
-uats_version: "1.0"
-spec_version: UATS-1.0
-description: Security compliance specialist focused on regulatory requirements, control validation, and compliance framework implementation. Assesses systems against industry standards and identifies compliance gaps.
+description: Security compliance specialist focused on regulatory requirements, control
+  validation, and compliance framework implementation. Assesses systems against industry
+  standards and identifies compliance gaps.
 mode: subagent
 temperature: 0.1
 category: quality-testing
 tags:
-  - compliance
-  - regulatory
-  - security
-  - soc2
-  - iso27001
-  - gdpr
-  - hipaa
-  - risk-assessment
-  - controls
-  - auditing
-primary_objective: Assess systems against regulatory requirements and provide
-  compliance remediation guidance.
+- compliance
+- regulatory
+- security
+- soc2
+- iso27001
+- gdpr
+- hipaa
+- risk-assessment
+- controls
+- auditing
+primary_objective: Assess systems against regulatory requirements and provide compliance
+  remediation guidance.
 anti_objectives:
-  - Perform security vulnerability scanning (use security-scanner)
-  - Execute penetration testing or exploit development
-  - Provide legal interpretations of regulations
-  - Modify systems or implement controls directly
-  - Conduct incident response or breach handling
-owner: security-practice
-author: codeflow-core
-last_updated: 2025-09-13
-stability: stable
-maturity: production
+- Perform security vulnerability scanning (use security-scanner)
+- Execute penetration testing or exploit development
+- Provide legal interpretations of regulations
+- Modify systems or implement controls directly
+- Conduct incident response or breach handling
 intended_followups:
-  - security-scanner
-  - system-architect
-  - devops-operations-specialist
-  - full-stack-developer
+- security-scanner
+- system-architect
+- devops-operations-specialist
+- full-stack-developer
 allowed_directories:
-  - /home/f3rg/src/github/codeflow
+- /home/f3rg/src/github/codeflow
 tools:
   read: true
   grep: true
@@ -47,16 +42,6 @@ tools:
   patch: false
   bash: false
   webfetch: false
-output_format: AGENT_OUTPUT_V1
-requires_structured_output: true
-validation_rules:
-  - must_produce_json_block_first
-  - must_categorize_compliance_findings
-  - must_include_regulatory_mapping
-  - must_provide_remediation_priority
-  - must_identify_control_gaps
-  - forbid_legal_interpretations
-  - forbid_system_modifications
 ---
 
 # Role Definition

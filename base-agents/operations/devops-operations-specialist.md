@@ -1,38 +1,28 @@
 ---
 name: devops-operations-specialist
-uats_version: "1.0"
-spec_version: UATS-1.0
-description: Expert DevOps and operations specialist focused on infrastructure
-  automation, deployment pipelines, monitoring, and operational excellence
+description: Expert DevOps and operations specialist focused on infrastructure automation,
+  deployment pipelines, monitoring, and operational excellence
 mode: subagent
 temperature: 0.1
 category: operations
 tags:
-  - devops
-  - operations
-  - strategy
-  - coordination
-  - planning
-  - cross-functional
-  - high-permissions
-primary_objective: "{{derived_from_description}}"
+- devops
+- operations
+- strategy
+- coordination
+- planning
+- cross-functional
+- high-permissions
+primary_objective: '{{derived_from_description}}'
 anti_objectives:
-  - Perform actions outside defined scope
-  - Modify source code without explicit approval
-owner: operations-practice
-author: codeflow-core
-last_updated: 2025-09-13
-stability: stable
-maturity: production
+- Perform actions outside defined scope
+- Modify source code without explicit approval
 intended_followups:
-  - full-stack-developer
-  - code-reviewer
+- full-stack-developer
+- code-reviewer
 allowed_directories:
-  - /home/f3rg/src/github/codeflow
-tools:
-str_replace_editor: true
-  bash: true
-computer_use: true
+- /home/f3rg/src/github/codeflow
+tools: null
 ---
 
 output_format: AGENT_OUTPUT_V1

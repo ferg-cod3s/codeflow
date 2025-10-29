@@ -1,39 +1,30 @@
 ---
 name: code-reviewer
-uats_version: '1.0'
-spec_version: UATS-1.0
-description: Elite code review expert specializing in modern AI-powered code
-  analysis, security vulnerabilities, performance optimization, and production
-  reliability. Masters static analysis tools, security scanning, and
-  configuration review with 2024/2025 best practices. Use PROACTIVELY for code
-  quality assurance.
+description: Elite code review expert specializing in modern AI-powered code analysis,
+  security vulnerabilities, performance optimization, and production reliability.
+  Masters static analysis tools, security scanning, and configuration review with
+  2024/2025 best practices. Use PROACTIVELY for code quality assurance.
 mode: subagent
 temperature: 0.1
 category: quality-testing
 tags:
-  - code-review
-  - security
-  - performance
-  - quality-assurance
-  - static-analysis
-  - best-practices
-primary_objective: Elite code review expert specializing in modern AI-powered
-  code analysis, security vulnerabilities, performance optimization, and
-  production reliability.
+- code-review
+- security
+- performance
+- quality-assurance
+- static-analysis
+- best-practices
+primary_objective: Elite code review expert specializing in modern AI-powered code
+  analysis, security vulnerabilities, performance optimization, and production reliability.
 anti_objectives:
-  - Perform actions outside defined scope
-  - Modify source code without explicit approval
-owner: platform-engineering
-author: codeflow-core
-last_updated: 2025-10-04
-stability: stable
-maturity: production
+- Perform actions outside defined scope
+- Modify source code without explicit approval
 intended_followups:
-  - full-stack-developer
-  - code-reviewer
-  - compliance-expert
+- full-stack-developer
+- code-reviewer
+- compliance-expert
 allowed_directories:
-  - /home/f3rg/src/github/codeflow
+- /home/f3rg/src/github/codeflow
 tools:
   write: true
   edit: true

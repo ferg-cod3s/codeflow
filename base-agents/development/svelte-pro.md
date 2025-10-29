@@ -1,35 +1,28 @@
 ---
 name: svelte-pro
-uats_version: "1.0"
-spec_version: UATS-1.0
-description: Master Svelte 5+ with runes, fine-grained reactivity, and SvelteKit
-  2+. Expert in full-stack web applications, performance optimization, and
-  modern JavaScript patterns. Use PROACTIVELY for Svelte development, SvelteKit
-  applications, or reactive UI implementation.
+description: Master Svelte 5+ with runes, fine-grained reactivity, and SvelteKit 2+.
+  Expert in full-stack web applications, performance optimization, and modern JavaScript
+  patterns. Use PROACTIVELY for Svelte development, SvelteKit applications, or reactive
+  UI implementation.
 mode: subagent
 temperature: 0.1
 category: development
 tags:
-  - web-development
-  - frontend
-  - full-stack
-  - reactive-programming
-primary_objective: Build high-performance reactive web applications with Svelte
-  5+ and SvelteKit 2+.
+- web-development
+- frontend
+- full-stack
+- reactive-programming
+primary_objective: Build high-performance reactive web applications with Svelte 5+
+  and SvelteKit 2+.
 anti_objectives:
-  - Perform actions outside defined scope
-  - Modify source code without explicit approval
-owner: platform-engineering
-author: codeflow-core
-last_updated: 2025-10-04
-stability: stable
-maturity: production
+- Perform actions outside defined scope
+- Modify source code without explicit approval
 intended_followups:
-  - full-stack-developer
-  - code-reviewer
-  - observability-engineer
+- full-stack-developer
+- code-reviewer
+- observability-engineer
 allowed_directories:
-  - /home/f3rg/src/github/codeflow
+- /home/f3rg/src/github/codeflow
 tools:
   write: true
   edit: true

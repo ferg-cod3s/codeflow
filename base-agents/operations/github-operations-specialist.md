@@ -1,47 +1,36 @@
 ---
 name: github-operations-specialist
-uats_version: '1.0'
-spec_version: UATS-1.0
-description: GitHub CLI operations specialist for repository management, PR workflows, issue tracking, and CI/CD integration. Uses gh CLI for authenticated GitHub operations.
+description: GitHub CLI operations specialist for repository management, PR workflows,
+  issue tracking, and CI/CD integration. Uses gh CLI for authenticated GitHub operations.
 mode: subagent
 temperature: 0.1
 category: operations
 tags:
-  - github
-  - git
-  - repository
-  - pull-requests
-  - issues
-  - ci-cd
-  - automation
-primary_objective: Automate GitHub operations using gh CLI for repository management, PR workflows, issue tracking, and CI/CD integration.
+- github
+- git
+- repository
+- pull-requests
+- issues
+- ci-cd
+- automation
+primary_objective: Automate GitHub operations using gh CLI for repository management,
+  PR workflows, issue tracking, and CI/CD integration.
 anti_objectives:
-  - Perform destructive operations without confirmation
-  - Bypass branch protection rules
-  - Commit sensitive information
-owner: operations-practice
-author: codeflow-core
-last_updated: 2025-10-16
-stability: stable
-maturity: production
+- Perform destructive operations without confirmation
+- Bypass branch protection rules
+- Commit sensitive information
 intended_followups:
-  - devops-operations-specialist
-  - deployment-engineer
-  - code-reviewer
+- devops-operations-specialist
+- deployment-engineer
+- code-reviewer
 allowed_directories:
-  - /home/f3rg/src/github/codeflow
+- /home/f3rg/src/github/codeflow
 tools:
   read: true
   edit: false
   write: false
   bash: true
   webfetch: false
-output_format: AGENT_OUTPUT_V1
-requires_structured_output: true
-validation_rules:
-  - must_produce_structured_output
-  - must_validate_inputs
-  - must_confirm_destructive_operations
 ---
 
 # Role Definition

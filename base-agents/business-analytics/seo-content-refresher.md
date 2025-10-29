@@ -1,31 +1,24 @@
 ---
 name: seo-content-refresher
-uats_version: "1.0"
-spec_version: UATS-1.0
-description: Identifies outdated elements in provided content and suggests
-  updates to maintain freshness. Finds statistics, dates, and examples that need
-  updating. Use PROACTIVELY for older content.
+description: Identifies outdated elements in provided content and suggests updates
+  to maintain freshness. Finds statistics, dates, and examples that need updating.
+  Use PROACTIVELY for older content.
 mode: subagent
 temperature: 0.1
 category: business-analytics
 tags:
-  - seo
-primary_objective: Identifies outdated elements in provided content and suggests
-  updates to maintain freshness.
+- seo
+primary_objective: Identifies outdated elements in provided content and suggests updates
+  to maintain freshness.
 anti_objectives:
-  - Perform actions outside defined scope
-  - Modify source code without explicit approval
-owner: platform-engineering
-author: codeflow-core
-last_updated: 2025-10-04
-stability: stable
-maturity: production
+- Perform actions outside defined scope
+- Modify source code without explicit approval
 intended_followups:
-  - full-stack-developer
-  - code-reviewer
-  - compliance-expert
+- full-stack-developer
+- code-reviewer
+- compliance-expert
 allowed_directories:
-  - /home/f3rg/src/github/codeflow
+- /home/f3rg/src/github/codeflow
 tools:
   write: true
   edit: true

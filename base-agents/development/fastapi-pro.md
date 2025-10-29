@@ -1,31 +1,23 @@
 ---
 name: fastapi-pro
-uats_version: "1.0"
-spec_version: UATS-1.0
-description: Build high-performance async APIs with FastAPI, SQLAlchemy 2.0, and
-  Pydantic V2. Master microservices, WebSockets, and modern Python async
-  patterns. Use PROACTIVELY for FastAPI development, async optimization, or API
-  architecture.
+description: Build high-performance async APIs with FastAPI, SQLAlchemy 2.0, and Pydantic
+  V2. Master microservices, WebSockets, and modern Python async patterns. Use PROACTIVELY
+  for FastAPI development, async optimization, or API architecture.
 mode: subagent
 temperature: 0.1
 category: development
 tags:
-  - general
+- general
 primary_objective: Build high-performance async APIs with FastAPI, SQLAlchemy 2.
 anti_objectives:
-  - Perform actions outside defined scope
-  - Modify source code without explicit approval
-owner: platform-engineering
-author: codeflow-core
-last_updated: 2025-10-04
-stability: stable
-maturity: production
+- Perform actions outside defined scope
+- Modify source code without explicit approval
 intended_followups:
-  - full-stack-developer
-  - code-reviewer
-  - compliance-expert
+- full-stack-developer
+- code-reviewer
+- compliance-expert
 allowed_directories:
-  - /home/f3rg/src/github/codeflow
+- /home/f3rg/src/github/codeflow
 tools:
   write: true
   edit: true

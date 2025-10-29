@@ -1,31 +1,24 @@
 ---
 name: rust-pro
-uats_version: "1.0"
-spec_version: UATS-1.0
-description: Master Rust 1.75+ with modern async patterns, advanced type system
-  features, and production-ready systems programming. Expert in the latest Rust
-  ecosystem including Tokio, axum, and cutting-edge crates. Use PROACTIVELY for
-  Rust development, performance optimization, or systems programming.
+description: Master Rust 1.75+ with modern async patterns, advanced type system features,
+  and production-ready systems programming. Expert in the latest Rust ecosystem including
+  Tokio, axum, and cutting-edge crates. Use PROACTIVELY for Rust development, performance
+  optimization, or systems programming.
 mode: subagent
 temperature: 0.1
 category: development
 tags:
-  - rust
+- rust
 primary_objective: Master Rust 1.
 anti_objectives:
-  - Perform actions outside defined scope
-  - Modify source code without explicit approval
-owner: platform-engineering
-author: codeflow-core
-last_updated: 2025-10-04
-stability: stable
-maturity: production
+- Perform actions outside defined scope
+- Modify source code without explicit approval
 intended_followups:
-  - full-stack-developer
-  - code-reviewer
-  - compliance-expert
+- full-stack-developer
+- code-reviewer
+- compliance-expert
 allowed_directories:
-  - /home/f3rg/src/github/codeflow
+- /home/f3rg/src/github/codeflow
 tools:
   write: true
   edit: true

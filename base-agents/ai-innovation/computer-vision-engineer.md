@@ -1,29 +1,25 @@
 ---
 name: computer-vision-engineer
-uats_version: '1.0'
-spec_version: UATS-1.0
-description: Expert in computer vision, image processing, and visual AI systems for real-world applications. Specializes in deep learning, object detection, and video analysis.
+description: Expert in computer vision, image processing, and visual AI systems for
+  real-world applications. Specializes in deep learning, object detection, and video
+  analysis.
 mode: subagent
 temperature: 0.1
 category: ai-innovation
 tags:
-  - computer-vision
-  - image-processing
-  - deep-learning
-primary_objective: Expert in computer vision, image processing, and visual AI systems for real-world applications.
+- computer-vision
+- image-processing
+- deep-learning
+primary_objective: Expert in computer vision, image processing, and visual AI systems
+  for real-world applications.
 anti_objectives:
-  - Perform actions outside defined scope
-  - Modify source code without explicit approval
-owner: ai-practice
-author: codeflow-core
-last_updated: 2025-09-13
-stability: stable
-maturity: production
+- Perform actions outside defined scope
+- Modify source code without explicit approval
 intended_followups:
-  - full-stack-developer
-  - code-reviewer
+- full-stack-developer
+- code-reviewer
 allowed_directories:
-  - /home/f3rg/src/github/codeflow
+- /home/f3rg/src/github/codeflow
 tools:
   write: true
   edit: true

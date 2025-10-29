@@ -1,22 +1,18 @@
 ---
 name: javascript-pro
-uats_version: "1.0"
-spec_version: UATS-1.0
-description: Master modern JavaScript with ES6+, async patterns, and Node.js APIs. Handles promises, event loops, and browser/Node compatibility for optimization and debugging.
+description: Master modern JavaScript with ES6+, async patterns, and Node.js APIs. Handles promises, event loops, and browser/Node compatibility.
 mode: subagent
 temperature: 0.1
 category: development
- tags:
-   - javascript
-primary_objective: Master modern JavaScript with ES6+, async patterns, and Node.
+tags:
+  - javascript
+  - async
+  - es6
+  - node-js
+primary_objective: Master modern JavaScript with ES6+, async patterns, and Node.js APIs.
 anti_objectives:
   - Perform actions outside defined scope
   - Modify source code without explicit approval
-owner: platform-engineering
-author: codeflow-core
-last_updated: 2025-10-04
-stability: stable
-maturity: production
 intended_followups:
   - full-stack-developer
   - code-reviewer

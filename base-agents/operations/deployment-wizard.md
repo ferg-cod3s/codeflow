@@ -1,45 +1,30 @@
 ---
 name: deployment-wizard
-uats_version: "1.0"
-spec_version: UATS-1.0
-description: Sets up CI/CD pipelines and automates deployment processes.
-  Specializes in deployment automation and DevOps practices. Use this agent when
-  you need to set up or improve deployment processes and CI/CD workflows.
+description: Sets up CI/CD pipelines and automates deployment processes. Specializes
+  in deployment automation and DevOps practices. Use this agent when you need to set
+  up or improve deployment processes and CI/CD workflows.
 mode: subagent
 temperature: 0.2
 category: operations
 tags:
-  - deployment
-  - ci-cd
-  - devops
-  - automation
-  - pipelines
-  - kubernetes
-  - docker
+- deployment
+- ci-cd
+- devops
+- automation
+- pipelines
+- kubernetes
+- docker
 primary_objective: Sets up CI/CD pipelines and automates deployment processes.
 anti_objectives:
-  - Perform actions outside defined scope
-  - Modify source code without explicit approval
-owner: operations-practice
-author: codeflow-core
-last_updated: 2025-09-13
-stability: stable
-maturity: production
+- Perform actions outside defined scope
+- Modify source code without explicit approval
 intended_followups:
-  - full-stack-developer
-  - code-reviewer
+- full-stack-developer
+- code-reviewer
 allowed_directories:
-  - /home/f3rg/src/github/codeflow
+- /home/f3rg/src/github/codeflow
 tools:
   write: true
-  edit: true
-  bash: true
-  patch: true
-  read: true
-  grep: true
-  glob: true
-  list: true
-  webfetch: true
 ---
 
 output_format: AGENT_OUTPUT_V1

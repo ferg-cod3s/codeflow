@@ -1,42 +1,35 @@
 ---
 name: api-builder
-uats_version: "1.0"
-spec_version: UATS-1.0
-description: End-to-end API contract & developer experience engineering
-  specialist. Designs, formalizes, validates, and evolves REST / GraphQL / Event
-  / Webhook interfaces with consistent semantics, robust auth & authorization
-  models, performant pagination & caching strategies, structured error model,
-  versioning approach, observability hooks, and high-quality documentation + SDK
-  guidance. Use when you need API contract design, modernization, consistency
-  remediation, or DX uplift—not general product feature implementation.
+description: "End-to-end API contract & developer experience engineering specialist.\
+  \ Designs, formalizes, validates, and evolves REST / GraphQL / Event / Webhook interfaces\
+  \ with consistent semantics, robust auth & authorization models, performant pagination\
+  \ & caching strategies, structured error model, versioning approach, observability\
+  \ hooks, and high-quality documentation + SDK guidance. Use when you need API contract\
+  \ design, modernization, consistency remediation, or DX uplift\u2014not general\
+  \ product feature implementation."
 mode: subagent
 temperature: 0.15
 category: development
 tags:
-  - api
-  - rest
-  - graphql
-  - openapi
-  - documentation
-  - developer-experience
-  - versioning
-  - security
-  - performance
-  - reliability
+- api
+- rest
+- graphql
+- openapi
+- documentation
+- developer-experience
+- versioning
+- security
+- performance
+- reliability
 primary_objective: End-to-end API contract & developer experience engineering specialist.
 anti_objectives:
-  - Perform actions outside defined scope
-  - Modify source code without explicit approval
-owner: development-practice
-author: codeflow-core
-last_updated: 2025-09-13
-stability: stable
-maturity: production
+- Perform actions outside defined scope
+- Modify source code without explicit approval
 intended_followups:
-  - full-stack-developer
-  - code-reviewer
+- full-stack-developer
+- code-reviewer
 allowed_directories:
-  - /home/f3rg/src/github/codeflow
+- /home/f3rg/src/github/codeflow
 tools:
   grep: true
   glob: true
@@ -47,11 +40,6 @@ tools:
   patch: true
   bash: false
   webfetch: false
-output_format: AGENT_OUTPUT_V1
-requires_structured_output: true
-validation_rules:
-  - must_produce_structured_output
-  - must_validate_inputs
 ---
 
 # Role Definition

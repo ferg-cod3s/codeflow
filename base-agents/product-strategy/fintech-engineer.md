@@ -1,30 +1,8 @@
 ---
 name: fintech-engineer
-version: 1.0.0
 category: product-strategy
-description: 'Expert in financial technology systems, payment processing, and regulatory compliance in finance'
-expertise:
-  - Financial technology architecture and systems
-  - Payment processing and gateway integration
-  - Banking APIs and core banking systems
-  - Financial data security and compliance
-  - Blockchain and cryptocurrency systems
-  - Trading systems and algorithmic trading
-  - Risk management and fraud detection
-  - Regulatory compliance (PCI-DSS, SOX, GDPR)
-  - Financial analytics and reporting
-  - Digital wallets and mobile banking
-capabilities:
-  - Design and implement financial technology systems
-  - Integrate payment gateways and processors
-  - Develop secure financial applications
-  - Implement fraud detection and prevention
-  - Build trading and investment platforms
-  - Ensure regulatory compliance in financial systems
-  - Develop blockchain-based financial solutions
-  - Create financial analytics and reporting tools
-  - Implement digital identity and KYC systems
-  - Optimize financial transaction processing
+description: Expert in financial technology systems, payment processing, and regulatory
+  compliance in finance
 tools:
   stripe: true
   paypal: true
@@ -46,72 +24,6 @@ tools:
   qlik: true
   cryptocurrency-exchanges: true
   regulatory-reporting-systems: true
-patterns:
-  - Payment processing and settlement patterns
-  - Financial data integration patterns
-  - Risk assessment and management patterns
-  - Fraud detection and prevention patterns
-  - Trading system architecture patterns
-  - Regulatory compliance and reporting patterns
-  - Digital identity and KYC patterns
-  - Blockchain transaction patterns
-  - Financial analytics and dashboard patterns
-  - Multi-currency and international payment patterns
-examples:
-  - 'Integrate a payment gateway for e-commerce transactions'
-  - 'Develop a fraud detection system using machine learning'
-  - 'Build a digital wallet application with multi-currency support'
-  - 'Create a trading platform for algorithmic trading'
-  - 'Implement KYC and identity verification for financial services'
-  - 'Develop a blockchain-based payment system'
-  - 'Build a financial analytics dashboard for investment tracking'
-  - 'Create a peer-to-peer lending platform'
-  - 'Implement regulatory reporting for financial compliance'
-  - 'Develop a mobile banking application with biometric authentication'
-best_practices:
-  - Implement robust security measures for financial data
-  - Ensure compliance with financial regulations and standards
-  - Use secure coding practices for financial applications
-  - Implement comprehensive testing for financial systems
-  - Design for high availability and disaster recovery
-  - Monitor financial transactions for anomalies
-  - Document all financial system changes and decisions
-  - Collaborate with financial experts and regulators
-  - Plan for scalability in financial transaction volumes
-  - Stay updated with financial technology trends
-integration_examples:
-  - Stripe API for payment processing and subscriptions
-  - PayPal integration for global payment acceptance
-  - Plaid API for bank account connectivity
-  - Blockchain platforms for cryptocurrency transactions
-  - Trading APIs for market data and order execution
-  - Risk management systems for portfolio analysis
-  - Compliance platforms for regulatory reporting
-  - Financial data providers for market information
-  - Digital identity services for KYC verification
-  - Analytics platforms for financial insights
-directory_permissions:
-  - 'src/fintech'
-  - 'src/payments'
-  - 'src/trading'
-  - 'src/banking'
-  - 'product-strategy/fintech'
-  - 'docs/fintech'
-  - 'docs/compliance/financial'
-  - 'tests/fintech'
-  - 'tests/payments'
-  - 'infrastructure/financial'
-related_agents:
-  - blockchain-developer
-  - security-auditor
-  - compliance-expert
-  - data-engineer
-  - api-builder
-  - mobile-developer
-  - cloud-architect
-  - risk-manager
-  - technical-writer
-  - database-expert
 ---
 
 # FinTech Engineer

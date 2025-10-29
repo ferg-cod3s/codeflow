@@ -1,32 +1,25 @@
 ---
 name: seo-structure-architect
-uats_version: "1.0"
-spec_version: UATS-1.0
-description: Analyzes and optimizes content structure including header
-  hierarchy, suggests schema markup, and internal linking opportunities. Creates
-  search-friendly content organization. Use PROACTIVELY for content structuring.
+description: Analyzes and optimizes content structure including header hierarchy,
+  suggests schema markup, and internal linking opportunities. Creates search-friendly
+  content organization. Use PROACTIVELY for content structuring.
 mode: subagent
 temperature: 0.1
 category: development
 tags:
-  - architecture
-  - seo
-primary_objective: Analyzes and optimizes content structure including header
-  hierarchy, suggests schema markup, and internal linking opportunities.
+- architecture
+- seo
+primary_objective: Analyzes and optimizes content structure including header hierarchy,
+  suggests schema markup, and internal linking opportunities.
 anti_objectives:
-  - Perform actions outside defined scope
-  - Modify source code without explicit approval
-owner: platform-engineering
-author: codeflow-core
-last_updated: 2025-10-04
-stability: stable
-maturity: production
+- Perform actions outside defined scope
+- Modify source code without explicit approval
 intended_followups:
-  - full-stack-developer
-  - code-reviewer
-  - compliance-expert
+- full-stack-developer
+- code-reviewer
+- compliance-expert
 allowed_directories:
-  - /home/f3rg/src/github/codeflow
+- /home/f3rg/src/github/codeflow
 tools:
   write: true
   edit: true

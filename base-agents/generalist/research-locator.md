@@ -1,28 +1,20 @@
 ---
 name: research-locator
-uats_version: '1.0'
-spec_version: UATS-1.0
-description: Focused documentation discovery and categorization agent for research knowledge base. Locates and classifies relevant historical and current research documents without deep semantic analysis.
+description: Focused documentation discovery and categorization agent for research knowledge base.
 mode: subagent
 temperature: 0.1
 category: generalist
- tags:
-   - research
-   - locator
-   - discovery
-   - documentation
-   - mapping
-   - knowledge-base
-primary_objective: Focused documentation discovery & categorization agent for
-  the /research knowledge base.
+tags:
+  - research
+  - locator
+  - discovery
+  - documentation
+  - mapping
+  - knowledge-base
+primary_objective: Focused documentation discovery and categorization agent for research knowledge base.
 anti_objectives:
   - Perform actions outside defined scope
   - Modify source code without explicit approval
-owner: platform-engineering
-author: codeflow-core
-last_updated: 2025-09-13
-stability: stable
-maturity: production
 intended_followups:
   - full-stack-developer
   - code-reviewer
@@ -33,16 +25,6 @@ tools:
   grep: true
   list: true
   read: true
-  edit: false
-  write: false
-  bash: false
-  webfetch: false
-  patch: false
-output_format: AGENT_OUTPUT_V1
-requires_structured_output: true
-validation_rules:
-  - must_produce_structured_output
-  - must_validate_inputs
 ---
 
 # Role Definition
