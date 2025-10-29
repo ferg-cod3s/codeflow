@@ -2,7 +2,6 @@
 name: seo-content-writer
 description: Writes SEO-optimized content based on provided keywords and topic briefs. Creates engaging, comprehensive content following best practices. Use PROACTIVELY for content creation tasks.
 mode: subagent
-model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: allow

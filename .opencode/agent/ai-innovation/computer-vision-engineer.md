@@ -2,7 +2,6 @@
 name: computer-vision-engineer
 description: Expert in computer vision, image processing, and visual AI systems for real-world applications. Specializes in deep learning, object detection, and video analysis.
 mode: subagent
-model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: allow

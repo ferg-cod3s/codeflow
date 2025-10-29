@@ -2,7 +2,6 @@
 name: iot-security-specialist
 description: Expert in IoT security, device hardening, and securing IoT ecosystems from threats
 mode: subagent
-model: opencode/grok-code
 permission:
   edit: deny
   bash: deny

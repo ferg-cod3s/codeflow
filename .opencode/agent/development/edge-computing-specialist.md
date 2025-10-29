@@ -2,7 +2,6 @@
 name: edge-computing-specialist
 description: Expert in edge computing architectures, distributed systems, and real-time data processing at the network edge
 mode: subagent
-model: opencode/grok-code
 permission:
   edit: deny
   bash: deny

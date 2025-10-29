@@ -2,31 +2,33 @@
 name: compliance-expert
 description: Security compliance specialist focused on regulatory requirements, control validation, and compliance framework implementation. Assesses systems against industry standards and identifies compliance gaps.
 mode: subagent
-temperature: 0.1
+model: opencode/grok-code
 permission:
+  "0": allow
+  "1": allow
+  "2": allow
+  "3": allow
+  "4": allow
+  "5": allow
+  "6": allow
+  "7": allow
+  "8": allow
+  "9": allow
+  "10": allow
+  "11": allow
+  "12": allow
+  "13": allow
+  "14": allow
+  "15": allow
+  "16": allow
+  "17": allow
+  "18": allow
+  "19": allow
+  "20": allow
+  "21": allow
   edit: deny
   bash: deny
-  webfetch: deny
-  read: allow
-  grep: allow
-  list: allow
-  glob: allow
-  write: deny
-  patch: deny
-category: quality-testing
-tags:
-  - compliance
-  - regulatory
-  - security
-  - soc2
-  - iso27001
-  - gdpr
-  - hipaa
-  - risk-assessment
-  - controls
-  - auditing
-allowed_directories:
-  - /home/f3rg/src/github/codeflow
+  webfetch: allow
 ---
 # Role Definition
 

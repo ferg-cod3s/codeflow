@@ -2,24 +2,21 @@
 name: github-operations-specialist
 description: GitHub CLI operations specialist for repository management, PR workflows, issue tracking, and CI/CD integration. Uses gh CLI for authenticated GitHub operations.
 mode: subagent
-temperature: 0.1
+model: opencode/grok-code
 permission:
+  "0": allow
+  "1": allow
+  "2": allow
+  "3": allow
+  "4": allow
+  "5": allow
+  "6": allow
+  "7": allow
+  "8": allow
+  "9": allow
   edit: deny
-  bash: allow
-  webfetch: deny
-  read: allow
-  write: deny
-category: operations
-tags:
-  - github
-  - git
-  - repository
-  - pull-requests
-  - issues
-  - ci-cd
-  - automation
-allowed_directories:
-  - /home/f3rg/src/github/codeflow
+  bash: deny
+  webfetch: allow
 ---
 # Role Definition
 

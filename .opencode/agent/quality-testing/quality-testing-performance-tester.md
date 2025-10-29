@@ -2,7 +2,6 @@
 name: quality-testing-performance-tester
 description: Design and execute load, stress, soak, and spike tests; analyze performance bottlenecks; and recommend optimizations aligned with SLOs.
 mode: subagent
-model: opencode/grok-code
 temperature: 0.3
 permission:
   edit: deny

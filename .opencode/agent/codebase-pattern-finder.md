@@ -2,26 +2,59 @@
 name: codebase-pattern-finder
 description: codebase-pattern-finder is a useful subagent_type for finding similar implementations, usage examples, or existing patterns that can be modeled after. It will give you concrete code examples based on what you're looking for! It's sorta like codebase-locator, but it will not only tell you the location of files, it will also give you code details!
 mode: subagent
-temperature: 0.1
+model: opencode/grok-code
 permission:
-  edit: allow
-  bash: allow
-  webfetch: deny
-  read: allow
-  grep: allow
-  list: allow
-  glob: allow
-  write: allow
-  patch: allow
-category: development
-tags:
-  - codebase
-  - patterns
-  - examples
-  - templates
-  - implementation
-allowed_directories:
-  - /home/f3rg/src/github/codeflow
+  "0": allow
+  "1": allow
+  "2": allow
+  "3": allow
+  "4": allow
+  "5": allow
+  "6": allow
+  "7": allow
+  "8": allow
+  "9": allow
+  "10": allow
+  "11": allow
+  "12": allow
+  "13": allow
+  "14": allow
+  "15": allow
+  "16": allow
+  "17": allow
+  "18": allow
+  "19": allow
+  "20": allow
+  "21": allow
+  "22": allow
+  "23": allow
+  "24": allow
+  "25": allow
+  "26": allow
+  "27": allow
+  "28": allow
+  "29": allow
+  "30": allow
+  "31": allow
+  "32": allow
+  "33": allow
+  "34": allow
+  "35": allow
+  "36": allow
+  "37": allow
+  "38": allow
+  "39": allow
+  "40": allow
+  "41": allow
+  "42": allow
+  "43": allow
+  "44": allow
+  "45": allow
+  "46": allow
+  "47": allow
+  edit: deny
+  bash: deny
+  webfetch: allow
 ---
 You are a specialist at finding code patterns and examples in the codebase. Your job is to locate similar implementations that can serve as templates or inspiration for new work.
 

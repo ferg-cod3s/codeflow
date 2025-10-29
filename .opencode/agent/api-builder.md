@@ -2,31 +2,53 @@
 name: api-builder
 description: End-to-end API contract & developer experience engineering specialist. Designs, formalizes, validates, and evolves REST / GraphQL / Event / Webhook interfaces with consistent semantics, robust auth & authorization models, performant pagination & caching strategies, structured error model, versioning approach, observability hooks, and high-quality documentation + SDK guidance. Use when you need API contract design, modernization, consistency remediation, or DX uplift—not general product feature implementation.
 mode: subagent
-temperature: 0.15
+model: opencode/grok-code
 permission:
-  edit: allow
+  "0": allow
+  "1": allow
+  "2": allow
+  "3": allow
+  "4": allow
+  "5": allow
+  "6": allow
+  "7": allow
+  "8": allow
+  "9": allow
+  "10": allow
+  "11": allow
+  "12": allow
+  "13": allow
+  "14": allow
+  "15": allow
+  "16": allow
+  "17": allow
+  "18": allow
+  "19": allow
+  "20": allow
+  "21": allow
+  "22": allow
+  "23": allow
+  "24": allow
+  "25": allow
+  "26": allow
+  "27": allow
+  "28": allow
+  "29": allow
+  "30": allow
+  "31": allow
+  "32": allow
+  "33": allow
+  "34": allow
+  "35": allow
+  "36": allow
+  "37": allow
+  "38": allow
+  "39": allow
+  "40": allow
+  "41": allow
+  edit: deny
   bash: deny
-  webfetch: deny
-  grep: allow
-  glob: allow
-  list: allow
-  read: allow
-  write: allow
-  patch: allow
-category: development
-tags:
-  - api
-  - rest
-  - graphql
-  - openapi
-  - documentation
-  - developer-experience
-  - versioning
-  - security
-  - performance
-  - reliability
-allowed_directories:
-  - /home/f3rg/src/github/codeflow
+  webfetch: allow
 ---
 # Role Definition
 

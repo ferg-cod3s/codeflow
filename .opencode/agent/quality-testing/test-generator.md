@@ -1,29 +1,19 @@
 ---
 name: test-generator
-description: Automated test generation specialist focused on creating comprehensive test suites for code coverage, quality assurance, and regression prevention. Generates unit tests, integration tests, and edge case scenarios based on code analysis and requirements.
+description: Automated test generation specialist focused on comprehensive test coverage.
 mode: subagent
-model: opencode/grok-code
-temperature: 0.2
+temperature: 0.1
 permission:
   edit: deny
-  bash: deny
-  webfetch: deny
+  bash: allow
+  webfetch: allow
   read: allow
-  grep: allow
-  list: allow
-  glob: allow
-  write: deny
-  patch: deny
+  write: allow
 category: quality-testing
 tags:
   - testing
+  - automation
   - test-generation
-  - unit-tests
-  - integration-tests
-  - coverage
-  - quality-assurance
-  - regression-testing
-  - edge-cases
 allowed_directories:
   - /home/f3rg/src/github/codeflow
 ---

@@ -2,7 +2,6 @@
 name: ux-optimizer
 description: Simplifies user flows, enhances user experience, and optimizes conversion paths. Specializes in user journey optimization, interaction design, and conversion optimization.
 mode: subagent
-model: opencode/grok-code
 temperature: 0.3
 permission:
   edit: allow

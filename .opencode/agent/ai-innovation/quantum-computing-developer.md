@@ -2,7 +2,6 @@
 name: quantum-computing-developer
 description: Expert in quantum computing algorithms, quantum software development, and quantum-classical hybrid systems
 mode: subagent
-model: opencode/grok-code
 permission:
   edit: deny
   bash: deny

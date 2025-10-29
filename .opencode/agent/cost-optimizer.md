@@ -2,28 +2,33 @@
 name: cost-optimizer
 description: Cloud cost optimization and resource efficiency specialist. Analyzes cloud spending patterns, identifies cost-saving opportunities, and provides recommendations for resource rightsizing.
 mode: subagent
-temperature: 0.1
+model: opencode/grok-code
 permission:
+  "0": allow
+  "1": allow
+  "2": allow
+  "3": allow
+  "4": allow
+  "5": allow
+  "6": allow
+  "7": allow
+  "8": allow
+  "9": allow
+  "10": allow
+  "11": allow
+  "12": allow
+  "13": allow
+  "14": allow
+  "15": allow
+  "16": allow
+  "17": allow
+  "18": allow
+  "19": allow
+  "20": allow
+  "21": allow
   edit: deny
   bash: deny
-  webfetch: deny
-  read: allow
-  grep: allow
-  list: allow
-  glob: allow
-  write: deny
-  patch: deny
-category: operations
-tags:
-  - cost-optimization
-  - cloud-economics
-  - resource-efficiency
-  - reserved-instances
-  - rightsizing
-  - spending-analysis
-  - budget-optimization
-allowed_directories:
-  - /home/f3rg/src/github/codeflow
+  webfetch: allow
 ---
 # Role Definition
 

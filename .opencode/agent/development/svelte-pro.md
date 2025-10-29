@@ -2,7 +2,6 @@
 name: svelte-pro
 description: Master Svelte 5+ with runes, fine-grained reactivity, and SvelteKit 2+. Expert in full-stack web applications, performance optimization, and modern JavaScript patterns. Use PROACTIVELY for Svelte development, SvelteKit applications, or reactive UI implementation.
 mode: subagent
-model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: allow

@@ -2,16 +2,14 @@
 name: full-stack-developer
 description: Generalist implementation developer focused on end-to-end feature
 mode: subagent
-temperature: 0.2
+model: opencode/grok-code
 permission:
   edit: deny
   bash: deny
   webfetch: allow
   read: allow
   write: deny
-category: development
 ---
-
 output_format: AGENT_OUTPUT_V1
 requires_structured_output: true
 validation_rules:

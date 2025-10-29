@@ -2,7 +2,6 @@
 name: growth-engineer
 description: Identifies user engagement opportunities and implements growth mechanisms. Specializes in user acquisition strategies, retention optimization, and viral growth feature development.
 mode: subagent
-model: opencode/grok-code
 temperature: 0.3
 permission:
   edit: allow

@@ -2,7 +2,6 @@
 name: debugger
 description: Debugging specialist for errors, test failures, and unexpected behavior across multiple programming languages and frameworks.
 mode: subagent
-model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: allow
