@@ -2,6 +2,7 @@
 name: fintech-engineer
 description: Expert in financial technology systems, payment processing, and regulatory compliance in finance
 mode: subagent
+model: opencode/grok-code
 permission:
   edit: deny
   bash: deny

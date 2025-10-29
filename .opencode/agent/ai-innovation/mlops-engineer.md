@@ -2,6 +2,7 @@
 name: mlops-engineer
 description: Build comprehensive ML pipelines, experiment tracking, and model registries with MLflow, Kubeflow, and modern MLOps tools. Implements automated training, deployment, and monitoring across cloud platforms. Use PROACTIVELY for ML infrastructure, experiment management, or pipeline automation.
 mode: subagent
+model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: allow

@@ -2,6 +2,7 @@
 name: seo-authority-builder
 description: Analyzes content for E-E-A-T signals and suggests improvements to build authority and trust. Identifies missing credibility elements. Use PROACTIVELY for YMYL topics.
 mode: subagent
+model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: allow

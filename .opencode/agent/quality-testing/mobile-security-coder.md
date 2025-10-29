@@ -2,6 +2,7 @@
 name: mobile-security-coder
 description: Expert in secure mobile coding practices specializing in input validation, WebView security, and mobile-specific security patterns for secure mobile applications.
 mode: subagent
+model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: allow

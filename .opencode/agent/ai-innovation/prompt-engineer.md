@@ -2,6 +2,7 @@
 name: prompt-engineer
 description: Expert prompt engineer specializing in advanced prompting techniques, LLM optimization, and AI system design. Masters chain-of-thought, constitutional AI, and production prompt strategies.
 mode: subagent
+model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: deny

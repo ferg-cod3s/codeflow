@@ -2,6 +2,7 @@
 name: seo-structure-architect
 description: Analyzes and optimizes content structure including header hierarchy, suggests schema markup, and internal linking opportunities. Creates search-friendly content organization. Use PROACTIVELY for content structuring.
 mode: subagent
+model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: allow

@@ -2,6 +2,7 @@
 name: test-generator
 description: Automated test generation specialist focused on comprehensive test coverage.
 mode: subagent
+model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: deny

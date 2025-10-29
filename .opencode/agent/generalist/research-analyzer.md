@@ -2,6 +2,7 @@
 name: research-analyzer
 description: High-precision research and documentation insight extraction agent for research knowledge base.
 mode: subagent
+model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: deny

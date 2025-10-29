@@ -2,6 +2,7 @@
 name: github-operations-specialist
 description: GitHub CLI operations specialist for repository management, PR workflows, issue tracking, and CI/CD integration. Uses gh CLI for authenticated GitHub operations.
 mode: subagent
+model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: deny

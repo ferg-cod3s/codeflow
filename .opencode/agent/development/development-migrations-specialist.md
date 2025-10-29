@@ -2,6 +2,7 @@
 name: development-migrations-specialist
 description: Plan and execute safe, reversible database schema and data migrations with zero/minimal downtime, across PostgreSQL/MySQL/NoSQL systems.
 mode: subagent
+model: opencode/grok-code
 temperature: 0.3
 permission:
   edit: allow

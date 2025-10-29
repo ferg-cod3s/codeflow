@@ -2,6 +2,7 @@
 name: ecommerce-specialist
 description: Expert in e-commerce platforms, online retail systems, and digital commerce optimization. Specializes in platform architecture, payment integration, and conversion optimization.
 mode: subagent
+model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: deny

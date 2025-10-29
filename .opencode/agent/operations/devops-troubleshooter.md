@@ -2,6 +2,7 @@
 name: devops-troubleshooter
 description: Expert DevOps troubleshooter specializing in rapid incident response, advanced debugging, and modern observability.
 mode: subagent
+model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: allow

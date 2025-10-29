@@ -2,6 +2,7 @@
 name: mermaid-expert
 description: Create Mermaid diagrams for flowcharts, sequences, ERDs, and architectures. Masters syntax for all diagram types and styling. Use PROACTIVELY for visual documentation, system diagrams, or process flows.
 mode: subagent
+model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: allow

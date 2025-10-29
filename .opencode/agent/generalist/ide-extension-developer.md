@@ -2,6 +2,7 @@
 name: ide-extension-developer
 description: Expert in IDE extension development, developer tools, and productivity enhancement for development environments. Specializes in VS Code extensions, language servers, and developer productivity tools.
 mode: subagent
+model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: allow

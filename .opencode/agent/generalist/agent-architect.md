@@ -2,6 +2,7 @@
 name: agent-architect
 description: Meta-level agent that creates and designs specialized AI agents on-demand for specific tasks, projects, or domains. Analyzes requirements, selects base agent capabilities, and designs specializations.
 mode: subagent
+model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: allow

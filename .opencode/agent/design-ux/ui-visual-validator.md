@@ -2,6 +2,7 @@
 name: ui-visual-validator
 description: Rigorous visual validation expert specializing in UI testing, design system compliance, and accessibility verification. Masters screenshot analysis, visual regression testing, and component validation.
 mode: subagent
+model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: allow

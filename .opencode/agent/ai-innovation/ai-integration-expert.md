@@ -2,6 +2,7 @@
 name: ai-integration-expert
 description: Adds AI features and integrates machine learning capabilities. Specializes in AI/ML implementation and optimization for chatbots, recommendation engines, and predictive analytics.
 mode: subagent
+model: opencode/grok-code
 temperature: 0.2
 permission:
   edit: allow

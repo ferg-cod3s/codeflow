@@ -2,6 +2,7 @@
 name: flutter-expert
 description: Master Flutter development with Dart 3, advanced widgets, and multi-platform deployment. Handles state management, animations, testing, and performance optimization for mobile, web, desktop, and embedded platforms. Use PROACTIVELY for Flutter architecture, UI implementation, or cross-platform features.
 mode: subagent
+model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: allow

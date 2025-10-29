@@ -2,6 +2,7 @@
 name: quant-analyst
 description: Build financial models, backtest trading strategies, and analyze market data. Implements risk metrics, portfolio optimization, and statistical arbitrage. Use PROACTIVELY for quantitative finance, trading algorithms, or risk analysis.
 mode: subagent
+model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: allow

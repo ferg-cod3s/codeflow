@@ -2,6 +2,7 @@
 name: seo-content-refresher
 description: Identifies outdated elements in provided content and suggests updates to maintain freshness. Finds statistics, dates, and examples that need updating. Use PROACTIVELY for older content.
 mode: subagent
+model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: allow

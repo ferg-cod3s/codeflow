@@ -2,6 +2,7 @@
 name: compliance-expert
 description: Security compliance specialist focused on regulatory requirements, control validation, and compliance framework implementation. Assesses systems against industry standards and identifies compliance gaps.
 mode: subagent
+model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: deny

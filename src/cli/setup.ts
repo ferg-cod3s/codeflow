@@ -1,6 +1,7 @@
-import { join } from 'node:path';
+import { join, dirname } from 'node:path';
 import { existsSync } from 'node:fs';
 import { readdir, mkdir, copyFile, writeFile, readFile } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
 import {
   parseAgentsFromDirectory,
   serializeAgent,
@@ -12,6 +13,19 @@ import { FormatConverter } from '../conversion/format-converter.js';
 import { CommandConverter } from '../conversion/command-converter.js';
 
 export type SupportedFormat = 'claude-code' | 'opencode' | 'cursor';
+
+function getPackageRoot(): string {
+  try {
+    // Get the directory of the current module
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = dirname(__filename);
+    // Go up from src/cli to the package root
+    return dirname(dirname(__dirname));
+  } catch {
+    // Fallback to cwd
+    return process.cwd();
+  }
+}
 
 export function getTargetFormat(setupDir: string): SupportedFormat | null {
   if (setupDir.includes('.cursor')) {
@@ -295,36 +309,59 @@ export async function setup(
 
 export function getAgentSourceDirs(sourcePath: string, targetFormat: SupportedFormat): string[] {
   const sourceDirs: string[] = [];
+  const packageRoot = getPackageRoot();
 
-  // Primary source: codeflow-agents directory (check in current working directory first)
-  const cwdAgentsDir = join(process.cwd(), 'codeflow-agents');
-  if (existsSync(cwdAgentsDir)) {
-    sourceDirs.push(cwdAgentsDir);
-  } else {
-    sourceDirs.push(join(sourcePath, 'codeflow-agents'));
+  // Primary source: base-agents directory (our single source of truth)
+  // Try in order: cwd, package root, sourcePath
+  const baseAgentsCandidates = [
+    join(process.cwd(), 'base-agents'),
+    join(packageRoot, 'base-agents'),
+    join(sourcePath, 'base-agents'),
+  ];
+
+  for (const candidate of baseAgentsCandidates) {
+    if (existsSync(candidate)) {
+      sourceDirs.push(candidate);
+      break;
+    }
   }
 
-  // Fallback sources based on target format
+  // Secondary source: Pre-converted agents for the target format
   if (targetFormat === 'claude-code') {
-    const cwdClaudeAgentsDir = join(process.cwd(), 'claude-agents');
-    if (existsSync(cwdClaudeAgentsDir)) {
-      sourceDirs.push(cwdClaudeAgentsDir);
-    } else {
-      sourceDirs.push(join(sourcePath, 'claude-agents'));
+    const claudeAgentsCandidates = [
+      join(process.cwd(), '.claude', 'agents'),
+      join(packageRoot, '.claude', 'agents'),
+      join(sourcePath, '.claude', 'agents'),
+    ];
+    for (const candidate of claudeAgentsCandidates) {
+      if (existsSync(candidate)) {
+        sourceDirs.push(candidate);
+        break;
+      }
     }
   } else if (targetFormat === 'opencode') {
-    const cwdOpenCodeAgentsDir = join(process.cwd(), 'opencode-agents');
-    if (existsSync(cwdOpenCodeAgentsDir)) {
-      sourceDirs.push(cwdOpenCodeAgentsDir);
-    } else {
-      sourceDirs.push(join(sourcePath, 'opencode-agents'));
+    const opencodeAgentsCandidates = [
+      join(process.cwd(), '.opencode', 'agent'),
+      join(packageRoot, '.opencode', 'agent'),
+      join(sourcePath, '.opencode', 'agent'),
+    ];
+    for (const candidate of opencodeAgentsCandidates) {
+      if (existsSync(candidate)) {
+        sourceDirs.push(candidate);
+        break;
+      }
     }
   } else if (targetFormat === 'cursor') {
-    const cwdCursorAgentsDir = join(process.cwd(), 'cursor-agents');
-    if (existsSync(cwdCursorAgentsDir)) {
-      sourceDirs.push(cwdCursorAgentsDir);
-    } else {
-      sourceDirs.push(join(sourcePath, 'cursor-agents'));
+    const cursorAgentsCandidates = [
+      join(process.cwd(), '.cursor', 'agents'),
+      join(packageRoot, '.cursor', 'agents'),
+      join(sourcePath, '.cursor', 'agents'),
+    ];
+    for (const candidate of cursorAgentsCandidates) {
+      if (existsSync(candidate)) {
+        sourceDirs.push(candidate);
+        break;
+      }
     }
   }
 

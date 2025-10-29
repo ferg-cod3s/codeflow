@@ -2,6 +2,7 @@
 name: security-scanner
 description: Defensive application and platform security analysis agent. Performs structured security posture evaluation across code, configuration, and dependency layers to identify vulnerabilities and risks.
 mode: subagent
+model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: deny

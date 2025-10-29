@@ -2,6 +2,7 @@
 name: release-manager
 description: CI/CD release coordination and deployment management specialist.
 mode: subagent
+model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: deny

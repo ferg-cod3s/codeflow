@@ -2,6 +2,7 @@
 name: onboarding-experience-designer
 description: Expert in designing developer onboarding experiences, documentation, and learning systems for technology products. Specializes in interactive tutorials, documentation architecture, and developer portals.
 mode: subagent
+model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: allow

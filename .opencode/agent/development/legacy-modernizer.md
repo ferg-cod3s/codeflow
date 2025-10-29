@@ -2,6 +2,7 @@
 name: legacy-modernizer
 description: Refactor legacy codebases, migrate outdated frameworks, and implement gradual modernization. Handles technical debt, dependency updates, and backward compatibility. Use PROACTIVELY for legacy system updates, framework migrations, or technical debt reduction.
 mode: subagent
+model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: allow

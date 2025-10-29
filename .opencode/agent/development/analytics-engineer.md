@@ -2,6 +2,7 @@
 name: analytics-engineer
 description: Data instrumentation, tracking plan governance, metrics modeling & analytics platform implementation specialist. Designs event schemas, metrics layer, warehouse/data model transformations, attribution & cohort frameworks, data quality monitoring, experimentation instrumentation, and privacy-compliant telemetry. NOT responsible for growth tactic ideation (growth-engineer) nor UX flow/conversion redesign (ux-optimizer). Use when you need trustworthy, governed, actionable product data.
 mode: subagent
+model: opencode/grok-code
 temperature: 0.15
 permission:
   edit: deny

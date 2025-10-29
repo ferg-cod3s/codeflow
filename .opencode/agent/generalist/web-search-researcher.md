@@ -2,6 +2,7 @@
 name: web-search-researcher
 description: Targeted multi-phase web research and evidence synthesis agent.
 mode: subagent
+model: opencode/grok-code
 temperature: 0.15
 permission:
   edit: deny

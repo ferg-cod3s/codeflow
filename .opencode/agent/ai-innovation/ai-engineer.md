@@ -2,6 +2,7 @@
 name: ai-engineer
 description: Build production-ready LLM applications, advanced RAG systems, and intelligent agents. Implements vector search, multimodal AI, agent orchestration, and enterprise AI integrations. Use PROACTIVELY for LLM features, chatbots, AI agents, or AI-powered applications.
 mode: subagent
+model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: allow

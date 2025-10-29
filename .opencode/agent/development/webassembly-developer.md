@@ -2,6 +2,7 @@
 name: webassembly-developer
 description: Master WebAssembly development with Emscripten, WASI, and modern WASM toolchains. Specializes in high-performance web applications, cross-language compilation, and browser-based computing.
 mode: subagent
+model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: allow

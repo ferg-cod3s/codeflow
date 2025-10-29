@@ -2,6 +2,7 @@
 name: reference-builder
 description: Creates exhaustive technical references and API documentation. Generates comprehensive parameter listings, configuration guides, and searchable reference materials. Use PROACTIVELY for API docs, configuration references, or complete technical specifications.
 mode: subagent
+model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: allow

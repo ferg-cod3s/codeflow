@@ -2,6 +2,7 @@
 name: codebase-analyzer
 description: Specialized implementation analysis agent that explains exactly HOW specified code works with precise file:line evidence.
 mode: subagent
+model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: deny

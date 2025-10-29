@@ -2,6 +2,7 @@
 name: security-auditor
 description: Expert security auditor specializing in DevSecOps, comprehensive cybersecurity, and compliance frameworks. Masters vulnerability assessment, threat modeling, and security automation.
 mode: subagent
+model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: allow

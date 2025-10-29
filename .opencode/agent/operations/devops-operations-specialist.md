@@ -2,6 +2,7 @@
 name: devops-operations-specialist
 description: Expert DevOps and operations specialist focused on infrastructure automation, deployment pipelines, monitoring, and operational excellence
 mode: subagent
+model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: deny

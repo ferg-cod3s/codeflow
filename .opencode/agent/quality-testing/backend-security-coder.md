@@ -2,6 +2,7 @@
 name: backend-security-coder
 description: Expert in secure backend coding practices specializing in input validation, authentication, and API security for secure backend applications.
 mode: subagent
+model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: allow

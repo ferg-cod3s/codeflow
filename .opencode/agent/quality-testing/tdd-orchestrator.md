@@ -2,6 +2,7 @@
 name: tdd-orchestrator
 description: Master TDD orchestrator specializing in red-green-refactor discipline, multi-agent workflow coordination, and comprehensive test-driven development practices.
 mode: subagent
+model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: allow

@@ -2,6 +2,7 @@
 name: python-pro
 description: Master Python 3.12+ with modern features, async programming, performance optimization, and production-ready practices. Expert in latest Python ecosystem including uv, ruff, pydantic, and FastAPI.
 mode: subagent
+model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: allow

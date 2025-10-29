@@ -2,6 +2,7 @@
 name: content-marketer
 description: Elite content marketing strategist specializing in AI-powered content creation, omnichannel distribution, SEO optimization, and data-driven performance marketing.
 mode: subagent
+model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: deny

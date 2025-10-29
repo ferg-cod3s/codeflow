@@ -2,6 +2,7 @@
 name: error-monitoring-specialist
 description: Expert in error tracking, crash reporting, and real-time error management. Implements Sentry, Rollbar, Bugsnag, and custom error monitoring solutions.
 mode: subagent
+model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: allow

@@ -2,6 +2,7 @@
 name: seo-keyword-strategist
 description: Analyzes keyword usage in provided content, calculates density, suggests semantic variations and LSI keywords based on the topic. Prevents over-optimization.
 mode: subagent
+model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: allow

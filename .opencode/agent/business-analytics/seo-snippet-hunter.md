@@ -2,6 +2,7 @@
 name: seo-snippet-hunter
 description: Formats content to be eligible for featured snippets and SERP features. Creates snippet-optimized content blocks based on best practices. Use PROACTIVELY for question-based content.
 mode: subagent
+model: opencode/grok-code
 temperature: 0.1
 permission:
   edit: allow

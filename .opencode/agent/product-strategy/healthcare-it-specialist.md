@@ -2,6 +2,7 @@
 name: healthcare-it-specialist
 description: Expert in healthcare IT systems, medical software development, and healthcare technology compliance
 mode: subagent
+model: opencode/grok-code
 permission:
   edit: deny
   bash: deny
