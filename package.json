@@ -1,6 +1,6 @@
 {
   "name": "@agentic-codeflow/cli",
-  "version": "0.15.2",
+  "version": "0.16.0",
   "description": "AI Agent & Command Distribution Platform - Deploy 33+ specialized AI agents and workflow commands to any project instantly",
   "type": "module",
   "bin": {
