@@ -1,14 +1,14 @@
 # Test Results Report
 
-**Generated:** 2025-10-30T09:43:22.048Z
+**Generated:** 2025-10-30T11:01:15.975Z
 
 ## Summary
 
 - **Total Tests:** 60
-- **Passed:** 57 ✅
-- **Failed:** 3 ❌
+- **Passed:** 59 ✅
+- **Failed:** 1 ❌
 - **Skipped:** 0 ⏭️
-- **Duration:** 2.33s
+- **Duration:** 2.52s
 
 ## Test Suites
 
@@ -16,7 +16,7 @@
 |-------|--------|--------|---------|----------|
 | ✅ CLI Commands | 8 | 0 | 0 | 1.60s |
 | ✅ Format Conversion | 10 | 0 | 0 | 0.15s |
-| ❌ Agent Validation | 10 | 1 | 0 | 0.18s |
-| ❌ Command Validation | 15 | 2 | 0 | 0.20s |
+| ✅ Agent Validation | 11 | 0 | 0 | 0.29s |
+| ❌ Command Validation | 16 | 1 | 0 | 0.26s |
 | ✅ OpenCode Syntax Validation | 7 | 0 | 0 | 0.10s |
 | ✅ OpenCode Variable Substitution | 7 | 0 | 0 | 0.10s |

@@ -1,373 +1,373 @@
 {
   "canonical_agents": [
     {
-      "name": "accessibility-pro",
+      "name": "accessibility_pro",
       "description": "Agent: accessibility pro",
       "category": "design-ux",
       "sources": {
-        "base": "base-agents/design-ux/accessibility-pro.md",
-        "claude-code": ".claude/agents/accessibility-pro.md",
-        "opencode": ".opencode/agent/accessibility-pro.md"
+        "base": "base-agents/design-ux/accessibility_pro.md",
+        "claude-code": ".claude/agents/accessibility_pro.md",
+        "opencode": ".opencode/agent/accessibility_pro.md"
       }
     },
     {
-      "name": "agent-architect",
+      "name": "agent_architect",
       "description": "Agent: agent architect",
       "category": "generalist",
       "sources": {
-        "base": "base-agents/generalist/agent-architect.md",
-        "claude-code": ".claude/agents/agent-architect.md",
-        "opencode": ".opencode/agent/agent-architect.md"
+        "base": "base-agents/generalist/agent_architect.md",
+        "claude-code": ".claude/agents/agent_architect.md",
+        "opencode": ".opencode/agent/agent_architect.md"
       }
     },
     {
-      "name": "agent-ecosystem-manager",
+      "name": "agent_ecosystem_manager",
       "description": "Agent: agent ecosystem manager",
       "category": "generalist",
       "sources": {
-        "base": "base-agents/generalist/agent-ecosystem-manager.md",
-        "claude-code": ".claude/agents/agent-ecosystem-manager.md",
-        "opencode": ".opencode/agent/agent-ecosystem-manager.md"
+        "base": "base-agents/generalist/agent_ecosystem_manager.md",
+        "claude-code": ".claude/agents/agent_ecosystem_manager.md",
+        "opencode": ".opencode/agent/agent_ecosystem_manager.md"
       }
     },
     {
-      "name": "ai-engineer",
+      "name": "ai_engineer",
       "description": "Agent: ai engineer",
       "category": "ai-innovation",
       "sources": {
-        "base": "base-agents/ai-innovation/ai-engineer.md",
-        "claude-code": ".claude/agents/ai-engineer.md",
-        "opencode": ".opencode/agent/ai-engineer.md"
+        "base": "base-agents/ai-innovation/ai_engineer.md",
+        "claude-code": ".claude/agents/ai_engineer.md",
+        "opencode": ".opencode/agent/ai_engineer.md"
       }
     },
     {
-      "name": "ai-integration-expert",
+      "name": "ai_integration_expert",
       "description": "Agent: ai integration expert",
       "category": "ai-innovation",
       "sources": {
-        "base": "base-agents/ai-innovation/ai-integration-expert.md",
-        "claude-code": ".claude/agents/ai-integration-expert.md",
-        "opencode": ".opencode/agent/ai-integration-expert.md"
+        "base": "base-agents/ai-innovation/ai_integration_expert.md",
+        "claude-code": ".claude/agents/ai_integration_expert.md",
+        "opencode": ".opencode/agent/ai_integration_expert.md"
       }
     },
     {
-      "name": "analytics-engineer",
+      "name": "analytics_engineer",
       "description": "Agent: analytics engineer",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/analytics-engineer.md",
-        "claude-code": ".claude/agents/analytics-engineer.md",
-        "opencode": ".opencode/agent/analytics-engineer.md"
+        "base": "base-agents/development/analytics_engineer.md",
+        "claude-code": ".claude/agents/analytics_engineer.md",
+        "opencode": ".opencode/agent/analytics_engineer.md"
       }
     },
     {
-      "name": "api-builder",
+      "name": "api_builder",
       "description": "Agent: api builder",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/api-builder.md",
-        "claude-code": ".claude/agents/api-builder.md",
-        "opencode": ".opencode/agent/api-builder.md"
+        "base": "base-agents/development/api_builder.md",
+        "claude-code": ".claude/agents/api_builder.md",
+        "opencode": ".opencode/agent/api_builder.md"
       }
     },
     {
-      "name": "api-builder-enhanced",
+      "name": "api_builder_enhanced",
       "description": "Agent: api builder enhanced",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/api-builder-enhanced.md",
-        "claude-code": ".claude/agents/api-builder-enhanced.md",
-        "opencode": ".opencode/agent/api-builder-enhanced.md"
+        "base": "base-agents/development/api_builder_enhanced.md",
+        "claude-code": ".claude/agents/api_builder_enhanced.md",
+        "opencode": ".opencode/agent/api_builder_enhanced.md"
       }
     },
     {
-      "name": "api-documenter",
+      "name": "api_documenter",
       "description": "Agent: api documenter",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/api-documenter.md",
-        "claude-code": ".claude/agents/api-documenter.md",
-        "opencode": ".opencode/agent/api-documenter.md"
+        "base": "base-agents/development/api_documenter.md",
+        "claude-code": ".claude/agents/api_documenter.md",
+        "opencode": ".opencode/agent/api_documenter.md"
       }
     },
     {
-      "name": "ar-vr-developer",
+      "name": "ar_vr_developer",
       "description": "Agent: ar vr developer",
       "category": "ai-innovation",
       "sources": {
-        "base": "base-agents/ai-innovation/ar-vr-developer.md",
-        "claude-code": ".claude/agents/ar-vr-developer.md",
-        "opencode": ".opencode/agent/ar-vr-developer.md"
+        "base": "base-agents/ai-innovation/ar_vr_developer.md",
+        "claude-code": ".claude/agents/ar_vr_developer.md",
+        "opencode": ".opencode/agent/ar_vr_developer.md"
       }
     },
     {
-      "name": "architect-review",
+      "name": "architect_review",
       "description": "Agent: architect review",
       "category": "quality-testing",
       "sources": {
-        "base": "base-agents/quality-testing/architect-review.md",
-        "claude-code": ".claude/agents/architect-review.md",
-        "opencode": ".opencode/agent/architect-review.md"
+        "base": "base-agents/quality-testing/architect_review.md",
+        "claude-code": ".claude/agents/architect_review.md",
+        "opencode": ".opencode/agent/architect_review.md"
       }
     },
     {
-      "name": "astro-pro",
+      "name": "astro_pro",
       "description": "Agent: astro pro",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/astro-pro.md",
-        "claude-code": ".claude/agents/astro-pro.md",
-        "opencode": ".opencode/agent/astro-pro.md"
+        "base": "base-agents/development/astro_pro.md",
+        "claude-code": ".claude/agents/astro_pro.md",
+        "opencode": ".opencode/agent/astro_pro.md"
       }
     },
     {
-      "name": "backend-architect",
+      "name": "backend_architect",
       "description": "Agent: backend architect",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/backend-architect.md",
-        "claude-code": ".claude/agents/backend-architect.md",
-        "opencode": ".opencode/agent/backend-architect.md"
+        "base": "base-agents/development/backend_architect.md",
+        "claude-code": ".claude/agents/backend_architect.md",
+        "opencode": ".opencode/agent/backend_architect.md"
       }
     },
     {
-      "name": "backend-security-coder",
+      "name": "backend_security_coder",
       "description": "Agent: backend security coder",
       "category": "quality-testing",
       "sources": {
-        "base": "base-agents/quality-testing/backend-security-coder.md",
-        "claude-code": ".claude/agents/backend-security-coder.md",
-        "opencode": ".opencode/agent/backend-security-coder.md"
+        "base": "base-agents/quality-testing/backend_security_coder.md",
+        "claude-code": ".claude/agents/backend_security_coder.md",
+        "opencode": ".opencode/agent/backend_security_coder.md"
       }
     },
     {
-      "name": "blockchain-developer",
+      "name": "blockchain_developer",
       "description": "Agent: blockchain developer",
       "category": "business-analytics",
       "sources": {
-        "base": "base-agents/business-analytics/blockchain-developer.md",
-        "claude-code": ".claude/agents/blockchain-developer.md",
-        "opencode": ".opencode/agent/blockchain-developer.md"
+        "base": "base-agents/business-analytics/blockchain_developer.md",
+        "claude-code": ".claude/agents/blockchain_developer.md",
+        "opencode": ".opencode/agent/blockchain_developer.md"
       }
     },
     {
-      "name": "business-analyst",
+      "name": "business_analyst",
       "description": "Agent: business analyst",
       "category": "business-analytics",
       "sources": {
-        "base": "base-agents/business-analytics/business-analyst.md",
-        "claude-code": ".claude/agents/business-analyst.md",
-        "opencode": ".opencode/agent/business-analyst.md"
+        "base": "base-agents/business-analytics/business_analyst.md",
+        "claude-code": ".claude/agents/business_analyst.md",
+        "opencode": ".opencode/agent/business_analyst.md"
       }
     },
     {
-      "name": "c-pro",
+      "name": "c_pro",
       "description": "Agent: c pro",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/c-pro.md",
-        "claude-code": ".claude/agents/c-pro.md",
-        "opencode": ".opencode/agent/c-pro.md"
+        "base": "base-agents/development/c_pro.md",
+        "claude-code": ".claude/agents/c_pro.md",
+        "opencode": ".opencode/agent/c_pro.md"
       }
     },
     {
-      "name": "cloud-architect",
+      "name": "cloud_architect",
       "description": "Agent: cloud architect",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/cloud-architect.md",
-        "claude-code": ".claude/agents/cloud-architect.md",
-        "opencode": ".opencode/agent/cloud-architect.md"
+        "base": "base-agents/development/cloud_architect.md",
+        "claude-code": ".claude/agents/cloud_architect.md",
+        "opencode": ".opencode/agent/cloud_architect.md"
       }
     },
     {
-      "name": "code-generation-specialist",
+      "name": "code_generation_specialist",
       "description": "Agent: code generation specialist",
       "category": "generalist",
       "sources": {
-        "base": "base-agents/generalist/code-generation-specialist.md",
-        "claude-code": ".claude/agents/code-generation-specialist.md",
-        "opencode": ".opencode/agent/code-generation-specialist.md"
+        "base": "base-agents/generalist/code_generation_specialist.md",
+        "claude-code": ".claude/agents/code_generation_specialist.md",
+        "opencode": ".opencode/agent/code_generation_specialist.md"
       }
     },
     {
-      "name": "code-reviewer",
+      "name": "code_reviewer",
       "description": "Agent: code reviewer",
       "category": "quality-testing",
       "sources": {
-        "base": "base-agents/quality-testing/code-reviewer.md",
-        "claude-code": ".claude/agents/code-reviewer.md",
-        "opencode": ".opencode/agent/code-reviewer.md"
+        "base": "base-agents/quality-testing/code_reviewer.md",
+        "claude-code": ".claude/agents/code_reviewer.md",
+        "opencode": ".opencode/agent/code_reviewer.md"
       }
     },
     {
-      "name": "codebase-analyzer",
+      "name": "codebase_analyzer",
       "description": "Agent: codebase analyzer",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/codebase-analyzer.md",
-        "claude-code": ".claude/agents/codebase-analyzer.md",
-        "opencode": ".opencode/agent/codebase-analyzer.md"
+        "base": "base-agents/development/codebase_analyzer.md",
+        "claude-code": ".claude/agents/codebase_analyzer.md",
+        "opencode": ".opencode/agent/codebase_analyzer.md"
       }
     },
     {
-      "name": "codebase-locator",
+      "name": "codebase_locator",
       "description": "Agent: codebase locator",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/codebase-locator.md",
-        "claude-code": ".claude/agents/codebase-locator.md",
-        "opencode": ".opencode/agent/codebase-locator.md"
+        "base": "base-agents/development/codebase_locator.md",
+        "claude-code": ".claude/agents/codebase_locator.md",
+        "opencode": ".opencode/agent/codebase_locator.md"
       }
     },
     {
-      "name": "codebase-pattern-finder",
+      "name": "codebase_pattern_finder",
       "description": "Agent: codebase pattern finder",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/codebase-pattern-finder.md",
-        "claude-code": ".claude/agents/codebase-pattern-finder.md",
-        "opencode": ".opencode/agent/codebase-pattern-finder.md"
+        "base": "base-agents/development/codebase_pattern_finder.md",
+        "claude-code": ".claude/agents/codebase_pattern_finder.md",
+        "opencode": ".opencode/agent/codebase_pattern_finder.md"
       }
     },
     {
-      "name": "compliance-expert",
+      "name": "compliance_expert",
       "description": "Agent: compliance expert",
       "category": "quality-testing",
       "sources": {
-        "base": "base-agents/quality-testing/compliance-expert.md",
-        "claude-code": ".claude/agents/compliance-expert.md",
-        "opencode": ".opencode/agent/compliance-expert.md"
+        "base": "base-agents/quality-testing/compliance_expert.md",
+        "claude-code": ".claude/agents/compliance_expert.md",
+        "opencode": ".opencode/agent/compliance_expert.md"
       }
     },
     {
-      "name": "computer-vision-engineer",
+      "name": "computer_vision_engineer",
       "description": "Agent: computer vision engineer",
       "category": "ai-innovation",
       "sources": {
-        "base": "base-agents/ai-innovation/computer-vision-engineer.md",
-        "claude-code": ".claude/agents/computer-vision-engineer.md",
-        "opencode": ".opencode/agent/computer-vision-engineer.md"
+        "base": "base-agents/ai-innovation/computer_vision_engineer.md",
+        "claude-code": ".claude/agents/computer_vision_engineer.md",
+        "opencode": ".opencode/agent/computer_vision_engineer.md"
       }
     },
     {
-      "name": "content-localization-coordinator",
+      "name": "content_localization_coordinator",
       "description": "Agent: content localization coordinator",
       "category": "product-strategy",
       "sources": {
-        "base": "base-agents/product-strategy/content-localization-coordinator.md",
-        "claude-code": ".claude/agents/content-localization-coordinator.md",
-        "opencode": ".opencode/agent/content-localization-coordinator.md"
+        "base": "base-agents/product-strategy/content_localization_coordinator.md",
+        "claude-code": ".claude/agents/content_localization_coordinator.md",
+        "opencode": ".opencode/agent/content_localization_coordinator.md"
       }
     },
     {
-      "name": "content-marketer",
+      "name": "content_marketer",
       "description": "Agent: content marketer",
       "category": "business-analytics",
       "sources": {
-        "base": "base-agents/business-analytics/content-marketer.md",
-        "claude-code": ".claude/agents/content-marketer.md",
-        "opencode": ".opencode/agent/content-marketer.md"
+        "base": "base-agents/business-analytics/content_marketer.md",
+        "claude-code": ".claude/agents/content_marketer.md",
+        "opencode": ".opencode/agent/content_marketer.md"
       }
     },
     {
-      "name": "context-manager",
+      "name": "context_manager",
       "description": "Agent: context manager",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/context-manager.md",
-        "claude-code": ".claude/agents/context-manager.md",
-        "opencode": ".opencode/agent/context-manager.md"
+        "base": "base-agents/development/context_manager.md",
+        "claude-code": ".claude/agents/context_manager.md",
+        "opencode": ".opencode/agent/context_manager.md"
       }
     },
     {
-      "name": "cost-optimizer",
+      "name": "cost_optimizer",
       "description": "Agent: cost optimizer",
       "category": "operations",
       "sources": {
-        "base": "base-agents/operations/cost-optimizer.md",
-        "claude-code": ".claude/agents/cost-optimizer.md",
-        "opencode": ".opencode/agent/cost-optimizer.md"
+        "base": "base-agents/operations/cost_optimizer.md",
+        "claude-code": ".claude/agents/cost_optimizer.md",
+        "opencode": ".opencode/agent/cost_optimizer.md"
       }
     },
     {
-      "name": "cpp-pro",
+      "name": "cpp_pro",
       "description": "Agent: cpp pro",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/cpp-pro.md",
-        "claude-code": ".claude/agents/cpp-pro.md",
-        "opencode": ".opencode/agent/cpp-pro.md"
+        "base": "base-agents/development/cpp_pro.md",
+        "claude-code": ".claude/agents/cpp_pro.md",
+        "opencode": ".opencode/agent/cpp_pro.md"
       }
     },
     {
-      "name": "csharp-pro",
+      "name": "csharp_pro",
       "description": "Agent: csharp pro",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/csharp-pro.md",
-        "claude-code": ".claude/agents/csharp-pro.md",
-        "opencode": ".opencode/agent/csharp-pro.md"
+        "base": "base-agents/development/csharp_pro.md",
+        "claude-code": ".claude/agents/csharp_pro.md",
+        "opencode": ".opencode/agent/csharp_pro.md"
       }
     },
     {
-      "name": "customer-support",
+      "name": "customer_support",
       "description": "Agent: customer support",
       "category": "business-analytics",
       "sources": {
-        "base": "base-agents/business-analytics/customer-support.md",
-        "claude-code": ".claude/agents/customer-support.md",
-        "opencode": ".opencode/agent/customer-support.md"
+        "base": "base-agents/business-analytics/customer_support.md",
+        "claude-code": ".claude/agents/customer_support.md",
+        "opencode": ".opencode/agent/customer_support.md"
       }
     },
     {
-      "name": "data-engineer",
+      "name": "data_engineer",
       "description": "Agent: data engineer",
       "category": "ai-innovation",
       "sources": {
-        "base": "base-agents/ai-innovation/data-engineer.md",
-        "claude-code": ".claude/agents/data-engineer.md",
-        "opencode": ".opencode/agent/data-engineer.md"
+        "base": "base-agents/ai-innovation/data_engineer.md",
+        "claude-code": ".claude/agents/data_engineer.md",
+        "opencode": ".opencode/agent/data_engineer.md"
       }
     },
     {
-      "name": "data-scientist",
+      "name": "data_scientist",
       "description": "Agent: data scientist",
       "category": "ai-innovation",
       "sources": {
-        "base": "base-agents/ai-innovation/data-scientist.md",
-        "claude-code": ".claude/agents/data-scientist.md",
-        "opencode": ".opencode/agent/data-scientist.md"
+        "base": "base-agents/ai-innovation/data_scientist.md",
+        "claude-code": ".claude/agents/data_scientist.md",
+        "opencode": ".opencode/agent/data_scientist.md"
       }
     },
     {
-      "name": "database-admin",
+      "name": "database_admin",
       "description": "Agent: database admin",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/database-admin.md",
-        "claude-code": ".claude/agents/database-admin.md",
-        "opencode": ".opencode/agent/database-admin.md"
+        "base": "base-agents/development/database_admin.md",
+        "claude-code": ".claude/agents/database_admin.md",
+        "opencode": ".opencode/agent/database_admin.md"
       }
     },
     {
-      "name": "database-expert",
+      "name": "database_expert",
       "description": "Agent: database expert",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/database-expert.md",
-        "claude-code": ".claude/agents/database-expert.md",
-        "opencode": ".opencode/agent/database-expert.md"
+        "base": "base-agents/development/database_expert.md",
+        "claude-code": ".claude/agents/database_expert.md",
+        "opencode": ".opencode/agent/database_expert.md"
       }
     },
     {
-      "name": "database-optimizer",
+      "name": "database_optimizer",
       "description": "Agent: database optimizer",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/database-optimizer.md",
-        "claude-code": ".claude/agents/database-optimizer.md",
-        "opencode": ".opencode/agent/database-optimizer.md"
+        "base": "base-agents/development/database_optimizer.md",
+        "claude-code": ".claude/agents/database_optimizer.md",
+        "opencode": ".opencode/agent/database_optimizer.md"
       }
     },
     {
@@ -381,998 +381,998 @@
       }
     },
     {
-      "name": "deployment-engineer",
+      "name": "deployment_engineer",
       "description": "Agent: deployment engineer",
       "category": "operations",
       "sources": {
-        "base": "base-agents/operations/deployment-engineer.md",
-        "claude-code": ".claude/agents/deployment-engineer.md",
-        "opencode": ".opencode/agent/deployment-engineer.md"
+        "base": "base-agents/operations/deployment_engineer.md",
+        "claude-code": ".claude/agents/deployment_engineer.md",
+        "opencode": ".opencode/agent/deployment_engineer.md"
       }
     },
     {
-      "name": "deployment-wizard",
+      "name": "deployment_wizard",
       "description": "Agent: deployment wizard",
       "category": "operations",
       "sources": {
-        "base": "base-agents/operations/deployment-wizard.md",
-        "claude-code": ".claude/agents/deployment-wizard.md",
-        "opencode": ".opencode/agent/deployment-wizard.md"
+        "base": "base-agents/operations/deployment_wizard.md",
+        "claude-code": ".claude/agents/deployment_wizard.md",
+        "opencode": ".opencode/agent/deployment_wizard.md"
       }
     },
     {
-      "name": "development-migrations-specialist",
+      "name": "development_migrations_specialist",
       "description": "Agent: development migrations specialist",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/development-migrations-specialist.md",
-        "claude-code": ".claude/agents/development-migrations-specialist.md",
-        "opencode": ".opencode/agent/development-migrations-specialist.md"
+        "base": "base-agents/development/development_migrations_specialist.md",
+        "claude-code": ".claude/agents/development_migrations_specialist.md",
+        "opencode": ".opencode/agent/development_migrations_specialist.md"
       }
     },
     {
-      "name": "devops-operations-specialist",
+      "name": "devops_operations_specialist",
       "description": "Agent: devops operations specialist",
       "category": "operations",
       "sources": {
-        "base": "base-agents/operations/devops-operations-specialist.md",
-        "claude-code": ".claude/agents/devops-operations-specialist.md",
-        "opencode": ".opencode/agent/devops-operations-specialist.md"
+        "base": "base-agents/operations/devops_operations_specialist.md",
+        "claude-code": ".claude/agents/devops_operations_specialist.md",
+        "opencode": ".opencode/agent/devops_operations_specialist.md"
       }
     },
     {
-      "name": "devops-troubleshooter",
+      "name": "devops_troubleshooter",
       "description": "Agent: devops troubleshooter",
       "category": "operations",
       "sources": {
-        "base": "base-agents/operations/devops-troubleshooter.md",
-        "claude-code": ".claude/agents/devops-troubleshooter.md",
-        "opencode": ".opencode/agent/devops-troubleshooter.md"
+        "base": "base-agents/operations/devops_troubleshooter.md",
+        "claude-code": ".claude/agents/devops_troubleshooter.md",
+        "opencode": ".opencode/agent/devops_troubleshooter.md"
       }
     },
     {
-      "name": "django-pro",
+      "name": "django_pro",
       "description": "Agent: django pro",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/django-pro.md",
-        "claude-code": ".claude/agents/django-pro.md",
-        "opencode": ".opencode/agent/django-pro.md"
+        "base": "base-agents/development/django_pro.md",
+        "claude-code": ".claude/agents/django_pro.md",
+        "opencode": ".opencode/agent/django_pro.md"
       }
     },
     {
-      "name": "docs-architect",
+      "name": "docs_architect",
       "description": "Agent: docs architect",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/docs-architect.md",
-        "claude-code": ".claude/agents/docs-architect.md",
-        "opencode": ".opencode/agent/docs-architect.md"
+        "base": "base-agents/development/docs_architect.md",
+        "claude-code": ".claude/agents/docs_architect.md",
+        "opencode": ".opencode/agent/docs_architect.md"
       }
     },
     {
-      "name": "documentation-specialist",
+      "name": "documentation_specialist",
       "description": "Agent: documentation specialist",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/documentation-specialist.md",
-        "claude-code": ".claude/agents/documentation-specialist.md",
-        "opencode": ".opencode/agent/documentation-specialist.md"
+        "base": "base-agents/development/documentation_specialist.md",
+        "claude-code": ".claude/agents/documentation_specialist.md",
+        "opencode": ".opencode/agent/documentation_specialist.md"
       }
     },
     {
-      "name": "dx-optimizer",
+      "name": "dx_optimizer",
       "description": "Agent: dx optimizer",
       "category": "operations",
       "sources": {
-        "base": "base-agents/operations/dx-optimizer.md",
-        "claude-code": ".claude/agents/dx-optimizer.md",
-        "opencode": ".opencode/agent/dx-optimizer.md"
+        "base": "base-agents/operations/dx_optimizer.md",
+        "claude-code": ".claude/agents/dx_optimizer.md",
+        "opencode": ".opencode/agent/dx_optimizer.md"
       }
     },
     {
-      "name": "ecommerce-specialist",
+      "name": "ecommerce_specialist",
       "description": "Agent: ecommerce specialist",
       "category": "product-strategy",
       "sources": {
-        "base": "base-agents/product-strategy/ecommerce-specialist.md",
-        "claude-code": ".claude/agents/ecommerce-specialist.md",
-        "opencode": ".opencode/agent/ecommerce-specialist.md"
+        "base": "base-agents/product-strategy/ecommerce_specialist.md",
+        "claude-code": ".claude/agents/ecommerce_specialist.md",
+        "opencode": ".opencode/agent/ecommerce_specialist.md"
       }
     },
     {
-      "name": "edge-computing-specialist",
+      "name": "edge_computing_specialist",
       "description": "Agent: edge computing specialist",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/edge-computing-specialist.md",
-        "claude-code": ".claude/agents/edge-computing-specialist.md",
-        "opencode": ".opencode/agent/edge-computing-specialist.md"
+        "base": "base-agents/development/edge_computing_specialist.md",
+        "claude-code": ".claude/agents/edge_computing_specialist.md",
+        "opencode": ".opencode/agent/edge_computing_specialist.md"
       }
     },
     {
-      "name": "elixir-pro",
+      "name": "elixir_pro",
       "description": "Agent: elixir pro",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/elixir-pro.md",
-        "claude-code": ".claude/agents/elixir-pro.md",
-        "opencode": ".opencode/agent/elixir-pro.md"
+        "base": "base-agents/development/elixir_pro.md",
+        "claude-code": ".claude/agents/elixir_pro.md",
+        "opencode": ".opencode/agent/elixir_pro.md"
       }
     },
     {
-      "name": "error-detective",
+      "name": "error_detective",
       "description": "Agent: error detective",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/error-detective.md",
-        "claude-code": ".claude/agents/error-detective.md",
-        "opencode": ".opencode/agent/error-detective.md"
+        "base": "base-agents/development/error_detective.md",
+        "claude-code": ".claude/agents/error_detective.md",
+        "opencode": ".opencode/agent/error_detective.md"
       }
     },
     {
-      "name": "error-monitoring-specialist",
+      "name": "error_monitoring_specialist",
       "description": "Agent: error monitoring specialist",
       "category": "operations",
       "sources": {
-        "base": "base-agents/operations/error-monitoring-specialist.md",
-        "claude-code": ".claude/agents/error-monitoring-specialist.md",
-        "opencode": ".opencode/agent/error-monitoring-specialist.md"
+        "base": "base-agents/operations/error_monitoring_specialist.md",
+        "claude-code": ".claude/agents/error_monitoring_specialist.md",
+        "opencode": ".opencode/agent/error_monitoring_specialist.md"
       }
     },
     {
-      "name": "fastapi-pro",
+      "name": "fastapi_pro",
       "description": "Agent: fastapi pro",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/fastapi-pro.md",
-        "claude-code": ".claude/agents/fastapi-pro.md",
-        "opencode": ".opencode/agent/fastapi-pro.md"
+        "base": "base-agents/development/fastapi_pro.md",
+        "claude-code": ".claude/agents/fastapi_pro.md",
+        "opencode": ".opencode/agent/fastapi_pro.md"
       }
     },
     {
-      "name": "fintech-engineer",
+      "name": "fintech_engineer",
       "description": "Agent: fintech engineer",
       "category": "product-strategy",
       "sources": {
-        "base": "base-agents/product-strategy/fintech-engineer.md",
-        "claude-code": ".claude/agents/fintech-engineer.md",
-        "opencode": ".opencode/agent/fintech-engineer.md"
+        "base": "base-agents/product-strategy/fintech_engineer.md",
+        "claude-code": ".claude/agents/fintech_engineer.md",
+        "opencode": ".opencode/agent/fintech_engineer.md"
       }
     },
     {
-      "name": "flutter-expert",
+      "name": "flutter_expert",
       "description": "Agent: flutter expert",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/flutter-expert.md",
-        "claude-code": ".claude/agents/flutter-expert.md",
-        "opencode": ".opencode/agent/flutter-expert.md"
+        "base": "base-agents/development/flutter_expert.md",
+        "claude-code": ".claude/agents/flutter_expert.md",
+        "opencode": ".opencode/agent/flutter_expert.md"
       }
     },
     {
-      "name": "frontend-developer",
+      "name": "frontend_developer",
       "description": "Agent: frontend developer",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/frontend-developer.md",
-        "claude-code": ".claude/agents/frontend-developer.md",
-        "opencode": ".opencode/agent/frontend-developer.md"
+        "base": "base-agents/development/frontend_developer.md",
+        "claude-code": ".claude/agents/frontend_developer.md",
+        "opencode": ".opencode/agent/frontend_developer.md"
       }
     },
     {
-      "name": "frontend-security-coder",
+      "name": "frontend_security_coder",
       "description": "Agent: frontend security coder",
       "category": "quality-testing",
       "sources": {
-        "base": "base-agents/quality-testing/frontend-security-coder.md",
-        "claude-code": ".claude/agents/frontend-security-coder.md",
-        "opencode": ".opencode/agent/frontend-security-coder.md"
+        "base": "base-agents/quality-testing/frontend_security_coder.md",
+        "claude-code": ".claude/agents/frontend_security_coder.md",
+        "opencode": ".opencode/agent/frontend_security_coder.md"
       }
     },
     {
-      "name": "full-stack-developer",
+      "name": "full_stack_developer",
       "description": "Agent: full stack developer",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/full-stack-developer.md",
-        "claude-code": ".claude/agents/full-stack-developer.md",
-        "opencode": ".opencode/agent/full-stack-developer.md"
+        "base": "base-agents/development/full_stack_developer.md",
+        "claude-code": ".claude/agents/full_stack_developer.md",
+        "opencode": ".opencode/agent/full_stack_developer.md"
       }
     },
     {
-      "name": "github-operations-specialist",
+      "name": "github_operations_specialist",
       "description": "Agent: github operations specialist",
       "category": "operations",
       "sources": {
-        "base": "base-agents/operations/github-operations-specialist.md",
-        "claude-code": ".claude/agents/github-operations-specialist.md",
-        "opencode": ".opencode/agent/github-operations-specialist.md"
+        "base": "base-agents/operations/github_operations_specialist.md",
+        "claude-code": ".claude/agents/github_operations_specialist.md",
+        "opencode": ".opencode/agent/github_operations_specialist.md"
       }
     },
     {
-      "name": "golang-pro",
+      "name": "golang_pro",
       "description": "Agent: golang pro",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/golang-pro.md",
-        "claude-code": ".claude/agents/golang-pro.md",
-        "opencode": ".opencode/agent/golang-pro.md"
+        "base": "base-agents/development/golang_pro.md",
+        "claude-code": ".claude/agents/golang_pro.md",
+        "opencode": ".opencode/agent/golang_pro.md"
       }
     },
     {
-      "name": "graphql-architect",
+      "name": "graphql_architect",
       "description": "Agent: graphql architect",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/graphql-architect.md",
-        "claude-code": ".claude/agents/graphql-architect.md",
-        "opencode": ".opencode/agent/graphql-architect.md"
+        "base": "base-agents/development/graphql_architect.md",
+        "claude-code": ".claude/agents/graphql_architect.md",
+        "opencode": ".opencode/agent/graphql_architect.md"
       }
     },
     {
-      "name": "growth-engineer",
+      "name": "growth_engineer",
       "description": "Agent: growth engineer",
       "category": "business-analytics",
       "sources": {
-        "base": "base-agents/business-analytics/growth-engineer.md",
-        "claude-code": ".claude/agents/growth-engineer.md",
-        "opencode": ".opencode/agent/growth-engineer.md"
+        "base": "base-agents/business-analytics/growth_engineer.md",
+        "claude-code": ".claude/agents/growth_engineer.md",
+        "opencode": ".opencode/agent/growth_engineer.md"
       }
     },
     {
-      "name": "healthcare-it-specialist",
+      "name": "healthcare_it_specialist",
       "description": "Agent: healthcare it specialist",
       "category": "product-strategy",
       "sources": {
-        "base": "base-agents/product-strategy/healthcare-it-specialist.md",
-        "claude-code": ".claude/agents/healthcare-it-specialist.md",
-        "opencode": ".opencode/agent/healthcare-it-specialist.md"
+        "base": "base-agents/product-strategy/healthcare_it_specialist.md",
+        "claude-code": ".claude/agents/healthcare_it_specialist.md",
+        "opencode": ".opencode/agent/healthcare_it_specialist.md"
       }
     },
     {
-      "name": "hr-pro",
+      "name": "hr_pro",
       "description": "Agent: hr pro",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/hr-pro.md",
-        "claude-code": ".claude/agents/hr-pro.md",
-        "opencode": ".opencode/agent/hr-pro.md"
+        "base": "base-agents/development/hr_pro.md",
+        "claude-code": ".claude/agents/hr_pro.md",
+        "opencode": ".opencode/agent/hr_pro.md"
       }
     },
     {
-      "name": "hybrid-cloud-architect",
+      "name": "hybrid_cloud_architect",
       "description": "Agent: hybrid cloud architect",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/hybrid-cloud-architect.md",
-        "claude-code": ".claude/agents/hybrid-cloud-architect.md",
-        "opencode": ".opencode/agent/hybrid-cloud-architect.md"
+        "base": "base-agents/development/hybrid_cloud_architect.md",
+        "claude-code": ".claude/agents/hybrid_cloud_architect.md",
+        "opencode": ".opencode/agent/hybrid_cloud_architect.md"
       }
     },
     {
-      "name": "ide-extension-developer",
+      "name": "ide_extension_developer",
       "description": "Agent: ide extension developer",
       "category": "generalist",
       "sources": {
-        "base": "base-agents/generalist/ide-extension-developer.md",
-        "claude-code": ".claude/agents/ide-extension-developer.md",
-        "opencode": ".opencode/agent/ide-extension-developer.md"
+        "base": "base-agents/generalist/ide_extension_developer.md",
+        "claude-code": ".claude/agents/ide_extension_developer.md",
+        "opencode": ".opencode/agent/ide_extension_developer.md"
       }
     },
     {
-      "name": "incident-responder",
+      "name": "incident_responder",
       "description": "Agent: incident responder",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/incident-responder.md",
-        "claude-code": ".claude/agents/incident-responder.md",
-        "opencode": ".opencode/agent/incident-responder.md"
+        "base": "base-agents/development/incident_responder.md",
+        "claude-code": ".claude/agents/incident_responder.md",
+        "opencode": ".opencode/agent/incident_responder.md"
       }
     },
     {
-      "name": "infrastructure-builder",
+      "name": "infrastructure_builder",
       "description": "Agent: infrastructure builder",
       "category": "operations",
       "sources": {
-        "base": "base-agents/operations/infrastructure-builder.md",
-        "claude-code": ".claude/agents/infrastructure-builder.md",
-        "opencode": ".opencode/agent/infrastructure-builder.md"
+        "base": "base-agents/operations/infrastructure_builder.md",
+        "claude-code": ".claude/agents/infrastructure_builder.md",
+        "opencode": ".opencode/agent/infrastructure_builder.md"
       }
     },
     {
-      "name": "ios-developer",
+      "name": "ios_developer",
       "description": "Agent: ios developer",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/ios-developer.md",
-        "claude-code": ".claude/agents/ios-developer.md",
-        "opencode": ".opencode/agent/ios-developer.md"
+        "base": "base-agents/development/ios_developer.md",
+        "claude-code": ".claude/agents/ios_developer.md",
+        "opencode": ".opencode/agent/ios_developer.md"
       }
     },
     {
-      "name": "iot-device-engineer",
+      "name": "iot_device_engineer",
       "description": "Agent: iot device engineer",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/iot-device-engineer.md",
-        "claude-code": ".claude/agents/iot-device-engineer.md",
-        "opencode": ".opencode/agent/iot-device-engineer.md"
+        "base": "base-agents/development/iot_device_engineer.md",
+        "claude-code": ".claude/agents/iot_device_engineer.md",
+        "opencode": ".opencode/agent/iot_device_engineer.md"
       }
     },
     {
-      "name": "iot-security-specialist",
+      "name": "iot_security_specialist",
       "description": "Agent: iot security specialist",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/iot-security-specialist.md",
-        "claude-code": ".claude/agents/iot-security-specialist.md",
-        "opencode": ".opencode/agent/iot-security-specialist.md"
+        "base": "base-agents/development/iot_security_specialist.md",
+        "claude-code": ".claude/agents/iot_security_specialist.md",
+        "opencode": ".opencode/agent/iot_security_specialist.md"
       }
     },
     {
-      "name": "java-pro",
+      "name": "java_pro",
       "description": "Agent: java pro",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/java-pro.md",
-        "claude-code": ".claude/agents/java-pro.md",
-        "opencode": ".opencode/agent/java-pro.md"
+        "base": "base-agents/development/java_pro.md",
+        "claude-code": ".claude/agents/java_pro.md",
+        "opencode": ".opencode/agent/java_pro.md"
       }
     },
     {
-      "name": "javascript-pro",
+      "name": "javascript_pro",
       "description": "Agent: javascript pro",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/javascript-pro.md",
-        "claude-code": ".claude/agents/javascript-pro.md",
-        "opencode": ".opencode/agent/javascript-pro.md"
+        "base": "base-agents/development/javascript_pro.md",
+        "claude-code": ".claude/agents/javascript_pro.md",
+        "opencode": ".opencode/agent/javascript_pro.md"
       }
     },
     {
-      "name": "kubernetes-architect",
+      "name": "kubernetes_architect",
       "description": "Agent: kubernetes architect",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/kubernetes-architect.md",
-        "claude-code": ".claude/agents/kubernetes-architect.md",
-        "opencode": ".opencode/agent/kubernetes-architect.md"
+        "base": "base-agents/development/kubernetes_architect.md",
+        "claude-code": ".claude/agents/kubernetes_architect.md",
+        "opencode": ".opencode/agent/kubernetes_architect.md"
       }
     },
     {
-      "name": "laravel-vue-developer",
+      "name": "laravel_vue_developer",
       "description": "Agent: laravel vue developer",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/laravel-vue-developer.md",
-        "claude-code": ".claude/agents/laravel-vue-developer.md",
-        "opencode": ".opencode/agent/laravel-vue-developer.md"
+        "base": "base-agents/development/laravel_vue_developer.md",
+        "claude-code": ".claude/agents/laravel_vue_developer.md",
+        "opencode": ".opencode/agent/laravel_vue_developer.md"
       }
     },
     {
-      "name": "legacy-modernizer",
+      "name": "legacy_modernizer",
       "description": "Agent: legacy modernizer",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/legacy-modernizer.md",
-        "claude-code": ".claude/agents/legacy-modernizer.md",
-        "opencode": ".opencode/agent/legacy-modernizer.md"
+        "base": "base-agents/development/legacy_modernizer.md",
+        "claude-code": ".claude/agents/legacy_modernizer.md",
+        "opencode": ".opencode/agent/legacy_modernizer.md"
       }
     },
     {
-      "name": "legal-advisor",
+      "name": "legal_advisor",
       "description": "Agent: legal advisor",
       "category": "business-analytics",
       "sources": {
-        "base": "base-agents/business-analytics/legal-advisor.md",
-        "claude-code": ".claude/agents/legal-advisor.md",
-        "opencode": ".opencode/agent/legal-advisor.md"
+        "base": "base-agents/business-analytics/legal_advisor.md",
+        "claude-code": ".claude/agents/legal_advisor.md",
+        "opencode": ".opencode/agent/legal_advisor.md"
       }
     },
     {
-      "name": "mermaid-expert",
+      "name": "mermaid_expert",
       "description": "Agent: mermaid expert",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/mermaid-expert.md",
-        "claude-code": ".claude/agents/mermaid-expert.md",
-        "opencode": ".opencode/agent/mermaid-expert.md"
+        "base": "base-agents/development/mermaid_expert.md",
+        "claude-code": ".claude/agents/mermaid_expert.md",
+        "opencode": ".opencode/agent/mermaid_expert.md"
       }
     },
     {
-      "name": "minecraft-bukkit-pro",
+      "name": "minecraft_bukkit_pro",
       "description": "Agent: minecraft bukkit pro",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/minecraft-bukkit-pro.md",
-        "claude-code": ".claude/agents/minecraft-bukkit-pro.md",
-        "opencode": ".opencode/agent/minecraft-bukkit-pro.md"
+        "base": "base-agents/development/minecraft_bukkit_pro.md",
+        "claude-code": ".claude/agents/minecraft_bukkit_pro.md",
+        "opencode": ".opencode/agent/minecraft_bukkit_pro.md"
       }
     },
     {
-      "name": "ml-engineer",
+      "name": "ml_engineer",
       "description": "Agent: ml engineer",
       "category": "ai-innovation",
       "sources": {
-        "base": "base-agents/ai-innovation/ml-engineer.md",
-        "claude-code": ".claude/agents/ml-engineer.md",
-        "opencode": ".opencode/agent/ml-engineer.md"
+        "base": "base-agents/ai-innovation/ml_engineer.md",
+        "claude-code": ".claude/agents/ml_engineer.md",
+        "opencode": ".opencode/agent/ml_engineer.md"
       }
     },
     {
-      "name": "mlops-engineer",
+      "name": "mlops_engineer",
       "description": "Agent: mlops engineer",
       "category": "ai-innovation",
       "sources": {
-        "base": "base-agents/ai-innovation/mlops-engineer.md",
-        "claude-code": ".claude/agents/mlops-engineer.md",
-        "opencode": ".opencode/agent/mlops-engineer.md"
+        "base": "base-agents/ai-innovation/mlops_engineer.md",
+        "claude-code": ".claude/agents/mlops_engineer.md",
+        "opencode": ".opencode/agent/mlops_engineer.md"
       }
     },
     {
-      "name": "mobile-developer",
+      "name": "mobile_developer",
       "description": "Agent: mobile developer",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/mobile-developer.md",
-        "claude-code": ".claude/agents/mobile-developer.md",
-        "opencode": ".opencode/agent/mobile-developer.md"
+        "base": "base-agents/development/mobile_developer.md",
+        "claude-code": ".claude/agents/mobile_developer.md",
+        "opencode": ".opencode/agent/mobile_developer.md"
       }
     },
     {
-      "name": "mobile-security-coder",
+      "name": "mobile_security_coder",
       "description": "Agent: mobile security coder",
       "category": "quality-testing",
       "sources": {
-        "base": "base-agents/quality-testing/mobile-security-coder.md",
-        "claude-code": ".claude/agents/mobile-security-coder.md",
-        "opencode": ".opencode/agent/mobile-security-coder.md"
+        "base": "base-agents/quality-testing/mobile_security_coder.md",
+        "claude-code": ".claude/agents/mobile_security_coder.md",
+        "opencode": ".opencode/agent/mobile_security_coder.md"
       }
     },
     {
-      "name": "monitoring-expert",
+      "name": "monitoring_expert",
       "description": "Agent: monitoring expert",
       "category": "operations",
       "sources": {
-        "base": "base-agents/operations/monitoring-expert.md",
-        "claude-code": ".claude/agents/monitoring-expert.md",
-        "opencode": ".opencode/agent/monitoring-expert.md"
+        "base": "base-agents/operations/monitoring_expert.md",
+        "claude-code": ".claude/agents/monitoring_expert.md",
+        "opencode": ".opencode/agent/monitoring_expert.md"
       }
     },
     {
-      "name": "network-engineer",
+      "name": "network_engineer",
       "description": "Agent: network engineer",
       "category": "operations",
       "sources": {
-        "base": "base-agents/operations/network-engineer.md",
-        "claude-code": ".claude/agents/network-engineer.md",
-        "opencode": ".opencode/agent/network-engineer.md"
+        "base": "base-agents/operations/network_engineer.md",
+        "claude-code": ".claude/agents/network_engineer.md",
+        "opencode": ".opencode/agent/network_engineer.md"
       }
     },
     {
-      "name": "observability-engineer",
+      "name": "observability_engineer",
       "description": "Agent: observability engineer",
       "category": "operations",
       "sources": {
-        "base": "base-agents/operations/observability-engineer.md",
-        "claude-code": ".claude/agents/observability-engineer.md",
-        "opencode": ".opencode/agent/observability-engineer.md"
+        "base": "base-agents/operations/observability_engineer.md",
+        "claude-code": ".claude/agents/observability_engineer.md",
+        "opencode": ".opencode/agent/observability_engineer.md"
       }
     },
     {
-      "name": "onboarding-experience-designer",
+      "name": "onboarding_experience_designer",
       "description": "Agent: onboarding experience designer",
       "category": "generalist",
       "sources": {
-        "base": "base-agents/generalist/onboarding-experience-designer.md",
-        "claude-code": ".claude/agents/onboarding-experience-designer.md",
-        "opencode": ".opencode/agent/onboarding-experience-designer.md"
+        "base": "base-agents/generalist/onboarding_experience_designer.md",
+        "claude-code": ".claude/agents/onboarding_experience_designer.md",
+        "opencode": ".opencode/agent/onboarding_experience_designer.md"
       }
     },
     {
-      "name": "operations-incident-commander",
+      "name": "operations_incident_commander",
       "description": "Agent: operations incident commander",
       "category": "operations",
       "sources": {
-        "base": "base-agents/operations/operations-incident-commander.md",
-        "claude-code": ".claude/agents/operations-incident-commander.md",
-        "opencode": ".opencode/agent/operations-incident-commander.md"
+        "base": "base-agents/operations/operations_incident_commander.md",
+        "claude-code": ".claude/agents/operations_incident_commander.md",
+        "opencode": ".opencode/agent/operations_incident_commander.md"
       }
     },
     {
-      "name": "payment-integration",
+      "name": "payment_integration",
       "description": "Agent: payment integration",
       "category": "business-analytics",
       "sources": {
-        "base": "base-agents/business-analytics/payment-integration.md",
-        "claude-code": ".claude/agents/payment-integration.md",
-        "opencode": ".opencode/agent/payment-integration.md"
+        "base": "base-agents/business-analytics/payment_integration.md",
+        "claude-code": ".claude/agents/payment_integration.md",
+        "opencode": ".opencode/agent/payment_integration.md"
       }
     },
     {
-      "name": "performance-engineer",
+      "name": "performance_engineer",
       "description": "Agent: performance engineer",
       "category": "quality-testing",
       "sources": {
-        "base": "base-agents/quality-testing/performance-engineer.md",
-        "claude-code": ".claude/agents/performance-engineer.md",
-        "opencode": ".opencode/agent/performance-engineer.md"
+        "base": "base-agents/quality-testing/performance_engineer.md",
+        "claude-code": ".claude/agents/performance_engineer.md",
+        "opencode": ".opencode/agent/performance_engineer.md"
       }
     },
     {
-      "name": "php-pro",
+      "name": "php_pro",
       "description": "Agent: php pro",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/php-pro.md",
-        "claude-code": ".claude/agents/php-pro.md",
-        "opencode": ".opencode/agent/php-pro.md"
+        "base": "base-agents/development/php_pro.md",
+        "claude-code": ".claude/agents/php_pro.md",
+        "opencode": ".opencode/agent/php_pro.md"
       }
     },
     {
-      "name": "programmatic-seo-engineer",
+      "name": "programmatic_seo_engineer",
       "description": "Agent: programmatic seo engineer",
       "category": "business-analytics",
       "sources": {
-        "base": "base-agents/business-analytics/programmatic-seo-engineer.md",
-        "claude-code": ".claude/agents/programmatic-seo-engineer.md",
-        "opencode": ".opencode/agent/programmatic-seo-engineer.md"
+        "base": "base-agents/business-analytics/programmatic_seo_engineer.md",
+        "claude-code": ".claude/agents/programmatic_seo_engineer.md",
+        "opencode": ".opencode/agent/programmatic_seo_engineer.md"
       }
     },
     {
-      "name": "prompt-engineer",
+      "name": "prompt_engineer",
       "description": "Agent: prompt engineer",
       "category": "ai-innovation",
       "sources": {
-        "base": "base-agents/ai-innovation/prompt-engineer.md",
-        "claude-code": ".claude/agents/prompt-engineer.md",
-        "opencode": ".opencode/agent/prompt-engineer.md"
+        "base": "base-agents/ai-innovation/prompt_engineer.md",
+        "claude-code": ".claude/agents/prompt_engineer.md",
+        "opencode": ".opencode/agent/prompt_engineer.md"
       }
     },
     {
-      "name": "python-pro",
+      "name": "python_pro",
       "description": "Agent: python pro",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/python-pro.md",
-        "claude-code": ".claude/agents/python-pro.md",
-        "opencode": ".opencode/agent/python-pro.md"
+        "base": "base-agents/development/python_pro.md",
+        "claude-code": ".claude/agents/python_pro.md",
+        "opencode": ".opencode/agent/python_pro.md"
       }
     },
     {
-      "name": "quality-testing-performance-tester",
+      "name": "quality_testing_performance_tester",
       "description": "Agent: quality testing performance tester",
       "category": "quality-testing",
       "sources": {
-        "base": "base-agents/quality-testing/quality-testing-performance-tester.md",
-        "claude-code": ".claude/agents/quality-testing-performance-tester.md",
-        "opencode": ".opencode/agent/quality-testing-performance-tester.md"
+        "base": "base-agents/quality-testing/quality_testing_performance_tester.md",
+        "claude-code": ".claude/agents/quality_testing_performance_tester.md",
+        "opencode": ".opencode/agent/quality_testing_performance_tester.md"
       }
     },
     {
-      "name": "quant-analyst",
+      "name": "quant_analyst",
       "description": "Agent: quant analyst",
       "category": "ai-innovation",
       "sources": {
-        "base": "base-agents/ai-innovation/quant-analyst.md",
-        "claude-code": ".claude/agents/quant-analyst.md",
-        "opencode": ".opencode/agent/quant-analyst.md"
+        "base": "base-agents/ai-innovation/quant_analyst.md",
+        "claude-code": ".claude/agents/quant_analyst.md",
+        "opencode": ".opencode/agent/quant_analyst.md"
       }
     },
     {
-      "name": "quantum-computing-developer",
+      "name": "quantum_computing_developer",
       "description": "Agent: quantum computing developer",
       "category": "ai-innovation",
       "sources": {
-        "base": "base-agents/ai-innovation/quantum-computing-developer.md",
-        "claude-code": ".claude/agents/quantum-computing-developer.md",
-        "opencode": ".opencode/agent/quantum-computing-developer.md"
+        "base": "base-agents/ai-innovation/quantum_computing_developer.md",
+        "claude-code": ".claude/agents/quantum_computing_developer.md",
+        "opencode": ".opencode/agent/quantum_computing_developer.md"
       }
     },
     {
-      "name": "rails-expert",
+      "name": "rails_expert",
       "description": "Agent: rails expert",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/rails-expert.md",
-        "claude-code": ".claude/agents/rails-expert.md",
-        "opencode": ".opencode/agent/rails-expert.md"
+        "base": "base-agents/development/rails_expert.md",
+        "claude-code": ".claude/agents/rails_expert.md",
+        "opencode": ".opencode/agent/rails_expert.md"
       }
     },
     {
-      "name": "reference-builder",
+      "name": "reference_builder",
       "description": "Agent: reference builder",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/reference-builder.md",
-        "claude-code": ".claude/agents/reference-builder.md",
-        "opencode": ".opencode/agent/reference-builder.md"
+        "base": "base-agents/development/reference_builder.md",
+        "claude-code": ".claude/agents/reference_builder.md",
+        "opencode": ".opencode/agent/reference_builder.md"
       }
     },
     {
-      "name": "release-manager",
+      "name": "release_manager",
       "description": "Agent: release manager",
       "category": "operations",
       "sources": {
-        "base": "base-agents/operations/release-manager.md",
-        "claude-code": ".claude/agents/release-manager.md",
-        "opencode": ".opencode/agent/release-manager.md"
+        "base": "base-agents/operations/release_manager.md",
+        "claude-code": ".claude/agents/release_manager.md",
+        "opencode": ".opencode/agent/release_manager.md"
       }
     },
     {
-      "name": "research-analyzer",
+      "name": "research_analyzer",
       "description": "Agent: research analyzer",
       "category": "generalist",
       "sources": {
-        "base": "base-agents/generalist/research-analyzer.md",
-        "claude-code": ".claude/agents/research-analyzer.md",
-        "opencode": ".opencode/agent/research-analyzer.md"
+        "base": "base-agents/generalist/research_analyzer.md",
+        "claude-code": ".claude/agents/research_analyzer.md",
+        "opencode": ".opencode/agent/research_analyzer.md"
       }
     },
     {
-      "name": "research-locator",
+      "name": "research_locator",
       "description": "Agent: research locator",
       "category": "generalist",
       "sources": {
-        "base": "base-agents/generalist/research-locator.md",
-        "claude-code": ".claude/agents/research-locator.md",
-        "opencode": ".opencode/agent/research-locator.md"
+        "base": "base-agents/generalist/research_locator.md",
+        "claude-code": ".claude/agents/research_locator.md",
+        "opencode": ".opencode/agent/research_locator.md"
       }
     },
     {
-      "name": "risk-manager",
+      "name": "risk_manager",
       "description": "Agent: risk manager",
       "category": "business-analytics",
       "sources": {
-        "base": "base-agents/business-analytics/risk-manager.md",
-        "claude-code": ".claude/agents/risk-manager.md",
-        "opencode": ".opencode/agent/risk-manager.md"
+        "base": "base-agents/business-analytics/risk_manager.md",
+        "claude-code": ".claude/agents/risk_manager.md",
+        "opencode": ".opencode/agent/risk_manager.md"
       }
     },
     {
-      "name": "ruby-pro",
+      "name": "ruby_pro",
       "description": "Agent: ruby pro",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/ruby-pro.md",
-        "claude-code": ".claude/agents/ruby-pro.md",
-        "opencode": ".opencode/agent/ruby-pro.md"
+        "base": "base-agents/development/ruby_pro.md",
+        "claude-code": ".claude/agents/ruby_pro.md",
+        "opencode": ".opencode/agent/ruby_pro.md"
       }
     },
     {
-      "name": "rust-pro",
+      "name": "rust_pro",
       "description": "Agent: rust pro",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/rust-pro.md",
-        "claude-code": ".claude/agents/rust-pro.md",
-        "opencode": ".opencode/agent/rust-pro.md"
+        "base": "base-agents/development/rust_pro.md",
+        "claude-code": ".claude/agents/rust_pro.md",
+        "opencode": ".opencode/agent/rust_pro.md"
       }
     },
     {
-      "name": "sales-automator",
+      "name": "sales_automator",
       "description": "Agent: sales automator",
       "category": "business-analytics",
       "sources": {
-        "base": "base-agents/business-analytics/sales-automator.md",
-        "claude-code": ".claude/agents/sales-automator.md",
-        "opencode": ".opencode/agent/sales-automator.md"
+        "base": "base-agents/business-analytics/sales_automator.md",
+        "claude-code": ".claude/agents/sales_automator.md",
+        "opencode": ".opencode/agent/sales_automator.md"
       }
     },
     {
-      "name": "scala-pro",
+      "name": "scala_pro",
       "description": "Agent: scala pro",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/scala-pro.md",
-        "claude-code": ".claude/agents/scala-pro.md",
-        "opencode": ".opencode/agent/scala-pro.md"
+        "base": "base-agents/development/scala_pro.md",
+        "claude-code": ".claude/agents/scala_pro.md",
+        "opencode": ".opencode/agent/scala_pro.md"
       }
     },
     {
-      "name": "search-specialist",
+      "name": "search_specialist",
       "description": "Agent: search specialist",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/search-specialist.md",
-        "claude-code": ".claude/agents/search-specialist.md",
-        "opencode": ".opencode/agent/search-specialist.md"
+        "base": "base-agents/development/search_specialist.md",
+        "claude-code": ".claude/agents/search_specialist.md",
+        "opencode": ".opencode/agent/search_specialist.md"
       }
     },
     {
-      "name": "security-auditor",
+      "name": "security_auditor",
       "description": "Agent: security auditor",
       "category": "quality-testing",
       "sources": {
-        "base": "base-agents/quality-testing/security-auditor.md",
-        "claude-code": ".claude/agents/security-auditor.md",
-        "opencode": ".opencode/agent/security-auditor.md"
+        "base": "base-agents/quality-testing/security_auditor.md",
+        "claude-code": ".claude/agents/security_auditor.md",
+        "opencode": ".opencode/agent/security_auditor.md"
       }
     },
     {
-      "name": "security-scanner",
+      "name": "security_scanner",
       "description": "Agent: security scanner",
       "category": "quality-testing",
       "sources": {
-        "base": "base-agents/quality-testing/security-scanner.md",
-        "claude-code": ".claude/agents/security-scanner.md",
-        "opencode": ".opencode/agent/security-scanner.md"
+        "base": "base-agents/quality-testing/security_scanner.md",
+        "claude-code": ".claude/agents/security_scanner.md",
+        "opencode": ".opencode/agent/security_scanner.md"
       }
     },
     {
-      "name": "seo-authority-builder",
+      "name": "seo_authority_builder",
       "description": "Agent: seo authority builder",
       "category": "design-ux",
       "sources": {
-        "base": "base-agents/design-ux/seo-authority-builder.md",
-        "claude-code": ".claude/agents/seo-authority-builder.md",
-        "opencode": ".opencode/agent/seo-authority-builder.md"
+        "base": "base-agents/design-ux/seo_authority_builder.md",
+        "claude-code": ".claude/agents/seo_authority_builder.md",
+        "opencode": ".opencode/agent/seo_authority_builder.md"
       }
     },
     {
-      "name": "seo-cannibalization-detector",
+      "name": "seo_cannibalization_detector",
       "description": "Agent: seo cannibalization detector",
       "category": "business-analytics",
       "sources": {
-        "base": "base-agents/business-analytics/seo-cannibalization-detector.md",
-        "claude-code": ".claude/agents/seo-cannibalization-detector.md",
-        "opencode": ".opencode/agent/seo-cannibalization-detector.md"
+        "base": "base-agents/business-analytics/seo_cannibalization_detector.md",
+        "claude-code": ".claude/agents/seo_cannibalization_detector.md",
+        "opencode": ".opencode/agent/seo_cannibalization_detector.md"
       }
     },
     {
-      "name": "seo-content-auditor",
+      "name": "seo_content_auditor",
       "description": "Agent: seo content auditor",
       "category": "business-analytics",
       "sources": {
-        "base": "base-agents/business-analytics/seo-content-auditor.md",
-        "claude-code": ".claude/agents/seo-content-auditor.md",
-        "opencode": ".opencode/agent/seo-content-auditor.md"
+        "base": "base-agents/business-analytics/seo_content_auditor.md",
+        "claude-code": ".claude/agents/seo_content_auditor.md",
+        "opencode": ".opencode/agent/seo_content_auditor.md"
       }
     },
     {
-      "name": "seo-content-planner",
+      "name": "seo_content_planner",
       "description": "Agent: seo content planner",
       "category": "business-analytics",
       "sources": {
-        "base": "base-agents/business-analytics/seo-content-planner.md",
-        "claude-code": ".claude/agents/seo-content-planner.md",
-        "opencode": ".opencode/agent/seo-content-planner.md"
+        "base": "base-agents/business-analytics/seo_content_planner.md",
+        "claude-code": ".claude/agents/seo_content_planner.md",
+        "opencode": ".opencode/agent/seo_content_planner.md"
       }
     },
     {
-      "name": "seo-content-refresher",
+      "name": "seo_content_refresher",
       "description": "Agent: seo content refresher",
       "category": "business-analytics",
       "sources": {
-        "base": "base-agents/business-analytics/seo-content-refresher.md",
-        "claude-code": ".claude/agents/seo-content-refresher.md",
-        "opencode": ".opencode/agent/seo-content-refresher.md"
+        "base": "base-agents/business-analytics/seo_content_refresher.md",
+        "claude-code": ".claude/agents/seo_content_refresher.md",
+        "opencode": ".opencode/agent/seo_content_refresher.md"
       }
     },
     {
-      "name": "seo-content-writer",
+      "name": "seo_content_writer",
       "description": "Agent: seo content writer",
       "category": "business-analytics",
       "sources": {
-        "base": "base-agents/business-analytics/seo-content-writer.md",
-        "claude-code": ".claude/agents/seo-content-writer.md",
-        "opencode": ".opencode/agent/seo-content-writer.md"
+        "base": "base-agents/business-analytics/seo_content_writer.md",
+        "claude-code": ".claude/agents/seo_content_writer.md",
+        "opencode": ".opencode/agent/seo_content_writer.md"
       }
     },
     {
-      "name": "seo-keyword-strategist",
+      "name": "seo_keyword_strategist",
       "description": "Agent: seo keyword strategist",
       "category": "business-analytics",
       "sources": {
-        "base": "base-agents/business-analytics/seo-keyword-strategist.md",
-        "claude-code": ".claude/agents/seo-keyword-strategist.md",
-        "opencode": ".opencode/agent/seo-keyword-strategist.md"
+        "base": "base-agents/business-analytics/seo_keyword_strategist.md",
+        "claude-code": ".claude/agents/seo_keyword_strategist.md",
+        "opencode": ".opencode/agent/seo_keyword_strategist.md"
       }
     },
     {
-      "name": "seo-meta-optimizer",
+      "name": "seo_meta_optimizer",
       "description": "Agent: seo meta optimizer",
       "category": "business-analytics",
       "sources": {
-        "base": "base-agents/business-analytics/seo-meta-optimizer.md",
-        "claude-code": ".claude/agents/seo-meta-optimizer.md",
-        "opencode": ".opencode/agent/seo-meta-optimizer.md"
+        "base": "base-agents/business-analytics/seo_meta_optimizer.md",
+        "claude-code": ".claude/agents/seo_meta_optimizer.md",
+        "opencode": ".opencode/agent/seo_meta_optimizer.md"
       }
     },
     {
-      "name": "seo-snippet-hunter",
+      "name": "seo_snippet_hunter",
       "description": "Agent: seo snippet hunter",
       "category": "business-analytics",
       "sources": {
-        "base": "base-agents/business-analytics/seo-snippet-hunter.md",
-        "claude-code": ".claude/agents/seo-snippet-hunter.md",
-        "opencode": ".opencode/agent/seo-snippet-hunter.md"
+        "base": "base-agents/business-analytics/seo_snippet_hunter.md",
+        "claude-code": ".claude/agents/seo_snippet_hunter.md",
+        "opencode": ".opencode/agent/seo_snippet_hunter.md"
       }
     },
     {
-      "name": "seo-structure-architect",
+      "name": "seo_structure_architect",
       "description": "Agent: seo structure architect",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/seo-structure-architect.md",
-        "claude-code": ".claude/agents/seo-structure-architect.md",
-        "opencode": ".opencode/agent/seo-structure-architect.md"
+        "base": "base-agents/development/seo_structure_architect.md",
+        "claude-code": ".claude/agents/seo_structure_architect.md",
+        "opencode": ".opencode/agent/seo_structure_architect.md"
       }
     },
     {
-      "name": "smart-subagent-orchestrator",
+      "name": "smart_subagent_orchestrator",
       "description": "Agent: smart subagent orchestrator",
       "category": "generalist",
       "sources": {
-        "base": "base-agents/generalist/smart-subagent-orchestrator.md",
-        "claude-code": ".claude/agents/smart-subagent-orchestrator.md",
-        "opencode": ".opencode/agent/smart-subagent-orchestrator.md"
+        "base": "base-agents/generalist/smart_subagent_orchestrator.md",
+        "claude-code": ".claude/agents/smart_subagent_orchestrator.md",
+        "opencode": ".opencode/agent/smart_subagent_orchestrator.md"
       }
     },
     {
-      "name": "sql-pro",
+      "name": "sql_pro",
       "description": "Agent: sql pro",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/sql-pro.md",
-        "claude-code": ".claude/agents/sql-pro.md",
-        "opencode": ".opencode/agent/sql-pro.md"
+        "base": "base-agents/development/sql_pro.md",
+        "claude-code": ".claude/agents/sql_pro.md",
+        "opencode": ".opencode/agent/sql_pro.md"
       }
     },
     {
-      "name": "svelte-pro",
+      "name": "svelte_pro",
       "description": "Agent: svelte pro",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/svelte-pro.md",
-        "claude-code": ".claude/agents/svelte-pro.md",
-        "opencode": ".opencode/agent/svelte-pro.md"
+        "base": "base-agents/development/svelte_pro.md",
+        "claude-code": ".claude/agents/svelte_pro.md",
+        "opencode": ".opencode/agent/svelte_pro.md"
       }
     },
     {
-      "name": "system-architect",
+      "name": "system_architect",
       "description": "Agent: system architect",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/system-architect.md",
-        "claude-code": ".claude/agents/system-architect.md",
-        "opencode": ".opencode/agent/system-architect.md"
+        "base": "base-agents/development/system_architect.md",
+        "claude-code": ".claude/agents/system_architect.md",
+        "opencode": ".opencode/agent/system_architect.md"
       }
     },
     {
-      "name": "tauri-pro",
+      "name": "tauri_pro",
       "description": "Agent: tauri pro",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/tauri-pro.md",
-        "claude-code": ".claude/agents/tauri-pro.md",
-        "opencode": ".opencode/agent/tauri-pro.md"
+        "base": "base-agents/development/tauri_pro.md",
+        "claude-code": ".claude/agents/tauri_pro.md",
+        "opencode": ".opencode/agent/tauri_pro.md"
       }
     },
     {
-      "name": "tdd-orchestrator",
+      "name": "tdd_orchestrator",
       "description": "Agent: tdd orchestrator",
       "category": "quality-testing",
       "sources": {
-        "base": "base-agents/quality-testing/tdd-orchestrator.md",
-        "claude-code": ".claude/agents/tdd-orchestrator.md",
-        "opencode": ".opencode/agent/tdd-orchestrator.md"
+        "base": "base-agents/quality-testing/tdd_orchestrator.md",
+        "claude-code": ".claude/agents/tdd_orchestrator.md",
+        "opencode": ".opencode/agent/tdd_orchestrator.md"
       }
     },
     {
-      "name": "terraform-specialist",
+      "name": "terraform_specialist",
       "description": "Agent: terraform specialist",
       "category": "operations",
       "sources": {
-        "base": "base-agents/operations/terraform-specialist.md",
-        "claude-code": ".claude/agents/terraform-specialist.md",
-        "opencode": ".opencode/agent/terraform-specialist.md"
+        "base": "base-agents/operations/terraform_specialist.md",
+        "claude-code": ".claude/agents/terraform_specialist.md",
+        "opencode": ".opencode/agent/terraform_specialist.md"
       }
     },
     {
-      "name": "test-automator",
+      "name": "test_automator",
       "description": "Agent: test automator",
       "category": "quality-testing",
       "sources": {
-        "base": "base-agents/quality-testing/test-automator.md",
-        "claude-code": ".claude/agents/test-automator.md",
-        "opencode": ".opencode/agent/test-automator.md"
+        "base": "base-agents/quality-testing/test_automator.md",
+        "claude-code": ".claude/agents/test_automator.md",
+        "opencode": ".opencode/agent/test_automator.md"
       }
     },
     {
-      "name": "test-generator",
+      "name": "test_generator",
       "description": "Agent: test generator",
       "category": "quality-testing",
       "sources": {
-        "base": "base-agents/quality-testing/test-generator.md",
-        "claude-code": ".claude/agents/test-generator.md",
-        "opencode": ".opencode/agent/test-generator.md"
+        "base": "base-agents/quality-testing/test_generator.md",
+        "claude-code": ".claude/agents/test_generator.md",
+        "opencode": ".opencode/agent/test_generator.md"
       }
     },
     {
-      "name": "tutorial-engineer",
+      "name": "tutorial_engineer",
       "description": "Agent: tutorial engineer",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/tutorial-engineer.md",
-        "claude-code": ".claude/agents/tutorial-engineer.md",
-        "opencode": ".opencode/agent/tutorial-engineer.md"
+        "base": "base-agents/development/tutorial_engineer.md",
+        "claude-code": ".claude/agents/tutorial_engineer.md",
+        "opencode": ".opencode/agent/tutorial_engineer.md"
       }
     },
     {
-      "name": "typescript-pro",
+      "name": "typescript_pro",
       "description": "Agent: typescript pro",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/typescript-pro.md",
-        "claude-code": ".claude/agents/typescript-pro.md",
-        "opencode": ".opencode/agent/typescript-pro.md"
+        "base": "base-agents/development/typescript_pro.md",
+        "claude-code": ".claude/agents/typescript_pro.md",
+        "opencode": ".opencode/agent/typescript_pro.md"
       }
     },
     {
-      "name": "ui-ux-designer",
+      "name": "ui_ux_designer",
       "description": "Agent: ui ux designer",
       "category": "design-ux",
       "sources": {
-        "base": "base-agents/design-ux/ui-ux-designer.md",
-        "claude-code": ".claude/agents/ui-ux-designer.md",
-        "opencode": ".opencode/agent/ui-ux-designer.md"
+        "base": "base-agents/design-ux/ui_ux_designer.md",
+        "claude-code": ".claude/agents/ui_ux_designer.md",
+        "opencode": ".opencode/agent/ui_ux_designer.md"
       }
     },
     {
-      "name": "ui-visual-validator",
+      "name": "ui_visual_validator",
       "description": "Agent: ui visual validator",
       "category": "design-ux",
       "sources": {
-        "base": "base-agents/design-ux/ui-visual-validator.md",
-        "claude-code": ".claude/agents/ui-visual-validator.md",
-        "opencode": ".opencode/agent/ui-visual-validator.md"
+        "base": "base-agents/design-ux/ui_visual_validator.md",
+        "claude-code": ".claude/agents/ui_visual_validator.md",
+        "opencode": ".opencode/agent/ui_visual_validator.md"
       }
     },
     {
-      "name": "unity-developer",
+      "name": "unity_developer",
       "description": "Agent: unity developer",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/unity-developer.md",
-        "claude-code": ".claude/agents/unity-developer.md",
-        "opencode": ".opencode/agent/unity-developer.md"
+        "base": "base-agents/development/unity_developer.md",
+        "claude-code": ".claude/agents/unity_developer.md",
+        "opencode": ".opencode/agent/unity_developer.md"
       }
     },
     {
-      "name": "ux-optimizer",
+      "name": "ux_optimizer",
       "description": "Agent: ux optimizer",
       "category": "design-ux",
       "sources": {
-        "base": "base-agents/design-ux/ux-optimizer.md",
-        "claude-code": ".claude/agents/ux-optimizer.md",
-        "opencode": ".opencode/agent/ux-optimizer.md"
+        "base": "base-agents/design-ux/ux_optimizer.md",
+        "claude-code": ".claude/agents/ux_optimizer.md",
+        "opencode": ".opencode/agent/ux_optimizer.md"
       }
     },
     {
-      "name": "web-search-researcher",
+      "name": "web_search_researcher",
       "description": "Agent: web search researcher",
       "category": "generalist",
       "sources": {
-        "base": "base-agents/generalist/web-search-researcher.md",
-        "claude-code": ".claude/agents/web-search-researcher.md",
-        "opencode": ".opencode/agent/web-search-researcher.md"
+        "base": "base-agents/generalist/web_search_researcher.md",
+        "claude-code": ".claude/agents/web_search_researcher.md",
+        "opencode": ".opencode/agent/web_search_researcher.md"
       }
     },
     {
-      "name": "webassembly-developer",
+      "name": "webassembly_developer",
       "description": "Agent: webassembly developer",
       "category": "development",
       "sources": {
-        "base": "base-agents/development/webassembly-developer.md",
-        "claude-code": ".claude/agents/webassembly-developer.md",
-        "opencode": ".opencode/agent/webassembly-developer.md"
+        "base": "base-agents/development/webassembly_developer.md",
+        "claude-code": ".claude/agents/webassembly_developer.md",
+        "opencode": ".opencode/agent/webassembly_developer.md"
       }
     }
   ],
   "total_agents": 137,
-  "last_updated": "2025-10-30T09:43:20.964Z",
+  "last_updated": "2025-10-30T11:01:14.707Z",
   "canonical_directories": [
     "base-agents/",
     ".claude/agents/",
