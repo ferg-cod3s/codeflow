@@ -2,6 +2,7 @@
 name: test
 mode: command
 description: Generate and run a comprehensive testing workflow
+subtask: true
 version: 2.0.0-internal
 last_updated: 2025-09-13
 command_schema_version: 1.0
@@ -39,6 +40,9 @@ failure_modes:
 ---
 
 # Generate Test Suite
+
+**Input**: $ARGUMENTS
+
 
 You are tasked with designing, generating, and executing comprehensive tests for implemented features or plans. This command uses intelligent caching to optimize testing workflows and maintain consistency across similar test generation scenarios.
 

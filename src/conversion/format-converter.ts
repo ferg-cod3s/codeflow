@@ -363,7 +363,7 @@ export class FormatConverter {
 
   /**
    * Extract permissions from base agent in priority order:
-   * 1. Complex permission objects (bash: {...}, edit: 'allow', etc.)
+   * 1. Complex permission objects (bash: {...}, edit: 'allow', etc.) - FLATTENED for OpenCode
    * 2. permissions.opencode field
    * 3. tools object (boolean flags)
    */
@@ -372,19 +372,18 @@ export class FormatConverter {
 
     // Priority 1: Check if permission field exists with complex objects or simple strings
     if (basePermission && typeof basePermission === 'object') {
-      const extracted: Record<string, any> = {};
+      const extracted: Record<string, 'allow' | 'ask' | 'deny'> = {};
 
       for (const [key, value] of Object.entries(basePermission)) {
-        if (typeof value === 'object' && value !== null) {
-          // Preserve complex permission objects (e.g., bash wildcard rules)
-          extracted[key] = value;
-        } else if (typeof value === 'string' && ['allow', 'ask', 'deny'].includes(value)) {
-          // Preserve simple permission strings
-          extracted[key] = value;
-        }
+        // Flatten nested permission objects for OpenCode compatibility
+        extracted[key] = this.flattenNestedPermission(value);
       }
 
       if (Object.keys(extracted).length > 0) {
+        // Ensure webfetch is present with default value if missing
+        if (!extracted.webfetch) {
+          extracted.webfetch = 'allow';
+        }
         return extracted;
       }
     }
@@ -400,6 +399,36 @@ export class FormatConverter {
     }
 
     return undefined;
+  }
+
+  /**
+   * Flatten nested permission objects to simple allow/deny strings
+   * Example: wildcard allow with specific denies -> "allow" (use most permissive value)
+   */
+  private flattenNestedPermission(permission: any): 'allow' | 'ask' | 'deny' {
+    if (typeof permission === 'string') {
+      return permission as 'allow' | 'ask' | 'deny';
+    }
+
+    if (typeof permission === 'object' && permission !== null) {
+      // For OpenCode, we need to flatten to a single value
+      // Strategy: Use the wildcard "*" value if present, otherwise use "allow" if any rule allows
+      if ('*' in permission) {
+        return permission['*'] as 'allow' | 'ask' | 'deny';
+      }
+
+      // Check if any rule allows access
+      const values = Object.values(permission);
+      if (values.includes('allow')) {
+        return 'allow';
+      }
+      if (values.includes('ask')) {
+        return 'ask';
+      }
+      return 'deny';
+    }
+
+    return 'deny'; // Safe default
   }
 
   /**

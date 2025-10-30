@@ -5,7 +5,7 @@
  * Ensures all files have valid YAML before syncing to local and global directories
  */
 
-import { readdir, readFile, writeFile, mkdir, copyFile, stat } from 'fs/promises';
+import { readdir, writeFile, mkdir } from 'fs/promises';
 import { existsSync } from 'fs';
 import { join, basename } from 'path';
 import { homedir } from 'os';
@@ -15,7 +15,6 @@ import {
   parseCommandFile,
   serializeAgent,
   serializeCommand,
-  Agent,
   Command,
 } from './conversion/agent-parser';
 import { FormatConverter } from './conversion/format-converter';

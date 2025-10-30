@@ -2,6 +2,7 @@
 name: execute
 mode: command
 description: Execute a specific implementation plan from docs/plans/
+subtask: true
 version: 2.0.0-internal
 last_updated: 2025-09-13
 command_schema_version: 1.0
@@ -39,6 +40,8 @@ failure_modes:
 ---
 
 # Execute Implementation Plan
+
+**Plan Path**: $ARGUMENTS
 
 You are tasked with implementing an approved technical plan from `docs/plans/`. This command uses intelligent caching to optimize implementation workflows and maintain consistency across similar execution patterns.
 

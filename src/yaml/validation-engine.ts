@@ -93,10 +93,10 @@ export class ValidationEngine {
     );
 
     // Name format validation
-    if (agent.name && !/^[a-z0-9-]+$/.test(agent.name)) {
+    if (agent.name && !/^[a-z0-9-_]+$/.test(agent.name)) {
       warnings.push({
         field: 'name',
-        message: 'Name should use lowercase letters, numbers, and hyphens only',
+        message: 'Name should use lowercase letters, numbers, hyphens, and underscores only',
       });
     }
 
@@ -150,10 +150,10 @@ export class ValidationEngine {
     );
 
     // Name format validation
-    if (agent.name && !/^[a-z0-9-]+$/.test(agent.name)) {
+    if (agent.name && !/^[a-z0-9-_]+$/.test(agent.name)) {
       warnings.push({
         field: 'name',
-        message: 'Name should use lowercase letters, numbers, and hyphens only',
+        message: 'Name should use lowercase letters, numbers, hyphens, and underscores only',
       });
     }
 
@@ -228,10 +228,10 @@ export class ValidationEngine {
     );
 
     // Name format validation
-    if (agent.name && !/^[a-z0-9-]+$/.test(agent.name)) {
+    if (agent.name && !/^[a-z0-9-_]+$/.test(agent.name)) {
       warnings.push({
         field: 'name',
-        message: 'Name should use lowercase letters, numbers, and hyphens only',
+        message: 'Name should use lowercase letters, numbers, hyphens, and underscores only',
       });
     }
 

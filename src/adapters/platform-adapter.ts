@@ -49,11 +49,11 @@ export type StreamingCallback = (chunk: string) => void;
 
 /**
  * Platform Adapter Interface
- * 
+ *
  * Abstracts platform-specific agent invocation mechanisms:
  * - Claude Code: File-based agents, Task tool invocations
  * - OpenCode: MCP client, tool invocations, streaming support
- * 
+ *
  * All implementations must provide these capabilities.
  */
 export interface PlatformAdapter {
@@ -91,30 +91,25 @@ export interface PlatformAdapter {
 
   /**
    * Invoke a single agent
-   * 
+   *
    * @param agentName - Name of the agent to invoke
    * @param context - Invocation context (objective, parameters, etc.)
    * @returns Promise resolving to invocation result
    */
-  invokeAgent(
-    agentName: string,
-    context: AgentInvocationContext
-  ): Promise<AgentInvocationResult>;
+  invokeAgent(agentName: string, context: AgentInvocationContext): Promise<AgentInvocationResult>;
 
   /**
    * Invoke multiple agents in parallel
-   * 
+   *
    * @param requests - Array of batch invocation requests
    * @returns Promise resolving to array of results
    */
-  invokeAgentsBatch(
-    requests: BatchInvocationRequest[]
-  ): Promise<AgentInvocationResult[]>;
+  invokeAgentsBatch(requests: BatchInvocationRequest[]): Promise<AgentInvocationResult[]>;
 
   /**
    * Invoke an agent with streaming support
    * Only supported by platforms that implement streaming (OpenCode)
-   * 
+   *
    * @param agentName - Name of the agent to invoke
    * @param context - Invocation context
    * @param onChunk - Callback for streaming chunks
@@ -138,6 +133,7 @@ export interface PlatformAdapter {
  */
 export abstract class BasePlatformAdapter implements PlatformAdapter {
   abstract readonly platform: Platform;
+  abstract readonly projectRoot: string;
   protected initialized: boolean = false;
   protected agentCache: Map<string, AgentMetadata> = new Map();
 
@@ -160,7 +156,7 @@ export abstract class BasePlatformAdapter implements PlatformAdapter {
 
     // Discover agents and update cache
     const agents = await this.discoverAgents();
-    agents.forEach(agent => this.agentCache.set(agent.name, agent));
+    agents.forEach((agent) => this.agentCache.set(agent.name, agent));
 
     return this.agentCache.get(agentName) || null;
   }
@@ -169,9 +165,7 @@ export abstract class BasePlatformAdapter implements PlatformAdapter {
    * Default batch implementation (sequential)
    * Subclasses can override for true parallel execution
    */
-  async invokeAgentsBatch(
-    requests: BatchInvocationRequest[]
-  ): Promise<AgentInvocationResult[]> {
+  async invokeAgentsBatch(requests: BatchInvocationRequest[]): Promise<AgentInvocationResult[]> {
     const results: AgentInvocationResult[] = [];
 
     for (const request of requests) {
@@ -221,10 +215,7 @@ export abstract class BasePlatformAdapter implements PlatformAdapter {
 /**
  * Create an error result
  */
-export function createErrorResult(
-  agentName: string,
-  error: Error | string
-): AgentInvocationResult {
+export function createErrorResult(agentName: string, error: Error | string): AgentInvocationResult {
   return {
     agentName,
     success: false,

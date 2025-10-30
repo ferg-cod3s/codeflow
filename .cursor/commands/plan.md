@@ -2,6 +2,7 @@
 name: plan
 mode: command
 description: Create an implementation plan from a ticket and research
+subtask: true
 version: 2.0.0-internal
 last_updated: 2025-09-13
 command_schema_version: 1.0
@@ -39,6 +40,8 @@ failure_modes:
 ---
 
 # Create Implementation Plan
+
+**Plan For**: $ARGUMENTS
 
 You are tasked with creating detailed implementation plans through an interactive, iterative process. This command uses intelligent caching to optimize research workflows and maintain consistency across similar planning scenarios.
 

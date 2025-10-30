@@ -741,6 +741,16 @@
       }
     },
     {
+      "name": "laravel-vue-developer",
+      "description": "Agent: laravel vue developer",
+      "category": "development",
+      "sources": {
+        "base": "base-agents/development/laravel-vue-developer.md",
+        "claude-code": ".claude/agents/laravel-vue-developer.md",
+        "opencode": ".opencode/agent/laravel-vue-developer.md"
+      }
+    },
+    {
       "name": "legacy-modernizer",
       "description": "Agent: legacy modernizer",
       "category": "development",
@@ -958,6 +968,16 @@
         "base": "base-agents/ai-innovation/quantum-computing-developer.md",
         "claude-code": ".claude/agents/quantum-computing-developer.md",
         "opencode": ".opencode/agent/quantum-computing-developer.md"
+      }
+    },
+    {
+      "name": "rails-expert",
+      "description": "Agent: rails expert",
+      "category": "development",
+      "sources": {
+        "base": "base-agents/development/rails-expert.md",
+        "claude-code": ".claude/agents/rails-expert.md",
+        "opencode": ".opencode/agent/rails-expert.md"
       }
     },
     {
@@ -1351,8 +1371,8 @@
       }
     }
   ],
-  "total_agents": 135,
-  "last_updated": "2025-10-27T15:40:16.062Z",
+  "total_agents": 137,
+  "last_updated": "2025-10-30T09:43:20.964Z",
   "canonical_directories": [
     "base-agents/",
     ".claude/agents/",

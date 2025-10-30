@@ -141,6 +141,36 @@ function detectFormatFromContent(content: string): 'base' | 'claude-code' | 'ope
 }
 
 /**
+ * Flatten nested permission objects to simple allow/deny strings
+ * Example: wildcard allow with specific denies -> "allow" (use most permissive value)
+ */
+function flattenNestedPermission(permission: any): 'allow' | 'ask' | 'deny' {
+  if (typeof permission === 'string') {
+    return permission as 'allow' | 'ask' | 'deny';
+  }
+
+  if (typeof permission === 'object' && permission !== null) {
+    // For OpenCode, we need to flatten to a single value
+    // Strategy: Use the wildcard "*" value if present, otherwise use "allow" if any rule allows
+    if ('*' in permission) {
+      return permission['*'] as 'allow' | 'ask' | 'deny';
+    }
+
+    // Check if any rule allows access
+    const values = Object.values(permission);
+    if (values.includes('allow')) {
+      return 'allow';
+    }
+    if (values.includes('ask')) {
+      return 'ask';
+    }
+    return 'deny';
+  }
+
+  return 'deny'; // Safe default
+}
+
+/**
  * Normalize permission format between tools: and permission: formats
  */
 export function normalizePermissionFormat(frontmatter: any): any {
@@ -151,22 +181,24 @@ export function normalizePermissionFormat(frontmatter: any): any {
     frontmatter.permission &&
     typeof frontmatter.permission === 'object'
   ) {
-    // Preserve complex permission objects (like bash wildcards), only use tools as fallback
+    // Flatten nested permission objects for OpenCode compatibility
     const permissions = {
-      read:
-        frontmatter.permission.read || booleanToPermissionString(frontmatter.tools.read || false),
-      write:
-        frontmatter.permission.write || booleanToPermissionString(frontmatter.tools.write || false),
-      edit:
-        frontmatter.permission.edit || booleanToPermissionString(frontmatter.tools.edit || false),
-      bash:
-        typeof frontmatter.permission.bash === 'object'
-          ? frontmatter.permission.bash
-          : frontmatter.permission.bash ||
-            booleanToPermissionString(frontmatter.tools.bash || false),
-      webfetch:
+      read: flattenNestedPermission(
+        frontmatter.permission.read || booleanToPermissionString(frontmatter.tools.read || false)
+      ),
+      write: flattenNestedPermission(
+        frontmatter.permission.write || booleanToPermissionString(frontmatter.tools.write || false)
+      ),
+      edit: flattenNestedPermission(
+        frontmatter.permission.edit || booleanToPermissionString(frontmatter.tools.edit || false)
+      ),
+      bash: flattenNestedPermission(
+        frontmatter.permission.bash || booleanToPermissionString(frontmatter.tools.bash || false)
+      ),
+      webfetch: flattenNestedPermission(
         frontmatter.permission.webfetch ||
-        booleanToPermissionString(frontmatter.tools.webfetch !== false),
+          booleanToPermissionString(frontmatter.tools.webfetch !== false)
+      ),
     };
 
     // Remove individual permission fields and tools to avoid duplication
@@ -221,8 +253,14 @@ export function normalizePermissionFormat(frontmatter: any): any {
     };
   }
 
-  // If agent already uses permission: format, remove individual permission fields to avoid duplication
+  // If agent already uses permission: format, flatten nested permissions and remove individual permission fields
   if (frontmatter.permission && typeof frontmatter.permission === 'object') {
+    // Flatten nested permission structures for OpenCode compatibility
+    const flattenedPermissions: Record<string, 'allow' | 'ask' | 'deny'> = {};
+    for (const [key, value] of Object.entries(frontmatter.permission)) {
+      flattenedPermissions[key] = flattenNestedPermission(value);
+    }
+
     // Remove individual permission fields that might exist alongside the permission block
     const {
       _edit,
@@ -236,7 +274,11 @@ export function normalizePermissionFormat(frontmatter: any): any {
       _write,
       ...cleanFrontmatter
     } = frontmatter;
-    return cleanFrontmatter;
+
+    return {
+      ...cleanFrontmatter,
+      permission: flattenedPermissions,
+    };
   }
 
   // If no permission format found, return as-is (for Claude Code and other formats that don't use permissions)

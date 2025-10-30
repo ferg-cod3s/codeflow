@@ -26,6 +26,9 @@ failure_modes:
 
 # CodeFlow Development Guidance
 
+**Input**: $ARGUMENTS
+
+
 This command provides guidance for working with the CodeFlow system and development workflows.
 
 ## Purpose
@@ -299,7 +302,7 @@ name: research
 mode: command
 scope: codebase
 depth: deep
-model: anthropic/claude-sonnet-4
+model: opencode/grok-code
 temperature: 0.1
 ---
 Research query here...

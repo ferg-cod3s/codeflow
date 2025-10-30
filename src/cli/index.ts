@@ -486,7 +486,8 @@ switch (command) {
       process.cwd(),
       homedir(),
     ]);
-    await exportProject(safeExportPath, {
+    await exportProject({
+      projectRoot: safeExportPath,
       format: values.format || 'json',
       output: values.output,
       includeContent: values['include-content'],
