@@ -51,33 +51,36 @@ describe('Setup Agents Functionality', () => {
   });
 
   describe('getAgentSourceDirs', () => {
-    test('should return cwd codeflow-agents when it exists', () => {
+    test('should return only base-agents directory as single source', () => {
       const sourcePath = tempDir;
       const targetFormat = 'claude-code';
 
-      // Since we're in the project directory, codeflow-agents exists in cwd
+      // After fix: only returns base-agents (single source of truth)
       const result = getAgentSourceDirs(sourcePath, targetFormat);
-      expect(result[0]).toBe(join(process.cwd(), 'codeflow-agents'));
-      expect(result[1]).toBe(join(sourcePath, 'claude-agents'));
+      expect(result).toHaveLength(1);
+      expect(result[0]).toMatch(/base-agents$/);
     });
 
-    test('should return source path fallbacks when cwd directories do not exist', () => {
+    test('should return same base-agents directory regardless of target format', () => {
       const sourcePath = tempDir;
-      const targetFormat = 'opencode';
 
-      // Test the fallback behavior by checking what happens when cwd doesn't have the dirs
-      // This is harder to test in isolation, so we'll test the general structure
-      const result = getAgentSourceDirs(sourcePath, targetFormat);
-      expect(result).toHaveLength(2);
-      expect(result[0]).toMatch(/codeflow-agents$/);
-      expect(result[1]).toMatch(/opencode-agents$/);
+      // All formats should use the same base-agents source
+      const claudeResult = getAgentSourceDirs(sourcePath, 'claude-code');
+      const opencodeResult = getAgentSourceDirs(sourcePath, 'opencode');
+      const cursorResult = getAgentSourceDirs(sourcePath, 'cursor');
+
+      expect(claudeResult).toHaveLength(1);
+      expect(opencodeResult).toHaveLength(1);
+      expect(cursorResult).toHaveLength(1);
+      expect(claudeResult[0]).toBe(opencodeResult[0]);
+      expect(claudeResult[0]).toBe(cursorResult[0]);
     });
   });
 
   describe('copyAgentsWithConversion', () => {
     test('should successfully convert base agents to claude-code format', async () => {
-      // Create source directory with base agent in temp location
-      const sourceDir = join(tempDir, 'codeflow-agents');
+      // Create base-agents subdirectory in temp location (new single source)
+      const sourceDir = join(tempDir, 'base-agents');
       await mkdir(sourceDir, { recursive: true });
 
       const baseAgentContent = `---
@@ -103,7 +106,7 @@ This is a test agent.
       const targetDir = join(tempDir, 'target');
       await mkdir(targetDir, { recursive: true });
 
-      // Temporarily change to temp directory so cwd checks don't find real agents
+      // Temporarily change to temp directory so cwd checks find our test base-agents
       const originalCwd = process.cwd();
       process.chdir(tempDir);
 
@@ -127,8 +130,8 @@ This is a test agent.
     });
 
     test('should handle parsing errors gracefully', async () => {
-      // Create source directory with malformed agent
-      const sourceDir = join(tempDir, 'codeflow-agents');
+      // Create base-agents directory with malformed agent
+      const sourceDir = join(tempDir, 'base-agents');
       await mkdir(sourceDir, { recursive: true });
 
       const malformedContent = `---
@@ -165,18 +168,19 @@ tools:
       }
     });
 
-    test('should handle missing source directory', async () => {
+    test('should fallback to package root base-agents when local base-agents missing', async () => {
       const targetDir = join(tempDir, 'target');
       await mkdir(targetDir, { recursive: true });
 
-      // Temporarily change to temp directory where no agents exist
+      // Temporarily change to temp directory where no base-agents exists
       const originalCwd = process.cwd();
       process.chdir(tempDir);
 
       try {
         const result = await copyAgentsWithConversion(tempDir, targetDir, 'claude-code');
 
-        expect(result).toBe(0); // No agents converted
+        // With new architecture, should fallback to package root base-agents (135 agents)
+        expect(result).toBeGreaterThan(0); // Falls back to package root base-agents
         expect(result).toBeDefined(); // Should not throw
       } finally {
         process.chdir(originalCwd);
@@ -327,8 +331,8 @@ tools:
 
   describe('Performance monitoring integration', () => {
     test('should track agent parsing performance', async () => {
-      // Create a test agent file
-      const agentDir = join(tempDir, 'codeflow-agents');
+      // Create a test agent file in base-agents
+      const agentDir = join(tempDir, 'base-agents');
       await mkdir(agentDir, { recursive: true });
 
       const agentContent = `---

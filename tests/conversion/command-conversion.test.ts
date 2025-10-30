@@ -137,7 +137,7 @@ This is a test command.
       expect(result).toContain('mode: command');
 
       // OpenCode commands MUST have model field (per MODEL_CONFIGURATION.md)
-      expect(result).toContain('model: anthropic/claude-sonnet-4-20250514');
+      expect(result).toContain('model: opencode/grok-code');
 
       // Should contain inputs structure
       expect(result).toContain('inputs:');
@@ -211,7 +211,7 @@ Test content.
       expect(result).not.toContain('params:');
 
       // OpenCode commands MUST have model field (per MODEL_CONFIGURATION.md)
-      expect(result).toContain('model: anthropic/claude-sonnet-4-20250514');
+      expect(result).toContain('model: opencode/grok-code');
     });
   });
 
@@ -236,7 +236,7 @@ Test content.
 
       const result = (converter as any).convertClaudeCodeToOpenCode(frontmatter);
       // OpenCode commands MUST have model field (per MODEL_CONFIGURATION.md)
-      expect(result.model).toBe('anthropic/claude-sonnet-4-20250514');
+      expect(result.model).toBe('opencode/grok-code');
     });
   });
 
@@ -287,7 +287,7 @@ Test content.
       const opencodeResult = await converter.convertFile(testCommandPath, 'opencode');
       expect(opencodeResult).toContain('mode: command');
       // OpenCode commands MUST have model field (per MODEL_CONFIGURATION.md)
-      expect(opencodeResult).toContain('model: anthropic/claude-sonnet-4-20250514');
+      expect(opencodeResult).toContain('model: opencode/grok-code');
     });
   });
 });

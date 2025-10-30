@@ -311,7 +311,9 @@ export function getAgentSourceDirs(sourcePath: string, targetFormat: SupportedFo
   const sourceDirs: string[] = [];
   const packageRoot = getPackageRoot();
 
-  // Primary source: base-agents directory (our single source of truth)
+  // ONLY source: base-agents directory (single source of truth)
+  // Pre-converted platform directories (.claude/agents, .opencode/agent, .cursor/agents)
+  // are TARGETS, not sources - never include them as sources to avoid double conversion
   // Try in order: cwd, package root, sourcePath
   const baseAgentsCandidates = [
     join(process.cwd(), 'base-agents'),
@@ -323,45 +325,6 @@ export function getAgentSourceDirs(sourcePath: string, targetFormat: SupportedFo
     if (existsSync(candidate)) {
       sourceDirs.push(candidate);
       break;
-    }
-  }
-
-  // Secondary source: Pre-converted agents for the target format
-  if (targetFormat === 'claude-code') {
-    const claudeAgentsCandidates = [
-      join(process.cwd(), '.claude', 'agents'),
-      join(packageRoot, '.claude', 'agents'),
-      join(sourcePath, '.claude', 'agents'),
-    ];
-    for (const candidate of claudeAgentsCandidates) {
-      if (existsSync(candidate)) {
-        sourceDirs.push(candidate);
-        break;
-      }
-    }
-  } else if (targetFormat === 'opencode') {
-    const opencodeAgentsCandidates = [
-      join(process.cwd(), '.opencode', 'agent'),
-      join(packageRoot, '.opencode', 'agent'),
-      join(sourcePath, '.opencode', 'agent'),
-    ];
-    for (const candidate of opencodeAgentsCandidates) {
-      if (existsSync(candidate)) {
-        sourceDirs.push(candidate);
-        break;
-      }
-    }
-  } else if (targetFormat === 'cursor') {
-    const cursorAgentsCandidates = [
-      join(process.cwd(), '.cursor', 'agents'),
-      join(packageRoot, '.cursor', 'agents'),
-      join(sourcePath, '.cursor', 'agents'),
-    ];
-    for (const candidate of cursorAgentsCandidates) {
-      if (existsSync(candidate)) {
-        sourceDirs.push(candidate);
-        break;
-      }
     }
   }
 

@@ -18,12 +18,12 @@ export const testPaths = {
   agents: {
     claude: join(process.cwd(), '.claude', 'agents'),
     opencode: join(process.cwd(), '.opencode', 'agent'),
-    source: join(process.cwd(), 'codeflow-agents'),
+    source: join(process.cwd(), 'base-agents'),
   },
   commands: {
     claude: join(process.cwd(), '.claude', 'commands'),
-    opencode: join(process.cwd(), 'opencode-commands'),
-    source: join(process.cwd(), 'codeflow-commands'),
+    opencode: join(process.cwd(), '.opencode', 'command'),
+    source: join(process.cwd(), 'command'),
   },
   mcp: {
     claude: join(process.cwd(), 'mcp-servers', 'claude'),
