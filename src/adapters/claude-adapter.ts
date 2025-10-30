@@ -24,10 +24,12 @@ import { Platform } from '../config/platform-detector.js';
  */
 export class ClaudeCodeAdapter extends BasePlatformAdapter {
   readonly platform = Platform.CLAUDE_CODE;
+  readonly projectRoot: string;
   private agentsDirectory: string;
 
   constructor(projectRoot: string) {
     super();
+    this.projectRoot = projectRoot;
     this.agentsDirectory = join(projectRoot, '.claude', 'agents');
   }
 

@@ -25,7 +25,7 @@ describe('Build Manifest', () => {
   beforeEach(async () => {
     // Create test project structure
     testProjectRoot = join(TEST_DIR, `build-manifest-test-${Date.now()}`);
-    agentsDir = join(testProjectRoot, 'codeflow-agents');
+    agentsDir = join(testProjectRoot, 'base-agents');
 
     await mkdir(testProjectRoot, { recursive: true });
     await mkdir(agentsDir, { recursive: true });
@@ -259,7 +259,7 @@ describe('Build Manifest', () => {
 
       const manifest = (await Bun.file(outputFile).json()) as AgentManifest;
 
-      expect(manifest.canonical_directories).toContain('codeflow-agents/');
+      expect(manifest.canonical_directories).toContain('base-agents/');
       expect(manifest.canonical_directories).toContain('.claude/agents/');
       expect(manifest.canonical_directories).toContain('.opencode/agent/');
     });
@@ -289,13 +289,13 @@ describe('Build Manifest', () => {
 
       expect(agent.name).toBe('codebase-analyzer');
       expect(agent.description).toBe('Agent: codebase analyzer');
-      expect(agent.category).toBe('core-workflow'); // codebase-analyzer matches core-workflow pattern
+      expect(agent.category).toBe('development'); // Category determined by directory structure
 
       expect(agent.sources).toHaveProperty('base');
       expect(agent.sources).toHaveProperty('claude-code');
       expect(agent.sources).toHaveProperty('opencode');
 
-      expect(agent.sources.base).toBe('codeflow-agents/development/codebase-analyzer.md');
+      expect(agent.sources.base).toBe('base-agents/development/codebase-analyzer.md');
       expect(agent.sources['claude-code']).toBe('.claude/agents/codebase-analyzer.md');
       expect(agent.sources.opencode).toBe('.opencode/agent/codebase-analyzer.md');
     });
@@ -329,6 +329,8 @@ describe('Build Manifest', () => {
       await mkdir(devDir, { recursive: true });
       await writeFile(join(devDir, 'test-agent.md'), 'Test agent');
 
+      const outputFile = join(testProjectRoot, 'verbose-test-manifest.json');
+
       // Capture console output
       const originalConsoleLog = console.log;
       let consoleOutput = '';
@@ -339,6 +341,7 @@ describe('Build Manifest', () => {
       try {
         await buildManifest({
           projectRoot: testProjectRoot,
+          output: outputFile,
           verbose: true,
         });
 
@@ -366,8 +369,13 @@ describe('Build Manifest', () => {
       await mkdir(devDir, { recursive: true });
       await writeFile(join(devDir, 'test-agent.md'), 'Test agent');
 
-      // Should not throw with default options
-      await expect(buildManifest()).resolves.toBeUndefined();
+      const outputFile = join(testProjectRoot, 'default-options-manifest.json');
+
+      // Should not throw with minimal options (projectRoot + output)
+      await expect(buildManifest({
+        projectRoot: testProjectRoot,
+        output: outputFile,
+      })).resolves.toBeUndefined();
     });
 
     test('should respect custom output path', async () => {
@@ -378,12 +386,11 @@ describe('Build Manifest', () => {
       const customOutput = join(testProjectRoot, 'custom-manifest.json');
 
       await buildManifest({
+        projectRoot: testProjectRoot,
         output: customOutput,
       });
 
       expect(existsSync(customOutput)).toBe(true);
-      // Note: buildManifest always creates default AGENT_MANIFEST.json when no output specified
-      // This test verifies custom output works, but doesn't prevent default creation
     });
 
     test('should respect project root option', async () => {

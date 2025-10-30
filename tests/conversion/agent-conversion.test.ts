@@ -287,12 +287,14 @@ This agent has no explicit permissions.
     const baseAgent = await parseAgentFile(noPermPath, 'base');
     const openCodeAgent = converter.convert(baseAgent, 'opencode');
 
-    // Should have default permissions
+    // Should have default permissions (including read/write from parser)
     const openCodeFrontmatter = openCodeAgent.frontmatter as OpenCodeAgent;
     expect(openCodeFrontmatter.permission).toEqual({
       edit: 'deny',
       bash: 'deny',
+      read: 'allow',
       webfetch: 'allow',
+      write: 'deny',
     });
   });
 });

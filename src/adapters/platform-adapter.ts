@@ -63,6 +63,11 @@ export interface PlatformAdapter {
   readonly platform: Platform;
 
   /**
+   * Project root directory
+   */
+  readonly projectRoot: string;
+
+  /**
    * Initialize the adapter
    * Must be called before any other operations
    */

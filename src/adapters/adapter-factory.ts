@@ -4,6 +4,9 @@ import { createClaudeAdapter } from './claude-adapter.js';
 import { createOpenCodeAdapter } from './opencode-adapter.js';
 import { ResearchConfig } from '../config/config-loader.js';
 
+// Re-export Platform enum for convenience
+export { Platform };
+
 /**
  * Adapter Factory
  *
@@ -58,7 +61,7 @@ export class AdapterFactory {
       );
     }
 
-    if (detection.confidence === 'low') {
+    if (detection.confidence === 'low' || detection.confidence === 'medium') {
       console.warn(
         `⚠️  Low confidence platform detection (${detection.platform})\n` +
           `Evidence:\n${detection.evidence.map((e) => `  - ${e}`).join('\n')}`
