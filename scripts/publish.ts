@@ -89,40 +89,28 @@ function updatePackageVersion(version: string): boolean {
   }
 }
 
-function createGitTag(version: string): void {
+function verifyTag(version: string): void {
   const tagName = `v${version}`;
 
-  // Check if tag already exists
+  // Check if tag exists and is on current commit
   try {
     execSync(`git rev-parse --verify refs/tags/${tagName}`, { stdio: 'pipe' });
-    logWarning(`Tag ${tagName} already exists`);
 
-    // Check if it's on the current commit
     const currentCommit = execSync('git rev-parse HEAD', { encoding: 'utf8' }).trim();
     const tagCommit = execSync(`git rev-list -n 1 ${tagName}`, { encoding: 'utf8' }).trim();
 
     if (currentCommit === tagCommit) {
-      logSuccess(`Tag ${tagName} is already on current commit`);
-      return;
+      logSuccess(`Tag ${tagName} is on current commit`);
     } else {
-      logError(`Tag ${tagName} exists but points to a different commit`);
-      logError(`Current commit: ${currentCommit}`);
-      logError(`Tag commit: ${tagCommit}`);
-      process.exit(1);
+      logWarning(`Tag ${tagName} exists but points to a different commit`);
+      logWarning(`Current commit: ${currentCommit}`);
+      logWarning(`Tag commit: ${tagCommit}`);
+      logWarning('Proceeding anyway since this is a release workflow');
     }
   } catch (error) {
-    // Tag doesn't exist, create it
-    logInfo(`Creating tag ${tagName}`);
-    execSync(`git tag ${tagName}`);
-    logSuccess(`Created tag ${tagName}`);
+    logError(`Tag ${tagName} does not exist`);
+    process.exit(1);
   }
-}
-
-function pushGitTag(version: string): void {
-  const tagName = `v${version}`;
-  logInfo(`Pushing tag ${tagName} to remote`);
-  execSync(`git push origin ${tagName}`);
-  logSuccess(`Pushed tag ${tagName} to remote`);
 }
 
 function publishToNpm(): void {
@@ -230,16 +218,11 @@ function main(): void {
     logInfo('No version change to commit');
   }
 
-  // Create and push git tag
-  createGitTag(version);
-  pushGitTag(version);
+  // Verify tag exists and is on current commit
+  verifyTag(version);
 
-  // Publish to npm (if authenticated via OIDC or token)
-  if (process.env.NODE_AUTH_TOKEN || process.env.NPM_TOKEN) {
-    publishToNpm();
-  } else {
-    logWarning('No npm authentication found (NODE_AUTH_TOKEN or NPM_TOKEN), skipping npm publish');
-  }
+  // Publish to npm (OIDC handles authentication automatically)
+  publishToNpm();
 
   // Create GitHub release (if GITHUB_TOKEN is available)
   if (process.env.GITHUB_TOKEN) {
