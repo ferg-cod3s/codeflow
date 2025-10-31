@@ -35,7 +35,7 @@ jobs:
       - name: Upgrade npm for OIDC support
         run: npm install -g npm@latest
 
-- name: Configure npm for OIDC
+      - name: Configure npm for OIDC
         run: |
           # Try using the OIDC token that GitHub Actions should provide
           echo "Attempting OIDC authentication..."
