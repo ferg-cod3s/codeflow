@@ -27,7 +27,7 @@ jobs:
         with:
           bun-version: latest
 
-- - name: Setup Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
@@ -59,17 +59,11 @@ jobs:
         run: |
           git config --global user.email "agentic@bod.care"
           git config --global user.name "agentic"
-          
-          # Get OIDC token for npm
-          if [ -n "$ACTIONS_ID_TOKEN_REQUEST_URL" ]; then
-            echo "Getting OIDC token..."
-            OIDC_TOKEN=$(curl -s -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=npm" | jq -r '.value')
-            export NODE_AUTH_TOKEN="$OIDC_TOKEN"
-            echo "NODE_AUTH_TOKEN length: ${#NODE_AUTH_TOKEN}"
-          else
-            echo "No OIDC URL available"
-          fi
-          
+
+          # Debug OIDC token availability
+          echo "NODE_AUTH_TOKEN: ${NODE_AUTH_TOKEN:0:20}..."
+          echo "ACTIONS_ID_TOKEN_REQUEST_URL: $ACTIONS_ID_TOKEN_REQUEST_URL"
+
           if [ "${{ github.event_name }}" = "push" ]; then
             AGENTIC_VERSION=${{ steps.version.outputs.version }} bun run ./scripts/publish.ts
           else
@@ -77,8 +71,6 @@ jobs:
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          ACTIONS_ID_TOKEN_REQUEST_TOKEN: ${{ secrets.ACTIONS_ID_TOKEN_REQUEST_TOKEN }}
-          ACTIONS_ID_TOKEN_REQUEST_URL: ${{ secrets.ACTIONS_ID_TOKEN_REQUEST_URL }}
 
       - name: Create GitHub Release
         if: github.event_name == 'push'
