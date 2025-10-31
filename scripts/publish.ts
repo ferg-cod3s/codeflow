@@ -117,8 +117,8 @@ function publishToNpm(): void {
   logInfo('Publishing to npm registry');
 
   try {
-    // Use bun publish if available, otherwise npm
-    const publishCommand = process.env.USE_NPM === 'true' ? 'npm publish' : 'bun publish';
+    // For OIDC authentication, we must use npm (not bun)
+    const publishCommand = 'npm publish';
     execSync(publishCommand, { stdio: 'inherit' });
     logSuccess('Successfully published to npm');
   } catch (error) {
