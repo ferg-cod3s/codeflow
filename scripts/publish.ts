@@ -117,6 +117,19 @@ function publishToNpm(): void {
   logInfo('Publishing to npm registry');
 
   try {
+    // Check if we have a token (either OIDC or NPM_TOKEN)
+    const hasToken = process.env.NODE_AUTH_TOKEN || process.env.NPM_TOKEN;
+
+    if (!hasToken) {
+      logError(
+        'No authentication token found. Set NODE_AUTH_TOKEN for OIDC or NPM_TOKEN for manual token.'
+      );
+      process.exit(1);
+    }
+
+    const authMethod = process.env.NODE_AUTH_TOKEN ? 'OIDC' : 'NPM_TOKEN';
+    logInfo(`Using authentication method: ${authMethod}`);
+
     // For OIDC authentication, we must use npm (not bun)
     const publishCommand = 'npm publish';
     execSync(publishCommand, { stdio: 'inherit' });

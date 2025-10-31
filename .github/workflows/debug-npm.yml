@@ -1,0 +1,28 @@
+name: Debug NPM Token
+
+on:
+  workflow_dispatch:
+
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check NPM_TOKEN
+        run: |
+          if [ -n "${{ secrets.NPM_TOKEN }}" ]; then
+            echo "NPM_TOKEN secret exists"
+            echo "Token length: $(echo "${{ secrets.NPM_TOKEN }}" | wc -c)"
+          else
+            echo "NPM_TOKEN secret does not exist"
+          fi
+
+      - name: Test npm authentication
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [ -n "$NODE_AUTH_TOKEN" ]; then
+            echo "Testing npm authentication..."
+            npm whoami
+          else
+            echo "No NODE_AUTH_TOKEN available"
+          fi

@@ -18,6 +18,9 @@ permissions:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - uses: actions/checkout@v4
         with:
@@ -32,9 +35,6 @@ jobs:
         with:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
-
-      - name: Update npm to latest version
-        run: npm install -g npm@latest
 
       - name: Install dependencies
         run: bun install
@@ -61,6 +61,7 @@ jobs:
             AGENTIC_VERSION=${{ inputs.version }} bun run ./scripts/publish.ts
           fi
         env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create GitHub Release
