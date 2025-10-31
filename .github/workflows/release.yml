@@ -50,7 +50,11 @@ jobs:
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "Extracted version: $VERSION"
 
-      # OIDC automatically configures .npmrc - no manual configuration needed
+      - name: Configure npm for OIDC
+        run: |
+          echo "Configuring npm for OIDC authentication..."
+          echo "NODE_AUTH_TOKEN: ${NODE_AUTH_TOKEN:0:20}..."
+          echo "ACTIONS_ID_TOKEN_REQUEST_URL: $ACTIONS_ID_TOKEN_REQUEST_URL"
 
       - name: Publish packages
         run: |
