@@ -1,6 +1,6 @@
 {
   "name": "@agentic-codeflow/cli",
-  "version": "0.17.0",
+  "version": "0.17.3",
   "description": "AI Agent & Command Distribution Platform - Deploy 33+ specialized AI agents and workflow commands to any project instantly",
   "type": "module",
   "bin": {
@@ -53,7 +53,7 @@
     "access": "public"
   },
   "scripts": {
-    "install": "bun link",
+    "postinstall": "echo '✓ @agentic-codeflow/cli installed successfully'",
     "install:node": "npm link",
     "typecheck": "tsc --noEmit",
     "typecheck:node": "tsc --noEmit --project tsconfig.node.json",
@@ -122,7 +122,7 @@
     "prepublishOnly:node": "npm run typecheck:node && npm run build:cli:node && npm run lint || echo \"Lint warnings found but continuing with publish\"",
     "prepack": "bun run typecheck",
     "prepack:node": "npm run typecheck:node",
-    "build:cli": "bun build src/cli/index.ts --target bun --outfile dist/cli.js",
+    "build:cli": "esbuild src/cli/index.ts --bundle --platform=node --target=node18 --format=esm --outfile=dist/cli.js --packages=external && chmod +x dist/cli.js",
     "build:cli:node": "esbuild src/cli/index.ts --bundle --platform=node --target=node18 --outfile=dist/cli.js",
     "prepare": "echo 'Husky prepared'"
   },

@@ -1,4 +1,4 @@
-#!/usr/bin/env bun
+#!/usr/bin/env node
 
 import { parseArgs } from 'util';
 import { status } from './status.js';
@@ -214,7 +214,7 @@ let positionals: string[];
 
 try {
   const parsed = parseArgs({
-    args: Bun.argv,
+    args: process.argv,
     options: {
       help: {
         type: 'boolean',
@@ -350,7 +350,7 @@ switch (command) {
   }
   case 'fix-models': {
     // For fix-models, default to global. Check if --local was passed
-    const hasLocalFlag = Bun.argv.includes('--local') || Bun.argv.includes('-l');
+    const hasLocalFlag = process.argv.includes('--local') || process.argv.includes('-l');
     await fixModels({
       dryRun: values['dry-run'],
       verbose: values.help || false,
