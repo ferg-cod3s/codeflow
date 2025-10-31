@@ -64,17 +64,22 @@ function validateVersion(version: string): boolean {
   return versionRegex.test(version);
 }
 
-function updatePackageVersion(version: string): void {
+function updatePackageVersion(version: string): boolean {
   try {
     const packageJsonPath = join(process.cwd(), 'package.json');
     const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8'));
 
     const oldVersion = packageJson.version;
-    packageJson.version = version;
+    if (oldVersion === version) {
+      logInfo(`Package.json version is already ${version}, no update needed`);
+      return false;
+    }
 
+    packageJson.version = version;
     writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2) + '\n');
 
     logSuccess(`Updated package.json version from ${oldVersion} to ${version}`);
+    return true;
   } catch (error) {
     logError('Failed to update package.json version');
     if (error instanceof Error) {
@@ -214,12 +219,16 @@ function main(): void {
   }
 
   // Update package.json version
-  updatePackageVersion(version);
+  const versionChanged = updatePackageVersion(version);
 
-  // Commit the version change
-  execSync('git add package.json');
-  execSync(`git commit --no-verify -m "Bump version to ${version}"`);
-  logSuccess(`Committed version bump to ${version}`);
+  // Commit the version change only if it actually changed
+  if (versionChanged) {
+    execSync('git add package.json');
+    execSync(`git commit --no-verify -m "Bump version to ${version}"`);
+    logSuccess(`Committed version bump to ${version}`);
+  } else {
+    logInfo('No version change to commit');
+  }
 
   // Create and push git tag
   createGitTag(version);
