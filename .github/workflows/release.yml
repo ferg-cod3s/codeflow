@@ -35,8 +35,13 @@ jobs:
       - name: Upgrade npm for OIDC support
         run: npm install -g npm@latest
 
-      - name: Verify npm authentication
-        run: npm whoami
+- name: Configure npm for OIDC
+        run: |
+          # Try using the OIDC token that GitHub Actions should provide
+          echo "Attempting OIDC authentication..."
+          echo "Available env vars:" | env | grep -i oidc || echo "No OIDC vars found"
+          echo "Node auth config:" && cat ~/.npmrc 2>/dev/null || echo "No .npmrc found"
+          npm whoami
 
       - name: Install dependencies
         run: bun install
