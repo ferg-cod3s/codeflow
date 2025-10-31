@@ -234,11 +234,11 @@ function main(): void {
   createGitTag(version);
   pushGitTag(version);
 
-  // Publish to npm (if NODE_AUTH_TOKEN is available)
+  // Publish to npm (if authenticated via OIDC or token)
   if (process.env.NODE_AUTH_TOKEN || process.env.NPM_TOKEN) {
     publishToNpm();
   } else {
-    logWarning('NPM_TOKEN not found, skipping npm publish');
+    logWarning('No npm authentication found (NODE_AUTH_TOKEN or NPM_TOKEN), skipping npm publish');
   }
 
   // Create GitHub release (if GITHUB_TOKEN is available)
