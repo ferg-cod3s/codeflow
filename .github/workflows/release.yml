@@ -67,7 +67,8 @@ jobs:
             AGENTIC_VERSION=${{ inputs.version }} bun run ./scripts/publish.ts
           fi
         env:
-          # Only set NPM_TOKEN as fallback - let OIDC handle NODE_AUTH_TOKEN automatically
+          # Use NPM_TOKEN for now until OIDC is properly configured for @agentic-codeflow scope
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

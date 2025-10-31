@@ -130,9 +130,22 @@ function publishToNpm(): void {
 
     // Prioritize OIDC (NODE_AUTH_TOKEN) over manual NPM_TOKEN
     const authToken = nodeAuthToken || npmToken;
-    const authMethod = nodeAuthToken ? 'OIDC (NODE_AUTH_TOKEN)' : 'NPM_TOKEN (fallback)';
+    const authMethod = nodeAuthToken ? 'OIDC (NODE_AUTH_TOKEN)' : 'NPM_TOKEN (manual)';
     logInfo(`Using authentication method: ${authMethod}`);
     logInfo(`Token length: ${authToken?.length || 0} characters`);
+
+    // Test authentication before publishing
+    try {
+      logInfo('Testing npm authentication...');
+      const whoami = execSync('npm whoami', { encoding: 'utf8', stdio: 'pipe' }).trim();
+      logSuccess(`Authenticated as: ${whoami}`);
+    } catch (error) {
+      logError('npm authentication failed');
+      if (error instanceof Error) {
+        logError(error.message);
+      }
+      process.exit(1);
+    }
 
     // Verify .npmrc configuration
     try {

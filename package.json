@@ -1,10 +1,10 @@
 {
   "name": "@agentic-codeflow/cli",
-  "version": "0.16.6",
+  "version": "0.16.11",
   "description": "AI Agent & Command Distribution Platform - Deploy 33+ specialized AI agents and workflow commands to any project instantly",
   "type": "module",
   "bin": {
-    "codeflow": "./src/cli/index.ts"
+    "codeflow": "./dist/cli.js"
   },
   "keywords": [
     "cli",
@@ -118,8 +118,8 @@
     "release:publish:patch": "./scripts/release.sh --publish --bump-patch",
     "release:publish:minor": "./scripts/release.sh --publish --bump-minor",
     "release:publish:major": "./scripts/release.sh --publish --bump-major",
-    "prepublishOnly": "bun run typecheck && bun run lint || echo \"Lint warnings found but continuing with publish\"",
-    "prepublishOnly:node": "npm run typecheck:node && npm run lint || echo \"Lint warnings found but continuing with publish\"",
+    "prepublishOnly": "bun run typecheck && bun run build:cli && bun run lint || echo \"Lint warnings found but continuing with publish\"",
+    "prepublishOnly:node": "npm run typecheck:node && npm run build:cli:node && npm run lint || echo \"Lint warnings found but continuing with publish\"",
     "prepack": "bun run typecheck",
     "prepack:node": "npm run typecheck:node",
     "build:cli": "bun build src/cli/index.ts --target bun",
