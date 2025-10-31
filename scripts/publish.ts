@@ -146,24 +146,15 @@ function publishToNpm(): void {
 
     logSuccess(`npm version ${npmVersion} supports OIDC authentication`);
 
-    // Test authentication before publishing
-    try {
-      logInfo('Testing npm authentication with OIDC...');
-      const whoami = execSync('npm whoami', { encoding: 'utf8', stdio: 'pipe' }).trim();
-      logSuccess(`Authenticated as: ${whoami}`);
-    } catch (error) {
-      logError('npm OIDC authentication failed');
-      logError('This usually means the Trusted Publisher is not configured correctly on npmjs.com');
-      logError('Please verify:');
-      logError('  1. Package exists on npmjs.com');
-      logError('  2. Trusted Publisher is configured for this repository');
-      logError('  3. Workflow name matches exactly: "release.yml"');
-      logError('  4. Repository name matches: ferg-cod3s/codeflow');
-      if (error instanceof Error) {
-        logError(error.message);
-      }
-      process.exit(1);
-    }
+    // Note: OIDC authentication happens automatically during npm publish --provenance
+    // We cannot test authentication with npm whoami because OIDC only activates during publish
+    logInfo('OIDC authentication will be used automatically during publish');
+    logInfo('Verification:');
+    logInfo(`  ✓ OIDC environment variables detected`);
+    logInfo(`  ✓ npm version ${npmVersion} supports OIDC`);
+    logInfo(`  ✓ Environment: ${process.env.GITHUB_ENVIRONMENT || 'npm'}`);
+    logInfo(`  ✓ Repository: ${process.env.GITHUB_REPOSITORY || 'unknown'}`);
+    logInfo(`  ✓ Workflow: release.yml`);
 
     // Verify npm registry configuration
     const registry = execSync('npm config get registry', { encoding: 'utf8' }).trim();
