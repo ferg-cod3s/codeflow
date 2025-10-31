@@ -51,11 +51,10 @@ jobs:
         run: |
           git config --global user.email "agentic@bod.care"
           git config --global user.name "agentic"
-          chmod +x ./scripts/publish.ts
           if [ "${{ github.event_name }}" = "push" ]; then
-            AGENTIC_VERSION=${{ steps.version.outputs.version }} ./scripts/publish.ts
+            AGENTIC_VERSION=${{ steps.version.outputs.version }} bun run ./scripts/publish.ts
           else
-            AGENTIC_VERSION=${{ inputs.version }} ./scripts/publish.ts
+            AGENTIC_VERSION=${{ inputs.version }} bun run ./scripts/publish.ts
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
