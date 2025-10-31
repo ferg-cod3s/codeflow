@@ -27,34 +27,16 @@ jobs:
         with:
           bun-version: latest
 
-      - name: Setup Node.js
+- name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-
-      - name: Upgrade npm for OIDC support
-        run: npm install -g npm@latest
+          registry-url: 'https://registry.npmjs.org'
 
       - name: Configure npm for OIDC
         run: |
-          # Configure npm for OIDC using the standard approach
-          echo "Configuring npm for OIDC authentication..."
-
-          # Try using the OIDC token with npm's expected format
-          OIDC_TOKEN=$(curl -s -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
-            "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=npm" | jq -r '.value')
-
-          if [ -z "$OIDC_TOKEN" ] || [ "$OIDC_TOKEN" = "null" ]; then
-            echo "Failed to get OIDC token"
-            exit 1
-          fi
-
-          echo "OIDC token received, configuring npm..."
-
-          # Set up npm config for OIDC
-          echo "//registry.npmjs.org/:_authToken=$OIDC_TOKEN" > ~/.npmrc
-
-          # Test authentication
+          # Use the built-in OIDC token from setup-node action
+          echo "Testing npm OIDC authentication..."
           npm whoami
 
       - name: Install dependencies
