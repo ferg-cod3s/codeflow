@@ -235,10 +235,11 @@ function main(): void {
   pushGitTag(version);
 
   // Publish to npm (if NPM_TOKEN is available)
-  if (process.env.NODE_AUTH_TOKEN) {
+  // Skip npm publish for now to focus on GitHub releases
+  if (false && process.env.NODE_AUTH_TOKEN) {
     publishToNpm();
   } else {
-    logWarning('NODE_AUTH_TOKEN not found, skipping npm publish');
+    logWarning('Skipping npm publish (disabled for now)');
   }
 
   // Create GitHub release (if GITHUB_TOKEN is available)
