@@ -50,6 +50,8 @@ jobs:
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "Extracted version: $VERSION"
 
+      # OIDC automatically configures .npmrc - no manual configuration needed
+
       - name: Publish packages
         run: |
           git config --global user.email "agentic@bod.care"
@@ -61,7 +63,8 @@ jobs:
             AGENTIC_VERSION=${{ inputs.version }} bun run ./scripts/publish.ts
           fi
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          # Only set NPM_TOKEN as fallback - let OIDC handle NODE_AUTH_TOKEN automatically
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create GitHub Release

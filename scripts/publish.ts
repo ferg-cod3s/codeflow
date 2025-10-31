@@ -118,17 +118,29 @@ function publishToNpm(): void {
 
   try {
     // Check if we have a token (either OIDC or NPM_TOKEN)
-    const hasToken = process.env.NODE_AUTH_TOKEN || process.env.NPM_TOKEN;
+    const nodeAuthToken = process.env.NODE_AUTH_TOKEN;
+    const npmToken = process.env.NPM_TOKEN;
 
-    if (!hasToken) {
+    if (!nodeAuthToken && !npmToken) {
       logError(
         'No authentication token found. Set NODE_AUTH_TOKEN for OIDC or NPM_TOKEN for manual token.'
       );
       process.exit(1);
     }
 
-    const authMethod = process.env.NODE_AUTH_TOKEN ? 'OIDC' : 'NPM_TOKEN';
+    // Prioritize OIDC (NODE_AUTH_TOKEN) over manual NPM_TOKEN
+    const authToken = nodeAuthToken || npmToken;
+    const authMethod = nodeAuthToken ? 'OIDC (NODE_AUTH_TOKEN)' : 'NPM_TOKEN (fallback)';
     logInfo(`Using authentication method: ${authMethod}`);
+    logInfo(`Token length: ${authToken?.length || 0} characters`);
+
+    // Verify .npmrc configuration
+    try {
+      const npmrcContent = execSync('cat ~/.npmrc', { encoding: 'utf8' });
+      logInfo(`Current .npmrc content: ${npmrcContent.trim()}`);
+    } catch (error) {
+      logWarning('Could not read .npmrc file');
+    }
 
     // For OIDC authentication, we must use npm (not bun)
     const publishCommand = 'npm publish';
