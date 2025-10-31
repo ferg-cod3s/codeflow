@@ -1,7 +1,6 @@
 import { join } from 'node:path';
 import { existsSync } from 'node:fs';
 import { writeFile } from 'node:fs/promises';
-import CLIErrorHandler from './error-handler.js';
 
 /**
  * Research CLI - Executes deep research workflows
@@ -53,7 +52,7 @@ export class ResearchCLI {
         // For testing or when package not built, use mock
         this.agentRegistry = { agents: [] };
         this.workflowOrchestrator = {
-          executeResearchWorkflow: async (options: any) => ({
+          executeResearchWorkflow: async (_options: any) => ({
             summary: 'Mock research result',
             qualityMetrics: {
               overallScore: 80,

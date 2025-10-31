@@ -4,7 +4,6 @@
  */
 
 import { describe, test, expect, beforeEach, afterEach } from 'bun:test';
-import { Console } from 'console';
 import {
   CLIErrorHandler,
   type ErrorContext,

@@ -307,7 +307,7 @@ export async function setup(
   }
 }
 
-export function getAgentSourceDirs(sourcePath: string, targetFormat: SupportedFormat): string[] {
+export function getAgentSourceDirs(sourcePath: string, _targetFormat: SupportedFormat): string[] {
   const sourceDirs: string[] = [];
   const packageRoot = getPackageRoot();
 

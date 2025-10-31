@@ -43,7 +43,7 @@ function logError(message: string): void {
   log(`[ERROR] ${message}`, 'red');
 }
 
-function execCommand(command: string, options?: { silent?: boolean }): string {
+function _execCommand(command: string, options?: { silent?: boolean }): string {
   try {
     const result = execSync(command, {
       encoding: 'utf8',
@@ -107,7 +107,7 @@ function verifyTag(version: string): void {
       logWarning(`Tag commit: ${tagCommit}`);
       logWarning('Proceeding anyway since this is a release workflow');
     }
-  } catch (error) {
+  } catch {
     logError(`Tag ${tagName} does not exist`);
     process.exit(1);
   }
@@ -248,7 +248,7 @@ function main(): void {
       logError('Working directory is not clean. Please commit or stash changes first.');
       process.exit(1);
     }
-  } catch (error) {
+  } catch {
     logError('Failed to check git status');
     process.exit(1);
   }
