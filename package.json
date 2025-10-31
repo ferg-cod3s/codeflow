@@ -118,11 +118,11 @@
     "release:publish:patch": "./scripts/release.sh --publish --bump-patch",
     "release:publish:minor": "./scripts/release.sh --publish --bump-minor",
     "release:publish:major": "./scripts/release.sh --publish --bump-major",
-    "prepublishOnly": "bun run typecheck && bun run build:cli && bun run lint || echo \"Lint warnings found but continuing with publish\"",
+    "prepublishOnly": "mkdir -p dist && bun run typecheck && bun run build:cli && bun run lint || echo \"Lint warnings found but continuing with publish\"",
     "prepublishOnly:node": "npm run typecheck:node && npm run build:cli:node && npm run lint || echo \"Lint warnings found but continuing with publish\"",
     "prepack": "bun run typecheck",
     "prepack:node": "npm run typecheck:node",
-    "build:cli": "bun build src/cli/index.ts --target bun",
+    "build:cli": "bun build src/cli/index.ts --target bun --outfile dist/cli.js",
     "build:cli:node": "esbuild src/cli/index.ts --bundle --platform=node --target=node18 --outfile=dist/cli.js",
     "prepare": "echo 'Husky prepared'"
   },

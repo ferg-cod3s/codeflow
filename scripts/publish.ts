@@ -67,7 +67,8 @@ function validateVersion(version: string): boolean {
 function updatePackageVersion(version: string): boolean {
   try {
     const packageJsonPath = join(process.cwd(), 'package.json');
-    const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8'));
+    const originalContent = readFileSync(packageJsonPath, 'utf8');
+    const packageJson = JSON.parse(originalContent);
 
     const oldVersion = packageJson.version;
     if (oldVersion === version) {
@@ -75,8 +76,15 @@ function updatePackageVersion(version: string): boolean {
       return false;
     }
 
-    packageJson.version = version;
-    writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2) + '\n');
+    // Update version by replacing the exact version string in the original content
+    // This preserves all formatting, whitespace, and other properties exactly as they are
+    const versionPattern = new RegExp(
+      `("version"\\s*:\\s*)"${oldVersion.replace(/\./g, '\\.')}"`,
+      'g'
+    );
+    const updatedContent = originalContent.replace(versionPattern, `$1"${version}"`);
+
+    writeFileSync(packageJsonPath, updatedContent);
 
     logSuccess(`Updated package.json version from ${oldVersion} to ${version}`);
     return true;
