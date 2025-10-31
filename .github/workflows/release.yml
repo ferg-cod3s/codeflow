@@ -36,6 +36,15 @@ jobs:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
 
+      - name: Upgrade npm to 11.5.1+ for OIDC support
+        run: |
+          echo "Current npm version:"
+          npm --version
+          echo "Upgrading npm to latest version (11.5.1+)..."
+          npm install -g npm@latest
+          echo "New npm version:"
+          npm --version
+
       - name: Install dependencies
         run: bun install
 
@@ -50,11 +59,16 @@ jobs:
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "Extracted version: $VERSION"
 
-      - name: Configure npm for OIDC
+      - name: Verify OIDC Configuration
         run: |
-          echo "Configuring npm for OIDC authentication..."
-          echo "NODE_AUTH_TOKEN: ${NODE_AUTH_TOKEN:0:20}..."
-          echo "ACTIONS_ID_TOKEN_REQUEST_URL: $ACTIONS_ID_TOKEN_REQUEST_URL"
+          echo "=== OIDC Configuration Check ==="
+          echo "ACTIONS_ID_TOKEN_REQUEST_URL: ${ACTIONS_ID_TOKEN_REQUEST_URL:-NOT SET}"
+          echo "ACTIONS_ID_TOKEN_REQUEST_TOKEN: ${ACTIONS_ID_TOKEN_REQUEST_TOKEN:+SET (length: ${#ACTIONS_ID_TOKEN_REQUEST_TOKEN})}"
+          echo "NPM Registry URL: $(npm config get registry)"
+          echo "npm version: $(npm --version)"
+          echo ""
+          echo "=== Permissions Check ==="
+          echo "id-token permission should be 'write' for OIDC to work"
 
       - name: Publish packages
         run: |
@@ -67,9 +81,8 @@ jobs:
             AGENTIC_VERSION=${{ inputs.version }} bun run ./scripts/publish.ts
           fi
         env:
-          # Use NPM_TOKEN for now until OIDC is properly configured for @agentic-codeflow scope
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          # OIDC authentication - no manual token needed
+          # npm 11.5.1+ will automatically use GitHub OIDC via id-token: write permission
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create GitHub Release

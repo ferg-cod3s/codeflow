@@ -114,51 +114,69 @@ function verifyTag(version: string): void {
 }
 
 function publishToNpm(): void {
-  logInfo('Publishing to npm registry');
+  logInfo('Publishing to npm registry using OIDC authentication');
 
   try {
-    // Check if we have a token (either OIDC or NPM_TOKEN)
-    const nodeAuthToken = process.env.NODE_AUTH_TOKEN;
-    const npmToken = process.env.NPM_TOKEN;
+    // Verify OIDC environment variables are present
+    const oidcRequestUrl = process.env.ACTIONS_ID_TOKEN_REQUEST_URL;
+    const oidcRequestToken = process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN;
 
-    if (!nodeAuthToken && !npmToken) {
-      logError(
-        'No authentication token found. Set NODE_AUTH_TOKEN for OIDC or NPM_TOKEN for manual token.'
-      );
+    if (!oidcRequestUrl || !oidcRequestToken) {
+      logError('OIDC environment variables not found!');
+      logError('This script must be run in GitHub Actions with id-token: write permission');
+      logError(`ACTIONS_ID_TOKEN_REQUEST_URL: ${oidcRequestUrl ? 'SET' : 'NOT SET'}`);
+      logError(`ACTIONS_ID_TOKEN_REQUEST_TOKEN: ${oidcRequestToken ? 'SET' : 'NOT SET'}`);
       process.exit(1);
     }
 
-    // Prioritize OIDC (NODE_AUTH_TOKEN) over manual NPM_TOKEN
-    const authToken = nodeAuthToken || npmToken;
-    const authMethod = nodeAuthToken ? 'OIDC (NODE_AUTH_TOKEN)' : 'NPM_TOKEN (manual)';
-    logInfo(`Using authentication method: ${authMethod}`);
-    logInfo(`Token length: ${authToken?.length || 0} characters`);
+    logSuccess('OIDC environment variables detected');
+    logInfo(`OIDC Request URL: ${oidcRequestUrl}`);
+
+    // Verify npm version supports OIDC
+    const npmVersion = execSync('npm --version', { encoding: 'utf8' }).trim();
+    logInfo(`npm version: ${npmVersion}`);
+
+    const [major, minor] = npmVersion.split('.').map(Number);
+    if (major < 11 || (major === 11 && minor < 5)) {
+      logError(`npm version ${npmVersion} does not support OIDC authentication`);
+      logError('OIDC requires npm 11.5.1 or later');
+      logError('Please upgrade npm: npm install -g npm@latest');
+      process.exit(1);
+    }
+
+    logSuccess(`npm version ${npmVersion} supports OIDC authentication`);
 
     // Test authentication before publishing
     try {
-      logInfo('Testing npm authentication...');
+      logInfo('Testing npm authentication with OIDC...');
       const whoami = execSync('npm whoami', { encoding: 'utf8', stdio: 'pipe' }).trim();
       logSuccess(`Authenticated as: ${whoami}`);
     } catch (error) {
-      logError('npm authentication failed');
+      logError('npm OIDC authentication failed');
+      logError('This usually means the Trusted Publisher is not configured correctly on npmjs.com');
+      logError('Please verify:');
+      logError('  1. Package exists on npmjs.com');
+      logError('  2. Trusted Publisher is configured for this repository');
+      logError('  3. Workflow name matches exactly: "release.yml"');
+      logError('  4. Repository name matches: ferg-cod3s/codeflow');
       if (error instanceof Error) {
         logError(error.message);
       }
       process.exit(1);
     }
 
-    // Verify .npmrc configuration
-    try {
-      const npmrcContent = execSync('cat ~/.npmrc', { encoding: 'utf8' });
-      logInfo(`Current .npmrc content: ${npmrcContent.trim()}`);
-    } catch (error) {
-      logWarning('Could not read .npmrc file');
+    // Verify npm registry configuration
+    const registry = execSync('npm config get registry', { encoding: 'utf8' }).trim();
+    logInfo(`npm registry: ${registry}`);
+
+    if (registry !== 'https://registry.npmjs.org/') {
+      logWarning(`Registry is not default: ${registry}`);
     }
 
-    // For OIDC authentication, we must use npm (not bun)
-    const publishCommand = 'npm publish';
-    execSync(publishCommand, { stdio: 'inherit' });
-    logSuccess('Successfully published to npm');
+    // Publish using npm (required for OIDC)
+    logInfo('Publishing package with OIDC authentication...');
+    execSync('npm publish --provenance', { stdio: 'inherit' });
+    logSuccess('Successfully published to npm with provenance');
   } catch (error) {
     logError('Failed to publish to npm');
     if (error instanceof Error) {
