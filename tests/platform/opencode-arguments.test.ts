@@ -143,7 +143,7 @@ describe('OpenCode Argument Handling Validation', () => {
         version: { type: 'string', default: 'latest' },
       };
 
-      const args = { environment: 'production', version: 'v1.2.0' };
+      const args = { environment: 'production', version: 'v0.16.3' };
 
       // Simulate validation
       const isValid =
@@ -270,7 +270,7 @@ Rollback enabled: {{rollback}}`;
 
       const variables = {
         environment: 'production',
-        version: 'v1.2.0',
+        version: 'v0.16.3',
         rollback: 'true',
       };
 
@@ -280,7 +280,7 @@ Rollback enabled: {{rollback}}`;
         result = result.replace(regex, String(value));
       });
 
-      expect(result).toContain('Deploying to production with version v1.2.0');
+      expect(result).toContain('Deploying to production with version v0.16.3');
       expect(result).toContain('Rollback enabled: true');
       expect(result).toContain('name: deploy');
       expect(result).toContain('scope: codebase');

@@ -4,12 +4,12 @@ describe('Claude Code Argument Handling Validation', () => {
   describe('$ARGUMENTS Pattern', () => {
     test('captures all arguments as single string', () => {
       const template = 'Deploying application with arguments: $ARGUMENTS';
-      const args = 'production v1.2.0 --rollback --force';
+      const args = 'production v0.16.3 --rollback --force';
 
       const result = template.replace(/\$ARGUMENTS/g, args);
 
       expect(result).toBe(
-        'Deploying application with arguments: production v1.2.0 --rollback --force'
+        'Deploying application with arguments: production v0.16.3 --rollback --force'
       );
     });
 
@@ -130,11 +130,11 @@ describe('Claude Code Argument Handling Validation', () => {
   describe('Shell Command Integration', () => {
     test('properly escapes arguments in shell commands', () => {
       const template = 'echo "Deployment arguments: $ARGUMENTS"';
-      const args = 'production v1.2.0';
+      const args = 'production v0.16.3';
 
       const result = template.replace(/\$ARGUMENTS/g, args);
 
-      expect(result).toBe('echo "Deployment arguments: production v1.2.0"');
+      expect(result).toBe('echo "Deployment arguments: production v0.16.3"');
     });
 
     test('handles quotes in shell command arguments', () => {
@@ -186,8 +186,8 @@ describe('Claude Code Argument Handling Validation', () => {
       const deployTemplate =
         'Deploying application with arguments: $ARGUMENTS\\nEnvironment: $1\\nVersion: $2\\nAdditional Options: $3';
 
-      const allArgs = 'production v1.2.0 --rollback --force';
-      const positionalArgs = ['production', 'v1.2.0', '--rollback --force'];
+      const allArgs = 'production v0.16.3 --rollback --force';
+      const positionalArgs = ['production', 'v0.16.3', '--rollback --force'];
 
       let result = deployTemplate.replace(/\$ARGUMENTS/g, allArgs);
       positionalArgs.forEach((arg, index) => {
@@ -196,10 +196,10 @@ describe('Claude Code Argument Handling Validation', () => {
       });
 
       expect(result).toContain(
-        'Deploying application with arguments: production v1.2.0 --rollback --force'
+        'Deploying application with arguments: production v0.16.3 --rollback --force'
       );
       expect(result).toContain('Environment: production');
-      expect(result).toContain('Version: v1.2.0');
+      expect(result).toContain('Version: v0.16.3');
     });
 
     test('handles search command with query arguments', () => {

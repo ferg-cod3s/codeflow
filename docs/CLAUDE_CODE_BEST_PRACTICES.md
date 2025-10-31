@@ -41,8 +41,8 @@ Deploying application with arguments: $ARGUMENTS
 **Usage Examples:**
 
 ```bash
-/deploy production v1.2.0 --rollback
-# $ARGUMENTS becomes: "production v1.2.0 --rollback"
+/deploy production v0.16.3 --rollback
+# $ARGUMENTS becomes: "production v0.16.3 --rollback"
 
 /deploy staging
 # $ARGUMENTS becomes: "staging"

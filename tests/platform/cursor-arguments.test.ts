@@ -220,7 +220,7 @@ describe('Cursor Argument Handling Validation', () => {
       const deployTemplate =
         'Deploy to: $1\\nVersion: $2\\nRollback enabled: $3\\nConfig: @config/$1.json';
 
-      const args = ['staging', 'v1.2.0', 'false'];
+      const args = ['staging', 'v0.16.3', 'false'];
 
       let result = deployTemplate;
       args.forEach((arg, index) => {
@@ -229,7 +229,7 @@ describe('Cursor Argument Handling Validation', () => {
       });
 
       expect(result).toBe(
-        'Deploy to: staging\\nVersion: v1.2.0\\nRollback enabled: false\\nConfig: @config/staging.json'
+        'Deploy to: staging\\nVersion: v0.16.3\\nRollback enabled: false\\nConfig: @config/staging.json'
       );
     });
   });
