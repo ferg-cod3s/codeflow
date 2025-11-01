@@ -140,6 +140,43 @@ codeflow convert-all         # Generate platform formats
 - [Cursor Agent Modes](https://cursor.com/docs/agent/modes) - Cursor agent modes and subagent configuration
 - [Cursor Commands](https://cursor.com/docs/agent/chat/commands) - Cursor chat commands and slash command syntax
 
+## Release Process
+
+### Automated Publishing
+
+CodeFlow uses GitHub Actions for automated releases via `.github/workflows/release.yml`:
+
+**Triggers:**
+
+- **Tag Push**: `git tag v0.17.4 && git push origin v0.17.4`
+- **Manual Dispatch**: GitHub Actions UI with version input
+
+**Process:**
+
+1. ✅ **Type Check**: `bun run typecheck`
+2. ✅ **Version Update**: Updates `package.json` automatically
+3. ✅ **OIDC Authentication**: Uses GitHub OIDC (no tokens needed)
+4. ✅ **NPM Publish**: `npm publish --provenance`
+5. ✅ **GitHub Release**: Auto-generated with changelog
+
+**Manual Publishing:**
+
+```bash
+# Create and push tag (triggers workflow)
+git tag v0.17.4
+git push origin v0.17.4
+
+# Or manual workflow dispatch
+# Visit: https://github.com/ferg-cod3s/codeflow/actions/workflows/release.yml
+```
+
+**Local Publishing (Development):**
+
+```bash
+# Requires OTP from authenticator
+npm publish --otp=<6-digit-code>
+```
+
 ## Version History
 
 ### v0.17.4 (Current)
@@ -149,6 +186,7 @@ codeflow convert-all         # Generate platform formats
 - ✅ **Platform Support**: Claude Code (categorized dirs) + OpenCode (flat structure)
 - ✅ **Agent Count**: 137 agents + 58 commands
 - ✅ **Directory Structure**: Proper categorization with platform-specific handling
+- ✅ **Automated Publishing**: GitHub Actions workflow with OIDC authentication
 
 ### Previous Versions
 
