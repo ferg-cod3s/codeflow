@@ -1,6 +1,6 @@
 import { join } from 'node:path';
 import { existsSync } from 'node:fs';
-import { mkdir } from 'node:fs/promises';
+import { mkdir, writeFile } from 'node:fs/promises';
 import { parseAgentsFromDirectory, serializeAgent, Agent } from '../conversion/agent-parser.js';
 import { FormatConverter } from '../conversion/format-converter.js';
 import {
@@ -8,6 +8,56 @@ import {
   DEFAULT_OPENCODE_PERMISSIONS,
 } from '../security/opencode-permissions.js';
 import CLIErrorHandler from './error-handler.js';
+
+// Define the category structure for MCP and Claude agents
+const AGENT_CATEGORIES = {
+  development: [
+    'analytics_engineer',
+    'api_builder',
+    'api_builder_enhanced',
+    'code_reviewer',
+    'codebase_analyzer',
+    'codebase_locator',
+    'codebase_pattern_finder',
+    'database_expert',
+    'development_migrations_specialist',
+    'full_stack_developer',
+    'performance_engineer',
+    'system_architect',
+  ],
+  generalist: [
+    'agent_architect',
+    'smart_subagent_orchestrator',
+    'research_analyzer',
+    'research_locator',
+    'web_search_researcher',
+  ],
+  'ai-innovation': ['ai_integration_expert'],
+  operations: [
+    'deployment_wizard',
+    'devops_operations_specialist',
+    'infrastructure_builder',
+    'monitoring_expert',
+    'operations_incident_commander',
+  ],
+  'quality-testing': ['security_scanner', 'quality_testing_performance_tester'],
+  'business-analytics': ['growth_engineer', 'programmatic_seo_engineer'],
+  'design-ux': ['accessibility_pro', 'ux_optimizer'],
+  'product-strategy': ['content_localization_coordinator'],
+};
+
+/**
+ * Find the appropriate category for an agent
+ */
+function findAgentCategory(agentName: string): string {
+  for (const [category, agents] of Object.entries(AGENT_CATEGORIES)) {
+    if (agents.includes(agentName)) {
+      return category;
+    }
+  }
+  // Default to generalist if not found
+  return 'generalist';
+}
 
 export async function convert(source: string, target: string, format: 'claude-code' | 'opencode') {
   // Validate arguments
@@ -72,9 +122,21 @@ export async function convert(source: string, target: string, format: 'claude-co
     for (const agent of convertedAgents) {
       try {
         const filename = `${agent.frontmatter.name}.md`;
-        const filePath = join(target, filename);
+        let filePath: string;
+
+        if (format === 'claude-code') {
+          // Claude agents go into category subdirectories
+          const category = findAgentCategory(agent.frontmatter.name);
+          const categoryPath = join(target, category);
+          await mkdir(categoryPath, { recursive: true });
+          filePath = join(categoryPath, filename);
+        } else {
+          // OpenCode agents go into flat directory
+          filePath = join(target, filename);
+        }
+
         const serialized = serializeAgent(agent);
-        await Bun.write(filePath, serialized);
+        await writeFile(filePath, serialized);
         writeCount++;
       } catch (error: any) {
         writeErrors++;
