@@ -40,16 +40,19 @@ This document provides a comprehensive overview of all agents available in the C
 ### OpenCode Model Inheritance
 
 All agents are configured as `subagents` with `mode: subagent`. They **do not specify model fields** and instead inherit the model from:
+
 - Global OpenCode configuration (via TUI or CLI)
 - Parent `build` or `plan` agents in `opencode.jsonc`
 
 **Benefits:**
-- ✅ Easily switch models globally without editing 135+ agent files
+
+- ✅ Easily switch models globally without editing 137+ agent files
 - ✅ Test different models across all agents instantly
 - ✅ Consistent model usage across the entire agent ecosystem
 - ✅ Simpler agent definitions and maintenance
 
 **To change the model for all agents:**
+
 ```bash
 # OpenCode CLI
 opencode config set model provider/model-name
@@ -124,16 +127,35 @@ codeflow convert-all         # Generate platform formats
 ## Documentation
 
 ### CodeFlow Documentation
+
 - [Agent Registry](./docs/AGENT_REGISTRY.md) - Complete agent catalog
 - [Development Standards](./docs/) - Coding guidelines and best practices
 - [Cursor Rules](./.cursorrules) - Project development standards
 
 ### Official Platform Documentation
+
 - [OpenCode Agents](https://opencode.ai/docs/agents/) - OpenCode agent configuration and usage
 - [OpenCode Commands](https://opencode.ai/docs/commands/) - OpenCode command syntax and patterns
 - [Claude Code Documentation](https://docs.claude.com/en/docs/claude-code/overview) - Claude Code features and guides
 - [Cursor Agent Modes](https://cursor.com/docs/agent/modes) - Cursor agent modes and subagent configuration
 - [Cursor Commands](https://cursor.com/docs/agent/chat/commands) - Cursor chat commands and slash command syntax
+
+## Version History
+
+### v0.17.4 (Current)
+
+- ✅ **Node.js Compatibility**: Fixed Bun.write() → writeFile() for Node.js runtime
+- ✅ **Agent Categorization**: Implemented 8 categories (ai-innovation, business-analytics, design-ux, development, generalist, operations, product-strategy, quality-testing)
+- ✅ **Platform Support**: Claude Code (categorized dirs) + OpenCode (flat structure)
+- ✅ **Agent Count**: 137 agents + 58 commands
+- ✅ **Directory Structure**: Proper categorization with platform-specific handling
+
+### Previous Versions
+
+- v0.17.3: Initial agent ecosystem with 135+ agents
+- v0.17.2: MCP integration and command system
+- v0.17.1: Platform conversion framework
+- v0.17.0: Core CLI and agent management
 
 ---
 
