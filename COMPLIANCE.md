@@ -361,7 +361,7 @@ This section documents compliance with Anthropic's context management patterns f
 
 **Current Implementation**:
 - ✅ `codebase-locator`: File discovery WITHOUT content reading
-- ✅ `thoughts-locator`: Documentation discovery without deep analysis
+- ✅ `research-locator`: Documentation discovery without deep analysis
 - ✅ Strict tool permissions prevent scope creep
 - ✅ Clear escalation paths to analyzer agents
 
@@ -438,7 +438,7 @@ permission:
 **Current Implementation**:
 - ✅ Agents limited to specific tools (prevents context bloat)
 - ✅ Pattern expansion capped at ≤40 patterns
-- ✅ Excerpt length limits (max 220 chars in `thoughts-analyzer`)
+- ✅ Excerpt length limits (max 220 chars in `research-analyzer`)
 - ✅ Parallel execution reduces sequential context accumulation
 
 **Platform-Specific Optimizations**:
@@ -475,10 +475,10 @@ permission:
 - ✅ Explicit escalation triggers and conditions
 - ✅ Handoff recommendations in structured output
 
-**Example Escalation** (from `thoughts-analyzer`):
+**Example Escalation** (from `research-analyzer`):
 ```markdown
 # Escalation Triggers:
-- Missing path(s) or only topic provided → thoughts-locator
+- Missing path(s) or only topic provided → research-locator
 - Cross-document synthesis requested → orchestrator
 - Implementation verification needed → codebase-analyzer
 - >2 documents requested → batch mode with orchestrator

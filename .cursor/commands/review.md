@@ -2,6 +2,7 @@
 name: review
 mode: command
 description: Validate that an implementation plan was correctly executed
+subtask: true
 version: 2.0.0-internal
 last_updated: 2025-09-13
 command_schema_version: 1.0
@@ -39,6 +40,9 @@ failure_modes:
 ---
 
 # Validate Implementation
+
+**Input**: $ARGUMENTS
+
 
 You are tasked with validating that an implementation plan was correctly executed, verifying all success criteria and identifying any deviations or issues. This command uses intelligent caching to optimize validation workflows and maintain consistency across similar verification scenarios.
 
@@ -361,7 +365,7 @@ For thorough implementation validation requiring multi-domain expertise:
 
 - **codebase-locator**: Identify all implemented components and changed files
 - **codebase-analyzer**: Understand implementation details and code changes
-- **thoughts-analyzer**: Review implementation documentation and notes
+- **research-analyzer**: Review implementation documentation and notes
 - **codebase-pattern-finder**: Validate adherence to established patterns
 - **code-reviewer**: Primary agent for comprehensive code quality validation
 
@@ -392,7 +396,7 @@ For thorough implementation validation requiring multi-domain expertise:
 
 #### Phase 5: Documentation & Reporting (Parallel)
 
-- **thoughts-analyzer**: Validate documentation updates and completeness
+- **research-analyzer**: Validate documentation updates and completeness
 - **content-writer**: Review user-facing documentation accuracy
 - **code-reviewer**: Final comprehensive quality assessment
 

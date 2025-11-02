@@ -1,8 +1,6 @@
 #!/usr/bin/env bun
 
 import { serve } from 'bun';
-import { join } from 'node:path';
-import { existsSync, readFileSync } from 'node:fs';
 
 /**
  * Web Dashboard Server

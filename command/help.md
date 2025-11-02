@@ -26,6 +26,9 @@ failure_modes:
 
 # CodeFlow Development Guidance
 
+**Input**: $ARGUMENTS
+
+
 This command provides guidance for working with the CodeFlow system and development workflows.
 
 ## Purpose
@@ -166,8 +169,8 @@ This is a **Codeflow Automation Enhancement CLI** built with **Bun** and **TypeS
 - `codebase-locator` - Finds WHERE files and components exist
 - `codebase-analyzer` - Understands HOW specific code works
 - `codebase-pattern-finder` - Discovers similar implementation patterns
-- `thoughts-locator` - Discovers existing documentation about topics
-- `thoughts-analyzer` - Extracts insights from specific documents
+- `research-locator` - Discovers existing documentation about topics
+- `research-analyzer` - Extracts insights from specific documents
 - `web-search-researcher` - Performs targeted web research
 
 **Specialized Domain Agents** (Claude Code format):
@@ -233,10 +236,10 @@ The system emphasizes **context compression** and **fresh analysis** over cachin
 
 ### When to Use Subagents
 
-- **Research Tasks**: Use `codebase-locator` + `thoughts-locator` first, then `codebase-analyzer` + `thoughts-analyzer`
+- **Research Tasks**: Use `codebase-locator` + `research-locator` first, then `codebase-analyzer` + `research-analyzer`
 - **Code Analysis**: Use `codebase-analyzer` for understanding implementation details
 - **Testing**: Use `test-generator` for creating comprehensive test suites
-- **Documentation**: Use `thoughts-analyzer` for synthesizing information into structured docs
+- **Documentation**: Use `research-analyzer` for synthesizing information into structured docs
 - **Complex Multi-step Tasks**: Use `smart-subagent-orchestrator` for coordination
 - **Web Research**: Use `web-search-researcher` for external information gathering
 - **Architecture Decisions**: Use `system-architect` for design and planning
@@ -253,7 +256,7 @@ The system emphasizes **context compression** and **fresh analysis** over cachin
 ### Common Subagent Patterns
 
 - **Codebase Research**: `codebase-locator` → `codebase-analyzer` → `codebase-pattern-finder`
-- **Documentation Tasks**: `thoughts-locator` → `thoughts-analyzer` → document synthesis
+- **Documentation Tasks**: `research-locator` → `research-analyzer` → document synthesis
 - **Implementation**: `system-architect` → `full-stack-developer` → `code-reviewer`
 - **Testing**: `test-generator` → integration testing → `quality-testing-performance-tester`
 - **Web Research**: `web-search-researcher` for external information gathering
@@ -299,7 +302,7 @@ name: research
 mode: command
 scope: codebase
 depth: deep
-model: anthropic/claude-sonnet-4
+model: opencode/grok-code
 temperature: 0.1
 ---
 Research query here...

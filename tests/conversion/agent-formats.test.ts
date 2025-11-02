@@ -7,8 +7,6 @@ import {
   parseAgentsFromDirectory,
   serializeAgent,
   Agent,
-  BaseAgent,
-  ClaudeCodeAgent,
   OpenCodeAgent,
 } from '../../src/conversion/agent-parser';
 
@@ -544,9 +542,9 @@ describe('Agent Validation', () => {
   test('validates all existing agents in the repository', async () => {
     const codeflowRoot = path.join(import.meta.dir, '../..');
 
-    // Test base agents
+    // Test base agents (now in base-agents subdirectories)
     const baseResult = await parseAgentsFromDirectory(
-      path.join(codeflowRoot, 'codeflow-agents'),
+      path.join(codeflowRoot, 'base-agents'),
       'base'
     );
 

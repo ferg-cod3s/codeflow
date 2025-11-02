@@ -103,17 +103,17 @@ async function getAgentDescription(filePath) {
 }
 
 try {
-  // Find all agents in codeflow-agents directory
-  const codeflowAgentsDir = path.join(projectRoot, 'codeflow-agents');
-  const agents = await findAgentFiles(codeflowAgentsDir);
+  // Find all agents in base-agents directory
+  const baseAgentsDir = path.join(projectRoot, 'base-agents');
+  const agents = await findAgentFiles(baseAgentsDir);
 
-  console.log(`Found ${agents.size} agents in codeflow-agents/`);
+  console.log(`Found ${agents.size} agents in base-agents/`);
 
   // Build the canonical agents array
   const canonicalAgents = [];
 
   for (const [agentName, agentInfo] of agents) {
-    const fullPath = path.join(codeflowAgentsDir, agentInfo.path);
+    const fullPath = path.join(baseAgentsDir, agentInfo.path);
     const description = await getAgentDescription(fullPath);
 
     canonicalAgents.push({
@@ -121,7 +121,7 @@ try {
       description: description.substring(0, 200), // Limit description length
       category: normalizeCategory(agentInfo.category),
       sources: {
-        base: `codeflow-agents/${agentInfo.path}`,
+        base: `base-agents/${agentInfo.path}`,
         'claude-code': `.claude/agents/${agentName}.md`,
         opencode: `.opencode/agent/${agentName}.md`,
       },

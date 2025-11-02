@@ -51,6 +51,9 @@ validation_rules:
 
 # Deploy Application
 
+**Input**: $ARGUMENTS
+
+
 Execute a complete deployment workflow with comprehensive validation, execution, and verification phases to ensure safe and reliable deployments.
 
 ## Purpose
@@ -430,7 +433,7 @@ For production deployments requiring multi-domain coordination:
 #### Phase 5: Documentation & Communication (Parallel)
 
 - **content-writer**: Update deployment documentation and release notes
-- **thoughts-analyzer**: Document deployment learnings and improvements
+- **research-analyzer**: Document deployment learnings and improvements
 - **devops-operations-specialist**: Update operational runbooks
 
 ### Deployment Orchestration Best Practices

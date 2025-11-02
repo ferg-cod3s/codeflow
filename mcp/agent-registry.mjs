@@ -549,11 +549,11 @@ function suggestAgents(registry, taskDescription) {
   const patterns = [
     {
       keywords: ['find', 'locate', 'where', 'search'],
-      agents: ['codebase-locator', 'thoughts-locator'],
+      agents: ['codebase-locator', 'research-locator'],
     },
     {
       keywords: ['analyze', 'understand', 'how', 'explain'],
-      agents: ['codebase-analyzer', 'thoughts-analyzer'],
+      agents: ['codebase-analyzer', 'research-analyzer'],
     },
     { keywords: ['pattern', 'similar', 'example'], agents: ['codebase-pattern-finder'] },
     { keywords: ['research', 'investigate', 'web'], agents: ['web-search-researcher'] },

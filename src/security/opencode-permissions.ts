@@ -1,8 +1,8 @@
 import { join } from 'node:path';
 import { readFile, readdir, writeFile } from 'node:fs/promises';
 import { setFilePermissions, setDirectoryPermissions } from './validation';
-import { normalizePermissionFormat } from '../conversion/agent-parser';
-import { YamlProcessor } from '../yaml/yaml-processor';
+import { normalizePermissionFormat } from '../conversion/agent-parser.js';
+import { YamlProcessor } from '../yaml/yaml-processor.js';
 
 export interface OpenCodePermissionConfig {
   osPermissions: {

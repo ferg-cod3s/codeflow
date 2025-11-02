@@ -1,6 +1,9 @@
 name: Release
 
 on:
+  push:
+    tags:
+      - 'v*'
   workflow_dispatch:
     inputs:
       version:
@@ -10,38 +13,101 @@ on:
 permissions:
   contents: write
   packages: write
+  id-token: write
 
 jobs:
   publish:
     runs-on: ubuntu-latest
+    environment: npm
+    permissions:
+      id-token: write
+      contents: write
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      
+
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          registry-url: 'https://registry.npmjs.org'
-      
+          # Don't set registry-url when using OIDC - npm will handle authentication automatically
+
+      - name: Upgrade npm to 11.5.1+ for OIDC support
+        run: |
+          echo "Current npm version:"
+          npm --version
+          echo "Upgrading npm to latest version (11.5.1+)..."
+          npm install -g npm@latest
+          echo "New npm version:"
+          npm --version
+
       - name: Install dependencies
         run: bun install
-      
+
       - name: Run tests
         run: bun run typecheck
-      
+
+      - name: Extract version from tag
+        id: version
+        if: github.event_name == 'push'
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Extracted version: $VERSION"
+
+      - name: Verify OIDC Configuration
+        run: |
+          echo "=== OIDC Configuration Check ==="
+          echo "ACTIONS_ID_TOKEN_REQUEST_URL: ${ACTIONS_ID_TOKEN_REQUEST_URL:-NOT SET}"
+          echo "ACTIONS_ID_TOKEN_REQUEST_TOKEN: ${ACTIONS_ID_TOKEN_REQUEST_TOKEN:+SET (length: ${#ACTIONS_ID_TOKEN_REQUEST_TOKEN})}"
+          echo "NPM Registry URL: $(npm config get registry)"
+          echo "npm version: $(npm --version)"
+          echo ""
+          echo "=== Permissions Check ==="
+          echo "id-token permission should be 'write' for OIDC to work"
+
       - name: Publish packages
         run: |
           git config --global user.email "agentic@bod.care"
           git config --global user.name "agentic"
-          chmod +x ./scripts/publish.ts
-          AGENTIC_VERSION=${{ inputs.version }} ./scripts/publish.ts
+
+          if [ "${{ github.event_name }}" = "push" ]; then
+            AGENTIC_VERSION=${{ steps.version.outputs.version }} bun run ./scripts/publish.ts
+          else
+            AGENTIC_VERSION=${{ inputs.version }} bun run ./scripts/publish.ts
+          fi
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          # OIDC authentication - no manual token needed
+          # npm 11.5.1+ will automatically use GitHub OIDC via id-token: write permission
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
+
+      - name: Create GitHub Release
+        if: github.event_name == 'push'
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: CodeFlow CLI v${{ steps.version.outputs.version }}
+          body: |
+            ## CodeFlow CLI v${{ steps.version.outputs.version }}
+
+            ### Installation
+            ```bash
+            npm install -g @agentic-codeflow/cli
+            ```
+
+            ### Quick Start
+            ```bash
+            codeflow setup
+            ```
+
+            **Full Changelog**: https://github.com/ferg-cod3s/codeflow/compare/$(git describe --tags --abbrev=0 HEAD~1 2>/dev/null || echo "main")...${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          generate_release_notes: true

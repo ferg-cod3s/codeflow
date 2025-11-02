@@ -2,6 +2,7 @@
 name: execute
 mode: command
 description: Execute a specific implementation plan from docs/plans/
+subtask: true
 version: 2.0.0-internal
 last_updated: 2025-09-13
 command_schema_version: 1.0
@@ -39,6 +40,8 @@ failure_modes:
 ---
 
 # Execute Implementation Plan
+
+**Plan Path**: $ARGUMENTS
 
 You are tasked with implementing an approved technical plan from `docs/plans/`. This command uses intelligent caching to optimize implementation workflows and maintain consistency across similar execution patterns.
 
@@ -281,7 +284,7 @@ For complex feature implementation requiring coordinated expertise across domain
 
 - **codebase-locator**: Verify all referenced components and files exist
 - **codebase-analyzer**: Understand current implementation state and integration points
-- **thoughts-analyzer**: Review existing documentation and implementation notes
+- **research-analyzer**: Review existing documentation and implementation notes
 - **codebase-pattern-finder**: Identify established patterns for the implementation approach
 
 #### Phase 2: Domain-Specific Implementation (Sequential by Phase)
@@ -312,7 +315,7 @@ For complex feature implementation requiring coordinated expertise across domain
 #### Phase 5: Documentation & Knowledge Transfer (Parallel)
 
 - **content-writer**: Create user documentation and release notes
-- **thoughts-analyzer**: Update technical documentation and implementation notes
+- **research-analyzer**: Update technical documentation and implementation notes
 - **content-localization-coordinator**: Handle internationalization updates
 
 ### Execution Orchestration Best Practices
@@ -332,7 +335,7 @@ For complex feature implementation requiring coordinated expertise across domain
 - **Security**: Cleared by security-scanner
 - **Compliance**: Approved by compliance-expert (if applicable)
 - **Accessibility**: Validated by accessibility-pro (if applicable)
-- **Documentation**: Updated by thoughts-analyzer and content-writer
+- **Documentation**: Updated by research-analyzer and content-writer
 
 ### Risk Mitigation Strategies
 

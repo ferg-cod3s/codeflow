@@ -155,7 +155,7 @@ function validateEscalationChains() {
   const warnings = [];
 
   // Get all agent files
-  const findCommand = "find codeflow-agents -name '*.md' -not -name 'README.md'";
+  const findCommand = "find base-agents -name '*.md' -not -name 'README.md'";
   const agentFilesOutput = execSync(findCommand, { encoding: 'utf8' });
   const agentFiles = agentFilesOutput.trim().split('\n').filter(Boolean);
 
@@ -210,7 +210,7 @@ function main() {
   console.log('🛡️  UATS v1.0 Compliance Validation\n');
 
   // Find all agent files
-  const findCommand = "find codeflow-agents -name '*.md' -not -name 'README.md'";
+  const findCommand = "find base-agents -name '*.md' -not -name 'README.md'";
   const agentFilesOutput = execSync(findCommand, { encoding: 'utf8' });
   const agentFiles = agentFilesOutput.trim().split('\n').filter(Boolean);
 

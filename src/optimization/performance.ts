@@ -1,6 +1,5 @@
 import { readFile, stat } from 'node:fs/promises';
-import { join } from 'node:path';
-import type { Agent, Command, ParsedEntity, ParseError } from '../conversion/agent-parser.js';
+import type { Agent, ParseError } from '../conversion/agent-parser.js';
 
 /**
  * Performance optimization utilities for the codeflow system

@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 
-import { runHealthCheck } from '../monitoring/health';
+import { runHealthCheck } from '../monitoring/health.js';
 
 export async function healthCheck(): Promise<void> {
   try {

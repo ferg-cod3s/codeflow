@@ -1,6 +1,6 @@
 import { basename } from 'node:path';
-import { globalPerformanceMonitor, globalFileReader } from '../optimization/performance';
-import { YamlProcessor } from '../yaml/yaml-processor';
+import { globalPerformanceMonitor, globalFileReader } from '../optimization/performance.ts';
+import { YamlProcessor } from '../yaml/yaml-processor.js';
 
 /**
  * Common interface for parsed entities (agents and commands)
@@ -141,6 +141,36 @@ function detectFormatFromContent(content: string): 'base' | 'claude-code' | 'ope
 }
 
 /**
+ * Flatten nested permission objects to simple allow/deny strings
+ * Example: wildcard allow with specific denies -> "allow" (use most permissive value)
+ */
+function flattenNestedPermission(permission: any): 'allow' | 'ask' | 'deny' {
+  if (typeof permission === 'string') {
+    return permission as 'allow' | 'ask' | 'deny';
+  }
+
+  if (typeof permission === 'object' && permission !== null) {
+    // For OpenCode, we need to flatten to a single value
+    // Strategy: Use the wildcard "*" value if present, otherwise use "allow" if any rule allows
+    if ('*' in permission) {
+      return permission['*'] as 'allow' | 'ask' | 'deny';
+    }
+
+    // Check if any rule allows access
+    const values = Object.values(permission);
+    if (values.includes('allow')) {
+      return 'allow';
+    }
+    if (values.includes('ask')) {
+      return 'ask';
+    }
+    return 'deny';
+  }
+
+  return 'deny'; // Safe default
+}
+
+/**
  * Normalize permission format between tools: and permission: formats
  */
 export function normalizePermissionFormat(frontmatter: any): any {
@@ -151,22 +181,24 @@ export function normalizePermissionFormat(frontmatter: any): any {
     frontmatter.permission &&
     typeof frontmatter.permission === 'object'
   ) {
-    // Preserve complex permission objects (like bash wildcards), only use tools as fallback
+    // Flatten nested permission objects for OpenCode compatibility
     const permissions = {
-      read:
-        frontmatter.permission.read || booleanToPermissionString(frontmatter.tools.read || false),
-      write:
-        frontmatter.permission.write || booleanToPermissionString(frontmatter.tools.write || false),
-      edit:
-        frontmatter.permission.edit || booleanToPermissionString(frontmatter.tools.edit || false),
-      bash:
-        typeof frontmatter.permission.bash === 'object'
-          ? frontmatter.permission.bash
-          : frontmatter.permission.bash ||
-            booleanToPermissionString(frontmatter.tools.bash || false),
-      webfetch:
+      read: flattenNestedPermission(
+        frontmatter.permission.read || booleanToPermissionString(frontmatter.tools.read || false)
+      ),
+      write: flattenNestedPermission(
+        frontmatter.permission.write || booleanToPermissionString(frontmatter.tools.write || false)
+      ),
+      edit: flattenNestedPermission(
+        frontmatter.permission.edit || booleanToPermissionString(frontmatter.tools.edit || false)
+      ),
+      bash: flattenNestedPermission(
+        frontmatter.permission.bash || booleanToPermissionString(frontmatter.tools.bash || false)
+      ),
+      webfetch: flattenNestedPermission(
         frontmatter.permission.webfetch ||
-        booleanToPermissionString(frontmatter.tools.webfetch !== false),
+          booleanToPermissionString(frontmatter.tools.webfetch !== false)
+      ),
     };
 
     // Remove individual permission fields and tools to avoid duplication
@@ -221,8 +253,14 @@ export function normalizePermissionFormat(frontmatter: any): any {
     };
   }
 
-  // If agent already uses permission: format, remove individual permission fields to avoid duplication
+  // If agent already uses permission: format, flatten nested permissions and remove individual permission fields
   if (frontmatter.permission && typeof frontmatter.permission === 'object') {
+    // Flatten nested permission structures for OpenCode compatibility
+    const flattenedPermissions: Record<string, 'allow' | 'ask' | 'deny'> = {};
+    for (const [key, value] of Object.entries(frontmatter.permission)) {
+      flattenedPermissions[key] = flattenNestedPermission(value);
+    }
+
     // Remove individual permission fields that might exist alongside the permission block
     const {
       _edit,
@@ -236,7 +274,11 @@ export function normalizePermissionFormat(frontmatter: any): any {
       _write,
       ...cleanFrontmatter
     } = frontmatter;
-    return cleanFrontmatter;
+
+    return {
+      ...cleanFrontmatter,
+      permission: flattenedPermissions,
+    };
   }
 
   // If no permission format found, return as-is (for Claude Code and other formats that don't use permissions)
@@ -310,7 +352,10 @@ export async function parseAgentFile(
     const normalizedFrontmatter =
       format === 'opencode' ? normalizePermissionFormat(frontmatter) : frontmatter;
 
-    const agent: Agent = {
+    // Check if this is a command by mode field
+    const _isCommand = normalizedFrontmatter.mode === 'command';
+
+    const entity: Agent | Command = {
       name: basename(filePath, '.md'),
       format,
       frontmatter: normalizedFrontmatter,
@@ -319,12 +364,12 @@ export async function parseAgentFile(
     };
 
     // Cache successful parse
-    await parseCache.set(cacheKey, agent);
+    await parseCache.set(cacheKey, entity);
 
     const parseTime = performance.now() - parseStart;
     globalPerformanceMonitor.updateMetrics({ agentParseTime: parseTime });
 
-    return agent;
+    return entity;
   } catch (error: any) {
     // For malformed YAML, try to parse what we can using fallback parsing
     try {
@@ -337,7 +382,10 @@ export async function parseAgentFile(
           throw new Error('Agent must have a description field');
         }
 
-        const agent: Agent = {
+        // Check if this is a command in fallback parsing too
+        const _isCommand = frontmatter.mode === 'command';
+
+        const entity: Agent | Command = {
           name: frontmatter.name || basename(filePath, '.md'),
           format,
           frontmatter: frontmatter as any,
@@ -345,7 +393,7 @@ export async function parseAgentFile(
           filePath,
         };
 
-        return agent;
+        return entity;
       }
     } catch {
       // Fallback also failed, cache the error
@@ -422,12 +470,12 @@ function parseWithFallback(content: string): {
 export async function parseAgentsFromDirectory(
   directory: string,
   format: 'base' | 'claude-code' | 'opencode' | 'cursor' | 'cursor' | 'auto'
-): Promise<{ agents: Agent[]; errors: ParseError[] }> {
+): Promise<{ agents: (Agent | Command)[]; errors: ParseError[] }> {
   const { readdir } = await import('node:fs/promises');
   const { join } = await import('node:path');
   const { existsSync } = await import('node:fs');
 
-  const agents: Agent[] = [];
+  const agents: (Agent | Command)[] = [];
   const errors: ParseError[] = [];
 
   if (!existsSync(directory)) {
@@ -463,8 +511,30 @@ export async function parseAgentsFromDirectory(
             const content = await globalFileReader.readFile(itemPath);
             actualFormat = detectFormatFromContent(content);
           }
-          const agent = await parseAgentFile(itemPath, actualFormat);
-          agents.push(agent);
+
+          // Check if this is likely a command file
+          const content = await globalFileReader.readFile(itemPath);
+          const { frontmatter } = parseFrontmatter(content);
+          const isLikelyCommand =
+            // Check if it's in a command directory
+            itemPath.includes('/command/') ||
+            // Check for command-specific fields
+            frontmatter.inputs ||
+            frontmatter.outputs ||
+            frontmatter.cache_strategy ||
+            frontmatter.success_signals ||
+            frontmatter.failure_modes ||
+            frontmatter.command_schema_version ||
+            frontmatter.mode === 'command';
+
+          let entity: Agent | Command;
+          if (isLikelyCommand && (actualFormat === 'base' || actualFormat === 'opencode')) {
+            entity = await parseCommandFile(itemPath, actualFormat);
+          } else {
+            entity = await parseAgentFile(itemPath, actualFormat);
+          }
+
+          agents.push(entity);
         } catch (error: any) {
           errors.push({
             message: error.message,

@@ -1,4 +1,4 @@
-import { Agent, BaseAgent, ClaudeCodeAgent, OpenCodeAgent } from '../conversion/agent-parser';
+import { Agent, BaseAgent, ClaudeCodeAgent, OpenCodeAgent } from '../conversion/agent-parser.js';
 
 /**
  * Unified validation engine for all agent formats
@@ -27,7 +27,7 @@ export type AgentFormat = 'base' | 'claude-code' | 'opencode';
 // Claude Code v2.x.x Specifications
 const CLAUDE_CODE_AGENT_FIELDS = ['name', 'description', 'tools', 'model'] as const;
 const CLAUDE_CODE_MODELS = ['inherit', 'sonnet', 'opus', 'haiku'] as const;
-const CLAUDE_CODE_COMMAND_FIELDS = [
+const _CLAUDE_CODE_COMMAND_FIELDS = [
   'description',
   'allowed-tools',
   'argument-hint',
@@ -93,10 +93,10 @@ export class ValidationEngine {
     );
 
     // Name format validation
-    if (agent.name && !/^[a-z0-9-]+$/.test(agent.name)) {
+    if (agent.name && !/^[a-z0-9-_]+$/.test(agent.name)) {
       warnings.push({
         field: 'name',
-        message: 'Name should use lowercase letters, numbers, and hyphens only',
+        message: 'Name should use lowercase letters, numbers, hyphens, and underscores only',
       });
     }
 
@@ -131,9 +131,7 @@ export class ValidationEngine {
 
     // Check for invalid fields (Claude Code v2.x.x only allows specific fields)
     const agentKeys = Object.keys(agent) as string[];
-    const invalidFields = agentKeys.filter(
-      (key) => !CLAUDE_CODE_AGENT_FIELDS.includes(key as any)
-    );
+    const invalidFields = agentKeys.filter((key) => !CLAUDE_CODE_AGENT_FIELDS.includes(key as any));
 
     if (invalidFields.length > 0) {
       errors.push({
@@ -152,10 +150,10 @@ export class ValidationEngine {
     );
 
     // Name format validation
-    if (agent.name && !/^[a-z0-9-]+$/.test(agent.name)) {
+    if (agent.name && !/^[a-z0-9-_]+$/.test(agent.name)) {
       warnings.push({
         field: 'name',
-        message: 'Name should use lowercase letters, numbers, and hyphens only',
+        message: 'Name should use lowercase letters, numbers, hyphens, and underscores only',
       });
     }
 
@@ -230,10 +228,10 @@ export class ValidationEngine {
     );
 
     // Name format validation
-    if (agent.name && !/^[a-z0-9-]+$/.test(agent.name)) {
+    if (agent.name && !/^[a-z0-9-_]+$/.test(agent.name)) {
       warnings.push({
         field: 'name',
-        message: 'Name should use lowercase letters, numbers, and hyphens only',
+        message: 'Name should use lowercase letters, numbers, hyphens, and underscores only',
       });
     }
 

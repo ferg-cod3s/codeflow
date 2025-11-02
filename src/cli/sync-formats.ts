@@ -1,14 +1,14 @@
 import { join } from 'node:path';
 import { existsSync } from 'node:fs';
 import { writeFile, mkdir } from 'node:fs/promises';
-import { parseAgentsFromDirectory, serializeAgent } from '../conversion/agent-parser';
-import { FormatConverter } from '../conversion/format-converter';
-import { AgentValidator } from '../conversion/validator';
+import { parseAgentsFromDirectory, serializeAgent } from '../conversion/agent-parser.js';
+import { FormatConverter } from '../conversion/format-converter.js';
+import { AgentValidator } from '../conversion/validator.js';
 import {
   applyOpenCodePermissionsToDirectory,
   DEFAULT_OPENCODE_PERMISSIONS,
-} from '../security/opencode-permissions';
-import { applyPermissionInheritance } from '../security/validation';
+} from '../security/opencode-permissions.js';
+import { applyPermissionInheritance } from '../security/validation.js';
 import CLIErrorHandler from './error-handler.js';
 
 interface SyncFormatsOptions {
@@ -35,8 +35,8 @@ const AGENT_CATEGORIES = {
   generalist: [
     'agent-architect',
     'smart-subagent-orchestrator',
-    'thoughts-analyzer',
-    'thoughts-locator',
+    'research-analyzer',
+    'research-locator',
     'web-search-researcher',
   ],
   'ai-innovation': ['ai-integration-expert'],

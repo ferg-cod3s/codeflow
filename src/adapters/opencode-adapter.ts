@@ -25,12 +25,14 @@ import { Platform } from '../config/platform-detector.js';
  */
 export class OpenCodeAdapter extends BasePlatformAdapter {
   readonly platform = Platform.OPENCODE;
+  readonly projectRoot: string;
   private agentsDirectory: string;
   private mcpClient?: Client;
   private mcpEndpoint?: string;
 
   constructor(projectRoot: string, mcpEndpoint?: string) {
     super();
+    this.projectRoot = projectRoot;
     this.agentsDirectory = join(projectRoot, '.opencode', 'agent');
     this.mcpEndpoint = mcpEndpoint;
   }

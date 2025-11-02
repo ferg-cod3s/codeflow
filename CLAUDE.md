@@ -2,209 +2,243 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Global Development Standards
+## Core Project Knowledge
 
-**IMPORTANT**: All coding must follow the centralized development standards. These are the single source of truth for all projects:
+**Import shared development knowledge**: See @AGENTS.md for:
+- Build, test, and lint commands
+- Code style guidelines
+- Agent catalog and usage patterns
+- Getting started workflows
+- Documentation references
 
-- **[Global Rules](../../docs/global-rules.md)** - Overview and core development principles
-- **[Git Workflow](../../docs/git-workflow.md)** - Branch strategy, commit conventions, PR process, versioning
-- **[Testing Standards](../../docs/testing-standards.md)** - TDD practices, testing patterns, frameworks, coverage requirements
-- **[Security Guidelines](../../docs/security-guidelines.md)** - Authentication, data protection, OWASP compliance, secure coding
-- **[Code Quality](../../docs/code-quality.md)** - SOLID principles, naming conventions, function complexity, code organization
-- **[Accessibility](../../docs/accessibility.md)** - WCAG 2.2 AA compliance, keyboard navigation, screen readers, ARIA
-- **[Communication Style](../../docs/communication-style.md)** - AI agent interaction patterns, intellectual honesty, clarification guidelines
+The information below is specific to Claude Code features and patterns.
 
-## Development Commands
+## Claude Code-Specific Patterns
 
-- **Type checking**: `npm run typecheck` or `bun run typecheck` - Runs TypeScript compiler without emitting files
-- **Installation**: `bun install && bun run install` - Installs dependencies and links the CLI globally
+### Using Subagents
 
-## Architecture Overview
+Claude Code provides native subagent support. When working in this codebase, leverage specialized subagents from `.claude/agents/`:
 
-This is a **Codeflow Automation Enhancement CLI** built with **Bun** and **TypeScript** that manages agents and commands for AI-assisted development workflows.
+**Research Pattern** (always follow this order):
+1. Run locator subagents first (in parallel):
+   - `codebase-locator` - Find WHERE files exist
+   - `research-locator` - Find existing documentation
 
-### Core Structure
+2. Then run analyzer subagents:
+   - `codebase-analyzer` - Understand HOW code works
+   - `research-analyzer` - Extract insights from docs
+   - `codebase-pattern-finder` - Find similar patterns
 
-- **CLI Entry Point**: `src/cli/index.ts` - Main CLI with core MVP commands
-- **Agent Definitions**: `/agent/` - Specialized subagents for codebase analysis and research
-- **Command Prompts**: `/command/` - Complex workflow commands that orchestrate multiple agents
-- **Workflow Documentation**: `/README.md` - Contains the full codeflow automation process
+**Critical Rule**: Never run analyzer subagents before locators. Locators gather context; analyzers consume it.
 
-### Key Components
+### Agent Invocation
 
-**CLI Commands** (MVP):
+Claude Code automatically delegates to subagents based on task descriptions. You can also explicitly request them:
 
-- `codeflow setup [project-path]` - Sets up codeflow directory structure and copies agents/commands
-- `codeflow status [project-path]` - Checks which files are up-to-date or outdated
-- `codeflow sync [project-path]` - Synchronizes agents and commands with global configuration
-- `codeflow convert` - Converts agents between different formats
-- `codeflow watch start` - Starts file watching for automatic synchronization
-
-**Core Workflow Agent Types**:
-
-- `codebase-locator` - Finds WHERE files and components exist
-- `codebase-analyzer` - Understands HOW specific code works
-- `codebase-pattern-finder` - Discovers similar implementation patterns
-- `thoughts-locator` - Discovers existing documentation about topics
-- `thoughts-analyzer` - Extracts insights from specific documents
-- `web-search-researcher` - Performs targeted web research
-
-**Specialized Domain Agents** (Claude Code format):
-
-- `operations_incident_commander` - Incident response leadership and coordination
-- `development_migrations_specialist` - Database schema migrations and data backfills
-- `quality-testing_performance_tester` - Performance testing and bottleneck analysis
-- `programmatic_seo_engineer` - Large-scale SEO architecture and content generation
-- `content_localization_coordinator` - i18n/l10n workflow coordination
-
-**Base Agent Architecture**:
-
-- **Source of Truth**: `codeflow-agents/` - Base agents in hierarchical structure by domain
-- **Platform Conversion**: Agents are converted to platform-specific formats on setup
-- **OpenCode Format**: Converted to `.opencode/agent/` with proper permissions and configuration
-
-**Agent Categories** (Base Format):
-
-- `agent-architect` - Meta-agent for creating specialized AI agents
-- `smart-subagent-orchestrator` - Complex multi-domain project coordination
-- `ai-integration-expert`, `api-builder`, `database-expert`, `full-stack-developer`
-- `growth-engineer`, `security-scanner`, `ux-optimizer` and others
-
-**Command Workflows**:
-
-- `/research` - Comprehensive codebase and documentation analysis
-- `/plan` - Creates detailed implementation plans from tickets and research
-- `/execute` - Implements plans with proper verification
-- `/test` - Generates comprehensive test suites for implemented features
-- `/document` - Creates user guides, API docs, and technical documentation
-- `/commit` - Creates commits with structured messages
-- `/review` - Validates implementations against original plans
-
-**Slash Commands Available**:
-
-- **Claude Code**: Commands in `.claude/commands/` (YAML frontmatter format)
-- **OpenCode**: Commands in `.opencode/command/` (YAML frontmatter with agent/model specs)
-- Use `codeflow commands` to list all available slash commands and their descriptions
-- Commands are automatically copied to projects via `codeflow setup [project-path]`
-
-### Workflow Philosophy
-
-The system emphasizes **context compression** and **fresh analysis** over caching. Each phase uses specialized agents to gather only the essential information needed for the next phase, enabling complex workflows within context limits.
-
-**Critical Patterns**:
-
-- Always run locator agents first in parallel, then run analyzer agents only after locators complete. This prevents premature analysis without proper context.
-- Use specialized domain agents selectively based on the research or implementation domain (operations, database migrations, performance, SEO, localization)
-- Agents have defined handoff targets for complex scenarios - follow escalation paths when needed
-
-### Development Notes
-
-- Uses **Bun runtime** for fast TypeScript execution
-- CLI binary linked via `bun link` for global access
-- TypeScript configured for ES modules with Bun-specific types
-- Comprehensive test framework with unit, integration, and E2E tests
-- See `AGENT_REGISTRY.md` for complete agent capabilities and usage guidelines
-
-## Subagent Usage Guidelines
-## Argument Handling & Defaults
-
-### Platform-Specific Argument Patterns
-
-#### Claude Code (.claude.ai/code)
-Claude Code uses native argument parsing and provides defaults automatically:
-
-```bash
-# Arguments are passed directly to commands
-/research "Analyze authentication system" --scope=codebase --depth=deep
-/plan --files="docs/tickets/auth-ticket.md,docs/research/auth-research.md" --scope=feature
-/execute --plan_path="docs/plans/oauth-implementation.md" --start_phase=1
+```
+"Use the codebase-locator subagent to find authentication files"
+"Use the security-scanner subagent to check for vulnerabilities"
 ```
 
-**Default Values**:
-- `scope`: `"codebase"` (for research), `"feature"` (for plan)
-- `depth`: `"medium"` (for research)
-- `start_phase`: `1` (for execute)
-- `strictness`: `"standard"` (for review)
+### Slash Commands Available
 
-#### OpenCode (opencode.ai)
-OpenCode requires explicit argument specification with YAML frontmatter:
+After running `codeflow setup`, these workflow commands are available:
+
+- `/research` - Comprehensive codebase and documentation analysis
+- `/plan` - Creates detailed implementation plans
+- `/execute` - Implements plans with verification
+- `/test` - Generates comprehensive test suites
+- `/document` - Creates user guides and API docs
+- `/commit` - Creates commits with structured messages
+- `/review` - Validates implementations against plans
+- `/continue` - Resume execution from last completed step
+- `/help` - Get detailed development guidance
+
+## Architecture for Claude Code Context
+
+### Model Inheritance
+
+All Claude Code subagents use `model: inherit` to automatically adapt to the model you're currently using:
+- **Sonnet** in normal/plan mode
+- **Haiku** in code mode
+- **Opus** when you explicitly select it
+
+This means agents seamlessly use the right model for the task without hardcoding model preferences. No configuration needed!
+
+### Critical: Single Source of Truth Pattern
+
+**NEVER directly edit platform-specific agent directories**. This is the most important architectural principle:
+
+```
+base-agents/                    # ← EDIT HERE (single source of truth)
+  ├── development/
+  ├── operations/
+  ├── quality-testing/
+  └── ...
+
+        ↓ Automatic Conversion ↓
+
+.claude/agents/                 # ← NEVER EDIT (auto-generated)
+.opencode/agent/                # ← NEVER EDIT (auto-generated)
+```
+
+**Workflow**:
+1. Edit agents in `base-agents/[category]/agent-name.md`
+2. Validate: `codeflow validate`
+3. Convert: `codeflow sync` or `codeflow convert`
+4. Generated files appear in `.claude/agents/`
+
+### Project Structure for Navigation
+
+```
+src/cli/index.ts               # Main CLI entry point
+src/cli/*.ts                   # Individual CLI commands
+src/conversion/agent-parser.ts # Agent format definitions
+src/adapters/                  # Platform-specific converters
+base-agents/                   # Single source of truth for agents
+tests/                         # Comprehensive test suite
+  ├── unit/                    # Fast, isolated tests
+  ├── integration/             # Multi-component tests
+  └── e2e/                     # End-to-end workflows
+```
+
+### Agent Format Reference
+
+Agents in `base-agents/` use this YAML frontmatter format:
 
 ```yaml
 ---
-name: research
-mode: command
-scope: codebase
-depth: deep
+name: agent-name
+description: Brief description
+mode: subagent
+temperature: 0.1
+model: anthropic/claude-sonnet-4
+category: development
+tags: [typescript, testing]
+tools:
+  read: true
+  write: true
+  bash: true
 ---
-Research query here...
+
+Agent system prompt content here...
 ```
 
-**Default Values**:
-- `scope`: `"both"` (codebase + thoughts)
-- `depth`: `"medium"`
-- `model`: `"anthropic/claude-sonnet-4"`
-- `temperature`: `0.1`
+**For Claude Code**: The conversion process transforms this into `.claude/agents/` format with:
+- `tools` as comma-separated string (not object)
+- `model` as `sonnet`, `opus`, `haiku`, or `inherit`
 
-### Date Formatting
+## Development Workflow with Claude Code
 
-Both platforms use current date for research documents:
-- **Format**: `YYYY-MM-DDTHH:MM:SSZ` (ISO 8601)
-- **Source**: Current system time when command executes
-- **Example**: `2025-09-27T12:00:00Z` (not `2025-01-26T...`)
+### Before Making Changes
 
-### OpenCode Documentation Reference
+1. **Research first**: Use `/research` or `codebase-locator` + `codebase-analyzer` subagents
+2. **Understand patterns**: Use `codebase-pattern-finder` to see similar implementations
+3. **Check documentation**: Use `research-locator` + `research-analyzer` for existing decisions
 
-For complete OpenCode command syntax and options, see:
-- **Official Docs**: https://opencode.ai/docs/commands
-- **Agent Format**: https://opencode.ai/docs/agents
-- **YAML Frontmatter**: https://opencode.ai/docs/yaml-format
+### When Adding Agents
 
+1. Create in `base-agents/[category]/agent-name.md`
+2. Use BaseAgent YAML format (see above)
+3. Validate: `codeflow validate`
+4. Test conversion: `codeflow sync --dry-run`
+5. Generate: `codeflow sync`
+6. Test the agent in Claude Code
 
+### Before Committing
 
-**ALWAYS use the appropriate specialized subagents** for complex tasks instead of attempting to handle everything directly. This ensures thorough, accurate, and efficient execution.
+```bash
+bun run typecheck    # Type check
+bun run lint         # Lint check
+bun run test         # All tests
+```
 
-### When to Use Subagents
+## Path Security Pattern
 
-- **Research Tasks**: Use `codebase-locator` + `thoughts-locator` first, then `codebase-analyzer` + `thoughts-analyzer`
-- **Code Analysis**: Use `codebase-analyzer` for understanding implementation details
-- **Testing**: Use `test-generator` for creating comprehensive test suites
-- **Documentation**: Use `thoughts-analyzer` for synthesizing information into structured docs
-- **Complex Multi-step Tasks**: Use `smart-subagent-orchestrator` for coordination
-- **Web Research**: Use `web-search-researcher` for external information gathering
-- **Architecture Decisions**: Use `system-architect` for design and planning
+This codebase implements strict path validation. When working with file operations, note that:
 
-### Subagent Coordination Best Practices
+- All user-provided paths go through `safeResolve()` validation
+- Directory traversal (`..`) is prevented
+- Paths are validated against allowed root directories
+- This pattern is in `src/cli/index.ts` and used throughout
 
-1. **Start with Locators**: Always run locator agents first to gather comprehensive context
-2. **Parallel Execution**: Run same-type agents concurrently when possible
-3. **Sequential Analysis**: Run analyzers only after locators complete
-4. **Specialized Domains**: Use domain-specific agents (security-scanner, database-expert, etc.) for specialized tasks
-5. **Complex Orchestration**: Use `smart-subagent-orchestrator` for multi-domain coordination
-6. **Quality Validation**: Use `code-reviewer` for code quality assessment
+## Multi-Runtime Support
 
-### Common Subagent Patterns
+The project supports both Bun (preferred) and Node.js:
 
-- **Codebase Research**: `codebase-locator` → `codebase-analyzer` → `codebase-pattern-finder`
-- **Documentation Tasks**: `thoughts-locator` → `thoughts-analyzer` → document synthesis
-- **Implementation**: `system-architect` → `full-stack-developer` → `code-reviewer`
-- **Testing**: `test-generator` → integration testing → `quality-testing-performance-tester`
-- **Web Research**: `web-search-researcher` for external information gathering
+```bash
+# Bun (preferred)
+bun run typecheck
+bun run test
 
-### Subagent Selection Criteria
+# Node.js (fallback)
+npm run typecheck:node
+npm run test:node
+```
 
-- **Task Complexity**: Use specialized agents for complex, multi-step tasks
-- **Domain Expertise**: Choose agents with relevant domain knowledge
-- **Output Requirements**: Select agents that produce the required output format
-- **Context Limits**: Use agents to work within context constraints efficiently
+All npm scripts have `:node` equivalents for compatibility.
 
-**Remember**: Subagents are designed to handle specific types of work better than general assistance. Always leverage their specialized capabilities for optimal results.
+## Key Files to Understand
 
-## Development Standards Quick Reference
+**Read First**:
+- `src/cli/index.ts` - CLI structure and command routing
+- `src/conversion/agent-parser.ts` - Agent format definitions
+- `base-agents/development/codebase-analyzer.md` - Example agent
+- `@AGENTS.md` - Complete agent catalog and commands
 
-For detailed guidelines, always refer to the centralized documentation in `../../docs/`:
-- **Git Workflow**: See [../../docs/git-workflow.md](../../docs/git-workflow.md)
-- **Testing**: See [../../docs/testing-standards.md](../../docs/testing-standards.md)
-- **Security**: See [../../docs/security-guidelines.md](../../docs/security-guidelines.md)
-- **Code Quality**: See [../../docs/code-quality.md](../../docs/code-quality.md)
-- **Accessibility**: See [../../docs/accessibility.md](../../docs/accessibility.md)
-- **Communication**: See [../../docs/communication-style.md](../../docs/communication-style.md)
+**Never Edit**:
+- `.claude/agents/*` - Auto-generated
+- `.opencode/agent/*` - Auto-generated
+- `AGENT_MANIFEST.json` - Auto-generated
+
+## Testing Philosophy
+
+- **Unit tests** (`tests/unit/`) - Fast, isolated, pure functions
+- **Integration tests** (`tests/integration/`) - Multi-component interactions
+- **E2E tests** (`tests/e2e/`) - Complete workflows
+
+Run specific test types with:
+```bash
+bun run test:unit
+bun run test:integration
+bun run test:e2e
+```
+
+Or filter by name/path:
+```bash
+bun run run-tests.ts agent       # Tests matching "agent"
+bun test path/to/specific.test.ts
+```
+
+## MCP Integration Notes
+
+The project includes MCP (Model Context Protocol) server implementation in `packages/agentic-mcp/`. This enables:
+- Research workflow orchestration
+- Agent spawning and coordination
+- Quality validation for outputs
+
+MCP server can be started with:
+```bash
+bun run mcp:server
+bun run mcp:dev  # Watch mode
+```
+
+## Common Pitfalls to Avoid
+
+1. ❌ Editing `.claude/agents/` directly → ✅ Edit `base-agents/` and convert
+2. ❌ Forgetting to validate agents → ✅ Run `codeflow validate` before committing
+3. ❌ Running analyzers before locators → ✅ Always run locators first
+4. ❌ Skipping type checking → ✅ Run `bun run typecheck` before commits
+5. ❌ Manual path manipulation → ✅ Use `safeResolve()` for all user paths
+
+## Documentation
+
+- **@AGENTS.md** - Agent catalog, commands, code style (imported above)
+- **README.md** - Project overview and quick start
+- **COMPLIANCE.md** - Platform format specifications
+- **docs/AGENT_REGISTRY.md** - Complete agent capabilities reference
+- **docs/TROUBLESHOOTING.md** - Common issues and solutions
+
+---
+
+**Remember**: This codebase distributes 123+ agents to thousands of developers. Always validate changes, maintain backward compatibility, and test across both Bun and Node.js runtimes.

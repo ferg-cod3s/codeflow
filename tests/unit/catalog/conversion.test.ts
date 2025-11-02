@@ -4,19 +4,17 @@
  */
 
 import { describe, test, expect, beforeAll, afterAll } from 'bun:test';
-import { readFile, writeFile, mkdir } from 'fs/promises';
-import { join } from 'path';
 import * as yaml from 'yaml';
-import { setupTests, cleanupTests, TEST_DIR, createMockAgent, createMockCommand } from '../../setup';
+import { setupTests, cleanupTests, createMockAgent, createMockCommand } from '../../setup';
 
 // Converter functions (should match actual implementation)
 function convertClaudeToOpenCode(claudeContent: string): string {
   const frontmatterMatch = claudeContent.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)/);
   if (!frontmatterMatch) return claudeContent;
-  
+
   const metadata = yaml.parse(frontmatterMatch[1]);
   const content = frontmatterMatch[2];
-  
+
   // Convert to OpenCode format
   const openCodeMetadata = {
     ...metadata,
@@ -31,7 +29,7 @@ function convertClaudeToOpenCode(claudeContent: string): string {
       edit: false,
       write: false,
       bash: false,
-      webfetch: false
+      webfetch: false,
     },
     permission: metadata.permission || {
       read: 'allow',
@@ -40,20 +38,20 @@ function convertClaudeToOpenCode(claudeContent: string): string {
       edit: 'deny',
       write: 'deny',
       bash: 'deny',
-      webfetch: 'deny'
-    }
+      webfetch: 'deny',
+    },
   };
-  
+
   return `---\n${yaml.stringify(openCodeMetadata)}---\n${content}`;
 }
 
 function convertOpenCodeToClaude(openCodeContent: string): string {
   const frontmatterMatch = openCodeContent.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)/);
   if (!frontmatterMatch) return openCodeContent;
-  
+
   const metadata = yaml.parse(frontmatterMatch[1]);
   const content = frontmatterMatch[2];
-  
+
   // Convert to Claude format
   const claudeMetadata = {
     name: metadata.name,
@@ -61,17 +59,17 @@ function convertOpenCodeToClaude(openCodeContent: string): string {
     model: metadata.model?.replace('anthropic/', '') || 'claude-3-5-sonnet-20241022',
     temperature: metadata.temperature || 0.7,
     category: metadata.category,
-    tags: metadata.tags
+    tags: metadata.tags,
   };
-  
+
   // Remove OpenCode-specific fields
-    const metadataAny = claudeMetadata as any;
+  const metadataAny = claudeMetadata as any;
   delete metadataAny['mode'];
-    delete metadataAny['primary_objective'];
-    delete metadataAny['anti_objectives'];
-    delete metadataAny['tools'];
-    delete metadataAny['permission'];
-  
+  delete metadataAny['primary_objective'];
+  delete metadataAny['anti_objectives'];
+  delete metadataAny['tools'];
+  delete metadataAny['permission'];
+
   return `---\n${yaml.stringify(claudeMetadata)}---\n${content}`;
 }
 
@@ -98,11 +96,11 @@ tags: ["test", "example"]
 # Test Agent
 
 This is the agent content.`;
-      
+
       const converted = convertClaudeToOpenCode(claudeAgent);
       const frontmatterMatch = converted.match(/^---\n([\s\S]*?)\n---/);
       expect(frontmatterMatch).toBeTruthy();
-      
+
       const metadata = yaml.parse(frontmatterMatch![1]);
       expect(metadata.name).toBe('test-agent');
       expect(metadata.mode).toBe('subagent');
@@ -125,11 +123,11 @@ category: utility
 # Test Command
 
 Command content here.`;
-      
+
       const converted = convertClaudeToOpenCode(claudeCommand);
       const frontmatterMatch = converted.match(/^---\n([\s\S]*?)\n---/);
       expect(frontmatterMatch).toBeTruthy();
-      
+
       const metadata = yaml.parse(frontmatterMatch![1]);
       expect(metadata.name).toBe('test-command');
       expect(metadata.mode).toBe('command');
@@ -149,7 +147,7 @@ Content paragraph.
 ## Subheading
 
 More content.`;
-      
+
       const converted = convertClaudeToOpenCode(claudeContent);
       expect(converted).toContain('# Heading');
       expect(converted).toContain('Content paragraph.');
@@ -188,11 +186,11 @@ tags: ["test", "example"]
 # Test Agent
 
 This is the agent content.`;
-      
+
       const converted = convertOpenCodeToClaude(openCodeAgent);
       const frontmatterMatch = converted.match(/^---\n([\s\S]*?)\n---/);
       expect(frontmatterMatch).toBeTruthy();
-      
+
       const metadata = yaml.parse(frontmatterMatch![1]);
       expect(metadata.name).toBe('test-agent');
       expect(metadata.model).toBe('claude-3-5-sonnet-20241022');
@@ -218,11 +216,11 @@ category: utility
 # Test Command
 
 Command content.`;
-      
+
       const converted = convertOpenCodeToClaude(openCodeCommand);
       const frontmatterMatch = converted.match(/^---\n([\s\S]*?)\n---/);
       expect(frontmatterMatch).toBeTruthy();
-      
+
       const metadata = yaml.parse(frontmatterMatch![1]);
       expect(metadata.name).toBe('test-command');
       expect(metadata.model).toBe('claude-3-5-sonnet-20241022');
@@ -245,13 +243,13 @@ permission:
 ---
 
 Content`;
-      
+
       const converted = convertOpenCodeToClaude(openCodeContent);
       const frontmatterMatch = converted.match(/^---\n([\s\S]*?)\n---/);
       const metadata = yaml.parse(frontmatterMatch![1]);
-      
+
       expect(metadata.category).toBe('development');
-      expect(metadata.tags).toEqual(["coding", "testing", "automation"]);
+      expect(metadata.tags).toEqual(['coding', 'testing', 'automation']);
     });
   });
 
@@ -260,14 +258,14 @@ Content`;
       const original = createMockAgent('round-trip', 'claude');
       const originalYaml = yaml.stringify(original);
       const originalContent = `---\n${originalYaml}---\n\n# Content\n\nTest content.`;
-      
+
       // Convert Claude -> OpenCode -> Claude
       const toOpenCode = convertClaudeToOpenCode(originalContent);
       const backToClaude = convertOpenCodeToClaude(toOpenCode);
-      
+
       const finalMatch = backToClaude.match(/^---\n([\s\S]*?)\n---/);
       const finalMetadata = yaml.parse(finalMatch![1]);
-      
+
       expect(finalMetadata.name).toBe(original.name);
       expect(finalMetadata.description).toBe(original.description);
       expect(finalMetadata.category).toBe(original.category);
@@ -290,7 +288,7 @@ console.log('Hello, World!');
 > A blockquote
 
 [A link](https://example.com)`;
-      
+
       const fullContent = `---
 name: test
 description: Test
@@ -298,10 +296,10 @@ model: claude-3-5-sonnet-20241022
 ---
 
 ${content}`;
-      
+
       const converted1 = convertClaudeToOpenCode(fullContent);
       const converted2 = convertOpenCodeToClaude(converted1);
-      
+
       // Content should be preserved
       expect(converted2).toContain('# Main Heading');
       expect(converted2).toContain('**bold**');
@@ -316,17 +314,17 @@ ${content}`;
       const files = [
         { name: 'agent1', content: createMockAgent('agent1', 'claude') },
         { name: 'agent2', content: createMockAgent('agent2', 'claude') },
-        { name: 'command1', content: createMockCommand('command1', 'claude') }
+        { name: 'command1', content: createMockCommand('command1', 'claude') },
       ];
-      
-      const results = files.map(file => {
+
+      const results = files.map((file) => {
         const content = `---\n${yaml.stringify(file.content)}---\n\n# ${file.name}`;
         const converted = convertClaudeToOpenCode(content);
         return { name: file.name, converted };
       });
-      
+
       expect(results).toHaveLength(3);
-      results.forEach(result => {
+      results.forEach((result) => {
         expect(result.converted).toContain(result.name);
         expect(result.converted).toContain('---');
       });

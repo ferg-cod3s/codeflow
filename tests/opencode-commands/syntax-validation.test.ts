@@ -27,7 +27,6 @@ describe('OpenCode Command Syntax Validation', () => {
   };
 
   test('validates required fields', async () => {
-    const result = await validator.validateFile('/dev/null'); // We'll test with actual file later
     // For now, test the schema validation directly
     const schemaResult = (validator as any).validateSchema(validCommandStructure, 'opencode');
     expect(schemaResult.valid).toBe(true);

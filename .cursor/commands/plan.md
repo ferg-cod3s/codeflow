@@ -2,6 +2,7 @@
 name: plan
 mode: command
 description: Create an implementation plan from a ticket and research
+subtask: true
 version: 2.0.0-internal
 last_updated: 2025-09-13
 command_schema_version: 1.0
@@ -40,6 +41,8 @@ failure_modes:
 
 # Create Implementation Plan
 
+**Plan For**: $ARGUMENTS
+
 You are tasked with creating detailed implementation plans through an interactive, iterative process. This command uses intelligent caching to optimize research workflows and maintain consistency across similar planning scenarios.
 
 ## Purpose
@@ -66,7 +69,7 @@ Create comprehensive, actionable implementation plans by thoroughly researching 
 
 1. **Check Cache First**: Query cache for similar planning patterns using ticket context hash
 2. **Read All Input Files**: Completely read all specified ticket and research files
-3. **Spawn Parallel Research**: Launch codebase-locator, codebase-analyzer, and thoughts-locator agents
+3. **Spawn Parallel Research**: Launch codebase-locator, codebase-analyzer, and research-locator agents
 4. **Gather Comprehensive Context**: Read all files identified by research agents
 5. **Cross-Reference Analysis**: Verify requirements against actual codebase state
 
@@ -255,8 +258,8 @@ Create comprehensive, actionable implementation plans by thoroughly researching 
 - **codebase-locator**: Find all relevant files and components
 - **codebase-analyzer**: Understand current implementation details
 - **codebase-pattern-finder**: Discover similar implementations to model after
-- **thoughts-locator**: Find existing research and decisions
-- **thoughts-analyzer**: Extract insights from documentation
+- **research-locator**: Find existing research and decisions
+- **research-analyzer**: Extract insights from documentation
 
 ### Task Specification Best Practices
 
@@ -305,9 +308,9 @@ For complex feature planning requiring architectural and technical expertise:
 #### Phase 1: Research Integration & Context Building (Parallel)
 
 - **codebase-locator**: Maps existing component locations and architectural boundaries
-- **thoughts-locator**: Discovers existing plans, architectural decisions, and technical constraints
+- **research-locator**: Discovers existing plans, architectural decisions, and technical constraints
 - **codebase-pattern-finder**: Identifies established implementation patterns for similar features
-- **thoughts-analyzer**: Extracts insights from past planning decisions and outcomes
+- **research-analyzer**: Extracts insights from past planning decisions and outcomes
 
 #### Phase 2: Technical Feasibility Analysis (Sequential)
 

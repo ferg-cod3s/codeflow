@@ -6,7 +6,7 @@
 import { describe, test, expect, beforeAll, afterAll, beforeEach } from 'bun:test';
 import { exec } from 'child_process';
 import { promisify } from 'util';
-import { readFile, writeFile, mkdir } from 'fs/promises';
+import { writeFile, mkdir } from 'fs/promises';
 import { existsSync } from 'fs';
 import { join } from 'path';
 import { setupTests, cleanupTests, TEST_DIR, TEST_OUTPUT } from '../../setup';
@@ -41,12 +41,6 @@ describe('CLI Commands', () => {
   });
 
   describe('sync commands', () => {
-    test.skip('sync - should sync agents and commands', async () => {
-      const result = await runCLI('sync');
-      expect(result.stdout).toContain('codeflow');
-      expect(result.stdout.toLowerCase()).toContain('sync');
-    });
-
     test('sync --global - should sync to global directories', async () => {
       const result = await runCLI('sync --global');
       // May require permissions
@@ -109,16 +103,18 @@ Content`
   });
 
   describe('build-manifest command', () => {
-    test.skip('build-manifest - should rebuild agent manifest', async () => {
+    test('build-manifest - should rebuild agent manifest', async () => {
       const result = await runCLI('build-manifest');
-      expect(result.stdout).toContain('codeflow');
-      expect(result.stdout.toLowerCase()).toContain('manifest');
+      expect(result.code).toBe(0);
+      expect(result.stdout).toContain('Agent manifest created successfully');
+      expect(result.stdout).toContain('agents');
     });
   });
 
   describe('help command', () => {
-    test.skip('help - should show available commands', async () => {
+    test('help - should show available commands', async () => {
       const result = await runCLI('--help');
+      expect(result.code).toBe(0);
       expect(result.stdout).toContain('codeflow');
       expect(result.stdout).toContain('Usage');
       expect(result.stdout.toLowerCase()).toContain('command');

@@ -88,7 +88,7 @@ export function validateYAML(content: string): ValidationResult {
         yaml.parse(fixed);
         warnings.push('YAML was auto-fixed');
         return { valid: true, errors: [], warnings, fixed };
-      } catch (fixError) {
+      } catch {
         // Auto-fix didn't work
         errors.push('Auto-fix attempted but failed');
       }

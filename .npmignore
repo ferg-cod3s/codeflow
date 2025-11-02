@@ -61,6 +61,16 @@ thoughts/
 TEST_REPORT.md
 DEPLOYMENT_GUIDE.md
 
+# Platform-specific commands and agents (users only need one format)
+.claude/commands/
+.claude/agents/
+.opencode/command/
+.opencode/agent/
+
+# Base agents (converted to platform formats on setup)
+codeflow-agents/
+command/
+
 # TypeScript cache
 tsconfig.tsbuildinfo
 *.tsbuildinfo

@@ -1,6 +1,6 @@
 # Codeflow Documentation Index
 
-This directory contains comprehensive documentation for the Codeflow project. The project also includes deeper design and planning under `thoughts/`.
+This directory contains comprehensive documentation for the Codeflow project. The project also includes deeper design and planning under `research/`.
 
 ## Getting Started & Core Documentation
 
@@ -19,6 +19,11 @@ This directory contains comprehensive documentation for the Codeflow project. Th
 ## Platform Integration
 
 - **Cross-Repository Setup**: `./CROSS_REPO_SETUP.md` - Use codeflow from any project
+- **Platform Best Practices**:
+  - `./OPENCODE_BEST_PRACTICES.md` - OpenCode command development
+  - `./OPENCODE_CODEFLOW_BEST_PRACTICES.md` - OpenCode for CI/CD workflows
+  - `./CLAUDE_CODE_BEST_PRACTICES.md` - Claude Code slash commands
+  - `./CURSOR_BEST_PRACTICES.md` - Cursor commands and rules
 
 ## Development & Operations
 
@@ -44,7 +49,7 @@ This directory contains comprehensive documentation for the Codeflow project. Th
 
 - **Changelog**: `./CHANGELOG.md` - Version history and changes
 - **TODO**: `./TODO.md` - Development tracking and upcoming work
-- **Thoughts System**: `./THOUGHTS.md` - Understanding the thoughts directory structure
+- **Thoughts System**: `./THOUGHTS.md` - Understanding the research directory structure
 - **Agent Synchronization**: `./scripts/README.md` - Agent sync system documentation
 
 ## AI-Specific Documentation (Root Directory)
@@ -57,13 +62,13 @@ The following AI-specific documentation remains in the root directory:
 
 ## Internal Planning & Research
 
-For internal planning and deeper technical docs, see `thoughts/`:
+For internal planning and deeper technical docs, see `research/`:
 
-- `../thoughts/architecture/` - Architectural decisions and designs
-- `../thoughts/research/` - Research findings and analysis
-- `../thoughts/plans/` - Implementation plans
-- `../thoughts/documentation/` - Documentation for implemented plan
-- `../thoughts/review/` - Reviews completed
+- `../research/architecture/` - Architectural decisions and designs
+- `../research/research/` - Research findings and analysis
+- `../research/plans/` - Implementation plans
+- `../research/documentation/` - Documentation for implemented plan
+- `../research/review/` - Reviews completed
 
 ## Quick Navigation
 

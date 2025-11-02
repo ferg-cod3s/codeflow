@@ -15,10 +15,10 @@ The Agentic workflow provides a structured, phase-based approach to software dev
 **Process**:
 1. Reads ticket requirements
 2. Spawns specialized agents to explore codebase
-3. Searches thoughts directory for historical context
+3. Searches research directory for historical context
 4. Synthesizes findings into a research document
 
-**Output**: `thoughts/research/YYYY-MM-DD_topic.md`
+**Output**: `research/research/YYYY-MM-DD_topic.md`
 
 **Key Points**:
 - Always review research for accuracy
@@ -38,7 +38,7 @@ The Agentic workflow provides a structured, phase-based approach to software dev
 3. Develops phased implementation approach
 4. Defines success criteria
 
-**Output**: `thoughts/plans/descriptive-name.md`
+**Output**: `research/plans/descriptive-name.md`
 
 **Key Points**:
 - Interactive process with user feedback
@@ -94,7 +94,7 @@ The Agentic workflow provides a structured, phase-based approach to software dev
 3. Verifies success criteria
 4. Documents findings
 
-**Output**: `thoughts/reviews/YYYY-MM-DD_review.md`
+**Output**: `research/reviews/YYYY-MM-DD_review.md`
 
 **Key Points**:
 - Ensures plan was followed correctly
@@ -265,5 +265,5 @@ Each phase has quality requirements:
 ## Related Documentation
 - [Usage Guide](./usage.md)
 - [Commands](./commands.md)
-- [Thoughts Directory](./thoughts.md)
+- [Thoughts Directory](./research.md)
 - [Architecture](./architecture.md)

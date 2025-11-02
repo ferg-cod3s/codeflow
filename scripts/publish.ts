@@ -1,310 +1,308 @@
 #!/usr/bin/env bun
 
-import { $ } from 'bun';
-import path from 'path';
-import fs from 'fs/promises';
+/**
+ * CodeFlow Publish Script
+ *
+ * This script handles the automated publishing process for CodeFlow CLI.
+ * It's designed to be called from the GitHub release workflow.
+ *
+ * Usage:
+ *   AGENTIC_VERSION=1.0.0 ./scripts/publish.ts
+ */
 
-const version = process.env.AGENTIC_VERSION;
-if (!version) {
-  throw new Error('AGENTIC_VERSION environment variable is required');
-}
+import { execSync } from 'child_process';
+import { readFileSync, writeFileSync } from 'fs';
+import { join } from 'path';
 
-console.log(`=== Publishing agentic-cli v${version} ===\n`);
-
-// Save current git tree state for potential rollback
-// const tree = await $`git add . && git write-tree`.text().then(x => x.trim());
-
-// Update version in package.json
-console.log('Updating package.json version...');
-const pkgPath = path.join(process.cwd(), 'package.json');
-let pkg = await fs.readFile(pkgPath, 'utf-8');
-pkg = pkg.replace(/"version": "[^"]+"/, `"version": "${version}"`);
-await fs.writeFile(pkgPath, pkg);
-console.log(`  Updated package.json to v${version}`);
-
-// Run bun install to update lockfile
-console.log('Running bun install...');
-await $`bun install`.quiet();
-
-// Platform configurations
-const platforms = [
-  { name: 'darwin-x64', os: 'darwin', cpu: 'x64', bun: 'darwin-x64' },
-  { name: 'darwin-arm64', os: 'darwin', cpu: 'arm64', bun: 'darwin-arm64' },
-  { name: 'linux-x64', os: 'linux', cpu: 'x64', bun: 'linux-x64' },
-  { name: 'linux-arm64', os: 'linux', cpu: 'arm64', bun: 'linux-arm64' },
-];
-
-// Create dist directory
-const distDir = path.join(process.cwd(), 'dist');
-await fs.mkdir(distDir, { recursive: true });
-
-// Build binaries for each platform
-console.log('\nBuilding binaries...');
-for (const platform of platforms) {
-  console.log(`  Building ${platform.name}...`);
-  const outfile = `./dist/agentic-${platform.name}/bin/agentic`;
-  await $`bun build ./src/cli/index.ts --compile --target=bun-${platform.bun} --outfile ${outfile}`;
-}
-
-// Create platform-specific packages
-console.log('\nCreating platform packages...');
-for (const platform of platforms) {
-  const pkgDir = path.join(distDir, `agentic-${platform.name}`);
-
-  // Create package.json for platform package
-  const platformPkg = {
-    name: `agentic-${platform.name}`,
-    version: version,
-    os: [platform.os],
-    cpu: [platform.cpu],
-  };
-
-  await fs.writeFile(path.join(pkgDir, 'package.json'), JSON.stringify(platformPkg, null, 2));
-
-  // Copy agent and command directories to platform package
-  const dirsToCopy = ['agent', 'command', 'docs'];
-  for (const dir of dirsToCopy) {
-    const srcDir = path.join(process.cwd(), dir);
-    const destDir = path.join(pkgDir, dir);
-    if (await fs.stat(srcDir).catch(() => null)) {
-      await $`cp -r ${srcDir} ${destDir}`;
-    }
-  }
-
-  console.log(`  Created ${platform.name} package`);
-}
-
-// Create main package
-console.log('\nCreating main package...');
-const mainPkgDir = path.join(distDir, 'agentic-cli');
-await fs.mkdir(mainPkgDir, { recursive: true });
-await fs.mkdir(path.join(mainPkgDir, 'bin'), { recursive: true });
-
-// Read base package.json
-const basePkg = JSON.parse(await fs.readFile('package.json', 'utf-8'));
-
-// Create main package.json with optionalDependencies
-const mainPkg = {
-  name: 'agentic-cli',
-  version: version,
-  description: basePkg.description,
-  bin: {
-    agentic: './bin/agentic',
-  },
-  keywords: basePkg.keywords,
-  author: basePkg.author,
-  license: basePkg.license,
-  repository: basePkg.repository,
-  bugs: basePkg.bugs,
-  homepage: basePkg.homepage,
-  optionalDependencies: Object.fromEntries(platforms.map((p) => [`agentic-${p.name}`, version])),
+// Colors for output
+const colors = {
+  reset: '\x1b[0m',
+  red: '\x1b[31m',
+  green: '\x1b[32m',
+  yellow: '\x1b[33m',
+  blue: '\x1b[34m',
 };
 
-await fs.writeFile(path.join(mainPkgDir, 'package.json'), JSON.stringify(mainPkg, null, 2));
-
-// Create shell wrapper script
-const shellWrapper = `#!/bin/sh
-set -e
-
-if [ -n "$AGENTIC_BIN_PATH" ]; then
-    resolved="$AGENTIC_BIN_PATH"
-else
-    # Get the real path of this script, resolving any symlinks
-    script_path="$0"
-    while [ -L "$script_path" ]; do
-        link_target="$(readlink "$script_path")"
-        case "$link_target" in
-            /*) script_path="$link_target" ;;
-            *) script_path="$(dirname "$script_path")/$link_target" ;;
-        esac
-    done
-    script_dir="$(dirname "$script_path")"
-    script_dir="$(cd "$script_dir" && pwd)"
-    
-    # Map platform names
-    case "$(uname -s)" in
-        Darwin) platform="darwin" ;;
-        Linux) platform="linux" ;;
-        *) platform="$(uname -s | tr '[:upper:]' '[:lower:]')" ;;
-    esac
-    
-    # Map architecture names  
-    case "$(uname -m)" in
-        x86_64|amd64) arch="x64" ;;
-        aarch64) arch="arm64" ;;
-        armv7l) arch="arm" ;;
-        *) arch="$(uname -m)" ;;
-    esac
-    
-    name="agentic-\${platform}-\${arch}"
-    binary="agentic"
-    
-    # Search for the binary starting from real script location
-    resolved=""
-    current_dir="$script_dir"
-    while [ "$current_dir" != "/" ]; do
-        candidate="$current_dir/../../$name/bin/$binary"
-        if [ -f "$candidate" ]; then
-            resolved="$candidate"
-            break
-        fi
-        current_dir="$(dirname "$current_dir")"
-    done
-    
-    if [ -z "$resolved" ]; then
-        printf "It seems that your package manager failed to install the right version of the agentic CLI for your platform. You can try manually installing the \\"%s\\" package\\n" "$name" >&2
-        exit 1
-    fi
-fi
-
-# Handle SIGINT gracefully
-trap '' INT
-
-# Execute the binary with all arguments
-exec "$resolved" "$@"
-`;
-
-await fs.writeFile(path.join(mainPkgDir, 'bin', 'agentic'), shellWrapper, { mode: 0o755 });
-
-// Copy other necessary files to main package
-const filesToCopy = ['LICENSE', 'README.md'];
-for (const file of filesToCopy) {
-  if (await fs.stat(file).catch(() => null)) {
-    await fs.copyFile(file, path.join(mainPkgDir, file));
-  }
+function log(message: string, color: keyof typeof colors = 'reset'): void {
+  console.log(`${colors[color]}${message}${colors.reset}`);
 }
 
-// Copy agent and command directories
-const dirsToCopy = ['agent', 'command', 'docs'];
-for (const dir of dirsToCopy) {
-  const srcDir = path.join(process.cwd(), dir);
-  const destDir = path.join(mainPkgDir, dir);
-  if (await fs.stat(srcDir).catch(() => null)) {
-    await $`cp -r ${srcDir} ${destDir}`;
-  }
+function logInfo(message: string): void {
+  log(`[INFO] ${message}`, 'blue');
 }
 
-// Publish all packages to npm
-console.log('\nPublishing to npm...');
-
-// Publish platform packages first
-for (const platform of platforms) {
-  const pkgDir = path.join(distDir, `agentic-${platform.name}`);
-  console.log(`  Publishing agentic-${platform.name}...`);
-  await $`cd ${pkgDir} && npm publish --access public`;
+function logSuccess(message: string): void {
+  log(`[SUCCESS] ${message}`, 'green');
 }
 
-// Publish main package
-console.log('  Publishing agentic-cli...');
-await $`cd ${mainPkgDir} && npm publish --access public`;
-
-console.log(`\n✓ Successfully published all packages to npm\n`);
-
-// Create zip files for GitHub release
-console.log('Creating release artifacts...');
-for (const platform of platforms) {
-  const binDir = path.join(distDir, `agentic-${platform.name}`, 'bin');
-  await $`cd ${binDir} && zip -r ../../agentic-${platform.name}.zip *`.quiet();
-  console.log(`  Created ${platform.name}.zip`);
+function logWarning(message: string): void {
+  log(`[WARNING] ${message}`, 'yellow');
 }
 
-// Commit version changes
-console.log('\nCommitting version changes...');
-await $`git add package.json bun.lock`;
-await $`git commit -m "release: v${version}"`;
-
-// Create and push tag
-console.log('Creating git tag...');
-await $`git tag v${version}`;
-
-// Push to origin
-console.log('Pushing to origin...');
-try {
-  await $`git push origin HEAD --tags --no-verify`;
-} catch {
-  console.log('  Warning: Could not push to origin (might be in CI environment)');
+function logError(message: string): void {
+  log(`[ERROR] ${message}`, 'red');
 }
 
-// Get commits for release notes
-console.log('\nGenerating release notes...');
-let releaseNotes = "## What's Changed\n\n";
-
-// Try to get previous release tag for comparison
-let previousReleaseTag: string | null = null;
-try {
-  const response = await fetch('https://api.github.com/repos/Cluster444/agentic/releases/latest', {
-    headers: process.env.GITHUB_TOKEN
-      ? {
-          Authorization: `token ${process.env.GITHUB_TOKEN}`,
-        }
-      : {},
-  });
-  if (response.ok) {
-    const data = (await response.json()) as { tag_name: string };
-    previousReleaseTag = data.tag_name;
-  }
-} catch {
-  console.log('  No previous release found');
-}
-
-if (previousReleaseTag) {
+function _execCommand(command: string, options?: { silent?: boolean }): string {
   try {
-    // Get commits between releases
-    const response = await fetch(
-      `https://api.github.com/repos/Cluster444/agentic/compare/${previousReleaseTag}...v${version}`,
-      {
-        headers: process.env.GITHUB_TOKEN
-          ? {
-              Authorization: `token ${process.env.GITHUB_TOKEN}`,
-            }
-          : {},
-      }
+    const result = execSync(command, {
+      encoding: 'utf8',
+      stdio: options?.silent ? 'pipe' : 'inherit',
+    });
+    return result;
+  } catch (error) {
+    logError(`Command failed: ${command}`);
+    if (error instanceof Error) {
+      logError(error.message);
+    }
+    process.exit(1);
+  }
+}
+
+function validateVersion(version: string): boolean {
+  const versionRegex = /^\d+\.\d+\.\d+$/;
+  return versionRegex.test(version);
+}
+
+function updatePackageVersion(version: string): boolean {
+  try {
+    const packageJsonPath = join(process.cwd(), 'package.json');
+    const originalContent = readFileSync(packageJsonPath, 'utf8');
+    const packageJson = JSON.parse(originalContent);
+
+    const oldVersion = packageJson.version;
+    if (oldVersion === version) {
+      logInfo(`Package.json version is already ${version}, no update needed`);
+      return false;
+    }
+
+    // Update version by replacing the exact version string in the original content
+    // This preserves all formatting, whitespace, and other properties exactly as they are
+    const versionPattern = new RegExp(
+      `("version"\\s*:\\s*)"${oldVersion.replace(/\./g, '\\.')}"`,
+      'g'
     );
+    const updatedContent = originalContent.replace(versionPattern, `$1"${version}"`);
 
-    if (response.ok) {
-      const data = (await response.json()) as { commits: Array<{ commit: { message: string } }> };
-      const commits = data.commits || [];
+    writeFileSync(packageJsonPath, updatedContent);
 
-      const notes = commits
-        .map((commit) => {
-          const msg = commit.commit.message.split('\n')[0]; // First line only
-          return `- ${msg}`;
-        })
-        .filter((msg) => {
-          const lower = msg.toLowerCase();
-          return (
-            !lower.includes('release:') &&
-            !lower.includes('chore:') &&
-            !lower.includes('ci:') &&
-            !lower.includes('wip:') &&
-            !lower.includes('docs:') &&
-            !lower.includes('doc:')
-          );
-        });
+    logSuccess(`Updated package.json version from ${oldVersion} to ${version}`);
+    return true;
+  } catch (error) {
+    logError('Failed to update package.json version');
+    if (error instanceof Error) {
+      logError(error.message);
+    }
+    process.exit(1);
+  }
+}
 
-      if (notes.length > 0) {
-        releaseNotes += notes.join('\n');
-      } else {
-        releaseNotes += 'Various improvements and bug fixes';
-      }
+function verifyTag(version: string): void {
+  const tagName = `v${version}`;
+
+  // Check if tag exists and is on current commit
+  try {
+    execSync(`git rev-parse --verify refs/tags/${tagName}`, { stdio: 'pipe' });
+
+    const currentCommit = execSync('git rev-parse HEAD', { encoding: 'utf8' }).trim();
+    const tagCommit = execSync(`git rev-list -n 1 ${tagName}`, { encoding: 'utf8' }).trim();
+
+    if (currentCommit === tagCommit) {
+      logSuccess(`Tag ${tagName} is on current commit`);
+    } else {
+      logWarning(`Tag ${tagName} exists but points to a different commit`);
+      logWarning(`Current commit: ${currentCommit}`);
+      logWarning(`Tag commit: ${tagCommit}`);
+      logWarning('Proceeding anyway since this is a release workflow');
     }
   } catch {
-    console.log('  Could not fetch commit comparison');
-    releaseNotes += 'See commit history for changes';
+    logError(`Tag ${tagName} does not exist`);
+    process.exit(1);
   }
-} else {
-  releaseNotes += 'Initial release of Agentic CLI';
 }
 
-releaseNotes += `\n\n**Full Changelog**: https://github.com/Cluster444/agentic/compare/${previousReleaseTag || 'main'}...v${version}`;
+function publishToNpm(): void {
+  logInfo('Publishing to npm registry using OIDC authentication');
 
-// Create GitHub release
-console.log('Creating GitHub release...');
-try {
-  await $`gh release create v${version} --title "v${version}" --notes ${releaseNotes} ./dist/*.zip`;
-  console.log(`  Created GitHub release v${version}`);
-} catch {
-  console.log('  Could not create GitHub release (might not have gh CLI or permissions)');
+  try {
+    // Verify OIDC environment variables are present
+    const oidcRequestUrl = process.env.ACTIONS_ID_TOKEN_REQUEST_URL;
+    const oidcRequestToken = process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN;
+
+    if (!oidcRequestUrl || !oidcRequestToken) {
+      logError('OIDC environment variables not found!');
+      logError('This script must be run in GitHub Actions with id-token: write permission');
+      logError(`ACTIONS_ID_TOKEN_REQUEST_URL: ${oidcRequestUrl ? 'SET' : 'NOT SET'}`);
+      logError(`ACTIONS_ID_TOKEN_REQUEST_TOKEN: ${oidcRequestToken ? 'SET' : 'NOT SET'}`);
+      process.exit(1);
+    }
+
+    logSuccess('OIDC environment variables detected');
+    logInfo(`OIDC Request URL: ${oidcRequestUrl}`);
+
+    // Verify npm version supports OIDC
+    const npmVersion = execSync('npm --version', { encoding: 'utf8' }).trim();
+    logInfo(`npm version: ${npmVersion}`);
+
+    const [major, minor] = npmVersion.split('.').map(Number);
+    if (major < 11 || (major === 11 && minor < 5)) {
+      logError(`npm version ${npmVersion} does not support OIDC authentication`);
+      logError('OIDC requires npm 11.5.1 or later');
+      logError('Please upgrade npm: npm install -g npm@latest');
+      process.exit(1);
+    }
+
+    logSuccess(`npm version ${npmVersion} supports OIDC authentication`);
+
+    // Note: OIDC authentication happens automatically during npm publish --provenance
+    // We cannot test authentication with npm whoami because OIDC only activates during publish
+    logInfo('OIDC authentication will be used automatically during publish');
+    logInfo('Verification:');
+    logInfo(`  ✓ OIDC environment variables detected`);
+    logInfo(`  ✓ npm version ${npmVersion} supports OIDC`);
+    logInfo(`  ✓ Environment: ${process.env.GITHUB_ENVIRONMENT || 'npm'}`);
+    logInfo(`  ✓ Repository: ${process.env.GITHUB_REPOSITORY || 'unknown'}`);
+    logInfo(`  ✓ Workflow: release.yml`);
+
+    // Verify npm registry configuration
+    const registry = execSync('npm config get registry', { encoding: 'utf8' }).trim();
+    logInfo(`npm registry: ${registry}`);
+
+    if (registry !== 'https://registry.npmjs.org/') {
+      logWarning(`Registry is not default: ${registry}`);
+    }
+
+    // Publish using npm (required for OIDC)
+    logInfo('Publishing package with OIDC authentication...');
+    execSync('npm publish --provenance', { stdio: 'inherit' });
+    logSuccess('Successfully published to npm with provenance');
+  } catch (error) {
+    logError('Failed to publish to npm');
+    if (error instanceof Error) {
+      logError(error.message);
+    }
+    process.exit(1);
+  }
 }
 
-console.log(`\n✨ Release v${version} completed successfully!`);
+function createGitHubRelease(version: string): void {
+  logInfo('Creating GitHub release');
+
+  try {
+    // Generate release notes
+    const tagName = `v${version}`;
+    const lastTag = execSync('git describe --tags --abbrev=0 HEAD~1 2>/dev/null || echo ""', {
+      encoding: 'utf8',
+    }).trim();
+
+    let releaseNotes = `## CodeFlow CLI v${version}\n\n`;
+
+    if (lastTag) {
+      const commits = execSync(`git log --pretty=format:"- %s (%h)" ${lastTag}..HEAD`, {
+        encoding: 'utf8',
+      });
+      releaseNotes += `### Changes since ${lastTag}\n\n${commits}\n`;
+    } else {
+      const commits = execSync('git log --pretty=format:"- %s (%h)" -10', {
+        encoding: 'utf8',
+      });
+      releaseNotes += `### Recent commits\n\n${commits}\n`;
+    }
+
+    releaseNotes += `\n### Installation\n\n\`\`\`bash\nnpm install -g @agentic-codeflow/cli\n\`\`\`\n\n`;
+    releaseNotes += `### Quick Start\n\n\`\`\`bash\ncodeflow setup\n\`\`\`\n\n`;
+    releaseNotes += `**Full Changelog**: https://github.com/ferg-cod3s/codeflow/compare/${lastTag || 'main'}...${tagName}`;
+
+    // Create release using gh CLI
+    execSync(
+      `echo "${releaseNotes}" | gh release create "${tagName}" --title "CodeFlow CLI v${version}" --draft=false --verify-tag -F -`
+    );
+    logSuccess(`Created GitHub release ${tagName}`);
+  } catch (error) {
+    logWarning('Failed to create GitHub release automatically');
+    logWarning(
+      'You can create it manually at: https://github.com/ferg-cod3s/codeflow/releases/new'
+    );
+    if (error instanceof Error) {
+      logWarning(error.message);
+    }
+  }
+}
+
+function main(): void {
+  logInfo('Starting CodeFlow publish process...');
+
+  // Get version from environment variable
+  const version = process.env.AGENTIC_VERSION;
+
+  if (!version) {
+    logError('AGENTIC_VERSION environment variable is required');
+    logError('Usage: AGENTIC_VERSION=1.0.0 ./scripts/publish.ts');
+    process.exit(1);
+  }
+
+  if (!validateVersion(version)) {
+    logError(`Invalid version format: ${version}`);
+    logError('Expected format: x.y.z (e.g., 1.0.0)');
+    process.exit(1);
+  }
+
+  logInfo(`Publishing version: ${version}`);
+
+  // Check if working directory is clean
+  try {
+    const status = execSync('git status --porcelain', { encoding: 'utf8' });
+    if (status.trim()) {
+      logError('Working directory is not clean. Please commit or stash changes first.');
+      process.exit(1);
+    }
+  } catch {
+    logError('Failed to check git status');
+    process.exit(1);
+  }
+
+  // Update package.json version
+  const versionChanged = updatePackageVersion(version);
+
+  // Commit the version change only if it actually changed
+  if (versionChanged) {
+    execSync('git add package.json');
+    execSync(`git commit --no-verify -m "Bump version to ${version}"`);
+    logSuccess(`Committed version bump to ${version}`);
+  } else {
+    logInfo('No version change to commit');
+  }
+
+  // Verify tag exists and is on current commit
+  verifyTag(version);
+
+  // Publish to npm (OIDC handles authentication automatically)
+  publishToNpm();
+
+  // Create GitHub release (if GITHUB_TOKEN is available)
+  if (process.env.GITHUB_TOKEN) {
+    createGitHubRelease(version);
+  } else {
+    logWarning('GITHUB_TOKEN not found, skipping GitHub release');
+  }
+
+  logSuccess(`Publish process completed for version ${version}`);
+}
+
+// Handle uncaught exceptions
+process.on('uncaughtException', (error) => {
+  logError(`Uncaught exception: ${error.message}`);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  logError(`Unhandled rejection at: ${promise}, reason: ${reason}`);
+  process.exit(1);
+});
+
+// Run main function
+if (require.main === module) {
+  main();
+}
+
+export { main };

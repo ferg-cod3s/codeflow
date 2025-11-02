@@ -1,11 +1,6 @@
 import { describe, it, expect, beforeEach } from 'bun:test';
 import { ValidationEngine } from '../../src/yaml/validation-engine';
-import {
-  Agent,
-  BaseAgent,
-  ClaudeCodeAgent,
-  OpenCodeAgent,
-} from '../../src/conversion/agent-parser';
+import { Agent, BaseAgent, OpenCodeAgent } from '../../src/conversion/agent-parser';
 
 describe('ValidationEngine', () => {
   let engine: ValidationEngine;

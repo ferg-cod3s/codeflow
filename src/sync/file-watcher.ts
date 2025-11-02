@@ -1,11 +1,10 @@
 import { watch, FSWatcher } from 'node:fs';
-import { join, relative, basename, dirname } from 'node:path';
+import { join, relative, basename } from 'node:path';
 import { existsSync } from 'node:fs';
-import { readFile } from 'node:fs/promises';
-import { syncGlobalAgents } from '../cli/sync';
-import { parseAgentFile } from '../conversion/agent-parser';
-import { FormatConverter } from '../conversion/format-converter';
-import { globalPerformanceMonitor } from '../optimization/performance.js';
+import { syncGlobalAgents } from '../cli/sync.js';
+import { parseAgentFile } from '../conversion/agent-parser.js';
+import { FormatConverter } from '../conversion/format-converter.js';
+import { globalPerformanceMonitor } from '../optimization/performance.ts';
 
 export interface WatchConfig {
   /** Root directory containing the codeflow installation */

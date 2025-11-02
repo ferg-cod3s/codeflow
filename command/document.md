@@ -2,6 +2,7 @@
 name: document
 mode: command
 description: Produce high-quality documentation for implemented features
+subtask: true
 version: 2.0.0-internal
 last_updated: 2025-09-13
 command_schema_version: 1.0
@@ -43,6 +44,9 @@ failure_modes:
 ---
 
 # Document Feature
+
+**Input**: $ARGUMENTS
+
 
 You are tasked with producing high-quality documentation based on the implemented feature, its plan, and the code. This command uses intelligent caching to optimize documentation generation and maintain consistency across similar features.
 
@@ -330,7 +334,7 @@ For multi-audience documentation requiring domain expertise and content speciali
 
 - **codebase-locator**: Identify all components and files requiring documentation
 - **codebase-analyzer**: Understand implementation details for technical accuracy
-- **thoughts-analyzer**: Review existing documentation patterns and standards
+- **research-analyzer**: Review existing documentation patterns and standards
 - **codebase-pattern-finder**: Identify established documentation patterns
 - **content-writer**: Primary agent for content creation and audience adaptation
 
@@ -359,7 +363,7 @@ For multi-audience documentation requiring domain expertise and content speciali
 
 #### Phase 5: Content Publishing & Maintenance (Parallel)
 
-- **thoughts-analyzer**: Update internal documentation and knowledge base
+- **research-analyzer**: Update internal documentation and knowledge base
 - **content-localization-coordinator**: Coordinate translation and localization efforts
 - **devops-operations-specialist**: Document operational procedures and runbooks
 - **infrastructure-builder**: Document infrastructure requirements and configurations

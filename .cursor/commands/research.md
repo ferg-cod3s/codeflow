@@ -1,6 +1,7 @@
 ---
 name: research
 description: Research codebase using direct query or ticket file
+subtask: true
 version: 2.1.0-optimized
 last_updated: 2025-09-17
 command_schema_version: 1.0
@@ -21,7 +22,7 @@ inputs:
   - name: scope
     type: string
     required: false
-    description: Research scope hint (codebase|thoughts|both)
+    description: Research scope hint (codebase|research|both)
   - name: depth
     type: string
     required: false
@@ -53,6 +54,8 @@ validation_rules:
 
 # Research Codebase
 
+**Research Query**: $ARGUMENTS
+
 Conduct comprehensive research across the codebase using direct queries or ticket files by coordinating specialized agents to explore patterns, context, and insights, then synthesize findings into actionable documentation. Uses intelligent caching for optimization.
 
 ## Purpose
@@ -62,7 +65,7 @@ Multi-dimensional research via agent coordination for codebase patterns, histori
 ## Inputs
 
 - **ticket**: Path to ticket file (optional if query provided)
-- **scope**: Optional scope (codebase|thoughts|both)
+- **scope**: Optional scope (codebase|research|both)
 - **depth**: Optional depth (shallow|medium|deep)
 - **conversation_context**: Related research history
 
@@ -84,9 +87,9 @@ Multi-dimensional research via agent coordination for codebase patterns, histori
 
 ### Phase 2: Parallel Agent Coordination
 
-1. Spawn locators: codebase-locator, thoughts-locator in parallel
+1. Spawn locators: codebase-locator, research-locator in parallel
 2. Pattern analysis: codebase-pattern-finder for examples
-3. Deep analysis: codebase-analyzer, thoughts-analyzer on key findings
+3. Deep analysis: codebase-analyzer, research-analyzer on key findings
 4. Domain agents: Deploy specialized agents as needed
 5. Wait for completion
 
@@ -128,10 +131,10 @@ Multi-dimensional research via agent coordination for codebase patterns, histori
   "status": "success|in_progress|error",
   "timestamp": "ISO-8601",
   "cache": {"hit": true|false, "key": "pattern:{hash}:{scope}", "ttl_remaining": 3600, "savings": 0.25},
-  "research": {"question": "string", "scope": "codebase|thoughts|both", "depth": "shallow|medium|deep"},
+  "research": {"question": "string", "scope": "codebase|research|both", "depth": "shallow|medium|deep"},
   "findings": {"total_files": 23, "codebase": 18, "thoughts": 5, "insights": 7, "patterns": 3},
   "document": {"path": "docs/research/YYYY-MM-DD-topic.md", "sections": ["synopsis", "summary", "findings", "references"], "code_refs": 12, "historical": 3},
-  "agents_used": ["codebase-locator", "codebase-analyzer", "thoughts-locator", "thoughts-analyzer"],
+  "agents_used": ["codebase-locator", "codebase-analyzer", "research-locator", "research-analyzer"],
   "metadata": {"processing_time": 180, "cache_savings": 0.25, "agent_tasks": 6, "follow_up": 0}
 }
 ```
@@ -158,9 +161,9 @@ Multi-dimensional research via agent coordination for codebase patterns, histori
 
 ### Execution Order
 
-1. **Discovery**: Locators in parallel (codebase-locator, thoughts-locator)
+1. **Discovery**: Locators in parallel (codebase-locator, research-locator)
 2. **Pattern Analysis**: codebase-pattern-finder after locators
-3. **Deep Analysis**: Analyzers on key findings (codebase-analyzer, thoughts-analyzer)
+3. **Deep Analysis**: Analyzers on key findings (codebase-analyzer, research-analyzer)
 
 ### Specialized Agents
 
@@ -275,4 +278,4 @@ status: complete
 - Memory <30MB
 - Response <150ms
 
-{{ticket}}
+$ARGUMENTS

@@ -1,5 +1,5 @@
 import { readFile, readdir } from 'node:fs/promises';
-import { join, extname } from 'node:path';
+import { join } from 'node:path';
 import { existsSync } from 'node:fs';
 import { ValidationEngine } from './validation-engine.js';
 import { YamlProcessor } from './yaml-processor.js';

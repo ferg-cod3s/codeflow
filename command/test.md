@@ -2,6 +2,7 @@
 name: test
 mode: command
 description: Generate and run a comprehensive testing workflow
+subtask: true
 version: 2.0.0-internal
 last_updated: 2025-09-13
 command_schema_version: 1.0
@@ -39,6 +40,9 @@ failure_modes:
 ---
 
 # Generate Test Suite
+
+**Input**: $ARGUMENTS
+
 
 You are tasked with designing, generating, and executing comprehensive tests for implemented features or plans. This command uses intelligent caching to optimize testing workflows and maintain consistency across similar test generation scenarios.
 
@@ -363,7 +367,7 @@ For thorough test generation and validation requiring multiple testing domains:
 
 - **codebase-locator**: Identify all components and files that need testing
 - **codebase-analyzer**: Understand implementation details and dependencies
-- **thoughts-analyzer**: Review existing test documentation and testing patterns
+- **research-analyzer**: Review existing test documentation and testing patterns
 - **codebase-pattern-finder**: Identify established testing patterns in the codebase
 - **test-generator**: Primary agent for comprehensive test suite generation
 
@@ -393,7 +397,7 @@ For thorough test generation and validation requiring multiple testing domains:
 #### Phase 5: Documentation & Reporting (Parallel)
 
 - **content-writer**: Document test scenarios and procedures
-- **thoughts-analyzer**: Update testing documentation and best practices
+- **research-analyzer**: Update testing documentation and best practices
 - **content-localization-coordinator**: Test internationalization scenarios
 
 ### Testing Orchestration Best Practices

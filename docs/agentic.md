@@ -19,6 +19,7 @@ bun link  # Makes 'agentic' available globally
 Pulls the latest agents and commands to a project's `.opencode` directory.
 
 **Usage:**
+
 ```bash
 # Pull to current directory (auto-detects project)
 cd ~/projects/my-app
@@ -32,9 +33,11 @@ agentic pull --ignore-frontmatter
 ```
 
 **Options:**
+
 - `--ignore-frontmatter`: Ignore YAML frontmatter in Markdown (.md) files when comparing and preserve target frontmatter during pull
 
 **What it does:**
+
 - Creates `.opencode` directory if it doesn't exist
 - Copies all files from `agent/` and `command/` directories
 - Preserves directory structure
@@ -42,6 +45,7 @@ agentic pull --ignore-frontmatter
 - When `--ignore-frontmatter` is used: preserves existing frontmatter in target .md files
 
 **Output:**
+
 ```
 📦 Pulling to: /home/user/projects/my-app/.opencode
 📁 Including: agent, command
@@ -59,6 +63,7 @@ agentic pull --ignore-frontmatter
 Checks synchronization status between your project and the agentic repository.
 
 **Usage:**
+
 ```bash
 # Check status of current directory
 cd ~/projects/my-app
@@ -72,15 +77,18 @@ agentic status --ignore-frontmatter
 ```
 
 **Options:**
+
 - `--ignore-frontmatter`: Ignore YAML frontmatter in Markdown (.md) files when comparing
 
 **What it does:**
+
 - Compares files in `.opencode` with source repository
 - Identifies missing, outdated, or extra files
 - Uses SHA-256 hashing for content comparison
 - When `--ignore-frontmatter` is used: treats files with only frontmatter changes as up-to-date
 
 **Output:**
+
 ```
 📊 Status for: /home/user/projects/my-app/.opencode
 📁 Checking: agent, command
@@ -104,16 +112,19 @@ Run 'agentic pull' to update the project
 Displays project metadata for use in research documentation.
 
 **Usage:**
+
 ```bash
 agentic metadata
 ```
 
 **What it does:**
+
 - Collects current date/time with timezone
 - Retrieves git information (commit hash, branch, repository name)
 - Generates timestamp for filename formatting
 
 **Output Example:**
+
 ```
 Current Date/Time (TZ): 01/15/2025 14:30:45 EST
 <git_commit>abc123def456789...</git_commit>
@@ -124,6 +135,7 @@ Current Date/Time (TZ): 01/15/2025 14:30:45 EST
 ```
 
 **Use Cases:**
+
 - Populating research document frontmatter
 - Creating timestamped filenames
 - Recording project state for documentation
@@ -183,12 +195,15 @@ The CLI provides clear error messages:
 ## File Management
 
 ### Hashing
+
 Uses Bun's built-in SHA-256 hasher for fast, reliable file comparison.
 
 ### Directory Walking
+
 Recursively processes all files in configured directories while preserving structure.
 
 ### Safe Operations
+
 - Never deletes files
 - Only overwrites during `pull` operation
 - Reports all changes clearly
@@ -205,6 +220,7 @@ bun run src/cli/index.ts pull ~/projects/my-app
 ### TypeScript Support
 
 The CLI is written in TypeScript with full type safety:
+
 ```bash
 bun run typecheck  # Verify types
 ```
@@ -226,26 +242,31 @@ bun run typecheck  # Verify types
 ## Troubleshooting
 
 ### Command not found
+
 - Ensure you ran `bun link` in the agentic repository
 - Check that `~/.bun/bin` is in your PATH
 
 ### No .opencode directory found
+
 - Ensure you're in a project directory
 - Or specify the project path explicitly
 
 ### Files showing as outdated
+
 - Run `agentic pull` to update
 - Check if you have local modifications
 
 ## Future Enhancements
 
 Planned improvements include:
+
 - Project initialization command
 - Selective agent/command installation
 - Update notifications
 - Dry-run mode for pull command
 
 ## Related Documentation
+
 - [Usage Guide](./usage.md)
-- [Agents](./agents.md)
+- [Agents](../AGENTS.md)
 - [Commands](./commands.md)

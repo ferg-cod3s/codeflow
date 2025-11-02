@@ -7,7 +7,7 @@
       "inputs": {
         "audience": "api",
         "files": ["src/api/users.ts"],
-        "plan": "thoughts/plans/user-api-implementation.md"
+        "plan": "research/plans/user-api-implementation.md"
       },
       "expected_clarifications": 1,
       "complexity": "low"
@@ -29,7 +29,7 @@
       "inputs": {
         "audience": "mixed",
         "files": ["src/features/auth/", "src/components/LoginForm.tsx"],
-        "plan": "thoughts/plans/auth-system-implementation.md"
+        "plan": "research/plans/auth-system-implementation.md"
       },
       "expected_clarifications": 3,
       "complexity": "high"

@@ -6,7 +6,7 @@ import { existsSync } from 'node:fs';
 import { parse as parseYaml } from 'yaml';
 
 const AGENT_DIRECTORIES = [
-  'codeflow-agents',
+  'base-agents',
   'claude-agents',
   'opencode-agents',
   '.opencode/agent',
@@ -115,23 +115,23 @@ class AgentComplianceAuditor {
 
   validateNaming(fileName, filePath) {
     // Check if name follows kebab-case convention
-    const kebabCaseRegex = /^[a-z]+(-[a-z]+)*$/;
+    const kebabCaseRegex = /^[a-z]+([-_][a-z]+)*$/;
 
     if (!kebabCaseRegex.test(fileName)) {
       this.auditResults.namingIssues.push({
         file: filePath,
         name: fileName,
         issue: 'not_kebab_case',
-        suggestion: this.convertToKebabCase(fileName),
+        suggestion: this.convertToSnakeCase(fileName),
       });
     }
   }
 
-  convertToKebabCase(name) {
+  convertToSnakeCase(name) {
     return name
-      .replace(/([a-z])([A-Z])/g, '$1-$2') // camelCase to kebab-case
-      .replace(/_/g, '-') // underscores to hyphens
-      .replace(/[^a-zA-Z0-9-]/g, '') // remove special characters
+      .replace(/([a-z])([A-Z])/g, '$1_$2') // camelCase to snake_case
+      .replace(/-/g, '_') // hyphens to underscores
+      .replace(/[^a-zA-Z0-9_]/g, '') // remove special characters
       .toLowerCase();
   }
 
@@ -245,22 +245,22 @@ class AgentComplianceAuditor {
     const nameVariants = new Map();
 
     for (const agentName of this.auditResults.agentsByName.keys()) {
-      const kebabCase = this.convertToKebabCase(agentName);
-      if (!nameVariants.has(kebabCase)) {
-        nameVariants.set(kebabCase, []);
+      const snakeCase = this.convertToSnakeCase(agentName);
+      if (!nameVariants.has(snakeCase)) {
+        nameVariants.set(snakeCase, []);
       }
-      nameVariants.get(kebabCase).push(agentName);
+      nameVariants.get(snakeCase).push(agentName);
     }
 
     // Find agents with multiple naming variants
-    for (const [kebabCase, variants] of nameVariants) {
+    for (const [snakeCase, variants] of nameVariants) {
       if (variants.length > 1) {
         this.auditResults.issues.push({
           type: 'naming_inconsistency',
           severity: 'warning',
-          message: `Agent '${kebabCase}' exists with multiple naming variants: ${variants.join(', ')}`,
+          message: `Agent '${snakeCase}' exists with multiple naming variants: ${variants.join(', ')}`,
           variants,
-          canonical: kebabCase,
+          canonical: snakeCase,
         });
       }
     }
@@ -329,7 +329,7 @@ class AgentComplianceAuditor {
     console.log(`\n💡 Recommendations:`);
     if (this.auditResults.namingIssues.length > 0) {
       console.log(
-        `  - Fix ${this.auditResults.namingIssues.length} naming issues (convert to kebab-case)`
+        `  - Fix ${this.auditResults.namingIssues.length} naming issues (convert to snake_case)`
       );
     }
     if (this.auditResults.yamlIssues.length > 0) {

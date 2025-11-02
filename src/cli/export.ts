@@ -3,9 +3,11 @@ import { join, resolve } from 'node:path';
 import { readFile, writeFile } from 'node:fs/promises';
 
 interface ExportOptions {
-  format?: 'json' | 'yaml' | 'tar' | 'zip';
+  projectRoot?: string;
+  format?: 'json' | 'yaml' | 'tar' | 'zip' | 'targz';
   output?: string;
   includeContent?: boolean;
+  includeMetadata?: boolean;
   verbose?: boolean;
 }
 
@@ -21,13 +23,20 @@ interface ExportedItem {
   };
 }
 
+interface ExportResult {
+  success: boolean;
+  outputPath?: string;
+  totalItems: number;
+  errors: string[];
+}
+
 /**
  * Export agents and commands from a project
  */
 export async function exportProject(
-  projectPath: string = process.cwd(),
   options: ExportOptions = {}
-): Promise<void> {
+): Promise<ExportResult> {
+  const projectPath = options.projectRoot || process.cwd();
   const projectPathResolved = resolve(projectPath);
   const { format = 'json', output, includeContent = true, verbose = false } = options;
 
@@ -207,6 +216,26 @@ ${item.content
 `;
         break;
 
+      case 'tar':
+      case 'targz':
+      case 'zip':
+        // For now, export as JSON with appropriate extension
+        // Full tar/zip support would require additional dependencies
+        exportData = JSON.stringify(
+          {
+            metadata: {
+              exportedAt: new Date().toISOString(),
+              projectPath: projectPathResolved,
+              totalItems: exportedItems.length,
+              includeContent,
+            },
+            items: exportedItems,
+          },
+          null,
+          2
+        );
+        break;
+
       default:
         throw new Error(`Unsupported export format: ${format}`);
     }
@@ -224,10 +253,21 @@ ${item.content
     if (includeContent) {
       console.log(`💡 Tip: Use --no-content to export metadata only (smaller file)`);
     }
+
+    return {
+      success: true,
+      outputPath,
+      totalItems: exportedItems.length,
+      errors,
+    };
   } catch (error) {
-    console.error(
-      `❌ Failed to write export file: ${error instanceof Error ? error.message : 'Unknown error'}`
-    );
-    process.exit(1);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error(`❌ Failed to write export file: ${errorMessage}`);
+
+    return {
+      success: false,
+      totalItems: exportedItems.length,
+      errors: [...errors, errorMessage],
+    };
   }
 }

@@ -84,9 +84,35 @@ async function listDirectory(dir: string, type: 'agent' | 'command'): Promise<Li
             platform = 'base';
           }
 
+          // Determine if this is an agent or command based on directory structure and frontmatter
+          let actualType: 'agent' | 'command' = type;
+
+          // Check if file is actually an agent or command by looking at frontmatter
+          try {
+            const content = await readFile(fullPath, 'utf-8');
+            const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---/);
+            if (frontmatterMatch) {
+              const frontmatter = frontmatterMatch[1];
+              // If it has agent-specific frontmatter, it's an agent
+              if (
+                frontmatter.includes('subagent_type:') ||
+                frontmatter.includes('mode: subagent')
+              ) {
+                actualType = 'agent';
+              } else if (
+                frontmatter.includes('mode: command') ||
+                frontmatter.includes('subtask: true')
+              ) {
+                actualType = 'command';
+              }
+            }
+          } catch {
+            // If we can't read the file, keep the original type
+          }
+
           items.push({
             name: entry.name.replace('.md', ''),
-            type,
+            type: actualType,
             platform,
             path: fullPath,
             ...metadata,
@@ -171,8 +197,10 @@ export async function list(
 
     for (const dir of agentDirs) {
       const fullPath = join(projectPathResolved, dir);
-      const agentItems = await listDirectory(fullPath, 'agent');
-      items.push(...agentItems);
+      if (existsSync(fullPath)) {
+        const agentItems = await listDirectory(fullPath, 'agent');
+        items.push(...agentItems);
+      }
     }
   }
 
@@ -182,8 +210,10 @@ export async function list(
 
     for (const dir of commandDirs) {
       const fullPath = join(projectPathResolved, dir);
-      const commandItems = await listDirectory(fullPath, 'command');
-      items.push(...commandItems);
+      if (existsSync(fullPath)) {
+        const commandItems = await listDirectory(fullPath, 'command');
+        items.push(...commandItems);
+      }
     }
   }
 

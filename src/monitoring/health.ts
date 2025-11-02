@@ -30,7 +30,7 @@ export class HealthChecker {
   }
 
   async runAllChecks(): Promise<HealthStatus> {
-    const startTime = Date.now();
+    const _startTime = Date.now();
     const checks: Record<string, HealthCheckResult> = {};
     let overallStatus: 'healthy' | 'unhealthy' | 'degraded' = 'healthy';
 

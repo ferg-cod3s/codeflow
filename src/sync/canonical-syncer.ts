@@ -252,7 +252,7 @@ export class CanonicalSyncer {
     for (const tempFile of tempFiles) {
       try {
         await import('node:fs/promises').then((fs) => fs.unlink(tempFile));
-      } catch (error) {
+      } catch {
         // Ignore cleanup errors
       }
     }
@@ -414,7 +414,7 @@ export class CanonicalSyncer {
       return (
         sourceStats.mtime > targetStats.mtime || Math.abs(sourceStats.size - targetStats.size) > 100
       );
-    } catch (error) {
+    } catch {
       // Target doesn't exist, should sync
       return true;
     }

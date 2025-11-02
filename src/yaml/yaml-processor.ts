@@ -1,8 +1,8 @@
 import { parse as parseYaml, stringify as stringifyYaml } from 'yaml';
 import { mkdir } from 'node:fs/promises';
-import { Agent, ParsedEntity } from '../conversion/agent-parser';
-import { ValidationEngine, ValidationResult, AgentFormat } from './validation-engine';
-import { ArrayParser } from './array-parser';
+import { Agent, ParsedEntity } from '../conversion/agent-parser.js';
+import { ValidationEngine, ValidationResult, AgentFormat } from './validation-engine.js';
+import { ArrayParser } from './array-parser.js';
 
 /**
  * Parsed YAML structure
