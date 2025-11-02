@@ -1,0 +1,43 @@
+/**
+ * VS Injection Patterns
+ *
+ * Defines standardized patterns for injecting verbalized sampling into different component types
+ */
+
+export interface InjectionPattern {
+  name: string;
+  description: string;
+  placement: 'top' | 'bottom' | 'after-frontmatter' | 'after-heading' | 'replace-section';
+  format: 'markdown' | 'yaml' | 'json' | 'code-comment';
+  template: string;
+  variables: string[];
+}
+
+export interface ComponentPattern {
+  componentType: 'agent' | 'command' | 'skill';
+  patterns: InjectionPattern[];
+  defaultPattern: string;
+  platformAdapters: {
+    opencode: Partial<InjectionPattern>;
+    claude: Partial<InjectionPattern>;
+    cursor: Partial<InjectionPattern>;
+  };
+}
+
+export class VSInjectionPatterns {
+  private static patterns: Map<string, ComponentPattern> = new Map();
+
+  static {
+    this.initializePatterns();
+  }
+
+  private static initializePatterns(): void {
+    // Agent Patterns
+    this.patterns.set('agent', {
+      componentType: 'agent',
+      patterns: [
+        {
+          name: 'frontmatter-section',
+          description: 'Inject VS as a section after YAML frontmatter',
+          placement: 'after-frontmatter',
+          format: 'markdown',

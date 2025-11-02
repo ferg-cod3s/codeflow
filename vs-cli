@@ -1,0 +1,2541 @@
+#!/usr/bin/env node
+// @bun
+var __create = Object.create;
+var __getProtoOf = Object.getPrototypeOf;
+var __defProp = Object.defineProperty;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __toESM = (mod, isNodeMode, target) => {
+  target = mod != null ? __create(__getProtoOf(mod)) : {};
+  const to = isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target;
+  for (let key of __getOwnPropNames(mod))
+    if (!__hasOwnProp.call(to, key))
+      __defProp(to, key, {
+        get: () => mod[key],
+        enumerable: true
+      });
+  return to;
+};
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, {
+      get: all[name],
+      enumerable: true,
+      configurable: true,
+      set: (newValue) => all[name] = () => newValue
+    });
+};
+var __esm = (fn, res) => () => (fn && (res = fn(fn = 0)), res);
+var __require = import.meta.require;
+
+// src/verbalized-sampling/strategy-generator.ts
+class StrategyGenerator {
+  confidence_weights = {
+    contextual_fit: 0.4,
+    success_probability: 0.3,
+    efficiency: 0.2,
+    user_preference: 0.1
+  };
+  async generateStrategies(request) {
+    const strategies = await this.createStrategies(request);
+    const rankedStrategies = this.rankStrategies(strategies);
+    const selectedStrategy = rankedStrategies[0];
+    return {
+      strategies: rankedStrategies,
+      selected_strategy: selectedStrategy.name,
+      total_confidence: selectedStrategy.confidence_score,
+      execution_summary: this.generateExecutionSummary(selectedStrategy, rankedStrategies),
+      metadata: {
+        generated_at: new Date().toISOString(),
+        agent_type: request.agent_type,
+        total_strategies: strategies.length,
+        confidence_range: this.getConfidenceRange(rankedStrategies)
+      }
+    };
+  }
+  async createStrategies(request) {
+    const { agent_type, problem, context } = request;
+    const strategyCount = request.strategy_count || 3;
+    switch (agent_type) {
+      case "research":
+        return this.createResearchStrategies(problem, context, strategyCount);
+      case "planning":
+        return this.createPlanningStrategies(problem, context, strategyCount);
+      case "development":
+        return this.createDevelopmentStrategies(problem, context, strategyCount);
+      default:
+        throw new Error(`Unknown agent type: ${agent_type}`);
+    }
+  }
+  createResearchStrategies(problem, context, count) {
+    const strategies = [];
+    strategies.push({
+      name: "Code-Path Analysis",
+      description: `Trace execution flows and identify key decision points to understand: ${problem}`,
+      confidence_score: 0,
+      reasoning: this.calculateReasoning("Code-Path Analysis", problem, context, "research"),
+      execution_plan: [
+        "Identify entry points and main execution flows",
+        "Trace key decision branches and conditional logic",
+        "Map data transformations and state changes",
+        "Document critical paths and edge cases",
+        "Analyze error handling and exception flows"
+      ],
+      strategy_type: "research"
+    });
+    strategies.push({
+      name: "Pattern Discovery",
+      description: `Find recurring patterns and architectural conventions related to: ${problem}`,
+      confidence_score: 0,
+      reasoning: this.calculateReasoning("Pattern Discovery", problem, context, "research"),
+      execution_plan: [
+        "Scan codebase for repeated code structures",
+        "Identify naming conventions and architectural patterns",
+        "Find common utility functions and shared logic",
+        "Analyze design patterns and abstractions",
+        "Document pattern variations and evolution"
+      ],
+      strategy_type: "research"
+    });
+    strategies.push({
+      name: "Architecture Mapping",
+      description: `Map system boundaries and integration points to understand: ${problem}`,
+      confidence_score: 0,
+      reasoning: this.calculateReasoning("Architecture Mapping", problem, context, "research"),
+      execution_plan: [
+        "Identify major components and modules",
+        "Map data flow and dependencies between components",
+        "Document interfaces and contracts",
+        "Analyze separation of concerns",
+        "Identify architectural layers and boundaries"
+      ],
+      strategy_type: "research"
+    });
+    if (count > 3) {
+      strategies.push({
+        name: "Integration Analysis",
+        description: `Examine how components interact and depend on each other for: ${problem}`,
+        confidence_score: 0,
+        reasoning: this.calculateReasoning("Integration Analysis", problem, context, "research"),
+        execution_plan: [
+          "Identify integration points and interfaces",
+          "Analyze data exchange formats and protocols",
+          "Document dependency relationships",
+          "Map communication patterns (sync/async)",
+          "Identify potential failure points and fallbacks"
+        ],
+        strategy_type: "research"
+      });
+    }
+    return strategies.slice(0, count);
+  }
+  createPlanningStrategies(problem, context, count) {
+    const strategies = [];
+    strategies.push({
+      name: "Sequential Planning",
+      description: `Create step-by-step linear approach with clear dependencies for: ${problem}`,
+      confidence_score: 0,
+      reasoning: this.calculateReasoning("Sequential Planning", problem, context, "planning"),
+      execution_plan: [
+        "Identify prerequisite tasks and dependencies",
+        "Create ordered sequence of activities",
+        "Define completion criteria for each step",
+        "Plan verification and validation points",
+        "Estimate timeline and resource needs"
+      ],
+      strategy_type: "planning"
+    });
+    strategies.push({
+      name: "Feature-Driven Planning",
+      description: `Organize plan around user-facing features and outcomes for: ${problem}`,
+      confidence_score: 0,
+      reasoning: this.calculateReasoning("Feature-Driven Planning", problem, context, "planning"),
+      execution_plan: [
+        "Define user stories and acceptance criteria",
+        "Break features into deliverable increments",
+        "Plan user experience and interface design",
+        "Coordinate frontend and backend development",
+        "Plan testing and user validation"
+      ],
+      strategy_type: "planning"
+    });
+    strategies.push({
+      name: "Minimal Viable Planning",
+      description: `Focus on smallest valuable increment first for: ${problem}`,
+      confidence_score: 0,
+      reasoning: this.calculateReasoning("Minimal Viable Planning", problem, context, "planning"),
+      execution_plan: [
+        "Identify core value proposition",
+        "Define smallest useful increment",
+        "Plan rapid development and deployment",
+        "Build in feedback collection mechanisms",
+        "Plan iterative improvements based on usage"
+      ],
+      strategy_type: "planning"
+    });
+    if (count > 3) {
+      strategies.push({
+        name: "Parallel Planning",
+        description: `Identify independent workstreams for concurrent execution for: ${problem}`,
+        confidence_score: 0,
+        reasoning: this.calculateReasoning("Parallel Planning", problem, context, "planning"),
+        execution_plan: [
+          "Identify independent work packages",
+          "Assign workstreams to team members",
+          "Plan integration points and coordination",
+          "Define interfaces and contracts between streams",
+          "Plan testing and validation across streams"
+        ],
+        strategy_type: "planning"
+      });
+    }
+    return strategies.slice(0, count);
+  }
+  createDevelopmentStrategies(problem, context, count) {
+    const strategies = [];
+    strategies.push({
+      name: "Component-First",
+      description: `Build UI components before backend integration for: ${problem}`,
+      confidence_score: 0,
+      reasoning: this.calculateReasoning("Component-First", problem, context, "development"),
+      execution_plan: [
+        "Build UI components with mock data",
+        "Implement component state management",
+        "Add styling and responsive design",
+        "Integrate with backend APIs",
+        "Add error handling and loading states"
+      ],
+      strategy_type: "development"
+    });
+    strategies.push({
+      name: "API-First",
+      description: `Design and implement endpoints before consumer code for: ${problem}`,
+      confidence_score: 0,
+      reasoning: this.calculateReasoning("API-First", problem, context, "development"),
+      execution_plan: [
+        "Design API contracts and data models",
+        "Implement endpoints with validation",
+        "Add authentication and authorization",
+        "Create documentation and testing tools",
+        "Build client integrations"
+      ],
+      strategy_type: "development"
+    });
+    strategies.push({
+      name: "Data-First",
+      description: `Establish data model and persistence before business logic for: ${problem}`,
+      confidence_score: 0,
+      reasoning: this.calculateReasoning("Data-First", problem, context, "development"),
+      execution_plan: [
+        "Design data models and relationships",
+        "Implement data access layer",
+        "Create migration scripts and seeding",
+        "Build data processing and validation",
+        "Implement business logic and services"
+      ],
+      strategy_type: "development"
+    });
+    if (count > 3) {
+      strategies.push({
+        name: "Integration-First",
+        description: `Focus on connecting existing systems over new development for: ${problem}`,
+        confidence_score: 0,
+        reasoning: this.calculateReasoning("Integration-First", problem, context, "development"),
+        execution_plan: [
+          "Analyze existing systems and interfaces",
+          "Design integration patterns and data flow",
+          "Implement adapters and connectors",
+          "Handle authentication and data transformation",
+          "Add monitoring and error handling"
+        ],
+        strategy_type: "development"
+      });
+    }
+    return strategies.slice(0, count);
+  }
+  calculateReasoning(strategyName, problem, context, agentType) {
+    const contextual_fit = this.assessContextualFit(strategyName, context, agentType);
+    const success_probability = this.assessSuccessProbability(strategyName, problem, context);
+    const efficiency = this.assessEfficiency(strategyName, problem, context);
+    const user_preference = this.assessUserPreference(strategyName, context);
+    const explanation = `Strategy "${strategyName}" scored well on contextual fit (${contextual_fit.toFixed(2)}) due to alignment with existing patterns, has moderate success probability (${success_probability.toFixed(2)}) based on problem complexity, good efficiency (${efficiency.toFixed(2)}) for implementation speed, and reasonable user preference alignment (${user_preference.toFixed(2)}).`;
+    return {
+      contextual_fit,
+      success_probability,
+      efficiency,
+      user_preference,
+      explanation
+    };
+  }
+  assessContextualFit(_strategyName, context, _agentType) {
+    if (context.existing_patterns && context.existing_patterns.length > 0) {
+      return 0.8;
+    }
+    if (context.codebase_description) {
+      return 0.7;
+    }
+    return 0.6;
+  }
+  assessSuccessProbability(_strategyName, problem, context) {
+    if (context.constraints && context.constraints.length > 2) {
+      return 0.6;
+    }
+    if (problem.length > 200) {
+      return 0.7;
+    }
+    return 0.8;
+  }
+  assessEfficiency(_strategyName, _problem, context) {
+    if (context.time_constraints?.includes("urgent")) {
+      return 0.9;
+    }
+    if (context.resource_constraints && context.resource_constraints.length > 0) {
+      return 0.7;
+    }
+    return 0.8;
+  }
+  assessUserPreference(_strategyName, context) {
+    if (context.user_preferences && context.user_preferences.length > 0) {
+      return 0.8;
+    }
+    return 0.7;
+  }
+  rankStrategies(strategies) {
+    const scoredStrategies = strategies.map((strategy) => ({
+      ...strategy,
+      confidence_score: this.calculateConfidenceScore(strategy.reasoning)
+    }));
+    return scoredStrategies.sort((a, b) => b.confidence_score - a.confidence_score);
+  }
+  calculateConfidenceScore(reasoning) {
+    return reasoning.contextual_fit * this.confidence_weights.contextual_fit + reasoning.success_probability * this.confidence_weights.success_probability + reasoning.efficiency * this.confidence_weights.efficiency + reasoning.user_preference * this.confidence_weights.user_preference;
+  }
+  generateExecutionSummary(selectedStrategy, allStrategies) {
+    const alternatives = allStrategies.filter((s) => s.name !== selectedStrategy.name).map((s) => `${s.name} (${s.confidence_score.toFixed(2)})`).join(", ");
+    return `Selected "${selectedStrategy.name}" with confidence ${selectedStrategy.confidence_score.toFixed(2)}. This approach was chosen over alternatives: ${alternatives}. The strategy provides the best balance of contextual fit, success probability, efficiency, and user preference alignment.`;
+  }
+  getConfidenceRange(strategies) {
+    if (strategies.length === 0)
+      return [0, 0];
+    const scores = strategies.map((s) => s.confidence_score);
+    return [Math.min(...scores), Math.max(...scores)];
+  }
+}
+// src/verbalized-sampling/output-formatter.ts
+class VSOutputFormatter {
+  format_version = "1.0";
+  default_colors = {
+    strategy: "\x1B[36m",
+    confidence: "\x1B[32m",
+    selected: "\x1B[33m",
+    explanation: "\x1B[37m",
+    metadata: "\x1B[90m"
+  };
+  formatResult(result, format = { format: "json" }) {
+    switch (format.format) {
+      case "json":
+        return this.formatAsJSON(result, format);
+      case "markdown":
+        return this.formatAsMarkdown(result, format);
+      case "terminal":
+        return this.formatAsTerminal(result, format);
+      case "summary":
+        return this.formatAsSummary(result, format);
+      default:
+        throw new Error(`Unsupported format: ${format.format}`);
+    }
+  }
+  formatStrategy(strategy, format = { format: "json" }, isSelected = false) {
+    const result = {
+      strategies: [strategy],
+      selected_strategy: isSelected ? strategy.name : "",
+      total_confidence: strategy.confidence_score,
+      execution_summary: isSelected ? "Single strategy display" : "",
+      metadata: {
+        generated_at: new Date().toISOString(),
+        agent_type: strategy.strategy_type,
+        total_strategies: 1,
+        confidence_range: [strategy.confidence_score, strategy.confidence_score]
+      }
+    };
+    return this.formatResult(result, format);
+  }
+  formatConfidenceBreakdown(breakdown, format = { format: "json" }) {
+    switch (format.format) {
+      case "json":
+        return this.formatConfidenceAsJSON(breakdown);
+      case "markdown":
+        return this.formatConfidenceAsMarkdown(breakdown);
+      case "terminal":
+        return this.formatConfidenceAsTerminal(breakdown);
+      default:
+        throw new Error(`Unsupported format for confidence: ${format.format}`);
+    }
+  }
+  formatAsJSON(result, _options) {
+    const content = JSON.stringify(result, null, 2);
+    return {
+      content,
+      format: "json",
+      metadata: {
+        generated_at: new Date().toISOString(),
+        format_version: this.format_version,
+        content_length: content.length
+      }
+    };
+  }
+  formatAsMarkdown(result, options) {
+    const lines = [];
+    lines.push("# Verbalized Sampling Results");
+    lines.push("");
+    lines.push("## Summary");
+    lines.push("");
+    lines.push(`**Selected Strategy:** ${result.selected_strategy}`);
+    lines.push(`**Total Confidence:** ${result.total_confidence.toFixed(3)}`);
+    lines.push(`**Agent Type:** ${result.metadata.agent_type}`);
+    lines.push(`**Total Strategies:** ${result.metadata.total_strategies}`);
+    lines.push("");
+    if (result.execution_summary) {
+      lines.push("## Execution Summary");
+      lines.push("");
+      lines.push(result.execution_summary);
+      lines.push("");
+    }
+    lines.push("## Strategies");
+    lines.push("");
+    result.strategies.forEach((strategy) => {
+      const isSelected = strategy.name === result.selected_strategy;
+      const prefix = isSelected ? "\uD83C\uDFAF **" : "### ";
+      const suffix = isSelected ? "**" : "";
+      lines.push(`${prefix}${strategy.name}${suffix}`);
+      lines.push("");
+      if (options.verbose !== false) {
+        lines.push(`**Description:** ${this.truncateText(strategy.description, options.max_description_length)}`);
+        lines.push("");
+      }
+      lines.push(`**Confidence Score:** ${strategy.confidence_score.toFixed(3)}`);
+      lines.push(`**Strategy Type:** ${strategy.strategy_type}`);
+      lines.push("");
+      if (options.include_breakdowns !== false) {
+        lines.push("#### Confidence Breakdown");
+        lines.push("");
+        lines.push(`- **Contextual Fit:** ${strategy.reasoning.contextual_fit.toFixed(3)} (40% weight)`);
+        lines.push(`- **Success Probability:** ${strategy.reasoning.success_probability.toFixed(3)} (30% weight)`);
+        lines.push(`- **Efficiency:** ${strategy.reasoning.efficiency.toFixed(3)} (20% weight)`);
+        lines.push(`- **User Preference:** ${strategy.reasoning.user_preference.toFixed(3)} (10% weight)`);
+        lines.push("");
+        if (options.verbose !== false && strategy.reasoning.explanation) {
+          lines.push("**Explanation:**");
+          lines.push("");
+          lines.push(strategy.reasoning.explanation);
+          lines.push("");
+        }
+      }
+      if (options.include_plans !== false && strategy.execution_plan.length > 0) {
+        lines.push("#### Execution Plan");
+        lines.push("");
+        strategy.execution_plan.forEach((step, stepIndex) => {
+          lines.push(`${stepIndex + 1}. ${step}`);
+        });
+        lines.push("");
+      }
+      lines.push("---");
+      lines.push("");
+    });
+    lines.push("## Metadata");
+    lines.push("");
+    lines.push(`- **Generated At:** ${result.metadata.generated_at}`);
+    lines.push(`- **Format Version:** ${this.format_version}`);
+    lines.push(`- **Confidence Range:** ${result.metadata.confidence_range[0].toFixed(3)} - ${result.metadata.confidence_range[1].toFixed(3)}`);
+    lines.push("");
+    const content = lines.join(`
+`);
+    return {
+      content,
+      format: "markdown",
+      metadata: {
+        generated_at: new Date().toISOString(),
+        format_version: this.format_version,
+        content_length: content.length
+      }
+    };
+  }
+  formatAsTerminal(result, options) {
+    const lines = [];
+    const colors = this.default_colors;
+    lines.push(`${colors.strategy}\u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557${colors.explanation}`);
+    lines.push(`${colors.strategy}\u2551                    VERBALIZED SAMPLING RESULTS                 \u2551${colors.explanation}`);
+    lines.push(`${colors.strategy}\u255A\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255D${colors.explanation}`);
+    lines.push("");
+    lines.push(`${colors.selected}\uD83D\uDCCA SUMMARY${colors.explanation}`);
+    lines.push(`${colors.explanation}\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500${colors.explanation}`);
+    lines.push(`${colors.strategy}Selected Strategy:${colors.explanation} ${result.selected_strategy}`);
+    lines.push(`${colors.confidence}Total Confidence:${colors.explanation} ${result.total_confidence.toFixed(3)}`);
+    lines.push(`${colors.strategy}Agent Type:${colors.explanation} ${result.metadata.agent_type}`);
+    lines.push(`${colors.strategy}Total Strategies:${colors.explanation} ${result.metadata.total_strategies}`);
+    lines.push("");
+    if (result.execution_summary) {
+      lines.push(`${colors.selected}\uD83C\uDFAF EXECUTION SUMMARY${colors.explanation}`);
+      lines.push(`${colors.explanation}\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500${colors.explanation}`);
+      lines.push(result.execution_summary);
+      lines.push("");
+    }
+    lines.push(`${colors.strategy}\uD83D\uDCCB STRATEGIES${colors.explanation}`);
+    lines.push(`${colors.explanation}\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500${colors.explanation}`);
+    lines.push("");
+    result.strategies.forEach((strategy) => {
+      const isSelected = strategy.name === result.selected_strategy;
+      const icon = isSelected ? "\uD83C\uDFAF" : "\uD83D\uDCDD";
+      lines.push(`${icon} ${colors.strategy}${strategy.name}${colors.explanation}`);
+      lines.push(`${colors.explanation}   ${this.truncateText(strategy.description, 80)}${colors.explanation}`);
+      lines.push(`   ${colors.confidence}Confidence: ${strategy.confidence_score.toFixed(3)}${colors.explanation} | ${colors.strategy}Type: ${strategy.strategy_type}${colors.explanation}`);
+      if (options.include_breakdowns !== false) {
+        lines.push(`   ${colors.explanation}Breakdown: Context(${strategy.reasoning.contextual_fit.toFixed(2)}) | Success(${strategy.reasoning.success_probability.toFixed(2)}) | Efficiency(${strategy.reasoning.efficiency.toFixed(2)}) | Preference(${strategy.reasoning.user_preference.toFixed(2)})${colors.explanation}`);
+      }
+      if (isSelected) {
+        lines.push(`   ${colors.selected}\u2190 SELECTED STRATEGY${colors.explanation}`);
+      }
+      lines.push("");
+    });
+    lines.push(`${colors.metadata}\u2139\uFE0F  METADATA${colors.explanation}`);
+    lines.push(`${colors.explanation}\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500${colors.explanation}`);
+    lines.push(`${colors.metadata}Generated: ${result.metadata.generated_at}${colors.explanation}`);
+    lines.push(`${colors.metadata}Confidence Range: ${result.metadata.confidence_range[0].toFixed(3)} - ${result.metadata.confidence_range[1].toFixed(3)}${colors.explanation}`);
+    lines.push("");
+    const content = lines.join(`
+`);
+    return {
+      content,
+      format: "terminal",
+      metadata: {
+        generated_at: new Date().toISOString(),
+        format_version: this.format_version,
+        content_length: content.length
+      }
+    };
+  }
+  formatAsSummary(result, options) {
+    const lines = [];
+    lines.push(`VS Results: ${result.selected_strategy} selected with ${result.total_confidence.toFixed(3)} confidence`);
+    lines.push(`Generated ${result.metadata.total_strategies} strategies for ${result.metadata.agent_type} agent`);
+    if (options.verbose) {
+      lines.push("");
+      lines.push("Strategies considered:");
+      result.strategies.forEach((strategy) => {
+        const marker = strategy.name === result.selected_strategy ? "\u2192" : " ";
+        lines.push(`  ${marker} ${strategy.name} (${strategy.confidence_score.toFixed(3)})`);
+      });
+    }
+    const content = lines.join(`
+`);
+    return {
+      content,
+      format: "summary",
+      metadata: {
+        generated_at: new Date().toISOString(),
+        format_version: this.format_version,
+        content_length: content.length
+      }
+    };
+  }
+  formatConfidenceAsJSON(breakdown) {
+    const content = JSON.stringify(breakdown, null, 2);
+    return {
+      content,
+      format: "json",
+      metadata: {
+        generated_at: new Date().toISOString(),
+        format_version: this.format_version,
+        content_length: content.length
+      }
+    };
+  }
+  formatConfidenceAsMarkdown(breakdown) {
+    const lines = [];
+    lines.push("## Confidence Breakdown");
+    lines.push("");
+    lines.push(`**Overall Score:** ${breakdown.score.toFixed(3)} (${breakdown.level})`);
+    lines.push("");
+    lines.push("### Criteria Scores");
+    lines.push("");
+    lines.push(`| Criterion | Score | Weight | Contribution |`);
+    lines.push(`|-----------|-------|--------|--------------|`);
+    lines.push(`| Contextual Fit | ${breakdown.criteria.contextual_fit.toFixed(3)} | ${breakdown.weights.contextual_fit.toFixed(2)} | ${(breakdown.criteria.contextual_fit * breakdown.weights.contextual_fit).toFixed(3)} |`);
+    lines.push(`| Success Probability | ${breakdown.criteria.success_probability.toFixed(3)} | ${breakdown.weights.success_probability.toFixed(2)} | ${(breakdown.criteria.success_probability * breakdown.weights.success_probability).toFixed(3)} |`);
+    lines.push(`| Efficiency | ${breakdown.criteria.efficiency.toFixed(3)} | ${breakdown.weights.efficiency.toFixed(2)} | ${(breakdown.criteria.efficiency * breakdown.weights.efficiency).toFixed(3)} |`);
+    lines.push(`| User Preference | ${breakdown.criteria.user_preference.toFixed(3)} | ${breakdown.weights.user_preference.toFixed(2)} | ${(breakdown.criteria.user_preference * breakdown.weights.user_preference).toFixed(3)} |`);
+    lines.push("");
+    if (breakdown.explanation) {
+      lines.push("### Explanation");
+      lines.push("");
+      lines.push(breakdown.explanation);
+      lines.push("");
+    }
+    const content = lines.join(`
+`);
+    return {
+      content,
+      format: "markdown",
+      metadata: {
+        generated_at: new Date().toISOString(),
+        format_version: this.format_version,
+        content_length: content.length
+      }
+    };
+  }
+  formatConfidenceAsTerminal(breakdown) {
+    const lines = [];
+    const colors = this.default_colors;
+    lines.push(`${colors.confidence}\uD83D\uDCCA CONFIDENCE BREAKDOWN${colors.explanation}`);
+    lines.push(`${colors.explanation}\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500${colors.explanation}`);
+    lines.push(`${colors.confidence}Overall Score: ${breakdown.score.toFixed(3)} (${breakdown.level.toUpperCase()})${colors.explanation}`);
+    lines.push("");
+    lines.push(`${colors.strategy}Criteria Breakdown:${colors.explanation}`);
+    lines.push(`  ${colors.explanation}Contextual Fit:    ${breakdown.criteria.contextual_fit.toFixed(3)} \xD7 ${breakdown.weights.contextual_fit.toFixed(2)} = ${(breakdown.criteria.contextual_fit * breakdown.weights.contextual_fit).toFixed(3)}${colors.explanation}`);
+    lines.push(`  ${colors.explanation}Success Probability: ${breakdown.criteria.success_probability.toFixed(3)} \xD7 ${breakdown.weights.success_probability.toFixed(2)} = ${(breakdown.criteria.success_probability * breakdown.weights.success_probability).toFixed(3)}${colors.explanation}`);
+    lines.push(`  ${colors.explanation}Efficiency:         ${breakdown.criteria.efficiency.toFixed(3)} \xD7 ${breakdown.weights.efficiency.toFixed(2)} = ${(breakdown.criteria.efficiency * breakdown.weights.efficiency).toFixed(3)}${colors.explanation}`);
+    lines.push(`  ${colors.explanation}User Preference:    ${breakdown.criteria.user_preference.toFixed(3)} \xD7 ${breakdown.weights.user_preference.toFixed(2)} = ${(breakdown.criteria.user_preference * breakdown.weights.user_preference).toFixed(3)}${colors.explanation}`);
+    lines.push("");
+    if (breakdown.explanation) {
+      lines.push(`${colors.explanation}Explanation: ${breakdown.explanation}${colors.explanation}`);
+      lines.push("");
+    }
+    const content = lines.join(`
+`);
+    return {
+      content,
+      format: "terminal",
+      metadata: {
+        generated_at: new Date().toISOString(),
+        format_version: this.format_version,
+        content_length: content.length
+      }
+    };
+  }
+  truncateText(text, maxLength) {
+    if (!maxLength || text.length <= maxLength) {
+      return text;
+    }
+    return text.substring(0, maxLength - 3) + "...";
+  }
+  createColorScheme(customColors) {
+    return { ...this.default_colors, ...customColors };
+  }
+  validateFormatOptions(options) {
+    const errors = [];
+    if (!["json", "markdown", "terminal", "summary"].includes(options.format)) {
+      errors.push(`Invalid format: ${options.format}`);
+    }
+    if (options.max_description_length !== undefined && options.max_description_length < 10) {
+      errors.push("max_description_length must be at least 10 characters");
+    }
+    return {
+      valid: errors.length === 0,
+      errors
+    };
+  }
+}
+
+// src/verbalized-sampling/index.ts
+class VerbalizedSampling {
+  strategyGenerator;
+  outputFormatter;
+  constructor() {
+    this.strategyGenerator = new StrategyGenerator;
+    this.outputFormatter = new VSOutputFormatter;
+  }
+  async execute(request) {
+    const startTime = Date.now();
+    const strategyRequest = {
+      problem: request.problem,
+      agent_type: request.agent_type,
+      context: request.context || {},
+      strategy_count: request.strategy_count || 3
+    };
+    const strategies = await this.strategyGenerator.generateStrategies(strategyRequest);
+    const outputFormat = request.output_format || { format: "json" };
+    const primaryOutput = this.outputFormatter.formatResult(strategies, outputFormat);
+    const additionalOutputs = [];
+    if (outputFormat.format !== "summary") {
+      const summaryOutput = this.outputFormatter.formatResult(strategies, { format: "summary" });
+      additionalOutputs.push(summaryOutput);
+    }
+    const processingTime = Date.now() - startTime;
+    return {
+      strategies,
+      outputs: {
+        primary: primaryOutput,
+        additional: additionalOutputs.length > 0 ? additionalOutputs : undefined
+      },
+      processing: {
+        generated_at: new Date().toISOString(),
+        processing_time_ms: processingTime,
+        agent_type: request.agent_type,
+        total_strategies: strategies.strategies.length
+      }
+    };
+  }
+  async generateStrategies(request) {
+    const strategyRequest = {
+      problem: request.problem,
+      agent_type: request.agent_type,
+      context: request.context || {},
+      strategy_count: request.strategy_count || 3
+    };
+    return this.strategyGenerator.generateStrategies(strategyRequest);
+  }
+  formatStrategies(strategies, format = { format: "json" }) {
+    return this.outputFormatter.formatResult(strategies, format);
+  }
+  getAvailablePatterns(agentType) {
+    const patterns = {
+      research: [
+        "Code-Path Analysis",
+        "Pattern Discovery",
+        "Architecture Mapping",
+        "Integration Analysis"
+      ],
+      planning: [
+        "Sequential Planning",
+        "Feature-Driven Planning",
+        "Minimal Viable Planning",
+        "Parallel Planning"
+      ],
+      development: ["Component-First", "API-First", "Data-First", "Integration-First"]
+    };
+    return patterns[agentType] || [];
+  }
+  validateRequest(request) {
+    const errors = [];
+    if (!request.problem || request.problem.trim().length === 0) {
+      errors.push("Problem description is required");
+    }
+    if (!["research", "planning", "development"].includes(request.agent_type)) {
+      errors.push("Agent type must be research, planning, or development");
+    }
+    if (request.strategy_count !== undefined && (request.strategy_count < 1 || request.strategy_count > 10)) {
+      errors.push("Strategy count must be between 1 and 10");
+    }
+    if (request.output_format) {
+      const formatValidation = this.outputFormatter.validateFormatOptions(request.output_format);
+      if (!formatValidation.valid) {
+        errors.push(...formatValidation.errors);
+      }
+    }
+    return {
+      valid: errors.length === 0,
+      errors
+    };
+  }
+}
+async function executeVerbalizedSampling(request) {
+  const vs = new VerbalizedSampling;
+  return vs.execute(request);
+}
+var init_verbalized_sampling = () => {};
+
+// src/verbalized-sampling/universal-integration.ts
+var exports_universal_integration = {};
+__export(exports_universal_integration, {
+  injectVSIntoComponent: () => injectVSIntoComponent,
+  exportVSToGlobalRepo: () => exportVSToGlobalRepo,
+  createUniversalVSIntegration: () => createUniversalVSIntegration,
+  UniversalVSIntegration: () => UniversalVSIntegration
+});
+import { readFile as readFile3, writeFile as writeFile2 } from "fs/promises";
+import { join as join3 } from "path";
+
+class UniversalVSIntegration {
+  config;
+  vs;
+  constructor(config) {
+    this.config = {
+      enabled: true,
+      autoInject: true,
+      confidenceThreshold: 0.7,
+      strategyCount: 3,
+      outputFormat: "markdown",
+      platforms: this.getDefaultPlatformConfigs(),
+      ...config
+    };
+    this.vs = new VerbalizedSampling;
+  }
+  getDefaultPlatformConfigs() {
+    return [
+      {
+        name: "opencode",
+        vsIntegrationPath: "base-agents",
+        templatePath: "templates/vs-integration.md",
+        injectionPattern: "section",
+        commentStyle: "md"
+      },
+      {
+        name: "claude",
+        vsIntegrationPath: "commands-simplified",
+        templatePath: "templates/vs-integration.md",
+        injectionPattern: "prepend",
+        commentStyle: "md"
+      },
+      {
+        name: "cursor",
+        vsIntegrationPath: ".cursor/agents",
+        templatePath: "templates/vs-integration.md",
+        injectionPattern: "section",
+        commentStyle: "md"
+      }
+    ];
+  }
+  async generateVSIntegration(problem, agentType, context) {
+    const request = {
+      problem,
+      agent_type: agentType,
+      context,
+      output_format: { format: this.config.outputFormat, verbose: true }
+    };
+    return await this.vs.execute(request);
+  }
+  async injectIntoAgent(agentPath, platform, problem, agentType) {
+    try {
+      const originalContent = await readFile3(agentPath, "utf-8");
+      const originalSize = originalContent.length;
+      const vsResult = await this.generateVSIntegration(problem, agentType);
+      const vsContent = this.formatVSForInjection(vsResult, platform);
+      const newContent = this.injectContent(originalContent, vsContent, platform);
+      await writeFile2(agentPath, newContent, "utf-8");
+      const newSize = newContent.length;
+      return {
+        success: true,
+        platform: platform.name,
+        filePath: agentPath,
+        injectionType: platform.injectionPattern,
+        originalSize,
+        newSize,
+        vsIntegration: {
+          strategiesCount: vsResult.strategies.strategies.length,
+          selectedStrategy: vsResult.strategies.selected_strategy,
+          confidenceScore: vsResult.strategies.total_confidence
+        }
+      };
+    } catch (error) {
+      return {
+        success: false,
+        platform: platform.name,
+        filePath: agentPath,
+        injectionType: platform.injectionPattern,
+        originalSize: 0,
+        newSize: 0,
+        vsIntegration: {
+          strategiesCount: 0,
+          selectedStrategy: "",
+          confidenceScore: 0
+        }
+      };
+    }
+  }
+  formatVSForInjection(vsResult, platform) {
+    const commentStyle = this.getCommentStyle(platform.commentStyle);
+    let vsContent = "";
+    switch (platform.injectionPattern) {
+      case "prepend":
+        vsContent = `${commentStyle.start} Verbalized Sampling Integration
+${commentStyle.middle} Generated strategies for problem-solving
+${commentStyle.end}
+
+`;
+        break;
+      case "append":
+        vsContent = `
+
+${commentStyle.start} Verbalized Sampling Integration
+${commentStyle.middle} Generated strategies for problem-solving
+${commentStyle.end}
+`;
+        break;
+      case "section":
+        vsContent = `
+
+${commentStyle.start} VERBALIZED SAMPLING INTEGRATION ${commentStyle.end}
+${commentStyle.start} ================================ ${commentStyle.end}
+
+`;
+        break;
+      case "replace":
+        vsContent = `${commentStyle.start} Verbalized Sampling Integration ${commentStyle.end}
+`;
+        break;
+    }
+    if (vsResult.strategies) {
+      vsContent += `**Selected Strategy**: ${vsResult.strategies.selected_strategy}
+`;
+      vsContent += `**Confidence**: ${(vsResult.strategies.total_confidence * 100).toFixed(1)}%
+
+`;
+      vsContent += `**Available Strategies**:
+`;
+      vsResult.strategies.strategies.forEach((strategy, index) => {
+        vsContent += `${index + 1}. **${strategy.name}** (Confidence: ${(strategy.confidence_score * 100).toFixed(1)}%)
+`;
+        if (strategy.execution_plan && strategy.execution_plan.length > 0) {
+          vsContent += `   - Plan: ${strategy.execution_plan.slice(0, 2).join(", ")}...
+`;
+        }
+      });
+    }
+    return vsContent;
+  }
+  getCommentStyle(style) {
+    switch (style) {
+      case "js":
+        return { start: "/*", middle: " *", end: " */" };
+      case "md":
+        return { start: "<!--", middle: "  ", end: "-->" };
+      case "yaml":
+        return { start: "#", middle: "#", end: "#" };
+      default:
+        return { start: "#", middle: "#", end: "#" };
+    }
+  }
+  injectContent(original, vsContent, platform) {
+    switch (platform.injectionPattern) {
+      case "prepend":
+        return vsContent + original;
+      case "append":
+        return original + vsContent;
+      case "section":
+        const lines = original.split(`
+`);
+        let insertIndex = 0;
+        if (lines[0] === "---") {
+          for (let i = 1;i < lines.length; i++) {
+            if (lines[i] === "---") {
+              insertIndex = i + 2;
+              break;
+            }
+          }
+        } else {
+          for (let i = 0;i < lines.length; i++) {
+            if (lines[i].startsWith("#") || lines[i].trim() === "") {
+              insertIndex = i + 1;
+              break;
+            }
+          }
+        }
+        lines.splice(insertIndex, 0, "", vsContent);
+        return lines.join(`
+`);
+      case "replace":
+        const vsSectionRegex = /\/\* Verbalized Sampling Integration[\s\S]*?\*\/\n*/g;
+        if (vsSectionRegex.test(original)) {
+          return original.replace(vsSectionRegex, vsContent + `
+`);
+        }
+        return vsContent + original;
+      default:
+        return original + vsContent;
+    }
+  }
+  async batchInjectAgents(agents) {
+    const results = [];
+    for (const agent of agents) {
+      const result = await this.injectIntoAgent(agent.path, agent.platform, agent.problem, agent.agentType);
+      results.push(result);
+    }
+    return results;
+  }
+  async createPlatformTemplate(platform) {
+    const template = `
+# Verbalized Sampling Integration Template for ${platform.name.toUpperCase()}
+
+This template provides standardized verbalized sampling integration for ${platform.name} agents.
+
+## Usage
+
+1. Include this template in your agent configuration
+2. Set the appropriate problem context and agent type
+3. The system will automatically generate and rank strategies
+
+## Integration Pattern: ${platform.injectionPattern}
+
+## Comment Style: ${platform.commentStyle}
+
+## Example Configuration
+
+\`\`\`yaml
+verbalized_sampling:
+  enabled: true
+  confidence_threshold: ${this.config.confidenceThreshold}
+  strategy_count: ${this.config.strategyCount}
+  output_format: ${this.config.outputFormat}
+\`\`\`
+
+## Generated Content Structure
+
+- **Selected Strategy**: The highest-confidence approach
+- **Confidence Score**: Overall confidence percentage
+- **Alternative Strategies**: Other viable approaches with their confidence scores
+- **Execution Plans**: Brief overview of implementation steps
+
+## Auto-Integration
+
+When \`autoInject: true\`, the system will automatically:
+1. Analyze the agent's purpose and context
+2. Generate appropriate strategies
+3. Inject the VS integration at the specified location
+4. Update the agent configuration
+
+## Manual Integration
+
+For manual integration, use the following structure:
+
+\`\`\`markdown
+<!-- VERBALIZED SAMPLING INTEGRATION -->
+<!-- ================================ -->
+
+**Selected Strategy**: [Strategy Name]
+**Confidence**: [XX.X]%
+
+**Available Strategies**:
+1. **[Strategy 1]** (Confidence: [XX.X]%)
+   - Plan: [Brief overview]
+2. **[Strategy 2]** (Confidence: [XX.X]%)
+   - Plan: [Brief overview]
+\`\`\`
+`;
+    return template.trim();
+  }
+  async exportToGlobalRepo(globalRepoPath, components = ["agents", "commands", "skills"]) {
+    const vsDir = join3(globalRepoPath, "verbalized-sampling");
+    await this.ensureDirectory(vsDir);
+    await this.ensureDirectory(join3(vsDir, "templates"));
+    await this.ensureDirectory(join3(vsDir, "patterns"));
+    await this.ensureDirectory(join3(vsDir, "examples"));
+    const coreFiles = [
+      "prompts/verbalized-sampling/base-vs-strategy-prompt.md",
+      "prompts/verbalized-sampling/confidence-scoring-rules.md",
+      "prompts/verbalized-sampling/strategy-generation-patterns.md"
+    ];
+    for (const file of coreFiles) {
+      const content = await readFile3(join3(process.cwd(), file), "utf-8");
+      const fileName = file.split("/").pop();
+      await writeFile2(join3(vsDir, fileName), content, "utf-8");
+    }
+    for (const platform of this.config.platforms) {
+      const template = await this.createPlatformTemplate(platform);
+      const templateFile = join3(vsDir, "templates", `${platform.name}-template.md`);
+      await writeFile2(templateFile, template, "utf-8");
+    }
+    for (const component of components) {
+      const example = await this.createIntegrationExample(component);
+      const exampleFile = join3(vsDir, "examples", `${component}-integration.md`);
+      await writeFile2(exampleFile, example, "utf-8");
+    }
+    const readme = this.createGlobalRepoREADME();
+    await writeFile2(join3(vsDir, "README.md"), readme, "utf-8");
+  }
+  async ensureDirectory(dirPath) {
+    try {
+      await writeFile2(dirPath, "");
+    } catch {}
+  }
+  async createIntegrationExample(component) {
+    const examples = {
+      agents: `
+# Agent VS Integration Example
+
+## Research Agent Integration
+
+\`\`\`markdown
+<!-- VERBALIZED SAMPLING INTEGRATION -->
+<!-- ================================ -->
+
+**Selected Strategy**: Code-Path Analysis
+**Confidence**: 85.2%
+
+**Available Strategies**:
+1. **Code-Path Analysis** (Confidence: 85.2%)
+   - Plan: Trace execution flows, identify key components, map dependencies
+2. **Pattern Discovery** (Confidence: 78.9%)
+   - Plan: Search for recurring patterns, analyze implementations, document findings
+3. **Architecture Mapping** (Confidence: 72.4%)
+   - Plan: Create system overview, identify boundaries, document interactions
+\`\`\`
+`,
+      commands: `
+# Command VS Integration Example
+
+## Research Command Integration
+
+\`\`\`markdown
+<!-- VERBALIZED SAMPLING INTEGRATION -->
+<!-- ================================ -->
+
+**Selected Strategy**: Multi-Phase Analysis
+**Confidence**: 91.3%
+
+**Available Strategies**:
+1. **Multi-Phase Analysis** (Confidence: 91.3%)
+   - Plan: Initial scan \u2192 Deep analysis \u2192 Pattern extraction \u2192 Documentation
+2. **Targeted Search** (Confidence: 83.7%)
+   - Plan: Query formulation \u2192 Result filtering \u2192 Context analysis \u2192 Summary
+\`\`\`
+`,
+      skills: `
+# Skill VS Integration Example
+
+## Analysis Skill Integration
+
+\`\`\`markdown
+<!-- VERBALIZED SAMPLING INTEGRATION -->
+<!-- ================================ -->
+
+**Selected Strategy**: Context-Aware Analysis
+**Confidence**: 88.6%
+
+**Available Strategies**:
+1. **Context-Aware Analysis** (Confidence: 88.6%)
+   - Plan: Gather context \u2192 Identify patterns \u2192 Generate insights \u2192 Validate findings
+2. **Pattern-Based Approach** (Confidence: 81.2%)
+   - Plan: Pattern matching \u2192 Classification \u2192 Documentation \u2192 Recommendations
+\`\`\`
+`
+    };
+    return examples[component] || "";
+  }
+  createGlobalRepoREADME() {
+    return `
+# Verbalized Sampling Global Repository
+
+This repository contains standardized verbalized sampling integration patterns for CodeFlow agents, commands, and skills.
+
+## Directory Structure
+
+- \`templates/\` - Platform-specific integration templates
+- \`patterns/\` - Strategy generation patterns by agent type
+- \`examples/\` - Integration examples for different component types
+- \`base-vs-strategy-prompt.md\` - Core VS prompting framework
+- \`confidence-scoring-rules.md\` - Confidence calculation guidelines
+- \`strategy-generation-patterns.md\` - Agent-specific pattern definitions
+
+## Platform Support
+
+- **OpenCode**: Agent integration with section-based injection
+- **Claude Code**: Command integration with prepend injection
+- **Cursor**: Agent integration with section-based injection
+
+## Usage
+
+1. Copy the appropriate template for your platform
+2. Customize the problem context and agent type
+3. Integrate the generated VS content into your component
+4. Configure auto-injection if desired
+
+## Configuration
+
+\`\`\`yaml
+verbalized_sampling:
+  enabled: true
+  auto_inject: true
+  confidence_threshold: 0.7
+  strategy_count: 3
+  output_format: "markdown"
+\`\`\`
+
+## Integration Patterns
+
+- **Prepend**: Add VS content at the beginning of the file
+- **Append**: Add VS content at the end of the file
+- **Section**: Insert VS content after front matter or first section
+- **Replace**: Replace existing VS integration sections
+
+## Auto-Synchronization
+
+The VS integration system supports automatic synchronization with global repositories:
+
+\`\`\`bash
+# Export to global repo
+vs-integration export --global-repo /path/to/global/repo
+
+# Import from global repo
+vs-integration import --global-repo /path/to/global/repo
+
+# Sync with updates
+vs-integration sync --global-repo /path/to/global/repo
+\`\`\`
+
+## Validation
+
+Use the built-in validation system to ensure proper integration:
+
+\`\`\`bash
+# Validate VS integration
+vs-integration validate --path /path/to/component
+
+# Test VS generation
+vs-integration test --problem "Your problem here" --agent-type research
+\`\`\`
+`;
+  }
+  getConfig() {
+    return { ...this.config };
+  }
+  updateConfig(newConfig) {
+    this.config = { ...this.config, ...newConfig };
+  }
+}
+async function createUniversalVSIntegration(config) {
+  return new UniversalVSIntegration(config);
+}
+async function injectVSIntoComponent(componentPath, platform, problem, agentType, config) {
+  const integration = new UniversalVSIntegration(config);
+  const platformConfig = integration.getDefaultPlatformConfigs().find((p) => p.name === platform);
+  if (!platformConfig) {
+    throw new Error(`Unsupported platform: ${platform}`);
+  }
+  return await integration.injectIntoAgent(componentPath, platformConfig, problem, agentType);
+}
+async function exportVSToGlobalRepo(globalRepoPath, config) {
+  const integration = new UniversalVSIntegration(config);
+  await integration.exportToGlobalRepo(globalRepoPath);
+}
+var init_universal_integration = __esm(() => {
+  init_verbalized_sampling();
+});
+
+// src/verbalized-sampling/cli.ts
+import { writeFile as writeFile3 } from "fs/promises";
+import { join as join4 } from "path";
+
+// src/verbalized-sampling/validation-framework.ts
+import { readFile as readFile2, writeFile, readdir, stat } from "fs/promises";
+import { join as join2, basename as basename2, dirname as dirname2, extname } from "path";
+
+// src/verbalized-sampling/injection-patterns.ts
+class VSInjectionPatterns {
+  static patterns = new Map;
+  static {
+    this.initializePatterns();
+  }
+  static initializePatterns() {
+    this.patterns.set("agent", {
+      componentType: "agent",
+      patterns: [
+        {
+          name: "frontmatter-section",
+          description: "Inject VS as a section after YAML frontmatter",
+          placement: "after-frontmatter",
+          format: "markdown",
+          template: `<!-- VERBALIZED SAMPLING INTEGRATION -->
+<!-- ================================ -->
+
+**Selected Strategy**: {{selectedStrategy}}
+**Confidence**: {{confidencePercentage}}%
+
+**Available Strategies**:
+{{#each strategies}}
+{{@index}}. **{{name}}** (Confidence: {{confidencePercentage}}%)
+   - Plan: {{briefPlan}}
+{{/each}}
+
+<!-- Generated at: {{generatedAt}} -->
+`,
+          variables: ["selectedStrategy", "confidencePercentage", "strategies", "generatedAt"]
+        },
+        {
+          name: "yaml-integration",
+          description: "Add VS configuration to YAML frontmatter",
+          placement: "replace-section",
+          format: "yaml",
+          template: `verbalized_sampling:
+  enabled: true
+  selected_strategy: {{selectedStrategy}}
+  confidence_score: {{confidenceScore}}
+  strategies:
+{{#each strategies}}
+    - name: {{name}}
+      confidence: {{confidenceScore}}
+      description: {{description}}
+{{/each}}
+`,
+          variables: ["selectedStrategy", "confidenceScore", "strategies"]
+        },
+        {
+          name: "code-comment",
+          description: "Inject VS as code comments",
+          placement: "top",
+          format: "code-comment",
+          template: `/*
+ * VERBALIZED SAMPLING INTEGRATION
+ * 
+ * Selected Strategy: {{selectedStrategy}}
+ * Confidence: {{confidencePercentage}}%
+ * 
+ * Available Strategies:
+{{#each strategies}}
+ * - {{name}} ({{confidencePercentage}}%)
+{{/each}}
+ */
+`,
+          variables: ["selectedStrategy", "confidencePercentage", "strategies"]
+        }
+      ],
+      defaultPattern: "frontmatter-section",
+      platformAdapters: {
+        opencode: {
+          placement: "after-frontmatter",
+          format: "markdown"
+        },
+        claude: {
+          placement: "top",
+          format: "markdown"
+        },
+        cursor: {
+          placement: "after-frontmatter",
+          format: "markdown"
+        }
+      }
+    });
+    this.patterns.set("command", {
+      componentType: "command",
+      patterns: [
+        {
+          name: "usage-section",
+          description: "Add VS to usage examples section",
+          placement: "after-heading",
+          format: "markdown",
+          template: `### Verbalized Sampling Integration
+
+This command uses verbalized sampling to determine the optimal approach:
+
+**Selected Strategy**: {{selectedStrategy}}
+**Confidence**: {{confidencePercentage}}%
+
+**Strategy Options**:
+{{#each strategies}}
+- **{{name}}**: {{briefDescription}} ({{confidencePercentage}}%)
+{{/each}}
+
+The command will automatically select the best strategy based on your context.
+`,
+          variables: ["selectedStrategy", "confidencePercentage", "strategies"]
+        },
+        {
+          name: "prepend-approach",
+          description: "Prepend VS analysis to command description",
+          placement: "top",
+          format: "markdown",
+          template: `> **Verbalized Sampling Analysis**: This command uses {{selectedStrategy}} approach ({{confidencePercentage}}% confidence) based on context analysis.
+
+{{#each strategies}}
+> - Alternative: {{name}} ({{confidencePercentage}}%)
+{{/each}}
+
+`,
+          variables: ["selectedStrategy", "confidencePercentage", "strategies"]
+        }
+      ],
+      defaultPattern: "usage-section",
+      platformAdapters: {
+        opencode: {
+          placement: "after-heading",
+          format: "markdown"
+        },
+        claude: {
+          placement: "top",
+          format: "markdown"
+        },
+        cursor: {
+          placement: "after-heading",
+          format: "markdown"
+        }
+      }
+    });
+    this.patterns.set("skill", {
+      componentType: "skill",
+      patterns: [
+        {
+          name: "implementation-strategy",
+          description: "Add VS strategy to implementation section",
+          placement: "after-heading",
+          format: "markdown",
+          template: `## Verbalized Sampling Strategy
+
+This skill uses verbalized sampling to determine the optimal implementation approach:
+
+### Selected Strategy: {{selectedStrategy}}
+**Confidence**: {{confidencePercentage}}%
+
+{{selectedStrategyDescription}}
+
+### Alternative Strategies
+{{#each strategies}}
+{{#unless @first}}
+#### {{name}}
+**Confidence**: {{confidencePercentage}}%
+{{description}}
+{{/unless}}
+{{/each}}
+
+### Execution Plan
+{{executionPlan}}
+`,
+          variables: [
+            "selectedStrategy",
+            "confidencePercentage",
+            "selectedStrategyDescription",
+            "strategies",
+            "executionPlan"
+          ]
+        },
+        {
+          name: "metadata-integration",
+          description: "Integrate VS into skill metadata",
+          placement: "replace-section",
+          format: "yaml",
+          template: `verbalized_sampling:
+  enabled: true
+  selected_strategy: {{selectedStrategy}}
+  confidence: {{confidenceScore}}
+  last_updated: {{generatedAt}}
+  
+strategies:
+{{#each strategies}}
+  - name: {{name}}
+    confidence: {{confidenceScore}}
+    type: {{strategy_type}}
+    execution_steps: {{execution_plan.length}}
+{{/each}}
+`,
+          variables: ["selectedStrategy", "confidenceScore", "generatedAt", "strategies"]
+        }
+      ],
+      defaultPattern: "implementation-strategy",
+      platformAdapters: {
+        opencode: {
+          placement: "after-heading",
+          format: "markdown"
+        },
+        claude: {
+          placement: "top",
+          format: "markdown"
+        },
+        cursor: {
+          placement: "after-heading",
+          format: "markdown"
+        }
+      }
+    });
+  }
+  static getPattern(componentType) {
+    return this.patterns.get(componentType);
+  }
+  static getInjectionPattern(componentType, patternName) {
+    const componentPattern = this.patterns.get(componentType);
+    return componentPattern?.patterns.find((p) => p.name === patternName);
+  }
+  static getPlatformPattern(componentType, platform, patternName) {
+    const componentPattern = this.patterns.get(componentType);
+    if (!componentPattern)
+      return;
+    const selectedPatternName = patternName || componentPattern.defaultPattern;
+    let pattern = componentPattern.patterns.find((p) => p.name === selectedPatternName);
+    if (!pattern)
+      return;
+    const platformAdapter = componentPattern.platformAdapters[platform];
+    if (platformAdapter) {
+      pattern = { ...pattern, ...platformAdapter };
+    }
+    return pattern;
+  }
+  static getAllPatterns(componentType) {
+    const componentPattern = this.patterns.get(componentType);
+    return componentPattern?.patterns || [];
+  }
+  static listPatternNames(componentType) {
+    const componentPattern = this.patterns.get(componentType);
+    return componentPattern?.patterns.map((p) => p.name) || [];
+  }
+  static validateVariables(pattern, data) {
+    const missing = [];
+    for (const variable of pattern.variables) {
+      if (!(variable in data)) {
+        missing.push(variable);
+      }
+    }
+    return {
+      valid: missing.length === 0,
+      missing
+    };
+  }
+  static renderTemplate(pattern, data) {
+    let template = pattern.template;
+    const simpleVars = [
+      "selectedStrategy",
+      "confidencePercentage",
+      "confidenceScore",
+      "generatedAt"
+    ];
+    for (const variable of simpleVars) {
+      const value = data[variable];
+      if (value !== undefined) {
+        const regex = new RegExp(`{{${variable}}}`, "g");
+        template = template.replace(regex, value.toString());
+      }
+    }
+    if (data.strategies && Array.isArray(data.strategies)) {
+      const eachRegex = /{{#each strategies}}([\s\S]*?){{\/each}}/g;
+      template = template.replace(eachRegex, (_, block) => {
+        return data.strategies.map((strategy, index) => {
+          let strategyBlock = block;
+          strategyBlock = strategyBlock.replace(/{{name}}/g, strategy.name || "");
+          strategyBlock = strategyBlock.replace(/{{description}}/g, strategy.description || "");
+          strategyBlock = strategyBlock.replace(/{{confidenceScore}}/g, (strategy.confidence_score || 0).toString());
+          strategyBlock = strategyBlock.replace(/{{confidencePercentage}}/g, ((strategy.confidence_score || 0) * 100).toFixed(1) + "%");
+          strategyBlock = strategyBlock.replace(/{{briefPlan}}/g, strategy.execution_plan && strategy.execution_plan.length > 0 ? strategy.execution_plan.slice(0, 2).join(", ") + "..." : "No plan available");
+          strategyBlock = strategyBlock.replace(/{{@index}}/g, (index + 1).toString());
+          strategyBlock = strategyBlock.replace(/{{#unless @first}}([\s\S]*?){{\/unless}}/g, index === 0 ? "" : "$1");
+          return strategyBlock;
+        }).join(`
+`);
+      });
+    }
+    if (data.selectedStrategyDescription) {
+      template = template.replace(/{{selectedStrategyDescription}}/g, data.selectedStrategyDescription);
+    }
+    if (data.executionPlan) {
+      template = template.replace(/{{executionPlan}}/g, data.executionPlan);
+    }
+    return template;
+  }
+  static createCustomPattern(componentType, pattern) {
+    const componentPattern = this.patterns.get(componentType);
+    if (componentPattern) {
+      componentPattern.patterns.push(pattern);
+    }
+  }
+  static getStatistics() {
+    const stats = {
+      totalPatterns: 0,
+      patternsByType: {},
+      supportedPlatforms: ["opencode", "claude", "cursor"]
+    };
+    for (const [type, componentPattern] of this.patterns) {
+      stats.patternsByType[type] = componentPattern.patterns.length;
+      stats.totalPatterns += componentPattern.patterns.length;
+    }
+    return stats;
+  }
+}
+
+// src/verbalized-sampling/platform-adapters.ts
+import { readFile } from "fs/promises";
+import { join, basename, dirname } from "path";
+
+class PlatformAdapters {
+  static adapters = new Map;
+  static {
+    this.initializeAdapters();
+  }
+  static initializeAdapters() {
+    this.adapters.set("opencode", {
+      name: "opencode",
+      description: "OpenCode platform adapter with flat structure and JSONC configuration",
+      fileExtensions: [".md", ".jsonc", ".ts", ".js"],
+      defaultPaths: {
+        agents: "base-agents",
+        commands: "commands-simplified",
+        skills: "base-skills"
+      },
+      conventions: {
+        commentStyle: "md",
+        frontMatter: true,
+        indentation: "spaces",
+        indentSize: 2
+      },
+      integration: {
+        preferredPattern: "frontmatter-section",
+        autoInject: true,
+        validation: true
+      }
+    });
+    this.adapters.set("claude", {
+      name: "claude",
+      description: "Claude Code platform adapter with command-based structure",
+      fileExtensions: [".md", ".mcp"],
+      defaultPaths: {
+        agents: "agents",
+        commands: "commands-simplified",
+        skills: "skills"
+      },
+      conventions: {
+        commentStyle: "md",
+        frontMatter: false,
+        indentation: "spaces",
+        indentSize: 2
+      },
+      integration: {
+        preferredPattern: "prepend-approach",
+        autoInject: true,
+        validation: true
+      }
+    });
+    this.adapters.set("cursor", {
+      name: "cursor",
+      description: "Cursor platform adapter with .cursor directory structure",
+      fileExtensions: [".md", ".cursorrules"],
+      defaultPaths: {
+        agents: ".cursor/agents",
+        commands: ".cursor/commands",
+        skills: ".cursor/skills"
+      },
+      conventions: {
+        commentStyle: "md",
+        frontMatter: true,
+        indentation: "spaces",
+        indentSize: 2
+      },
+      integration: {
+        preferredPattern: "frontmatter-section",
+        autoInject: true,
+        validation: true
+      }
+    });
+  }
+  static getAdapter(platform) {
+    return this.adapters.get(platform);
+  }
+  static getAllAdapters() {
+    return Array.from(this.adapters.values());
+  }
+  static getFilePaths(platform, componentName, componentType) {
+    const adapter = this.adapters.get(platform);
+    if (!adapter)
+      return [];
+    const basePath = adapter.defaultPaths[componentType];
+    const extension = this.getDefaultExtension(platform, componentType);
+    return [
+      join(basePath, `${componentName}${extension}`),
+      join(basePath, componentName, `index${extension}`),
+      join(basePath, componentName, `${componentName}${extension}`)
+    ];
+  }
+  static getDefaultExtension(platform, componentType) {
+    const extensions = {
+      opencode: {
+        agents: ".md",
+        commands: ".md",
+        skills: ".md"
+      },
+      claude: {
+        agents: ".md",
+        commands: ".md",
+        skills: ".md"
+      },
+      cursor: {
+        agents: ".md",
+        commands: ".md",
+        skills: ".md"
+      }
+    };
+    return extensions[platform][componentType];
+  }
+  static async validateFileStructure(platform, filePath) {
+    const adapter = this.adapters.get(platform);
+    if (!adapter) {
+      return { valid: false, errors: [`Unknown platform: ${platform}`] };
+    }
+    const errors = [];
+    try {
+      const content = await readFile(filePath, "utf-8");
+      const fileExtension = filePath.substring(filePath.lastIndexOf("."));
+      if (!adapter.fileExtensions.includes(fileExtension)) {
+        errors.push(`Invalid file extension: ${fileExtension}. Expected: ${adapter.fileExtensions.join(", ")}`);
+      }
+      if (adapter.conventions.frontMatter && fileExtension === ".md") {
+        const lines2 = content.split(`
+`);
+        if (lines2[0] !== "---") {
+          errors.push("Missing YAML front matter (should start with ---)");
+        }
+      }
+      const lines = content.split(`
+`);
+      for (let i = 0;i < lines.length; i++) {
+        const line = lines[i];
+        if (line.startsWith("\t") && adapter.conventions.indentation === "spaces") {
+          errors.push(`Line ${i + 1}: Uses tabs but platform expects spaces`);
+          break;
+        }
+      }
+    } catch (error) {
+      errors.push(`Cannot read file: ${error}`);
+    }
+    return {
+      valid: errors.length === 0,
+      errors
+    };
+  }
+  static formatContent(platform, content, componentType) {
+    const adapter = this.adapters.get(platform);
+    if (!adapter)
+      return content;
+    let formattedContent = content;
+    if (adapter.conventions.indentation === "spaces") {
+      const lines = formattedContent.split(`
+`);
+      const formattedLines = lines.map((line) => {
+        if (line.startsWith("\t")) {
+          return line.replace(/\t/g, " ".repeat(adapter.conventions.indentSize));
+        }
+        return line;
+      });
+      formattedContent = formattedLines.join(`
+`);
+    }
+    if (platform === "opencode" && componentType === "agents") {
+      if (!formattedContent.includes("```jsonc")) {
+        formattedContent = this.addOpenCodeConfig(formattedContent);
+      }
+    }
+    return formattedContent;
+  }
+  static addOpenCodeConfig(content) {
+    const config = `{
+  "subagent": {
+    "mode": "subagent",
+    "model": "anthropic/claude-sonnet-4"
+  }
+}`;
+    if (content.startsWith("---")) {
+      const lines = content.split(`
+`);
+      let insertIndex = 0;
+      for (let i = 1;i < lines.length; i++) {
+        if (lines[i] === "---") {
+          insertIndex = i + 2;
+          break;
+        }
+      }
+      lines.splice(insertIndex, 0, "", "```jsonc", config, "```", "");
+      return lines.join(`
+`);
+    } else {
+      return `---
+
+\`\`\`jsonc
+${config}
+\`\`\`
+
+${content}`;
+    }
+  }
+  static async extractComponentInfo(platform, filePath) {
+    const adapter = this.adapters.get(platform);
+    if (!adapter) {
+      throw new Error(`Unknown platform: ${platform}`);
+    }
+    const fileName = basename(filePath);
+    const dirPath = dirname(filePath);
+    let componentType = "agents";
+    for (const [type, path] of Object.entries(adapter.defaultPaths)) {
+      if (dirPath.includes(path) || filePath.includes(path)) {
+        componentType = type;
+        break;
+      }
+    }
+    const name = fileName.replace(/\.[^/.]+$/, "");
+    try {
+      const content = await readFile(filePath, "utf-8");
+      let description;
+      const lines = content.split(`
+`);
+      for (const line of lines) {
+        if (line.startsWith("# ")) {
+          description = line.substring(2).trim();
+          break;
+        }
+      }
+      const existingVS = content.includes("VERBALIZED SAMPLING") || content.includes("verbalized_sampling");
+      return {
+        name,
+        type: componentType,
+        description,
+        existingVS
+      };
+    } catch (error) {
+      return {
+        name,
+        type: componentType
+      };
+    }
+  }
+  static async generateIntegration(platform, componentType, vsResult, componentName) {
+    const adapter = this.adapters.get(platform);
+    if (!adapter) {
+      throw new Error(`Unknown platform: ${platform}`);
+    }
+    const pattern = VSInjectionPatterns.getPlatformPattern(componentType === "agents" ? "agent" : componentType === "commands" ? "command" : "skill", platform, adapter.integration.preferredPattern);
+    if (!pattern) {
+      throw new Error(`No pattern found for ${componentType} on ${platform}`);
+    }
+    const selectedStrategyObj = vsResult.strategies.strategies.find((s) => s.name === vsResult.strategies.selected_strategy);
+    const data = {
+      selectedStrategy: vsResult.strategies.selected_strategy,
+      confidenceScore: vsResult.strategies.total_confidence,
+      confidencePercentage: (vsResult.strategies.total_confidence * 100).toFixed(1),
+      strategies: vsResult.strategies.strategies,
+      generatedAt: new Date().toISOString(),
+      componentName
+    };
+    if (selectedStrategyObj) {
+      data.selectedStrategyDescription = selectedStrategyObj.description;
+      data.executionPlan = selectedStrategyObj.execution_plan.join(`
+1. `);
+    }
+    const vsContent = VSInjectionPatterns.renderTemplate(pattern, data);
+    return this.formatContent(platform, vsContent, componentType);
+  }
+  static async createDirectoryStructure(platform, basePath) {
+    const adapter = this.adapters.get(platform);
+    if (!adapter)
+      return;
+    const { writeFile } = await import("fs/promises");
+    for (const [, path] of Object.entries(adapter.defaultPaths)) {
+      const fullPath = join(basePath, path);
+      try {
+        await writeFile(fullPath, "");
+      } catch {}
+    }
+    if (platform === "opencode") {
+      const opencodeConfig = {
+        model: "anthropic/claude-sonnet-4",
+        agent: {
+          build: { mode: "primary" },
+          plan: { mode: "primary" }
+        }
+      };
+      const configPath = join(basePath, "opencode.jsonc");
+      await writeFile(configPath, JSON.stringify(opencodeConfig, null, 2));
+    }
+    if (platform === "cursor") {
+      const cursorRules = `
+# Cursor Rules for Verbalized Sampling Integration
+
+## VS Integration Guidelines
+
+- All agents should include verbalized sampling analysis
+- Use frontmatter-section pattern for consistency
+- Validate VS integration before committing
+- Follow platform-specific conventions
+
+## Auto-Integration
+
+When enabled, verbalized sampling will be automatically injected into:
+- Agent descriptions
+- Command usage examples
+- Skill implementation strategies
+
+## Validation
+
+Run validation before committing:
+\`\`\`bash
+cursor-vs-validate --path /path/to/component
+\`\`\`
+`;
+      const rulesPath = join(basePath, ".cursorrules");
+      await writeFile(rulesPath, cursorRules.trim());
+    }
+  }
+  static getStatistics() {
+    return {
+      totalPlatforms: this.adapters.size,
+      platforms: Array.from(this.adapters.keys()),
+      supportedComponents: ["agents", "commands", "skills"]
+    };
+  }
+}
+
+// src/verbalized-sampling/validation-framework.ts
+init_verbalized_sampling();
+
+class VSValidationFramework {
+  config;
+  constructor(config) {
+    this.config = {
+      strictMode: false,
+      includeWarnings: true,
+      includeSuggestions: true,
+      testVSGeneration: true,
+      testIntegration: true,
+      testPlatformCompliance: true,
+      minQualityScore: 70,
+      platforms: ["opencode", "claude", "cursor"],
+      componentTypes: ["agent", "command", "skill"],
+      ...config
+    };
+  }
+  async validateFile(filePath) {
+    const result = {
+      valid: false,
+      componentType: "agent",
+      platform: "opencode",
+      filePath,
+      errors: [],
+      warnings: [],
+      suggestions: [],
+      score: 0
+    };
+    try {
+      const { platform, componentType } = await this.determineFileContext(filePath);
+      result.platform = platform;
+      result.componentType = componentType;
+      const content = await readFile2(filePath, "utf-8");
+      await this.validateFileStructure(filePath, platform, componentType, result);
+      await this.validateVSIntegration(content, platform, componentType, result);
+      if (this.config.testPlatformCompliance) {
+        await this.validatePlatformCompliance(content, platform, componentType, result);
+      }
+      if (this.config.testVSGeneration) {
+        await this.testVSGeneration(content, componentType, result);
+      }
+      result.score = this.calculateQualityScore(result);
+      result.valid = result.errors.length === 0 && result.score >= this.config.minQualityScore;
+    } catch (error) {
+      result.errors.push(`Validation failed: ${error}`);
+      result.valid = false;
+      result.score = 0;
+    }
+    return result;
+  }
+  async validateDirectory(dirPath) {
+    const startTime = Date.now();
+    const report = {
+      timestamp: new Date().toISOString(),
+      totalFiles: 0,
+      validFiles: 0,
+      invalidFiles: 0,
+      averageScore: 0,
+      results: [],
+      testResults: [],
+      summary: {
+        byPlatform: {},
+        byComponentType: {},
+        commonErrors: [],
+        commonWarnings: []
+      }
+    };
+    try {
+      const files = await this.findRelevantFiles(dirPath);
+      report.totalFiles = files.length;
+      for (const file of files) {
+        const result = await this.validateFile(file);
+        report.results.push(result);
+        if (result.valid) {
+          report.validFiles++;
+        } else {
+          report.invalidFiles++;
+        }
+        this.updateSummaryStatistics(result, report.summary);
+      }
+      if (this.config.testIntegration) {
+        report.testResults = await this.runIntegrationTests(dirPath);
+      }
+      const totalScore = report.results.reduce((sum, result) => sum + result.score, 0);
+      report.averageScore = report.totalFiles > 0 ? totalScore / report.totalFiles : 0;
+    } catch (error) {
+      report.testResults.push({
+        testName: "Directory Validation",
+        passed: false,
+        duration: Date.now() - startTime,
+        details: `Directory validation failed: ${error}`,
+        error
+      });
+    }
+    return report;
+  }
+  async determineFileContext(filePath) {
+    const fileName = basename2(filePath);
+    const dirPath = dirname2(filePath);
+    let platform = "opencode";
+    if (dirPath.includes("commands-simplified") || dirPath.includes("agents")) {
+      platform = "claude";
+    } else if (dirPath.includes(".cursor")) {
+      platform = "cursor";
+    }
+    let componentType = "agent";
+    if (dirPath.includes("commands") || fileName.includes("command")) {
+      componentType = "command";
+    } else if (dirPath.includes("skills") || fileName.includes("skill")) {
+      componentType = "skill";
+    }
+    return { platform, componentType };
+  }
+  async validateFileStructure(filePath, platform, componentType, result) {
+    const adapter = PlatformAdapters.getAdapter(platform);
+    if (!adapter) {
+      result.errors.push(`Unknown platform: ${platform}`);
+      return;
+    }
+    const extension = extname(filePath);
+    if (!adapter.fileExtensions.includes(extension)) {
+      result.errors.push(`Invalid file extension: ${extension}. Expected: ${adapter.fileExtensions.join(", ")}`);
+    }
+    const structureValidation = await PlatformAdapters.validateFileStructure(platform, filePath);
+    if (!structureValidation.valid) {
+      result.errors.push(...structureValidation.errors);
+    }
+    const content = await readFile2(filePath, "utf-8");
+    await this.validateRequiredSections(content, componentType, result);
+  }
+  async validateRequiredSections(content, componentType, result) {
+    const lines = content.split(`
+`);
+    const hasHeadings = lines.some((line) => line.startsWith("#"));
+    if (!hasHeadings) {
+      result.warnings.push("No markdown headings found - consider adding structure");
+    }
+    if (componentType === "agent") {
+      if (!content.startsWith("---")) {
+        result.warnings.push("Agent files should include YAML front matter");
+      }
+    }
+    const hasDescription = lines.some((line) => line.startsWith("# ") || line.match(/^description:\s*.+/i) || line.match(/^summary:\s*.+/i));
+    if (!hasDescription) {
+      result.warnings.push("No description or summary found");
+    }
+  }
+  async validateVSIntegration(content, platform, componentType, result) {
+    const hasVSIntegration = content.includes("VERBALIZED SAMPLING") || content.includes("verbalized_sampling");
+    if (!hasVSIntegration) {
+      result.warnings.push("No verbalized sampling integration found");
+      result.suggestions.push("Consider adding VS integration for better decision-making");
+      return;
+    }
+    await this.validateVSStructure(content, platform, componentType, result);
+  }
+  async validateVSStructure(content, platform, componentType, result) {
+    const hasSelectedStrategy = content.includes("Selected Strategy") || content.includes("selected_strategy");
+    if (!hasSelectedStrategy) {
+      result.errors.push("VS integration missing selected strategy");
+    }
+    const hasConfidence = content.includes("Confidence:") || content.includes("confidence_score");
+    if (!hasConfidence) {
+      result.errors.push("VS integration missing confidence score");
+    }
+    const hasStrategyList = content.includes("Available Strategies") || content.includes("strategies:");
+    if (!hasStrategyList) {
+      result.warnings.push("VS integration missing strategy list");
+    }
+    const pattern = VSInjectionPatterns.getPlatformPattern(componentType, platform, platform === "claude" ? "prepend-approach" : "frontmatter-section");
+    if (pattern) {
+      for (const variable of pattern.variables) {
+        const placeholder = `{{${variable}}}`;
+        if (content.includes(placeholder)) {
+          result.errors.push(`Unresolved template variable: ${placeholder}`);
+        }
+      }
+    }
+  }
+  async validatePlatformCompliance(content, platform, componentType, result) {
+    const adapter = PlatformAdapters.getAdapter(platform);
+    if (!adapter)
+      return;
+    const lines = content.split(`
+`);
+    for (let i = 0;i < lines.length; i++) {
+      const line = lines[i];
+      if (line.startsWith("\t") && adapter.conventions.indentation === "spaces") {
+        result.errors.push(`Line ${i + 1}: Uses tabs but ${platform} expects spaces`);
+        break;
+      }
+    }
+    if (adapter.conventions.frontMatter && !content.startsWith("---")) {
+      result.warnings.push(`${platform} typically uses YAML front matter`);
+    }
+    if (platform === "opencode" && componentType === "agent") {
+      if (!content.includes("```jsonc")) {
+        result.warnings.push("OpenCode agents should include JSONC configuration");
+      }
+    }
+  }
+  async testVSGeneration(content, componentType, result) {
+    try {
+      const problem = this.extractProblemFromContent(content);
+      if (!problem) {
+        result.warnings.push("Could not extract problem for VS generation test");
+        return;
+      }
+      const request = {
+        problem,
+        agent_type: componentType === "agent" ? "research" : componentType === "command" ? "planning" : "development",
+        context: {
+          existing_patterns: ["test-pattern"],
+          constraints: ["test-constraint"]
+        }
+      };
+      const vsResult = await executeVerbalizedSampling(request);
+      if (!vsResult.strategies || vsResult.strategies.strategies.length === 0) {
+        result.errors.push("VS generation failed - no strategies generated");
+      }
+      if (!vsResult.strategies.selected_strategy) {
+        result.errors.push("VS generation failed - no selected strategy");
+      }
+      if (vsResult.strategies.total_confidence < 0.5) {
+        result.warnings.push("VS generation produced low confidence scores");
+      }
+    } catch (error) {
+      result.errors.push(`VS generation test failed: ${error}`);
+    }
+  }
+  extractProblemFromContent(content) {
+    const lines = content.split(`
+`);
+    for (const line of lines) {
+      if (line.startsWith("# ")) {
+        return line.substring(2).trim();
+      }
+      if (line.toLowerCase().startsWith("problem:")) {
+        return line.substring(9).trim();
+      }
+      if (line.toLowerCase().startsWith("description:")) {
+        return line.substring(13).trim();
+      }
+    }
+    return null;
+  }
+  calculateQualityScore(result) {
+    let score = 100;
+    score -= result.errors.length * 20;
+    score -= result.warnings.length * 5;
+    const hasVS = result.errors.some((e) => e.includes("VS integration")) || result.warnings.some((w) => w.includes("VS integration"));
+    if (!hasVS) {
+      score -= 10;
+    }
+    return Math.max(0, Math.min(100, score));
+  }
+  async findRelevantFiles(dirPath) {
+    const files = [];
+    async function scanDirectory(currentPath) {
+      try {
+        const entries = await readdir(currentPath, { withFileTypes: true });
+        for (const entry of entries) {
+          const fullPath = join2(currentPath, entry.name);
+          if (entry.isDirectory()) {
+            if (!entry.name.startsWith(".") && entry.name !== "node_modules") {
+              await scanDirectory(fullPath);
+            }
+          } else if (entry.isFile()) {
+            const extension = extname(entry.name);
+            if ([".md", ".jsonc", ".ts", ".js", ".cursorrules"].includes(extension)) {
+              files.push(fullPath);
+            }
+          }
+        }
+      } catch {}
+    }
+    await scanDirectory(dirPath);
+    return files;
+  }
+  updateSummaryStatistics(result, summary) {
+    if (!summary.byPlatform[result.platform]) {
+      summary.byPlatform[result.platform] = { total: 0, valid: 0, avgScore: 0 };
+    }
+    summary.byPlatform[result.platform].total++;
+    if (result.valid) {
+      summary.byPlatform[result.platform].valid++;
+    }
+    if (!summary.byComponentType[result.componentType]) {
+      summary.byComponentType[result.componentType] = { total: 0, valid: 0, avgScore: 0 };
+    }
+    summary.byComponentType[result.componentType].total++;
+    if (result.valid) {
+      summary.byComponentType[result.componentType].valid++;
+    }
+    for (const error of result.errors) {
+      const existing = summary.commonErrors.find((e) => e.error === error);
+      if (existing) {
+        existing.count++;
+      } else {
+        summary.commonErrors.push({ error, count: 1 });
+      }
+    }
+    for (const warning of result.warnings) {
+      const existing = summary.commonWarnings.find((w) => w.warning === warning);
+      if (existing) {
+        existing.count++;
+      } else {
+        summary.commonWarnings.push({ warning, count: 1 });
+      }
+    }
+  }
+  async runIntegrationTests(_dirPath) {
+    const testResults = [];
+    for (const platform of this.config.platforms) {
+      const adapter = PlatformAdapters.getAdapter(platform);
+      if (adapter) {
+        testResults.push({
+          testName: `Platform Adapter: ${platform}`,
+          passed: true,
+          duration: 0,
+          details: `Adapter loaded successfully for ${platform}`
+        });
+      } else {
+        testResults.push({
+          testName: `Platform Adapter: ${platform}`,
+          passed: false,
+          duration: 0,
+          details: `Failed to load adapter for ${platform}`
+        });
+      }
+    }
+    for (const componentType of this.config.componentTypes) {
+      const patterns = VSInjectionPatterns.getAllPatterns(componentType === "agent" ? "agent" : componentType === "command" ? "command" : "skill");
+      testResults.push({
+        testName: `Injection Patterns: ${componentType}`,
+        passed: patterns.length > 0,
+        duration: 0,
+        details: `Found ${patterns.length} patterns for ${componentType}`
+      });
+    }
+    try {
+      const testRequest = {
+        problem: "Test problem for validation",
+        agent_type: "research"
+      };
+      const startTime = Date.now();
+      const vsResult = await executeVerbalizedSampling(testRequest);
+      const duration = Date.now() - startTime;
+      testResults.push({
+        testName: "VS Generation Test",
+        passed: vsResult.strategies.strategies.length > 0,
+        duration,
+        details: `Generated ${vsResult.strategies.strategies.length} strategies in ${duration}ms`
+      });
+    } catch (error) {
+      testResults.push({
+        testName: "VS Generation Test",
+        passed: false,
+        duration: 0,
+        details: `VS generation failed: ${error}`,
+        error
+      });
+    }
+    return testResults;
+  }
+  async generateReport(report, outputPath) {
+    const reportContent = this.formatReport(report);
+    if (outputPath) {
+      await writeFile(outputPath, reportContent, "utf-8");
+    }
+    return reportContent;
+  }
+  formatReport(report) {
+    const sections = [
+      `# Verbalized Sampling Validation Report`,
+      `Generated: ${report.timestamp}`,
+      "",
+      `## Summary`,
+      `- Total Files: ${report.totalFiles}`,
+      `- Valid Files: ${report.validFiles}`,
+      `- Invalid Files: ${report.invalidFiles}`,
+      `- Average Score: ${report.averageScore.toFixed(1)}/100`,
+      "",
+      `## Results by Platform`
+    ];
+    for (const [platform, stats] of Object.entries(report.summary.byPlatform)) {
+      sections.push(`- **${platform}**: ${stats.valid}/${stats.total} valid (${(stats.valid / stats.total * 100).toFixed(1)}%)`);
+    }
+    sections.push("", "## Results by Component Type");
+    for (const [componentType, stats] of Object.entries(report.summary.byComponentType)) {
+      sections.push(`- **${componentType}**: ${stats.valid}/${stats.total} valid (${(stats.valid / stats.total * 100).toFixed(1)}%)`);
+    }
+    if (report.summary.commonErrors.length > 0) {
+      sections.push("", "## Common Errors", ...report.summary.commonErrors.map((error) => `- ${error.error} (${error.count} occurrences)`));
+    }
+    if (report.summary.commonWarnings.length > 0) {
+      sections.push("", "## Common Warnings", ...report.summary.commonWarnings.map((warning) => `- ${warning.warning} (${warning.count} occurrences)`));
+    }
+    if (this.config.includeWarnings) {
+      sections.push("", "## Detailed Results", ...report.results.map((result) => this.formatValidationResult(result)));
+    }
+    if (report.testResults.length > 0) {
+      sections.push("", "## Test Results", ...report.testResults.map((test) => this.formatTestResult(test)));
+    }
+    return sections.join(`
+`);
+  }
+  formatValidationResult(result) {
+    const status = result.valid ? "\u2705 Valid" : "\u274C Invalid";
+    const sections = [
+      `### ${basename2(result.filePath)} - ${status} (${result.score}/100)`,
+      `- Platform: ${result.platform}`,
+      `- Type: ${result.componentType}`
+    ];
+    if (result.errors.length > 0) {
+      sections.push("**Errors:**", ...result.errors.map((error) => `- ${error}`));
+    }
+    if (result.warnings.length > 0) {
+      sections.push("**Warnings:**", ...result.warnings.map((warning) => `- ${warning}`));
+    }
+    if (result.suggestions.length > 0) {
+      sections.push("**Suggestions:**", ...result.suggestions.map((suggestion) => `- ${suggestion}`));
+    }
+    sections.push("");
+    return sections.join(`
+`);
+  }
+  formatTestResult(test) {
+    const status = test.passed ? "\u2705 Passed" : "\u274C Failed";
+    return `- **${test.testName}**: ${status} (${test.duration}ms) - ${test.details}`;
+  }
+  getConfig() {
+    return { ...this.config };
+  }
+  updateConfig(newConfig) {
+    this.config = { ...this.config, ...newConfig };
+  }
+}
+async function runVSValidation(path, config) {
+  const framework = new VSValidationFramework(config);
+  const stats = await stat(path);
+  if (stats.isDirectory()) {
+    return await framework.validateDirectory(path);
+  } else {
+    const result = await framework.validateFile(path);
+    return {
+      timestamp: new Date().toISOString(),
+      totalFiles: 1,
+      validFiles: result.valid ? 1 : 0,
+      invalidFiles: result.valid ? 0 : 1,
+      averageScore: result.score,
+      results: [result],
+      testResults: [],
+      summary: {
+        byPlatform: {
+          [result.platform]: { total: 1, valid: result.valid ? 1 : 0, avgScore: result.score }
+        },
+        byComponentType: {
+          [result.componentType]: { total: 1, valid: result.valid ? 1 : 0, avgScore: result.score }
+        },
+        commonErrors: result.errors.map((error) => ({ error, count: 1 })),
+        commonWarnings: result.warnings.map((warning) => ({ warning, count: 1 }))
+      }
+    };
+  }
+}
+
+// src/verbalized-sampling/cli.ts
+function showHelp() {
+  console.log(`
+Verbalized Sampling CLI - Usage:
+
+vs-cli <command> [options]
+
+Commands:
+  validate <path>     Validate VS integration in files or directories
+  info               Show VS integration information and statistics
+  init               Initialize VS integration in current directory
+  test <problem>     Test VS generation with sample problem
+  help               Show this help message
+
+Examples:
+  vs-cli validate .                    # Validate current directory
+  vs-cli validate base-agents/         # Validate agents directory
+  vs-cli test "How does auth work?"    # Test VS generation
+  vs-cli info                          # Show system information
+  vs-cli init                          # Initialize VS integration
+
+Options for validate:
+  --platform <opencode|claude|cursor>  Specify platform
+  --type <agent|command|skill>         Specify component type
+  --strict                             Enable strict validation
+  --output <file>                      Save report to file
+  --no-warnings                        Disable warnings
+  --no-suggestions                     Disable suggestions
+`);
+}
+async function handleValidate(path, options = {}) {
+  try {
+    console.log(`\uD83D\uDD0D Validating VS integration in: ${path}`);
+    const config = {
+      strictMode: options.strict || false,
+      includeWarnings: options.warnings !== false,
+      includeSuggestions: options.suggestions !== false,
+      platforms: options.platform ? [options.platform] : ["opencode", "claude", "cursor"],
+      componentTypes: options.type ? [options.type] : ["agent", "command", "skill"]
+    };
+    const report = await runVSValidation(path, config);
+    if (options.output) {
+      await writeFile3(options.output, JSON.stringify(report, null, 2), "utf-8");
+      console.log(`\uD83D\uDCC4 Report saved to: ${options.output}`);
+    }
+    console.log(`
+\uD83D\uDCCA Validation Summary:`);
+    console.log(`   Total files: ${report.totalFiles}`);
+    console.log(`   Valid files: ${report.validFiles}`);
+    console.log(`   Invalid files: ${report.invalidFiles}`);
+    console.log(`   Average score: ${report.averageScore.toFixed(1)}/100`);
+    if (report.invalidFiles > 0) {
+      console.log(`
+\u274C Validation failed with ${report.invalidFiles} invalid files`);
+      process.exit(1);
+    } else {
+      console.log(`
+\u2705 All files passed validation`);
+    }
+  } catch (error) {
+    console.error(`\u274C Validation failed: ${error}`);
+    process.exit(1);
+  }
+}
+async function handleInfo() {
+  try {
+    console.log(`\uD83D\uDCCA Verbalized Sampling Integration Information
+`);
+    const platformStats = PlatformAdapters.getStatistics();
+    console.log(`\uD83C\uDFD7\uFE0F  Platform Support:`);
+    console.log(`   Total platforms: ${platformStats.totalPlatforms}`);
+    console.log(`   Supported platforms: ${platformStats.platforms.join(", ")}`);
+    console.log(`   Component types: ${platformStats.supportedComponents.join(", ")}`);
+    const patternStats = VSInjectionPatterns.getStatistics();
+    console.log(`
+\uD83C\uDFA8 Injection Patterns:`);
+    console.log(`   Total patterns: ${patternStats.totalPatterns}`);
+    console.log(`   By type:`);
+    for (const [type, count] of Object.entries(patternStats.patternsByType)) {
+      console.log(`     ${type}: ${count} patterns`);
+    }
+    const agentPatterns = VSInjectionPatterns.listPatternNames("agent");
+    console.log(`
+\uD83E\uDD16 Agent Patterns:`);
+    agentPatterns.forEach((pattern) => console.log(`   - ${pattern}`));
+    const commandPatterns = VSInjectionPatterns.listPatternNames("command");
+    console.log(`
+\u26A1 Command Patterns:`);
+    commandPatterns.forEach((pattern) => console.log(`   - ${pattern}`));
+    const skillPatterns = VSInjectionPatterns.listPatternNames("skill");
+    console.log(`
+\uD83D\uDEE0\uFE0F  Skill Patterns:`);
+    skillPatterns.forEach((pattern) => console.log(`   - ${pattern}`));
+    console.log(`
+\u2705 VS integration system is ready to use!`);
+  } catch (error) {
+    console.error(`\u274C Failed to get information: ${error}`);
+    process.exit(1);
+  }
+}
+async function handleInit(options = {}) {
+  try {
+    console.log(`\uD83D\uDE80 Initializing VS integration...`);
+    const platform = options.platform || "opencode";
+    await PlatformAdapters.createDirectoryStructure(platform, process.cwd());
+    const config = {
+      verbalized_sampling: {
+        enabled: true,
+        platform,
+        auto_inject: true,
+        confidence_threshold: 0.7,
+        strategy_count: 3,
+        output_format: "markdown"
+      }
+    };
+    const configFile = join4(process.cwd(), "vs-config.json");
+    await writeFile3(configFile, JSON.stringify(config, null, 2), "utf-8");
+    console.log(`\u2705 VS integration initialized successfully`);
+    console.log(`   Platform: ${platform}`);
+    console.log(`   Config file: ${configFile}`);
+    console.log(`
+\uD83D\uDCD6 Next steps:`);
+    console.log(`   1. Run 'vs-cli validate .' to check existing files`);
+    console.log(`   2. Run 'vs-cli test <problem>' to test VS generation`);
+  } catch (error) {
+    console.error(`\u274C Initialization failed: ${error}`);
+    process.exit(1);
+  }
+}
+async function handleTest(problem, options = {}) {
+  try {
+    console.log(`\uD83E\uDDEA Testing VS generation`);
+    console.log(`\uD83D\uDCDD Problem: ${problem}`);
+    const { UniversalVSIntegration: UniversalVSIntegration2 } = await Promise.resolve().then(() => (init_universal_integration(), exports_universal_integration));
+    const integration = new UniversalVSIntegration2;
+    const vsResult = await integration.generateVSIntegration(problem, options.type || "research", {
+      existing_patterns: ["test-pattern"],
+      constraints: ["test-constraint"]
+    });
+    console.log(`
+\uD83C\uDFAF Selected Strategy: ${vsResult.strategies.selected_strategy}`);
+    console.log(`\uD83D\uDCCA Confidence: ${(vsResult.strategies.total_confidence * 100).toFixed(1)}%`);
+    console.log(`
+\uD83D\uDCCB Available Strategies:`);
+    vsResult.strategies.strategies.forEach((strategy, index) => {
+      const isSelected = strategy.name === vsResult.strategies.selected_strategy;
+      const icon = isSelected ? "\uD83D\uDC49" : "  ";
+      console.log(`${icon} ${index + 1}. ${strategy.name} (${(strategy.confidence_score * 100).toFixed(1)}%)`);
+      if (strategy.execution_plan.length > 0) {
+        console.log(`     ${strategy.execution_plan.slice(0, 2).join(" \u2192 ")}...`);
+      }
+    });
+  } catch (error) {
+    console.error(`\u274C Test failed: ${error}`);
+    process.exit(1);
+  }
+}
+function parseOptions(args) {
+  const options = {};
+  const commandArgs = [];
+  for (let i = 1;i < args.length; i++) {
+    const arg = args[i];
+    if (arg.startsWith("--")) {
+      const [key, value] = arg.substring(2).split("=");
+      if (value) {
+        options[key] = value;
+      } else {
+        options[key] = true;
+      }
+    } else if (arg.startsWith("-")) {
+      const key = arg.substring(1);
+      options[key] = true;
+    } else {
+      commandArgs.push(arg);
+    }
+  }
+  return {
+    command: args[0] || "help",
+    args: commandArgs,
+    options
+  };
+}
+async function main() {
+  const cliArgs = process.argv.slice(2);
+  const { command, args, options } = parseOptions(cliArgs);
+  switch (command) {
+    case "validate":
+      if (args.length === 0) {
+        console.error("\u274C Please provide a path to validate");
+        process.exit(1);
+      }
+      await handleValidate(args[0], options);
+      break;
+    case "info":
+      await handleInfo();
+      break;
+    case "init":
+      await handleInit(options);
+      break;
+    case "test":
+      if (args.length === 0) {
+        console.error("\u274C Please provide a problem to test");
+        process.exit(1);
+      }
+      await handleTest(args.join(" "), options);
+      break;
+    case "help":
+    default:
+      showHelp();
+      break;
+  }
+}
+main().catch((error) => {
+  console.error("\u274C Unexpected error:", error);
+  process.exit(1);
+});

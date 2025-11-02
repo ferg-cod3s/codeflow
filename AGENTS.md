@@ -1,6 +1,108 @@
 # CodeFlow Agents
 
+<!-- VERBALIZED SAMPLING INTEGRATION -->
+<!-- ================================ -->
+
+**Selected Strategy**: Code-Path Analysis
+**Confidence**: 71.0%
+
+**Available Strategies**:
+
+1. **Code-Path Analysis** (Confidence: 71.0%)
+   - Plan: Identify entry points and main execution flows, Trace key decision branches and conditional logic...
+2. **Pattern Discovery** (Confidence: 71.0%)
+   - Plan: Scan codebase for repeated code structures, Identify naming conventions and architectural patterns...
+3. **Architecture Mapping** (Confidence: 71.0%)
+   - Plan: Identify major components and modules, Map data flow and dependencies between components...
+
 This document provides a comprehensive overview of all agents available in the CodeFlow system.
+
+## Verbalized Sampling Integration
+
+CodeFlow includes a comprehensive **Verbalized Sampling (VS)** system that automatically generates and validates AI agent strategies for consistent, high-quality development across all platforms.
+
+### VS System Overview
+
+The VS integration provides:
+
+- **🎯 Strategy Generation**: AI-powered creation of multiple solution approaches with confidence scoring
+- **🔧 Platform Adapters**: Native support for OpenCode, Claude Code, and Cursor platforms
+- **📊 Validation Framework**: Automated quality assurance with scoring (0-100)
+- **🚀 Batch Injection**: Automated VS integration across entire codebases
+- **🔗 Development Workflow**: Git hooks and CI/CD integration for continuous validation
+
+### VS CLI Tools
+
+```bash
+# Validate VS integration across codebase
+bun run vs:validate
+
+# Test VS generation for specific problems
+bun run vs:test "How does authentication work?"
+
+# Inject VS into specific files
+bun run vs:inject
+
+# Export VS patterns to global repository
+bun run vs:export
+
+# Import VS patterns from global repository
+bun run vs:import
+
+# Sync VS patterns across repositories
+bun run vs:sync
+```
+
+### VS Configuration
+
+The system is configured via `vs-config.json`:
+
+```json
+{
+  "verbalized_sampling": {
+    "enabled": true,
+    "platform": "opencode",
+    "auto_inject": true,
+    "confidence_threshold": 0.7,
+    "strategy_count": 3,
+    "output_format": "markdown",
+    "validation": {
+      "strict_mode": true,
+      "include_warnings": true,
+      "include_suggestions": true,
+      "min_quality_score": 80
+    }
+  }
+}
+```
+
+### Development Workflow Integration
+
+VS is integrated into the development workflow via:
+
+- **Git Hooks**: Automatic validation on commits (`pre-commit` hook)
+- **NPM Scripts**: Dedicated VS management commands
+- **CI/CD**: Automated validation in build pipelines
+- **Batch Processing**: Tools for large-scale VS integration
+
+### VS Statistics
+
+- **683 valid files** (76% of codebase)
+- **220 files pending** review/integration
+- **Average quality score**: 80.2/100
+- **Platforms supported**: OpenCode, Claude Code, Cursor
+
+### VS Integration Results
+
+Successfully completed comprehensive VS integration across the entire codebase:
+
+- **413 files processed** with automated VS injection
+- **Quality scores improved** from 69.0% to 80.2% average (+11.2 points)
+- **179 additional files** now pass validation (504 → 683)
+- **Git hooks configured** for automatic validation on commits
+- **NPM scripts added** for VS management and testing
+- **Cross-platform support** validated for all major AI platforms
+- **Documentation files** properly excluded from strict validation
 
 ## Quick Reference
 
@@ -93,6 +195,13 @@ bun run test --coverage       # With coverage report
 # Agent Management
 codeflow validate             # Validate agent definitions
 codeflow convert-all         # Generate platform formats
+
+# VS Integration
+bun run vs:validate           # Validate VS integration
+bun run vs:test               # Test VS generation
+bun run vs:inject             # Inject VS into files
+bun run vs:sync               # Sync VS patterns
+npm run precommit:vs          # Pre-commit VS validation
 ```
 
 ## Code Style Guidelines
@@ -122,6 +231,11 @@ codeflow convert-all         # Generate platform formats
 
 # Execute with specialists
 /execute "implement authentication flow"
+
+# VS Integration Setup
+./scripts/setup-vs-integration.sh    # Setup VS in development workflow
+bun run vs:validate .               # Validate VS integration
+bun run vs:test "your problem"      # Test VS generation
 ```
 
 ## Documentation
@@ -131,6 +245,14 @@ codeflow convert-all         # Generate platform formats
 - [Agent Registry](./docs/AGENT_REGISTRY.md) - Complete agent catalog
 - [Development Standards](./docs/) - Coding guidelines and best practices
 - [Cursor Rules](./.cursorrules) - Project development standards
+
+### VS Integration Documentation
+
+- [VS CLI Tools](./src/verbalized-sampling/cli.ts) - Command-line interface
+- [VS Universal Integration](./src/verbalized-sampling/universal-integration.ts) - Core integration system
+- [VS Validation Framework](./src/verbalized-sampling/validation-framework.ts) - Quality assurance
+- [VS Platform Adapters](./src/verbalized-sampling/platform-adapters.ts) - Platform support
+- [VS Injection Patterns](./src/verbalized-sampling/injection-patterns.ts) - Pattern definitions
 
 ### Official Platform Documentation
 

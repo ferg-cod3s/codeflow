@@ -4,6 +4,10 @@ import { CatalogIndex, CatalogItem } from '../catalog/index-builder.js';
 import { FormatConverter } from '../conversion/format-converter.js';
 import { parseAgentFile } from '../conversion/agent-parser.js';
 
+
+
+
+
 export class SimpleCatalogCLI {
   private projectRoot: string;
   private catalogPath: string;

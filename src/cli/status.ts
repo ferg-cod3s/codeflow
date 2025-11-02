@@ -1,7 +1,7 @@
 import { readdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { existsSync } from 'node:fs';
-import CLIErrorHandler from "./error-handler.js";
+import CLIErrorHandler from './error-handler.js';
 
 export async function status(projectPath?: string) {
   const resolvedPath = projectPath || process.cwd();
@@ -85,23 +85,19 @@ export async function status(projectPath?: string) {
 
     const totalIssues = outdatedCount + missingCount;
     if (totalIssues === 0) {
-      CLIErrorHandler.displaySuccess(
-        'All files are up-to-date!',
-        [
-          'Your project is fully synchronized with codeflow',
-          'No action needed'
-        ]
-      );
+      CLIErrorHandler.displaySuccess('All files are up-to-date!', [
+        'Your project is fully synchronized with codeflow',
+        'No action needed',
+      ]);
     } else {
       CLIErrorHandler.displayWarning(
         `${totalIssues} file${totalIssues === 1 ? '' : 's'} need${totalIssues === 1 ? 's' : ''} attention`,
         [
           "Run 'codeflow sync' to update the project",
-          "Run 'codeflow pull' to install missing files"
+          "Run 'codeflow pull' to install missing files",
         ]
       );
     }
-
   } catch (error) {
     CLIErrorHandler.handleCommonError(error, 'status');
   }

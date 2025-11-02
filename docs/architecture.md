@@ -1,5 +1,22 @@
 # Architecture Documentation
 
+
+
+<!-- VERBALIZED SAMPLING INTEGRATION -->
+<!-- ================================ -->
+
+**Selected Strategy**: Sequential Planning
+**Confidence**: 71.0%
+
+**Available Strategies**:
+1. **Sequential Planning** (Confidence: 71.0%)
+   - Plan: Identify prerequisite tasks and dependencies, Create ordered sequence of activities...
+2. **Feature-Driven Planning** (Confidence: 71.0%)
+   - Plan: Define user stories and acceptance criteria, Break features into deliverable increments...
+3. **Minimal Viable Planning** (Confidence: 71.0%)
+   - Plan: Identify core value proposition, Define smallest useful increment...
+
+
 ## Overview
 
 The `research/architecture/` directory contains the foundational design documents that guide your project's development. These documents serve as the source of truth for architectural decisions and help AI agents understand your system's design principles.

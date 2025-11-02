@@ -1,5 +1,9 @@
 #!/usr/bin/env bun
 
+
+
+
+
 /**
  * Enhanced Sync Script with YAML Validation
  * Ensures all files have valid YAML before syncing to local and global directories

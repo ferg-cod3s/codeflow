@@ -3,6 +3,10 @@ import { execSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 
+
+
+
+
 describe('ES Module Import Validation', () => {
   it('should validate all import paths have correct .js extensions', () => {
     // Test that the validation script runs without errors

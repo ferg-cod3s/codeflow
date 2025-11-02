@@ -9,7 +9,6 @@ import { AgentValidator } from '../conversion/validator.js';
 import { ModelFixer } from '../catalog/model-fixer.js';
 import { parseAgentFile } from '../conversion/agent-parser.js';
 import CLIErrorHandler from './error-handler.js';
-
 export class CatalogCLI {
   private projectRoot: string;
   private catalogIndex: CatalogIndex | null = null;

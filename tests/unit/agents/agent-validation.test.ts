@@ -3,6 +3,10 @@
  * Tests all agents for both claude-code and opencode formats
  */
 
+
+
+
+
 import { describe, test, expect, beforeAll, afterAll } from 'bun:test';
 import { readFile, readdir } from 'fs/promises';
 import { existsSync } from 'fs';

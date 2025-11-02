@@ -3,6 +3,10 @@
  * Renders data in styled tables
  */
 
+
+
+
+
 import Table from 'cli-table3';
 import chalk from 'chalk';
 import type { Theme } from '../themes/types.js';

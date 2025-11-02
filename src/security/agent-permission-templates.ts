@@ -9,6 +9,10 @@
  * - Claude Code agents use comma-separated `tools:` strings
  */
 
+
+
+
+
 export interface AgentRoleTemplate {
   opencode: {
     runtimePermissions?: {

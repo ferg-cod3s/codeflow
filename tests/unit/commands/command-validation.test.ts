@@ -3,6 +3,10 @@
  * Tests all commands for both formats
  */
 
+
+
+
+
 import { describe, test, expect, beforeAll, afterAll } from 'bun:test';
 import { readFile, readdir } from 'fs/promises';
 import { existsSync } from 'fs';

@@ -10,6 +10,10 @@ import {
   hasValidManifest,
 } from '../../src/utils/manifest-discovery';
 
+
+
+
+
 describe('Manifest Discovery Utilities', () => {
   let tempDir: string;
   let projectDir: string;

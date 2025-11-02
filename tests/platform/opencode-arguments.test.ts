@@ -1,5 +1,9 @@
 import { test, expect, describe } from 'bun:test';
 
+
+
+
+
 describe('OpenCode Argument Handling Validation', () => {
   describe('Template Variable Substitution ({{variable}})', () => {
     test('substitutes single template variable', () => {

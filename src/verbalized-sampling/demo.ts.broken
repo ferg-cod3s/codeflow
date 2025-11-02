@@ -1,0 +1,178 @@
+#!/usr/bin/env node
+
+
+
+
+
+/**
+ * Verbalized Sampling Integration Demo
+ *
+ * Demonstrates how to integrate verbalized sampling into existing agents
+ * Shows the complete workflow from generation to injection
+ */
+
+import { UniversalVSIntegration } from './universal-integration.js';
+import { Adapters } from './platform-adapters.js';
+import { InjectionPatterns } from './injection-patterns.js';
+import { readFile, writeFile } from 'fs/promises';
+import { join } from 'path';
+
+async function demonstrateVSIntegration() {
+  console.log('🎯 Verbalized Sampling Integration Demo\n');
+
+  // Initialize the universal integration system
+  const integration = new UniversalVSIntegration({
+    enabled: true,
+    autoInject: true,
+    confidenceThreshold: 0.7,
+    strategyCount: 3,
+    outputFormat: 'markdown',
+  });
+
+  console.log('✅ Initialized Universal VS Integration System\n');
+
+  // Example 1: Generate VS for a research agent
+  console.log('📝 Example 1: Research Agent Integration');
+  console.log('Problem: "How does user authentication work in this system?"');
+
+  const researchVS = await integration.generateVSIntegration(
+    'How does user authentication work in this system?',
+    'research'
+  );
+
+  console.log(`Selected Strategy: ${researchVS.strategies.selected_strategy}`);
+  console.log(`Confidence: ${(researchVS.strategies.total_confidence * 100).toFixed(1)}%`);
+  console.log(`Strategies Generated: ${researchVS.strategies.strategies.length}\n`);
+
+  // Example 2: Generate VS for a planning agent
+  console.log('📝 Example 2: Planning Agent Integration');
+  console.log('Problem: "Plan implementation of user profile management"');
+
+  const planningVS = await integration.generateVSIntegration(
+    'Plan implementation of user profile management',
+    'planning'
+  );
+
+  console.log(`Selected Strategy: ${planningVS.strategies.selected_strategy}`);
+  console.log(`Confidence: ${(planningVS.strategies.total_confidence * 100).toFixed(1)}%`);
+  console.log(`Strategies Generated: ${planningVS.strategies.strategies.length}\n`);
+
+  // Example 3: Platform-specific integration
+  console.log('🔧 Example 3: Platform-Specific Integration');
+
+  // Get OpenCode platform adapter
+  const opencodeAdapter = Adapters.getAdapter('opencode');
+  console.log(`OpenCode Platform: ${opencodeAdapter?.description}`);
+
+  // Get Claude platform adapter
+  const claudeAdapter = Adapters.getAdapter('claude');
+  console.log(`Claude Platform: ${claudeAdapter?.description}`);
+
+  // Get Cursor platform adapter
+  const cursorAdapter = Adapters.getAdapter('cursor');
+  console.log(`Cursor Platform: ${cursorAdapter?.description}\n`);
+
+  // Example 4: Injection patterns
+  console.log('🎨 Example 4: Injection Patterns');
+
+  const agentPatterns = InjectionPatterns.listPatternNames('agent');
+  console.log(`Agent Patterns: ${agentPatterns.join(', ')}`);
+
+  const commandPatterns = InjectionPatterns.listPatternNames('command');
+  console.log(`Command Patterns: ${commandPatterns.join(', ')}`);
+
+  const skillPatterns = InjectionPatterns.listPatternNames('skill');
+  console.log(`Skill Patterns: ${skillPatterns.join(', ')}\n`);
+
+  // Example 5: Create a sample agent with VS integration
+  console.log('🚀 Example 5: Creating Sample Agent with VS Integration');
+
+  const sampleAgentContent = `# Sample Research Agent
+
+This is a sample research agent for demonstration purposes.
+
+## Purpose
+
+Analyze and understand system components and their interactions.
+
+## Capabilities
+
+- Code analysis
+- Architecture mapping
+- Integration discovery
+`;
+
+  // Write sample agent file
+  const sampleAgentPath = join(process.cwd(), 'sample-agent.md');
+  await writeFile(sampleAgentPath, sampleAgentContent, 'utf-8');
+
+  // Inject VS integration
+  const platformAdapter = Adapters.getAdapter('opencode');
+  if (platformAdapter) {
+    const result = await integration.injectIntoAgent(
+      sampleAgentPath,
+      platformAdapter as any,
+      'Analyze system architecture and component interactions',
+      'research'
+    );
+
+    if (result.success) {
+      console.log('✅ VS integration injected successfully');
+      console.log(`   File: ${result.filePath}`);
+      console.log(`   Pattern: ${result.injectionType}`);
+      console.log(`   Strategies: ${result.vsIntegration.strategiesCount}`);
+      console.log(`   Selected: ${result.vsIntegration.selectedStrategy}`);
+      console.log(`   Confidence: ${(result.vsIntegration.confidenceScore * 100).toFixed(1)}%`);
+
+      // Show the updated content
+      const updatedContent = await readFile(sampleAgentPath, 'utf-8');
+      console.log('\n📄 Updated Agent Content:');
+      console.log('---');
+      console.log(updatedContent);
+      console.log('---');
+    }
+  }
+
+  // Example 6: Validation
+  console.log('\n🔍 Example 6: Validation');
+
+  const { runVSValidation } = await import('./validation-framework.js');
+  const validationReport = await runVSValidation(sampleAgentPath);
+
+  console.log(`Validation Results:`);
+  console.log(`   Total Files: ${validationReport.totalFiles}`);
+  console.log(`   Valid Files: ${validationReport.validFiles}`);
+  console.log(`   Invalid Files: ${validationReport.invalidFiles}`);
+  console.log(`   Average Score: ${validationReport.averageScore.toFixed(1)}/100`);
+
+  if (validationReport.results.length > 0) {
+    const result = validationReport.results[0];
+    console.log(`   Sample Agent Score: ${result.score}/100`);
+    if (result.errors.length > 0) {
+      console.log(`   Errors: ${result.errors.length}`);
+    }
+    if (result.warnings.length > 0) {
+      console.log(`   Warnings: ${result.warnings.length}`);
+    }
+  }
+
+  // Cleanup
+  try {
+    await writeFile(sampleAgentPath, '', 'utf-8'); // Clear file
+  } catch {
+    // Ignore cleanup errors
+  }
+
+  console.log('\n🎉 Demo completed successfully!');
+  console.log('\n📚 Next Steps:');
+  console.log('1. Use the CLI: ./vs-cli init');
+  console.log('2. Validate agents: ./vs-cli validate .');
+  console.log('3. Test generation: ./vs-cli test "Your problem here"');
+  console.log('4. Export to global repo: ./vs-cli export /path/to/global/repo');
+}
+
+// Run the demo
+demonstrateVSIntegration().catch((error) => {
+  console.error('❌ Demo failed:', error);
+  process.exit(1);
+});

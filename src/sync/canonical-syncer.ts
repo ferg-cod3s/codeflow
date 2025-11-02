@@ -5,6 +5,10 @@ import path, { basename } from 'path';
 import os from 'os';
 import { findAgentManifest } from '../utils/manifest-discovery.js';
 
+
+
+
+
 /**
  * Canonical Agent Synchronization System
  *

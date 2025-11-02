@@ -3,6 +3,10 @@
  * Ensures correct model configuration when installing agents and commands
  */
 
+
+
+
+
 import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 

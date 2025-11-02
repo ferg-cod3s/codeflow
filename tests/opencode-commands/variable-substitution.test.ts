@@ -1,6 +1,10 @@
 import { describe, test, expect } from 'bun:test';
 import { CommandValidator } from '../../src/yaml/command-validator';
 
+
+
+
+
 describe('OpenCode Variable Substitution', () => {
   const _validator = new CommandValidator();
 

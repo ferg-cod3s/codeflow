@@ -1,0 +1,12 @@
+{
+  "model": "opencode/big-pickle",
+  "agent": {
+    "plan": {
+      "mode": "primary"
+    },
+    "build": {
+      "mode": "primary"
+    }
+  },
+  "$schema": "https://opencode.ai/config.json"
+}

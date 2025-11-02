@@ -15,7 +15,7 @@ for (const file of files) {
     const newName = file.replace(/_/g, '-');
     const oldPath = path.join(opencodeDir, file);
     const newPath = path.join(opencodeDir, newName);
-    
+
     renames.push({ oldPath, newPath, oldName: file, newName });
   }
 }
@@ -37,7 +37,7 @@ import { readFile, writeFile } from 'fs/promises';
 const manifest = JSON.parse(await readFile('AGENT_MANIFEST.json', 'utf-8'));
 
 // Update the manifest to use hyphens for OpenCode sources
-manifest.canonical_agents.forEach(agent => {
+manifest.canonical_agents.forEach((agent) => {
   const opencodeFile = agent.sources.opencode;
   if (opencodeFile.includes('_')) {
     agent.sources.opencode = opencodeFile.replace(/_/g, '-');

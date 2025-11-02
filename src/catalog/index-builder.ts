@@ -3,6 +3,10 @@ import { join, relative, dirname } from 'path';
 import { existsSync } from 'fs';
 import crypto from 'crypto';
 
+
+
+
+
 export interface CatalogItem {
   id: string;
   kind: 'agent' | 'command' | 'template' | 'mcp';

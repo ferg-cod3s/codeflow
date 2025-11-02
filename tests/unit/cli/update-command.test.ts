@@ -3,6 +3,10 @@
  * Tests the update command functionality for CLI updates and version checking
  */
 
+
+
+
+
 import { describe, test, expect, beforeAll, afterAll, beforeEach, afterEach } from 'bun:test';
 import { mkdir, writeFile, rm } from 'fs/promises';
 import { existsSync } from 'fs';

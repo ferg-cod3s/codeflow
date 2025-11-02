@@ -3,6 +3,10 @@
  * Shows progress bars, spinners, and status indicators
  */
 
+
+
+
+
 import ora, { Ora } from 'ora';
 import chalk from 'chalk';
 import type { Theme } from '../themes/types.js';

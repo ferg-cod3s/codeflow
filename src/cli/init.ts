@@ -3,6 +3,10 @@ import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import * as readline from "node:readline/promises";
 import { stdin as input, stdout as output } from "node:process";
 
+
+
+
+
 interface AgenticConfig {
   thoughts: string;
   agents: {

@@ -2,6 +2,10 @@ import { join, dirname } from 'node:path';
 import { existsSync, copyFileSync, statSync } from 'node:fs';
 import { copyFile } from 'node:fs/promises';
 
+
+
+
+
 /**
  * Options for manifest discovery
  */

@@ -33,9 +33,7 @@ interface ExportResult {
 /**
  * Export agents and commands from a project
  */
-export async function exportProject(
-  options: ExportOptions = {}
-): Promise<ExportResult> {
+export async function exportProject(options: ExportOptions = {}): Promise<ExportResult> {
   const projectPath = options.projectRoot || process.cwd();
   const projectPathResolved = resolve(projectPath);
   const { format = 'json', output, includeContent = true, verbose = false } = options;

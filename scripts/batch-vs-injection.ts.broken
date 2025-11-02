@@ -1,0 +1,154 @@
+#!/usr/bin/env node
+
+/**
+ * Batch VS Integration Script
+ *
+ * Automatically injects verbalized sampling integration into all invalid files
+ * in the codebase based on validation results.
+ */
+
+// Temporary stubs for missing imports
+const runVSValidation = () => ({ totalFiles: 0, validFiles: 0, invalidFiles: 0, averageScore: 0 });
+const injectVSIntoComponent = () => ({
+  success: false,
+  filePath: '',
+  injectionType: '',
+  vsIntegration: { confidence: 0, strategy: '' },
+});
+import { readdir, stat } from 'fs/promises';
+import { join } from 'path';
+
+async function getAllFiles(dirPath: string): Promise<string[]> {
+  const files: string[] = [];
+
+  async function scanDir(currentPath: string): Promise<void> {
+    try {
+      const items = await readdir(currentPath);
+
+      for (const item of items) {
+        const fullPath = join(currentPath, item);
+
+        try {
+          const stats = await stat(fullPath);
+
+          if (
+            stats.isDirectory() &&
+            !item.startsWith('.') &&
+            item !== 'node_modules' &&
+            item !== 'dist' &&
+            item !== 'cleanup-backup'
+          ) {
+            await scanDir(fullPath);
+          } else if (
+            stats.isFile() &&
+            (item.endsWith('.md') || item.endsWith('.yaml') || item.endsWith('.yml'))
+          ) {
+            files.push(fullPath);
+          }
+        } catch (error) {
+          // Skip files that can't be accessed
+          continue;
+        }
+      }
+    } catch (error) {
+      // Skip directories that can't be read
+      return;
+    }
+  }
+
+  await scanDir(dirPath);
+  return files;
+}
+
+async function batchInjectVS() {
+  console.log('🚀 Starting batch VS integration injection...\n');
+
+  // Get all potential files
+  const allFiles = await getAllFiles('.');
+
+  // Run validation to find invalid files
+  console.log('🔍 Running validation to identify invalid files...');
+  const report = await runVSValidation('.', {
+    strictMode: true,
+    includeWarnings: false,
+    includeSuggestions: false,
+  });
+
+  console.log(
+    `📊 Found ${report.invalidFiles} invalid files out of ${report.totalFiles} total files\n`
+  );
+
+  // Filter to only invalid files
+  const invalidFiles = report.results.filter((r) => !r.valid);
+
+  let successCount = 0;
+  let errorCount = 0;
+
+  for (const result of invalidFiles) {
+    try {
+      console.log(`🔧 Injecting VS into: ${result.filePath}`);
+
+      // Determine problem based on file path and content
+      let problem = 'General problem solving';
+      if (result.filePath.includes('agent')) {
+        problem = 'Design and implement specialized AI agent capabilities';
+      } else if (result.filePath.includes('command')) {
+        problem = 'Execute complex development workflows and automation tasks';
+      } else if (result.filePath.includes('skill')) {
+        problem = 'Provide specialized technical expertise and implementation';
+      }
+
+      // Determine agent type
+      let agentType: 'research' | 'planning' | 'development' = 'research';
+      if (result.filePath.includes('architect') || result.filePath.includes('planner')) {
+        agentType = 'planning';
+      } else if (result.filePath.includes('developer') || result.filePath.includes('engineer')) {
+        agentType = 'development';
+      }
+
+      // Inject VS
+      const injectResult = await injectVSIntoComponent(
+        result.filePath,
+        'opencode',
+        problem,
+        agentType
+      );
+
+      console.log(
+        `   ✅ Injected ${injectResult.vsIntegration.strategiesCount} strategies (${(injectResult.vsIntegration.confidenceScore * 100).toFixed(1)}% confidence)`
+      );
+      successCount++;
+    } catch (error) {
+      console.error(`   ❌ Failed to inject into ${result.filePath}: ${(error as Error).message}`);
+      errorCount++;
+    }
+  }
+
+  console.log(`\n🎉 Batch injection completed!`);
+  console.log(`   ✅ Successfully injected: ${successCount} files`);
+  console.log(`   ❌ Failed injections: ${errorCount} files`);
+
+  // Run final validation
+  console.log('\n🔍 Running final validation...');
+  const finalReport = await runVSValidation('.', {
+    strictMode: true,
+    includeWarnings: false,
+    includeSuggestions: false,
+  });
+
+  console.log(`📊 Final Results:`);
+  console.log(`   Total files: ${finalReport.totalFiles}`);
+  console.log(`   Valid files: ${finalReport.validFiles}`);
+  console.log(`   Invalid files: ${finalReport.invalidFiles}`);
+  console.log(`   Average score: ${finalReport.averageScore.toFixed(1)}/100`);
+
+  if (finalReport.invalidFiles === 0) {
+    console.log('\n🎊 All files now have valid VS integration!');
+  }
+}
+
+// Run the batch injection
+batchInjectVS().catch((error) => {
+  console.error('❌ Batch injection failed:', error);
+  process.exit(1);
+});

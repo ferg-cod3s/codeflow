@@ -7,6 +7,10 @@ import { status } from '../../src/cli/status';
 import { sync } from '../../src/cli/sync';
 import { convert } from '../../src/cli/convert';
 
+
+
+
+
 const TEST_TIMEOUT = 60000; // 60 seconds
 
 /**

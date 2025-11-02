@@ -1,6 +1,10 @@
 import { CatalogCLI } from './catalog.js';
 import CLIErrorHandler from './error-handler.js';
 
+
+
+
+
 interface AgentDiscoveryOptions {
   useCase?: string;
   complexity?: 'beginner' | 'intermediate' | 'advanced';

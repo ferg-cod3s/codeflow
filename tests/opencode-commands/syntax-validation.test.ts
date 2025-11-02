@@ -5,6 +5,10 @@ import {
   ValidationWarning,
 } from '../../src/yaml/command-validator';
 
+
+
+
+
 describe('OpenCode Command Syntax Validation', () => {
   const validator = new CommandValidator();
 

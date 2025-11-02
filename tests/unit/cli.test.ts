@@ -4,6 +4,10 @@ import path from 'path';
 import fs from 'fs/promises';
 import os from 'os';
 
+
+
+
+
 const CLI_PATH = path.join(import.meta.dir, '../../src/cli/index.ts');
 
 // Helper function to run CLI commands

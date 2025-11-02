@@ -5,6 +5,10 @@
  * Supports Claude Code and OpenCode with automatic platform detection.
  */
 
+
+
+
+
 // Core adapter interface and base class
 export type {
   PlatformAdapter,

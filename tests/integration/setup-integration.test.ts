@@ -4,6 +4,10 @@ import { mkdir, rm, writeFile, readFile, readdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { setup } from '../../src/cli/setup';
 
+
+
+
+
 describe('Setup Integration', () => {
   let tempDir: string;
   let projectDir: string;

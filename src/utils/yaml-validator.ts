@@ -1,5 +1,9 @@
 #!/usr/bin/env bun
 
+
+
+
+
 /**
  * YAML Validator Utility
  * Ensures all YAML frontmatter is valid before writing files

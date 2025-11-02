@@ -3,6 +3,10 @@
  * Shows real-time agent execution status
  */
 
+
+
+
+
 import chalk from 'chalk';
 import type { Theme, AgentStatus } from '../themes/types.js';
 import { getTheme } from '../themes/index.js';

@@ -11,6 +11,10 @@ import {
 import { applyPermissionInheritance } from '../security/validation.js';
 import CLIErrorHandler from './error-handler.js';
 
+
+
+
+
 interface SyncFormatsOptions {
   validate?: boolean;
   dryRun?: boolean;

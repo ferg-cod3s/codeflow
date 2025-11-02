@@ -3,6 +3,10 @@
  * Tests the build-manifest.ts functionality for generating agent manifests
  */
 
+
+
+
+
 import { describe, test, expect, beforeAll, afterAll, beforeEach, afterEach } from 'bun:test';
 import { mkdir, writeFile, rm } from 'fs/promises';
 import { existsSync } from 'fs';

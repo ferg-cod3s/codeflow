@@ -131,3 +131,6 @@ test-integration-*/
 # Thoughts documentation (personal notes)
 docs/THOUGHTS.md
 docs/thoughts.md
+# Broken verbalized-sampling files (temporarily disabled)
+scripts/batch-vs-injection.ts.broken
+src/verbalized-sampling/*.ts.broken

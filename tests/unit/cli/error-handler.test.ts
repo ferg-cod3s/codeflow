@@ -3,6 +3,10 @@
  * Tests for error handling utilities to ensure good user experience
  */
 
+
+
+
+
 import { describe, test, expect, beforeEach, afterEach } from 'bun:test';
 import {
   CLIErrorHandler,

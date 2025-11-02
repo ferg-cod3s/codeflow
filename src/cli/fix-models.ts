@@ -27,15 +27,15 @@ interface FixResult {
 export async function fixModels(options: FixOptions = {}): Promise<void> {
   const isGlobal = options.global !== false; // Default to global
   const modelFixer = new ModelFixer(process.cwd());
-  
+
   console.log(`\n🔧 Fixing Model Configurations${isGlobal ? ' (Global)' : ' (Local)'}...\n`);
-  
+
   if (options.dryRun) {
     console.log('🔍 Dry run mode - no changes will be made\n');
   }
 
   const results: Record<string, FixResult> = {};
-  
+
   // Fix OpenCode models
   if (isGlobal) {
     results.openCodeCommands = await fixDirectory(
@@ -45,7 +45,7 @@ export async function fixModels(options: FixOptions = {}): Promise<void> {
       modelFixer,
       options
     );
-    
+
     results.openCodeAgents = await fixDirectory(
       join(homedir(), '.config', 'opencode', 'agent'),
       'opencode',
@@ -53,7 +53,7 @@ export async function fixModels(options: FixOptions = {}): Promise<void> {
       modelFixer,
       options
     );
-    
+
     results.claudeCommands = await fixDirectory(
       join(homedir(), '.claude', 'commands'),
       'claude-code',
@@ -61,7 +61,7 @@ export async function fixModels(options: FixOptions = {}): Promise<void> {
       modelFixer,
       options
     );
-    
+
     results.claudeAgents = await fixDirectory(
       join(homedir(), '.claude', 'agents'),
       'claude-code',
@@ -78,7 +78,7 @@ export async function fixModels(options: FixOptions = {}): Promise<void> {
       modelFixer,
       options
     );
-    
+
     results.localOpenCodeAgents = await fixDirectory(
       join(process.cwd(), '.opencode', 'agent'),
       'opencode',
@@ -86,7 +86,7 @@ export async function fixModels(options: FixOptions = {}): Promise<void> {
       modelFixer,
       options
     );
-    
+
     results.localClaudeCommands = await fixDirectory(
       join(process.cwd(), '.claude', 'commands'),
       'claude-code',
@@ -94,7 +94,7 @@ export async function fixModels(options: FixOptions = {}): Promise<void> {
       modelFixer,
       options
     );
-    
+
     results.localClaudeAgents = await fixDirectory(
       join(process.cwd(), '.claude', 'agents'),
       'claude-code',
@@ -103,7 +103,7 @@ export async function fixModels(options: FixOptions = {}): Promise<void> {
       options
     );
   }
-  
+
   // Print summary
   printSummary(results, options);
 }
@@ -119,29 +119,29 @@ async function fixDirectory(
     fixed: 0,
     skipped: 0,
     errors: 0,
-    details: []
+    details: [],
   };
-  
+
   if (!existsSync(dirPath)) {
     if (options.verbose) {
       console.log(`⏭️  Skipping ${dirPath} (directory doesn't exist)`);
     }
     return result;
   }
-  
+
   const targetName = target === 'claude-code' ? 'Claude Code' : 'OpenCode';
   console.log(`📂 Processing ${targetName} ${itemType}s: ${dirPath}`);
-  
+
   try {
-    const files = readdirSync(dirPath).filter(f => f.endsWith('.md'));
-    
+    const files = readdirSync(dirPath).filter((f) => f.endsWith('.md'));
+
     for (const file of files) {
       const filePath = join(dirPath, file);
-      
+
       try {
         const content = await readFile(filePath, 'utf-8');
         const fixedContent = modelFixer.fixModel(content, target, itemType);
-        
+
         if (content !== fixedContent) {
           if (!options.dryRun) {
             await writeFile(filePath, fixedContent, 'utf-8');
@@ -165,22 +165,22 @@ async function fixDirectory(
   } catch (error) {
     console.error(`  ✗ Error reading directory: ${error}`);
   }
-  
+
   if (result.fixed === 0 && !options.verbose) {
     console.log('  ✓ All models already correct');
   }
-  
+
   return result;
 }
 
 function printSummary(results: Record<string, FixResult>, options: FixOptions): void {
   console.log('\n📊 Summary:');
   console.log('═══════════════════════════════════');
-  
+
   let totalFixed = 0;
   let totalSkipped = 0;
   let totalErrors = 0;
-  
+
   for (const [key, result] of Object.entries(results)) {
     if (result.fixed > 0 || result.errors > 0 || options.verbose) {
       const name = key
@@ -189,7 +189,7 @@ function printSummary(results: Record<string, FixResult>, options: FixOptions): 
         .replace(/^open Code/, 'OpenCode')
         .replace(/^claude/, 'Claude')
         .trim();
-      
+
       console.log(`\n${name}:`);
       console.log(`  Fixed: ${result.fixed}`);
       console.log(`  Skipped: ${result.skipped}`);
@@ -197,15 +197,15 @@ function printSummary(results: Record<string, FixResult>, options: FixOptions): 
         console.log(`  Errors: ${result.errors}`);
       }
     }
-    
+
     totalFixed += result.fixed;
     totalSkipped += result.skipped;
     totalErrors += result.errors;
   }
-  
+
   console.log('\n═══════════════════════════════════');
   console.log(`Total: ${totalFixed} fixed, ${totalSkipped} already correct, ${totalErrors} errors`);
-  
+
   if (options.dryRun) {
     console.log('\n🔍 Dry run complete - no files were modified');
   } else if (totalFixed > 0) {
@@ -214,7 +214,7 @@ function printSummary(results: Record<string, FixResult>, options: FixOptions): 
   } else if (totalErrors === 0) {
     console.log('\n✅ All model configurations are already correct!');
   }
-  
+
   if (totalErrors > 0) {
     console.log('\n⚠️  Some errors occurred during processing');
     console.log('   Run with --verbose for detailed error information');
@@ -227,8 +227,8 @@ if (import.meta.main) {
   const options: FixOptions = {
     dryRun: args.includes('--dry-run'),
     verbose: args.includes('--verbose') || args.includes('-v'),
-    global: !args.includes('--local')
+    global: !args.includes('--local'),
   };
-  
+
   await fixModels(options);
 }

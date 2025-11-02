@@ -1,5 +1,9 @@
 import { test, expect, describe } from 'bun:test';
 
+
+
+
+
 describe('Claude Code Argument Handling Validation', () => {
   describe('$ARGUMENTS Pattern', () => {
     test('captures all arguments as single string', () => {

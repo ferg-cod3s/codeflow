@@ -3,6 +3,10 @@ import { existsSync, mkdirSync } from 'node:fs';
 import { readdir, stat, readFile } from 'node:fs/promises';
 import { homedir } from 'node:os';
 
+
+
+
+
 interface AgenticConfig {
   thoughts: string;
   agents: {
