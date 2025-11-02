@@ -165,7 +165,7 @@ export async function copyCommands(
         console.log(`   Searched: ${sourceDirs.join(', ')}`);
       }
       fileCount += commandsCopied;
-    } else {
+    } else if (setupDir.includes('agents') || setupDir.includes('/agent')) {
       console.log(`🤖 Converting agents to ${setupDir}...`);
       const targetFormat = getTargetFormat(setupDir);
       if (targetFormat) {
@@ -175,6 +175,106 @@ export async function copyCommands(
       } else {
         console.error(`❌ Could not determine target format for ${setupDir}`);
       }
+    } else if (setupDir.includes('skills')) {
+      // Skills are handled separately by copySkills - skip here
+      console.log(`⏭️  Skipping skills directory ${setupDir} (handled separately)`);
+    } else {
+      console.error(`❌ Unknown directory type: ${setupDir}`);
+    }
+  }
+
+  return fileCount;
+}
+
+export async function copySkills(
+  sourcePath: string,
+  targetPath: string,
+  setupDirs: string[]
+): Promise<number> {
+  let fileCount = 0;
+
+  for (const setupDir of setupDirs) {
+    if (setupDir.includes('skills')) {
+      const targetDir = join(targetPath, setupDir);
+
+      // Create target directory
+      if (!existsSync(targetDir)) {
+        await mkdir(targetDir, { recursive: true });
+        console.log(`  ✓ Created directory: ${setupDir}`);
+      }
+
+      console.log(`📦 Copying skills to ${setupDir}...`);
+
+      // Check multiple possible source locations
+      const sourceDirs = [
+        join(process.cwd(), 'base-skills'),
+        join(sourcePath, 'base-skills'),
+        join(getPackageRoot(), 'base-skills'),
+      ];
+
+      let skillsCopied = 0;
+      for (const sourceDir of sourceDirs) {
+        if (existsSync(sourceDir)) {
+          try {
+            const files = await readdir(sourceDir, { withFileTypes: true });
+            console.log(`Found ${files.length} items in ${sourceDir}`);
+
+            for (const file of files) {
+              if (file.isFile() && file.name.endsWith('.md')) {
+                try {
+                  const sourceFile = join(sourceDir, file.name);
+                  const targetFile = join(targetDir, file.name);
+                  await copyFile(sourceFile, targetFile);
+                  skillsCopied++;
+                } catch (error: any) {
+                  console.error(`❌ Failed to copy skill ${file.name}: ${error.message}`);
+                }
+              } else if (file.isDirectory()) {
+                // Handle skill categories (development, operations, mcp)
+                const sourceCategoryDir = join(sourceDir, file.name);
+                const targetCategoryDir = join(targetDir, file.name);
+
+                if (!existsSync(targetCategoryDir)) {
+                  await mkdir(targetCategoryDir, { recursive: true });
+                }
+
+                try {
+                  const categoryFiles = await readdir(sourceCategoryDir, { withFileTypes: true });
+                  for (const categoryFile of categoryFiles) {
+                    if (categoryFile.isFile() && categoryFile.name.endsWith('.md')) {
+                      try {
+                        const sourceSkillFile = join(sourceCategoryDir, categoryFile.name);
+                        const targetSkillFile = join(targetCategoryDir, categoryFile.name);
+                        await copyFile(sourceSkillFile, targetSkillFile);
+                        skillsCopied++;
+                      } catch (error: any) {
+                        console.error(
+                          `❌ Failed to copy skill ${categoryFile.name}: ${error.message}`
+                        );
+                      }
+                    }
+                  }
+                } catch (error: any) {
+                  console.error(
+                    `❌ Failed to read category directory ${sourceCategoryDir}: ${error.message}`
+                  );
+                }
+              }
+            }
+            break; // Stop after finding first valid source
+          } catch (error: any) {
+            console.error(`❌ Failed to read source directory ${sourceDir}: ${error.message}`);
+          }
+        }
+      }
+
+      if (skillsCopied > 0) {
+        console.log(`✅ Copied ${skillsCopied} skills`);
+      } else {
+        console.log(`⚠️  No skill files found for ${setupDir}`);
+        console.log(`   Searched: ${sourceDirs.join(', ')}`);
+      }
+      fileCount += skillsCopied;
     }
   }
 
@@ -215,13 +315,13 @@ export async function setup(
     const dirs = [];
     switch (type) {
       case 'claude-code':
-        dirs.push('.claude/commands', '.claude/agents');
+        dirs.push('.claude/commands', '.claude/agents', '.claude/skills');
         break;
       case 'opencode':
-        dirs.push('.opencode/command', '.opencode/agent');
+        dirs.push('.opencode/command', '.opencode/agent', '.opencode/skills');
         break;
       case 'cursor':
-        dirs.push('.cursor/commands', '.cursor/agents');
+        dirs.push('.cursor/commands', '.cursor/agents', '.cursor/skills');
         break;
       default:
         dirs.push('./command');
@@ -240,8 +340,15 @@ export async function setup(
     // Initialize converters
     const commandConverter = new CommandConverter();
 
-    // Copy commands
-    const fileCount = await copyCommands(commandConverter, sourcePath, targetPath, setupDirs);
+    // Copy commands and agents
+    const commandCount = await copyCommands(commandConverter, sourcePath, targetPath, setupDirs);
+
+    // Copy skills separately since it has different logic
+    const skillsSetupDirs = setupDirs.filter((dir) => dir.includes('skills'));
+    const skillsPath = join(process.cwd(), 'base-skills');
+    const skillCount = await copySkills(skillsPath, targetPath, skillsSetupDirs);
+
+    const fileCount = commandCount + skillCount;
 
     // Create or update README (skip if this is the main codeflow project)
     const readmePath = join(targetPath, 'README.md');
@@ -276,17 +383,26 @@ export async function setup(
 
       if (projectTypes.includes('claude-code')) {
         readmeContent +=
-          '### Claude Code Integration\n\n' + 'Commands are located in `.claude/commands/`.\n\n';
+          '### Claude Code Integration\n\n' +
+          'Commands are located in `.claude/commands/`.\n' +
+          'Agents are located in `.claude/agents/`.\n' +
+          'Skills are located in `.claude/skills/`.\n\n';
       }
 
       if (projectTypes.includes('opencode')) {
         readmeContent +=
-          '### OpenCode Integration\n\n' + 'Commands are located in `.opencode/command/`.\n';
+          '### OpenCode Integration\n\n' +
+          'Commands are located in `.opencode/command/`.\n' +
+          'Agents are located in `.opencode/agent/`.\n' +
+          'Skills are located in `.opencode/skills/`.\n';
       }
 
       if (projectTypes.includes('cursor')) {
         readmeContent +=
-          '### Cursor Integration\n\n' + 'Commands are located in `.cursor/commands/`.\n';
+          '### Cursor Integration\n\n' +
+          'Commands are located in `.cursor/commands/`.\n' +
+          'Agents are located in `.cursor/agents/`.\n' +
+          'Skills are located in `.cursor/skills/`.\n';
       }
 
       readmeContent += '\nGenerated by Codeflow CLI\n';
