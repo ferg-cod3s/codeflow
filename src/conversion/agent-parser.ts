@@ -3,7 +3,7 @@ import { globalPerformanceMonitor, globalFileReader } from '../optimization/perf
 import { YamlProcessor } from '../yaml/yaml-processor.js';
 
 /**
- * Common interface for parsed entities (agents and commands)
+ * Common interface for parsed entities (agents, commands, and skills)
  */
 export interface ParsedEntity {
   name: string;
@@ -11,6 +11,17 @@ export interface ParsedEntity {
   frontmatter: Record<string, any>;
   content: string;
   filePath: string;
+}
+
+/**
+ * Base skill format for all skills
+ */
+export interface BaseSkill {
+  name: string;
+  description: string;
+  noReply: boolean; // Required for skills - must be true
+  category?: string;
+  tags?: string[];
 }
 
 /**
@@ -721,6 +732,100 @@ export async function parseCommandFile(
 export function serializeCommand(command: Command): string {
   const processor = new YamlProcessor();
   const result = processor.serialize(command);
+
+  if (!result.success) {
+    throw new Error(result.error.message);
+  }
+
+  return result.data;
+}
+
+/**
+ * Parse skill file from markdown with YAML frontmatter
+ */
+export async function parseSkillFile(
+  filePath: string,
+  format: string = 'base'
+): Promise<ParsedEntity> {
+  const content = await globalFileReader.readFile(filePath);
+
+  try {
+    const processor = new YamlProcessor();
+    const result = processor.parse(content);
+
+    if (!result.success) {
+      throw new Error(result.error.message);
+    }
+
+    const frontmatter = result.data.frontmatter;
+
+    // Validate required skill fields
+    if (!frontmatter.name) {
+      throw new Error('Skill must have a name field');
+    }
+    if (!frontmatter.description) {
+      throw new Error('Skill must have a description field');
+    }
+    if (frontmatter.noReply === undefined) {
+      throw new Error('Skill must have a noReply field');
+    }
+    if (frontmatter.noReply !== true) {
+      throw new Error('Skill noReply field must be true for message insertion persistence');
+    }
+
+    const entity: ParsedEntity = {
+      name: frontmatter.name,
+      format,
+      frontmatter: frontmatter as any,
+      content: result.data.body,
+      filePath,
+    };
+
+    return entity;
+  } catch (error: any) {
+    // For malformed YAML, try to parse what we can using fallback parsing
+    try {
+      const fallbackResult = parseWithFallback(content);
+      if (fallbackResult.success) {
+        const frontmatter = fallbackResult.data!.frontmatter;
+
+        // Validate required fields even in fallback parsing
+        if (!frontmatter.name) {
+          throw new Error('Skill must have a name field');
+        }
+        if (!frontmatter.description) {
+          throw new Error('Skill must have a description field');
+        }
+        if (frontmatter.noReply !== true) {
+          throw new Error('Skill noReply field must be true');
+        }
+
+        const entity: ParsedEntity = {
+          name: frontmatter.name,
+          format,
+          frontmatter: frontmatter as any,
+          content: fallbackResult.data!.body,
+          filePath,
+        };
+
+        return entity;
+      }
+    } catch {
+      // Fallback also failed
+      throw new Error(`Failed to parse skill file ${filePath}: ${error.message}`);
+    }
+
+    // If we get here, both YAML parsing and fallback failed
+    throw new Error(`Failed to parse skill file ${filePath}: ${error.message}`);
+  }
+}
+
+/**
+ * Serialize skill back to markdown format using YamlProcessor
+ */
+export function serializeSkill(skill: ParsedEntity): string {
+  const processor = new YamlProcessor();
+  const result = processor.serialize(skill);
 
   if (!result.success) {
     throw new Error(result.error.message);

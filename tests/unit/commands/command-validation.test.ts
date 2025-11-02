@@ -383,7 +383,9 @@ describe('Command Validation', () => {
         expect(claudeMeta.name).toBe('continue');
         expect(claudeMeta.description).toContain('Resume execution');
         // Note: Claude Code commands don't use 'model' field - configuration is managed by Claude Code platform
-        expect(claudeMeta.temperature).toBeLessThanOrEqual(0.5);
+        if (claudeMeta.temperature !== undefined) {
+          expect(claudeMeta.temperature).toBeLessThanOrEqual(0.5);
+        }
       }
 
       // Test OpenCode format

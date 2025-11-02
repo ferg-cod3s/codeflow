@@ -1101,6 +1101,46 @@
       }
     },
     {
+      "name": "sentry-error-analyst",
+      "description": "Agent: sentry error analyst",
+      "category": "quality-testing",
+      "sources": {
+        "base": "base-agents/quality-testing/sentry-error-analyst.md",
+        "claude-code": ".claude/agents/sentry-error-analyst.md",
+        "opencode": ".opencode/agent/sentry-error-analyst.md"
+      }
+    },
+    {
+      "name": "sentry-incident-commander",
+      "description": "Agent: sentry incident commander",
+      "category": "operations",
+      "sources": {
+        "base": "base-agents/operations/sentry-incident-commander.md",
+        "claude-code": ".claude/agents/sentry-incident-commander.md",
+        "opencode": ".opencode/agent/sentry-incident-commander.md"
+      }
+    },
+    {
+      "name": "sentry-performance-expert",
+      "description": "Agent: sentry performance expert",
+      "category": "quality-testing",
+      "sources": {
+        "base": "base-agents/quality-testing/sentry-performance-expert.md",
+        "claude-code": ".claude/agents/sentry-performance-expert.md",
+        "opencode": ".opencode/agent/sentry-performance-expert.md"
+      }
+    },
+    {
+      "name": "sentry-release-manager",
+      "description": "Agent: sentry release manager",
+      "category": "operations",
+      "sources": {
+        "base": "base-agents/operations/sentry-release-manager.md",
+        "claude-code": ".claude/agents/sentry-release-manager.md",
+        "opencode": ".opencode/agent/sentry-release-manager.md"
+      }
+    },
+    {
       "name": "seo_authority_builder",
       "description": "Agent: seo authority builder",
       "category": "design-ux",
@@ -1371,8 +1411,8 @@
       }
     }
   ],
-  "total_agents": 137,
-  "last_updated": "2025-10-30T11:01:14.707Z",
+  "total_agents": 141,
+  "last_updated": "2025-11-02T14:14:10.612Z",
   "canonical_directories": [
     "base-agents/",
     ".claude/agents/",

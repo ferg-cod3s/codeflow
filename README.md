@@ -1,6 +1,6 @@
-# Codeflow - AI Agent & Command Distribution Platform
+# Codeflow - AI Agent, Command & Skill Distribution Platform
 
-A comprehensive TypeScript-based CLI platform for distributing 123+ specialized AI agents and 15+ workflow commands across Claude Code, OpenCode, and MCP-compatible clients. Built with Bun for maximum performance and reliability.
+A comprehensive TypeScript-based CLI platform for distributing 137+ specialized AI agents, 58+ workflow commands, and 9+ MCP skills across Claude Code, OpenCode, and MCP-compatible clients. Built with Bun for maximum performance and reliability.
 
 ## Quick Start
 
@@ -8,7 +8,7 @@ A comprehensive TypeScript-based CLI platform for distributing 123+ specialized 
 # Install dependencies and link CLI globally
 bun install && bun run install
 
-# Setup 123+ agents and 15+ commands in your project
+# Setup 137+ agents, 58+ commands, and 9+ skills in your project
 codeflow setup [project-path]
 
 # Check status and compliance
@@ -46,10 +46,10 @@ See [PUBLISHING.md](./PUBLISHING.md) for detailed publishing guide.
 
 ## Platform Support
 
-**Claude Code (v2.x.x)**: Native integration with YAML frontmatter format
-**OpenCode**: Full support with mode, temperature, and allowed_directories
+**Claude Code (v2.x.x)**: Native integration with YAML frontmatter format for agents, commands, and skills
+**OpenCode**: Full support with mode, temperature, and allowed*directories for all content types
 **Cursor**: Full support for creating agents and commands with built-in modes (Agent, Ask, Plan) and custom modes (Beta) configured through Cursor Settings UI
-**MCP Clients**: JSON parameter format for VS Code and other MCP-compatible editors
+**MCP Clients**: JSON parameter format for VS Code and other MCP-compatible editors with skills* prefixed tools
 
 See [COMPLIANCE.md](./COMPLIANCE.md) for detailed format specifications and migration guide.
 
@@ -104,6 +104,7 @@ OpenCode provides AI coding assistance with distinct modes and workflow capabili
 
 - **Commands**: Enhanced YAML configuration in `.opencode/command/`
 - **Agents**: YAML format in `.opencode/agent/` with mode, temperature, and allowed_directories
+- **Skills**: YAML format in `.opencode/skills/` with noReply: true for message insertion persistence
 - **Rules**: See `AGENTS.md` for comprehensive agent documentation and project instructions
 
 ### Cursor Integration
@@ -132,6 +133,8 @@ You can create custom modes through Cursor Settings UI:
 #### File Types
 
 - **Commands**: Plain Markdown (.md) files in `.cursor/commands/`
+- **Agents**: Plain Markdown (.md) files in `.cursor/agents/`
+- **Skills**: Plain Markdown (.md) files in `.cursor/skills/` with noReply: true frontmatter
 - **Custom Modes**: Configured through Cursor Settings UI (not file-based)
 - **Switching**: Use mode picker dropdown in Agent or press `Cmd+.` for quick switching
 
@@ -153,6 +156,37 @@ You can create custom modes through Cursor Settings UI:
 - `/deploy` - Automated deployment with validation
 - `/ticket` - Create structured development tickets
 
+## MCP Skills
+
+CodeFlow includes 9+ MCP skills that provide specialized tool integration for enhanced development workflows:
+
+### Development Skills
+
+- **skills_docker-container-management** - Container lifecycle management and operations
+- **skills_git-workflow-management** - Git operations, branching, and version control
+
+### MCP Integration Skills
+
+- **skills_context7-documentation-research** - Documentation lookup and research
+- **skills_playwright-web-automation** - Browser automation and testing
+- **skills_chrome-devtools-inspection** - Browser debugging and inspection
+- **skills_coolify-application-management** - Application deployment and management
+- **skills_sentry-incident-response** - Error tracking and incident management
+- **skills_socket-security-analysis** - Package security and vulnerability analysis
+
+### Operations Skills
+
+- **skills_kubernetes-deployment-automation** - K8s deployment and orchestration
+
+### Skill Requirements
+
+All skills require:
+
+- `noReply: true` in frontmatter (for message insertion persistence)
+- `name` field in hyphen-case format
+- `description` field (minimum 20 characters)
+- Proper YAML frontmatter structure
+
 ### Platform Integration
 
 - **Claude Code**: Commands in `.claude/commands/` with YAML frontmatter
@@ -164,7 +198,7 @@ You can create custom modes through Cursor Settings UI:
 
 ### Single Source of Truth
 
-All 135+ agents are defined once in `base-agents/` using a unified BaseAgent format:
+All 137+ agents, 58+ commands, and 9+ skills are defined once using unified formats:
 
 **Agent Categories:**
 
@@ -175,6 +209,12 @@ All 135+ agents are defined once in `base-agents/` using a unified BaseAgent for
 - `business-analytics/` (18 agents) - Data analysis, metrics, business intelligence
 - `design-ux/` (5 agents) - UI/UX, accessibility, design systems
 - `product-strategy/` (1 agent) - Product management, growth, requirements
+
+**Skill Categories:**
+
+- `development/` (2 skills) - Container management, Git workflows
+- `mcp/` (6 skills) - MCP service integrations (Sentry, Context7, Coolify, etc.)
+- `operations/` (1 skill) - Kubernetes deployment automation
 - `generalist/` (6 agents) - General purpose agents and orchestrators
 
 ### Automatic Platform Conversion

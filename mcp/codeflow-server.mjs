@@ -130,6 +130,37 @@ async function buildTools() {
     agentFiles.push(...files);
   }
 
+  // Load skills from base-skills directory
+  let skillFiles = [];
+  const skillsDirs = [
+    path.join(paths.codeflowRoot, 'base-skills'),
+    path.join(process.cwd(), 'base-skills'),
+  ];
+
+  for (const dir of skillsDirs) {
+    // Recursively find all .md files in base-skills directory
+    async function findSkillFiles(currentDir) {
+      try {
+        const entries = await fs.readdir(currentDir, { withFileTypes: true });
+        for (const entry of entries) {
+          const fullPath = path.join(currentDir, entry.name);
+          if (entry.isDirectory()) {
+            await findSkillFiles(fullPath);
+          } else if (entry.isFile() && entry.name.toLowerCase().endsWith('.md')) {
+            skillFiles.push(fullPath);
+          }
+        }
+      } catch {
+        // Ignore directory access errors
+      }
+    }
+
+    await findSkillFiles(dir);
+    if (skillFiles.length > 0) {
+      break; // Use first directory that has skills
+    }
+  }
+
   // Define the core workflow commands and popular service agents we want to expose
   const coreCommands = ['research', 'plan', 'execute', 'test', 'document', 'commit', 'review'];
 
@@ -192,6 +223,36 @@ async function buildTools() {
       slug,
       filePath,
       description: `Codeflow agent: ${base.replace(/-/g, ' ')}`,
+    });
+  }
+
+  // Process skill files
+  for (const filePath of skillFiles) {
+    const base = path.basename(filePath, '.md');
+
+    // Skills require noReply: true in frontmatter
+    try {
+      const content = await fs.readFile(filePath, 'utf8');
+      const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---/);
+      if (frontmatterMatch) {
+        const frontmatter = frontmatterMatch[1];
+        if (!frontmatter.includes('noReply: true')) {
+          continue; // Skip skills without noReply: true
+        }
+      } else {
+        continue; // Skip files without frontmatter
+      }
+    } catch {
+      continue; // Skip files that can't be read
+    }
+
+    const slug = toSlug(filePath);
+    tools.push({
+      id: `skills_${base}`,
+      type: 'skill',
+      slug,
+      filePath,
+      description: `Codeflow skill: ${base.replace(/-/g, ' ')}`,
     });
   }
 
@@ -350,50 +411,70 @@ async function run() {
     }
   );
 
-  // Register each core workflow command with agent context
+  // Register each tool (commands, agents, skills)
   for (const entry of toolEntries) {
-    server.registerTool(
-      entry.id,
-      {
-        title: entry.id,
-        description: entry.description + ' (Enhanced with agent orchestration capabilities)',
-      },
-      async () => {
-        const commandContent = await fs.readFile(entry.filePath, 'utf8');
+    if (entry.type === 'skill') {
+      // Skills are registered directly without agent context enhancement
+      server.registerTool(
+        entry.id,
+        {
+          title: entry.id,
+          description: entry.description,
+        },
+        async () => {
+          const skillContent = await fs.readFile(entry.filePath, 'utf8');
+          return {
+            content: [{ type: 'text', text: skillContent }],
+          };
+        }
+      );
+    } else {
+      // Commands and agents get enhanced with agent context
+      server.registerTool(
+        entry.id,
+        {
+          title: entry.id,
+          description: entry.description + ' (Enhanced with agent orchestration capabilities)',
+        },
+        async () => {
+          const commandContent = await fs.readFile(entry.filePath, 'utf8');
 
-        // Enhanced context with available agents
-        const context = {
-          availableAgents: Array.from(globalAgentRegistry.keys()),
-          agentCategories,
-          totalAgents: globalAgentRegistry.size,
+          // Enhanced context with available agents
+          const context = {
+            availableAgents: Array.from(globalAgentRegistry.keys()),
+            agentCategories,
+            totalAgents: globalAgentRegistry.size,
 
-          // Agent execution functions (for command reference)
-          spawnAgent: (agentId, task) => spawnAgentTask(agentId, task, globalAgentRegistry),
-          parallelAgents: (agentIds, tasks) =>
-            executeParallelAgents(agentIds, tasks, globalAgentRegistry),
-          sequentialAgents: (agentSpecs) =>
-            executeSequentialAgents(agentSpecs, globalAgentRegistry),
-          suggestAgents: (taskDescription) => suggestAgents(globalAgentRegistry, taskDescription),
-          validateAgent: (agentId) => validateAgentExecution(agentId, globalAgentRegistry),
+            // Agent execution functions (for command reference)
+            spawnAgent: (agentId, task) => spawnAgentTask(agentId, task, globalAgentRegistry),
+            parallelAgents: (agentIds, tasks) =>
+              executeParallelAgents(agentIds, tasks, globalAgentRegistry),
+            sequentialAgents: (agentSpecs) =>
+              executeSequentialAgents(agentSpecs, globalAgentRegistry),
+            suggestAgents: (taskDescription) => suggestAgents(globalAgentRegistry, taskDescription),
+            validateAgent: (agentId) => validateAgentExecution(agentId, globalAgentRegistry),
 
-          // Workflow orchestrators
-          executeResearchWorkflow: (domain, query) =>
-            workflowOrchestrator.executeResearchWorkflow(domain, query),
-          executePlanningWorkflow: (requirements, context) =>
-            workflowOrchestrator.executePlanningWorkflow(requirements, context),
-        };
+            // Workflow orchestrators
+            executeResearchWorkflow: (domain, query) =>
+              workflowOrchestrator.executeResearchWorkflow(domain, query),
+            executePlanningWorkflow: (requirements, context) =>
+              workflowOrchestrator.executePlanningWorkflow(requirements, context),
+          };
 
-        // Add agent context information to command content
-        const enhancedContent = addAgentContext(commandContent, context);
+          // Add agent context information to command content
+          const enhancedContent = addAgentContext(commandContent, context);
 
-        return {
-          content: [{ type: 'text', text: enhancedContent }],
-        };
-      }
-    );
+          return {
+            content: [{ type: 'text', text: enhancedContent }],
+          };
+        }
+      );
+    }
 
-    // Track for parameterized access
-    commandSlugToPath.set(entry.slug, entry.filePath);
+    // Track for parameterized access (only for commands and agents)
+    if (entry.type !== 'skill') {
+      commandSlugToPath.set(entry.slug, entry.filePath);
+    }
   }
 
   // Parameterized command getter with agent context

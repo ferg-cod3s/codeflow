@@ -18,7 +18,7 @@ import {
   StrategyGenerationResult,
   StrategyGenerator,
   generateStrategies,
-} from './strategy-generator.js';
+} from './strategy-generator';
 
 import {
   ConfidenceCriteria,
@@ -28,7 +28,7 @@ import {
   ProblemAnalysis,
   ConfidenceCalculator,
   calculateConfidence,
-} from './confidence-calculator.js';
+} from './confidence-calculator';
 
 import {
   VSOutputFormat,
@@ -37,7 +37,7 @@ import {
   VSOutputFormatter,
   formatVSResult,
   formatVSStrategy,
-} from './output-formatter.js';
+} from './output-formatter';
 
 // Re-export types
 export type {

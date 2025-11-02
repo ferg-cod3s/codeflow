@@ -161,7 +161,15 @@ export async function validateMarkdownYAML(filePath: string): Promise<Validation
     const frontmatter = parts[1];
     const result = validateYAML(frontmatter);
 
-    // If auto-fixed, update the file
+    // Additional validation for skills
+    if (filePath.includes('/skills/') || filePath.includes('\\skills\\')) {
+      const skillValidation = validateSkillFrontmatter(frontmatter);
+      result.errors.push(...skillValidation.errors);
+      result.warnings.push(...skillValidation.warnings);
+      result.valid = result.valid && skillValidation.valid;
+    }
+
+    // If auto-fixed, update file
     if (result.fixed) {
       const newContent = `---\n${result.fixed}---\n${parts.slice(2).join('---\n')}`;
       result.fixed = newContent;
@@ -172,6 +180,68 @@ export async function validateMarkdownYAML(filePath: string): Promise<Validation
     return {
       valid: false,
       errors: [`Failed to read file: ${error.message}`],
+      warnings: [],
+    };
+  }
+}
+
+/**
+ * Validate skill-specific frontmatter requirements
+ */
+function validateSkillFrontmatter(frontmatter: string): ValidationResult {
+  const errors: string[] = [];
+  const warnings: string[] = [];
+
+  try {
+    const parsed = yaml.parse(frontmatter);
+
+    // Required fields for skills
+    if (!parsed.name) {
+      errors.push('Missing required field: name');
+    } else if (typeof parsed.name !== 'string') {
+      errors.push('Field "name" must be a string');
+    } else if (!/^[a-z0-9-]+$/.test(parsed.name)) {
+      errors.push(
+        'Field "name" must be hyphen-case (lowercase letters, numbers, and hyphens only)'
+      );
+    }
+
+    if (!parsed.description) {
+      errors.push('Missing required field: description');
+    } else if (typeof parsed.description !== 'string') {
+      errors.push('Field "description" must be a string');
+    } else if (parsed.description.length < 20) {
+      errors.push('Field "description" must be at least 20 characters long');
+    }
+
+    if (parsed.noReply === undefined) {
+      errors.push('Missing required field: noReply');
+    } else if (typeof parsed.noReply !== 'boolean') {
+      errors.push('Field "noReply" must be a boolean');
+    } else if (!parsed.noReply) {
+      errors.push(
+        'Field "noReply" must be true for skills (required for message insertion persistence)'
+      );
+    }
+
+    // Optional field validation
+    if (parsed.category && typeof parsed.category !== 'string') {
+      errors.push('Field "category" must be a string');
+    }
+
+    if (parsed.tags && !Array.isArray(parsed.tags)) {
+      errors.push('Field "tags" must be an array');
+    }
+
+    return {
+      valid: errors.length === 0,
+      errors,
+      warnings,
+    };
+  } catch (error: any) {
+    return {
+      valid: false,
+      errors: [`Failed to parse skill frontmatter: ${error.message}`],
       warnings: [],
     };
   }

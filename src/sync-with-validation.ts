@@ -63,6 +63,13 @@ class SyncManager {
         globalClaude: join(this.homeDir, '.claude', 'commands'),
         globalOpenCode: join(this.homeDir, '.config', 'opencode', 'command'),
       },
+      skills: {
+        source: join(this.projectRoot, 'base-skills'),
+        claude: join(base, '.claude', 'skills'),
+        opencode: join(base, '.opencode', 'skill'),
+        globalClaude: join(this.homeDir, '.claude', 'skills'),
+        globalOpenCode: join(this.homeDir, '.config', 'opencode', 'skill'),
+      },
     };
   }
 
@@ -115,15 +122,39 @@ class SyncManager {
       return true;
     }
 
-    // Check if it's in the command source directory
+    // Check if it's in command source directory
     const paths = this.getPaths();
     if (filePath.startsWith(paths.commands.source)) {
       return true;
     }
 
-    // Check if it's in the base-agents command directory (if it exists)
+    // Check if it's in base-agents command directory (if it exists)
     const commandSourcePath = join(this.projectRoot, 'command');
     if (filePath.startsWith(commandSourcePath)) {
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * Check if a file is a skill based on its path
+   */
+  private isSkillFile(filePath: string): boolean {
+    // Check if it's in a skills directory
+    if (filePath.includes('/skills/') || filePath.includes('\\skills\\')) {
+      return true;
+    }
+
+    // Check if it's in skills source directory
+    const paths = this.getPaths();
+    if (filePath.startsWith(paths.skills.source)) {
+      return true;
+    }
+
+    // Check if it's in base-skills directory
+    const skillsSourcePath = join(this.projectRoot, 'base-skills');
+    if (filePath.startsWith(skillsSourcePath)) {
       return true;
     }
 
@@ -147,7 +178,7 @@ class SyncManager {
 
         if (!validation.valid) {
           if (options.fix) {
-            // Try to fix the source file
+            // Try to fix source file
             const fixed = await fixYAMLFile(sourcePath);
             if (!fixed) {
               if (options.verbose) {
@@ -173,6 +204,7 @@ class SyncManager {
       // Determine target format and convert content
       const targetFormat = this.getTargetFormat(targetPath);
       const isCommand = this.isCommandFile(sourcePath);
+      const isSkill = this.isSkillFile(sourcePath);
 
       let convertedContent: string;
       try {
@@ -181,6 +213,10 @@ class SyncManager {
           const converter = new FormatConverter();
           const convertedCommand = converter.convert(command as any, targetFormat);
           convertedContent = serializeCommand(convertedCommand as Command);
+        } else if (isSkill) {
+          // Skills are copied as-is for now (no conversion needed)
+          const content = await Bun.file(sourcePath).text();
+          convertedContent = content;
         } else {
           const agent = await parseAgentFile(sourcePath, 'base');
           const converter = new FormatConverter();
@@ -238,16 +274,16 @@ class SyncManager {
       return result;
     }
 
-    // Recursively find all .md files in the source directory and subdirectories
+    // Recursively find all .md files in source directory and subdirectories
     const mdFiles = await this.findAllMarkdownFiles(sourceDir);
 
     for (const file of mdFiles) {
-      // Get the relative path from the source directory to preserve subdirectory structure
+      // Get relative path from source directory to preserve subdirectory structure
       const relativePath = file.replace(sourceDir + '/', '');
       const sourcePath = join(sourceDir, relativePath);
 
       for (const targetDir of targetDirs) {
-        // Ensure the target directory exists
+        // Ensure target directory exists
         if (!existsSync(targetDir)) {
           await mkdir(targetDir, { recursive: true });
         }
@@ -286,6 +322,7 @@ class SyncManager {
     const results = {
       agents: { copied: 0, fixed: 0, skipped: 0, errors: [] as string[] },
       commands: { copied: 0, fixed: 0, skipped: 0, errors: [] as string[] },
+      skills: { copied: 0, fixed: 0, skipped: 0, errors: [] as string[] },
     };
 
     // Sync agents
@@ -306,14 +343,24 @@ class SyncManager {
     const commandResult = await this.syncDirectory(paths.commands.source, commandTargets, options);
     results.commands = commandResult;
 
+    // Sync skills
+    console.log('\n📦 Syncing skills...');
+    const skillTargets = options.global
+      ? [paths.skills.globalClaude, paths.skills.globalOpenCode]
+      : [paths.skills.claude, paths.skills.opencode];
+
+    const skillResult = await this.syncDirectory(paths.skills.source, skillTargets, options);
+    results.skills = skillResult;
+
     // Print summary
     console.log('\n📊 Sync Summary:');
     console.log('─'.repeat(40));
 
-    const totalCopied = results.agents.copied + results.commands.copied;
-    const totalFixed = results.agents.fixed + results.commands.fixed;
-    const totalSkipped = results.agents.skipped + results.commands.skipped;
-    const totalErrors = results.agents.errors.length + results.commands.errors.length;
+    const totalCopied = results.agents.copied + results.commands.copied + results.skills.copied;
+    const totalFixed = results.agents.fixed + results.commands.fixed + results.skills.fixed;
+    const totalSkipped = results.agents.skipped + results.commands.skipped + results.skills.skipped;
+    const totalErrors =
+      results.agents.errors.length + results.commands.errors.length + results.skills.errors.length;
 
     console.log(`✅ Copied: ${totalCopied} files`);
     if (totalFixed > 0) {
@@ -333,6 +380,11 @@ class SyncManager {
       if (results.commands.errors.length > 0) {
         console.log('\nCommand sync errors:');
         results.commands.errors.forEach((err) => console.log(`  - ${err}`));
+      }
+
+      if (results.skills.errors.length > 0) {
+        console.log('\nSkill sync errors:');
+        results.skills.errors.forEach((err) => console.log(`  - ${err}`));
       }
     }
 
@@ -393,6 +445,26 @@ class SyncManager {
         console.log(`  ⚠️  ${file}: ${result.warnings.join(', ')}`);
       } else {
         console.log(`  ✅ ${file}`);
+      }
+    }
+
+    // Validate skills
+    console.log('\n📦 Validating skills...');
+    const skillFiles = existsSync(paths.skills.source)
+      ? await this.findAllMarkdownFiles(paths.skills.source)
+      : [];
+
+    for (const file of skillFiles) {
+      const fileName = basename(file);
+      const result = await validateMarkdownYAML(file);
+
+      if (!result.valid) {
+        console.log(`  ❌ ${fileName}: ${result.errors.join(', ')}`);
+        hasErrors = true;
+      } else if (result.warnings.length > 0) {
+        console.log(`  ⚠️  ${fileName}: ${result.warnings.join(', ')}`);
+      } else {
+        console.log(`  ✅ ${fileName}`);
       }
     }
 
