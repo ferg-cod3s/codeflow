@@ -102,6 +102,8 @@
     "sync:smart": "./scripts/sync-with-model-config.sh",
     "sync:opencode": "./scripts/sync-with-model-config.sh",
     "fix:models": "./scripts/fix-opencode-models.sh && ./scripts/fix-opencode-agent-models.sh",
+    "fix:models:global": "./scripts/fix-global-models.js",
+    "fix:models:global:all": "./scripts/fix-global-models.js --all-projects",
     "yaml:validate": "bun run src/utils/yaml-validator.ts",
     "yaml:validate:node": "node --loader ts-node/esm src/utils/yaml-validator.ts",
     "yaml:fix": "bun run src/utils/yaml-validator.ts --fix",

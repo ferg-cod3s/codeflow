@@ -286,6 +286,14 @@ try {
       format: {
         type: 'string',
       },
+      'all-projects': {
+        type: 'boolean',
+        default: false,
+      },
+      local: {
+        type: 'boolean',
+        default: false,
+      },
     },
     strict: true,
     allowPositionals: true,
@@ -350,11 +358,13 @@ switch (command) {
   }
   case 'fix-models': {
     // For fix-models, default to global. Check if --local was passed
-    const hasLocalFlag = process.argv.includes('--local') || process.argv.includes('-l');
+    const hasLocalFlag =
+      values.local || process.argv.includes('--local') || process.argv.includes('-l');
     await fixModels({
       dryRun: values['dry-run'],
       verbose: values.help || false,
       global: !hasLocalFlag, // Default to global unless --local is specified
+      allProjects: values['all-projects'],
     });
     break;
   }

@@ -3,18 +3,27 @@
 /**
  * Fix model configurations for OpenCode and Claude Code
  * This ensures all agents and commands use the correct model format for each platform
+ *
+ * Usage:
+ *   bun run src/cli/fix-models.ts --global          # Fix global Claude Code agents/commands
+ *   bun run src/cli/fix-models.ts --global --all-projects  # Fix all OpenCode projects + global
+ *   bun run src/cli/fix-models.ts --local           # Fix local project agents/commands
+ *   bun run src/cli/fix-models.ts --dry-run        # Preview changes without applying
+ *   bun run src/cli/fix-models.ts --verbose        # Show detailed output
  */
 
 import { readFile, writeFile } from 'fs/promises';
 import { existsSync, readdirSync } from 'fs';
 import { join } from 'path';
 import { homedir } from 'os';
+import { execSync } from 'child_process';
 import { ModelFixer } from '../catalog/model-fixer.js';
 
 interface FixOptions {
   dryRun?: boolean;
   verbose?: boolean;
   global?: boolean;
+  allProjects?: boolean;
 }
 
 interface FixResult {
@@ -36,23 +45,16 @@ export async function fixModels(options: FixOptions = {}): Promise<void> {
 
   const results: Record<string, FixResult> = {};
 
-  // Fix OpenCode models
+  // Fix models
   if (isGlobal) {
-    results.openCodeCommands = await fixDirectory(
-      join(homedir(), '.config', 'opencode', 'command'),
-      'opencode',
-      'command',
-      modelFixer,
-      options
-    );
+    // OpenCode doesn't use global directories for agents/commands
+    // They are stored in project-specific .opencode directories
+    console.log('ℹ️  OpenCode agents/commands are stored per-project, not globally');
 
-    results.openCodeAgents = await fixDirectory(
-      join(homedir(), '.config', 'opencode', 'agent'),
-      'opencode',
-      'agent',
-      modelFixer,
-      options
-    );
+    if (options.allProjects) {
+      // Fix OpenCode agents/commands in all discovered projects
+      await fixAllOpenCodeProjects(modelFixer, options, results);
+    }
 
     results.claudeCommands = await fixDirectory(
       join(homedir(), '.claude', 'commands'),
@@ -64,39 +66,6 @@ export async function fixModels(options: FixOptions = {}): Promise<void> {
 
     results.claudeAgents = await fixDirectory(
       join(homedir(), '.claude', 'agents'),
-      'claude-code',
-      'agent',
-      modelFixer,
-      options
-    );
-  } else {
-    // Fix local project directories
-    results.localOpenCodeCommands = await fixDirectory(
-      join(process.cwd(), '.opencode', 'command'),
-      'opencode',
-      'command',
-      modelFixer,
-      options
-    );
-
-    results.localOpenCodeAgents = await fixDirectory(
-      join(process.cwd(), '.opencode', 'agent'),
-      'opencode',
-      'agent',
-      modelFixer,
-      options
-    );
-
-    results.localClaudeCommands = await fixDirectory(
-      join(process.cwd(), '.claude', 'commands'),
-      'claude-code',
-      'command',
-      modelFixer,
-      options
-    );
-
-    results.localClaudeAgents = await fixDirectory(
-      join(process.cwd(), '.claude', 'agents'),
       'claude-code',
       'agent',
       modelFixer,
@@ -173,6 +142,86 @@ async function fixDirectory(
   return result;
 }
 
+async function fixAllOpenCodeProjects(
+  modelFixer: ModelFixer,
+  options: FixOptions,
+  results: Record<string, FixResult>
+): Promise<void> {
+  console.log('🔍 Searching for OpenCode projects...');
+
+  try {
+    // Find all .opencode directories in user's home directory
+    const searchPaths = [
+      join(homedir(), 'src'),
+      join(homedir(), 'projects'),
+      join(homedir(), 'development'),
+      homedir(),
+    ];
+
+    const opencodeProjects: string[] = [];
+
+    for (const searchPath of searchPaths) {
+      if (!existsSync(searchPath)) continue;
+
+      try {
+        const output = execSync(
+          `find "${searchPath}" -name ".opencode" -type d 2>/dev/null | head -20`,
+          { encoding: 'utf-8', maxBuffer: 1024 * 1024 }
+        );
+
+        const projects = output
+          .trim()
+          .split('\n')
+          .filter(
+            (path) => (path && existsSync(join(path, 'agent'))) || existsSync(join(path, 'command'))
+          )
+          .map((path) => path.replace('/.opencode', ''));
+
+        opencodeProjects.push(...projects);
+      } catch (error) {
+        // Find command failed, continue
+      }
+    }
+
+    if (opencodeProjects.length === 0) {
+      console.log('  No OpenCode projects found');
+      return;
+    }
+
+    console.log(`  Found ${opencodeProjects.length} OpenCode projects`);
+
+    for (let i = 0; i < opencodeProjects.length; i++) {
+      const projectPath = opencodeProjects[i];
+      const projectName = projectPath.split('/').pop() || `project-${i + 1}`;
+
+      console.log(`\n📂 Processing project: ${projectName}`);
+
+      // Fix agents
+      const agentResult = await fixDirectory(
+        join(projectPath, '.opencode', 'agent'),
+        'opencode',
+        'agent',
+        modelFixer,
+        options
+      );
+
+      // Fix commands
+      const commandResult = await fixDirectory(
+        join(projectPath, '.opencode', 'command'),
+        'opencode',
+        'command',
+        modelFixer,
+        options
+      );
+
+      results[`openCodeProject_${projectName}_agents`] = agentResult;
+      results[`openCodeProject_${projectName}_commands`] = commandResult;
+    }
+  } catch (error) {
+    console.error('  ✗ Error searching for OpenCode projects:', error);
+  }
+}
+
 function printSummary(results: Record<string, FixResult>, options: FixOptions): void {
   console.log('\n📊 Summary:');
   console.log('═══════════════════════════════════');
@@ -210,7 +259,8 @@ function printSummary(results: Record<string, FixResult>, options: FixOptions): 
     console.log('\n🔍 Dry run complete - no files were modified');
   } else if (totalFixed > 0) {
     console.log('\n✅ Model configurations fixed successfully!');
-    console.log('🎯 OpenCode commands should now work correctly');
+    console.log('🎯 Claude Code agents and commands should now work correctly');
+    console.log('ℹ️  OpenCode agents/commands are managed per-project');
   } else if (totalErrors === 0) {
     console.log('\n✅ All model configurations are already correct!');
   }
@@ -228,6 +278,7 @@ if (import.meta.main) {
     dryRun: args.includes('--dry-run'),
     verbose: args.includes('--verbose') || args.includes('-v'),
     global: !args.includes('--local'),
+    allProjects: args.includes('--all-projects'),
   };
 
   await fixModels(options);
