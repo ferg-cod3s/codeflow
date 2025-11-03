@@ -8,12 +8,9 @@ import {
   applyOpenCodePermissionsToDirectory,
   DEFAULT_OPENCODE_PERMISSIONS,
 } from '../security/opencode-permissions.js';
+import { getCodeflowRoot } from '../utils/path-resolver.js';
 import { applyPermissionInheritance } from '../security/validation.js';
 import CLIErrorHandler from './error-handler.js';
-
-
-
-
 
 interface SyncFormatsOptions {
   validate?: boolean;
@@ -81,7 +78,7 @@ export async function syncAllFormats(options: SyncFormatsOptions = {}) {
   if (dryRun) CLIErrorHandler.displayProgress('Dry run mode - no files will be written');
 
   try {
-    const codeflowDir = join(import.meta.dir, '../..');
+    const codeflowDir = getCodeflowRoot();
 
     const directories = {
       base: join(codeflowDir, 'codeflow-agents'), // Updated to use codeflow-agents directory
@@ -359,7 +356,7 @@ export async function syncAllFormats(options: SyncFormatsOptions = {}) {
  */
 export async function showFormatDifferences() {
   try {
-    const codeflowDir = join(import.meta.dir, '../..');
+    const codeflowDir = getCodeflowRoot();
 
     const directories = {
       base: join(codeflowDir, 'codeflow-agents'), // Updated to use codeflow-agents directory

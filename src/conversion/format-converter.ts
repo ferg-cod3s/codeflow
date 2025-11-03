@@ -12,6 +12,32 @@ import {
  * Format conversion engine for agents
  */
 export class FormatConverter {
+  // Internal metadata fields that should not be included in output formats
+  private readonly internalFields = [
+    'output_format',
+    'requires_structured_output',
+    'validation_rules',
+    'primary_objective',
+    'anti_objectives',
+    'intended_followups',
+  ];
+
+  /**
+   * Filter out internal metadata fields from frontmatter
+   */
+  private filterInternalFields(frontmatter: Record<string, any>): Record<string, any> {
+    const filtered = { ...frontmatter };
+    const removedFields: string[] = [];
+    for (const field of this.internalFields) {
+      if (field in filtered) {
+        delete filtered[field];
+        removedFields.push(field);
+      }
+    }
+
+    return filtered;
+  }
+
   /**
    * Convert Base format to Claude Code format (v2.x.x specification)
    * Only allowed fields: name, description, tools (string), model (inherit|sonnet|opus|haiku)
@@ -21,7 +47,9 @@ export class FormatConverter {
       throw new Error(`Expected base format, got ${agent.format}`);
     }
 
-    const baseAgent = agent.frontmatter as BaseAgent;
+    // Filter out internal metadata fields first
+    const filteredFrontmatter = this.filterInternalFields(agent.frontmatter as BaseAgent);
+    const baseAgent = filteredFrontmatter as BaseAgent;
 
     // Convert tools from object or permission to comma-separated string
     let toolsString: string | undefined;
@@ -77,7 +105,9 @@ export class FormatConverter {
       throw new Error(`Expected base format, got ${agent.format}`);
     }
 
-    const baseAgent = agent.frontmatter as BaseAgent;
+    // Filter out internal metadata fields first
+    const filteredFrontmatter = this.filterInternalFields(agent.frontmatter as BaseAgent);
+    const baseAgent = filteredFrontmatter as BaseAgent;
 
     // Official OpenCode format - follows OpenCode.ai specification
     const openCodeFrontmatter: OpenCodeAgent = {

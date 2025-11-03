@@ -1,13 +1,10 @@
 #!/usr/bin/env bun
 
-
-
-
-
 import { readdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { DashboardDisplay } from './display/dashboard-display.js';
+import { getCodeflowRoot } from '../utils/path-resolver.js';
 import { getTheme } from './themes/theme-manager.js';
 import type { DashboardData } from './display/dashboard-display.js';
 
@@ -133,7 +130,7 @@ async function checkProjectHealth(projectPath: string) {
   }
 
   // Check for codeflow-agents source
-  const codeflowRoot = join(import.meta.dir, '../..');
+  const codeflowRoot = getCodeflowRoot();
   if (!existsSync(join(codeflowRoot, 'codeflow-agents'))) {
     issues.push({
       severity: 'error',
@@ -148,7 +145,7 @@ async function checkProjectHealth(projectPath: string) {
  * Count available agents
  */
 async function countAgents(_projectPath: string): Promise<number> {
-  const codeflowRoot = join(import.meta.dir, '../..');
+  const codeflowRoot = getCodeflowRoot();
   const sourceDir = join(codeflowRoot, 'codeflow-agents');
 
   if (!existsSync(sourceDir)) return 0;
@@ -165,7 +162,7 @@ async function countAgents(_projectPath: string): Promise<number> {
  * Count available commands
  */
 async function countCommands(_projectPath: string): Promise<number> {
-  const codeflowRoot = join(import.meta.dir, '../..');
+  const codeflowRoot = getCodeflowRoot();
   const commandDir = join(codeflowRoot, 'command');
 
   if (!existsSync(commandDir)) return 0;

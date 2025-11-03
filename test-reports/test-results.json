@@ -1,53 +1,53 @@
 {
-  "timestamp": "2025-11-03T02:46:40.866Z",
+  "timestamp": "2025-11-03T14:50:49.322Z",
   "suites": [
     {
       "suite": "CLI Commands",
       "passed": 8,
       "failed": 0,
       "skipped": 0,
-      "duration": 1932
+      "duration": 1150
     },
     {
       "suite": "Format Conversion",
       "passed": 10,
       "failed": 0,
       "skipped": 0,
-      "duration": 187
+      "duration": 162
     },
     {
       "suite": "Agent Validation",
       "passed": 11,
       "failed": 0,
       "skipped": 0,
-      "duration": 344
+      "duration": 323
     },
     {
       "suite": "Command Validation",
       "passed": 16,
       "failed": 1,
       "skipped": 0,
-      "duration": 327
+      "duration": 301
     },
     {
       "suite": "OpenCode Syntax Validation",
       "passed": 7,
       "failed": 0,
       "skipped": 0,
-      "duration": 113
+      "duration": 111
     },
     {
       "suite": "OpenCode Variable Substitution",
       "passed": 7,
       "failed": 0,
       "skipped": 0,
-      "duration": 117
+      "duration": 103
     }
   ],
   "totals": {
     "passed": 59,
     "failed": 1,
     "skipped": 0,
-    "duration": 3020
+    "duration": 2150
   }
 }

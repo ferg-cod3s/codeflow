@@ -1,6 +1,6 @@
 {
   "name": "@agentic-codeflow/cli",
-  "version": "0.20.2",
+  "version": "0.20.4",
   "description": "AI Agent & Command Distribution Platform with Verbalized Sampling - Deploy 33+ specialized AI agents and workflow commands with integrated VS strategy generation to any project instantly",
   "type": "module",
   "bin": {
@@ -136,7 +136,7 @@
     "prepack": "bun run typecheck",
     "prepack:node": "npm run typecheck:node",
     "build:cli": "esbuild src/cli/index.ts --bundle --platform=node --target=node18 --format=esm --outfile=dist/cli.js --packages=external && chmod +x dist/cli.js",
-    "build:cli:node": "esbuild src/cli/index.ts --bundle --platform=node --target=node18 --outfile=dist/cli.js",
+    "build:cli:node": "esbuild src/cli/index.ts --bundle --platform=node --target=node18 --format=esm --packages=external --outfile=dist/cli.js",
     "prepare": "echo 'Husky prepared'"
   },
   "dependencies": {

@@ -2,6 +2,7 @@ import { readdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { existsSync } from 'node:fs';
 import CLIErrorHandler from './error-handler.js';
+import { getCodeflowRoot } from '../utils/path-resolver.js';
 
 export async function status(projectPath?: string) {
   const resolvedPath = projectPath || process.cwd();
@@ -13,7 +14,7 @@ export async function status(projectPath?: string) {
     return;
   }
 
-  const codeflowDir = join(import.meta.dir, '../..');
+  const codeflowDir = getCodeflowRoot();
   const targetBase = join(resolvedPath, '.opencode');
 
   CLIErrorHandler.displayProgress(`Checking status for: ${resolvedPath}`);

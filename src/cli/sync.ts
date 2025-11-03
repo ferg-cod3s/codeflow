@@ -1,5 +1,5 @@
 import { existsSync } from 'node:fs';
-import { readdir, copyFile, mkdir } from 'node:fs/promises';
+import { readdir, copyFile, mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { parseAgentsFromDirectory, serializeAgent, Agent } from '../conversion/agent-parser.js';
 import { FormatConverter } from '../conversion/format-converter.js';
@@ -7,6 +7,8 @@ import { CanonicalSyncer } from '../sync/canonical-syncer.js';
 import { homedir } from 'node:os';
 // import { parse as loadYaml } from 'yaml';
 import { CommandValidator } from '../yaml/command-validator.js';
+import { getCodeflowRoot } from '../utils/path-resolver.js';
+import { SyncManager } from '../sync-with-validation.js';
 export interface SyncOptions {
   projectPath?: string;
   force?: boolean;
@@ -37,14 +39,15 @@ export async function sync(projectPath?: string, options: SyncOptions = {}) {
   const target = options.target || (options.global ? 'global' : 'project');
 
   // For global sync, we don't need a specific project path
-  const resolvedPath = target === 'global' ? homedir() : projectPath || process.cwd();
+  const cwd = process.cwd() || '.';
+  const resolvedPath = target === 'global' ? homedir() : projectPath || cwd;
 
   // Check if we should use the new canonical syncer or legacy sync
-  const manifestPath = join(process.cwd(), 'AGENT_MANIFEST.json');
+  const manifestPath = join(cwd, 'AGENT_MANIFEST.json');
   const hasManifest = existsSync(manifestPath);
 
   if (hasManifest) {
-    // Use new canonical syncer
+    // Use new canonical syncer for agents
     const syncer = new CanonicalSyncer();
 
     try {
@@ -82,20 +85,40 @@ export async function sync(projectPath?: string, options: SyncOptions = {}) {
 
       const totalProcessed = result.synced.length + result.skipped.length + result.errors.length;
       console.log(
-        `\n📊 Summary: ${result.synced.length}/${totalProcessed} files synced successfully`
+        `\n📊 Agent Summary: ${result.synced.length}/${totalProcessed} files synced successfully`
       );
     } catch (error: any) {
       console.error(`❌ Canonical sync failed: ${error.message}`);
       process.exit(1);
     }
 
+    // Always sync skills using SyncManager (even with manifest)
+    try {
+      const skillsSyncManager = new SyncManager();
+      await skillsSyncManager.sync({
+        global: target === 'global',
+        force: options.force,
+        dryRun: options.dryRun,
+        verbose: true,
+      });
+    } catch (error: any) {
+      console.error(`❌ Skills sync failed: ${error.message}`);
+      // Don't exit for skills sync failure, just report it
+    }
+
     return;
   }
 
-  // Legacy sync behavior (when no manifest exists)
+  // Use SyncManager for global sync
   if (target === 'global') {
-    console.error('❌ Global sync requires AGENT_MANIFEST.json. Run setup first.');
-    process.exit(1);
+    const syncManager = new SyncManager();
+    await syncManager.sync({
+      global: true,
+      force: options.force,
+      dryRun: options.dryRun,
+      verbose: true,
+    });
+    return;
   }
 
   if (!existsSync(resolvedPath)) {
@@ -103,7 +126,7 @@ export async function sync(projectPath?: string, options: SyncOptions = {}) {
     process.exit(1);
   }
 
-  const codeflowDir = join(import.meta.dir, '../..');
+  const codeflowDir = getCodeflowRoot();
   console.log(`🔄 Syncing from: ${codeflowDir}`);
   console.log(`📦 Syncing to: ${resolvedPath}\n`);
 
@@ -196,7 +219,7 @@ export async function sync(projectPath?: string, options: SyncOptions = {}) {
           const filename = `${agent.frontmatter.name}.md`;
           const targetFile = join(targetAgentDir, filename);
           const serialized = serializeAgent(agent);
-          await Bun.write(targetFile, serialized);
+          await writeFile(targetFile, serialized, 'utf-8');
           console.log(`  ✓ Synced agent: ${filename}`);
           totalSynced++;
         } catch (error: any) {

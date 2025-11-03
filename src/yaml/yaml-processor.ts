@@ -4,10 +4,6 @@ import { Agent, ParsedEntity } from '../conversion/agent-parser.js';
 import { ValidationEngine, ValidationResult, AgentFormat } from './validation-engine.js';
 import { ArrayParser } from './array-parser.js';
 
-
-
-
-
 /**
  * Parsed YAML structure
  */
@@ -75,7 +71,7 @@ export class YamlProcessor {
       }
 
       const frontmatterText = frontmatterMatch[1];
-      const body = frontmatterMatch[2] || '';
+      let body = frontmatterMatch[2] || '';
 
       // Parse frontmatter using YAML library
       let frontmatter: Record<string, any>;
@@ -84,6 +80,33 @@ export class YamlProcessor {
         frontmatter = {};
       } else {
         frontmatter = parseYaml(frontmatterText) || {};
+      }
+
+      // Check if body contains a second frontmatter block (with or without opening ---)
+      // Try to match second frontmatter block that might be missing its opening ---
+      let secondFrontmatterMatch = body.match(/^---[\s]*\n([\s\S]*?)\n---[\s]*(\n[\s\S]*)?$/);
+
+      if (!secondFrontmatterMatch) {
+        // Try pattern without opening --- (for cases where it was consumed by first regex)
+        secondFrontmatterMatch = body.match(/^[\s]*([\s\S]*?)\n---[\s]*(\n[\s\S]*)?$/);
+      }
+      if (secondFrontmatterMatch) {
+        // Parse the second frontmatter block and merge it
+        const secondFrontmatterText = secondFrontmatterMatch[1];
+        const secondBody = secondFrontmatterMatch[2] || '';
+
+        let secondFrontmatter: Record<string, any>;
+        if (secondFrontmatterText.trim() === '') {
+          secondFrontmatter = {};
+        } else {
+          secondFrontmatter = parseYaml(secondFrontmatterText) || {};
+        }
+
+        // Merge frontmatter blocks (second block takes precedence)
+        frontmatter = { ...frontmatter, ...secondFrontmatter };
+
+        // Update body to be the content after the second frontmatter block
+        body = secondBody;
       }
 
       return {

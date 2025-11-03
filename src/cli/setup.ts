@@ -1,4 +1,4 @@
-import { join, dirname } from 'node:path';
+import { join, dirname, resolve } from 'node:path';
 import { existsSync } from 'node:fs';
 import { readdir, mkdir, copyFile, writeFile, readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
@@ -40,34 +40,23 @@ export function getTargetFormat(setupDir: string): SupportedFormat | null {
   return null;
 }
 
-function getCommandSourceDirs(sourcePath: string, targetDir: string): string[] {
+function getCommandSourceDirs(
+  _sourcePath: string,
+  targetDir: string,
+  packageRoot: string
+): string[] {
   const sourceDirs: string[] = [];
 
-  // Primary source: command/ directory (check in current working directory first)
-  const cwdCommandDir = join(process.cwd(), 'command');
-  if (existsSync(cwdCommandDir)) {
-    sourceDirs.push(cwdCommandDir);
-  } else {
-    sourceDirs.push(join(sourcePath, 'command'));
-  }
+  // Primary source: command/ directory from CodeFlow repository
+  sourceDirs.push(join(packageRoot, 'command'));
 
-  // Fallback sources based on target format
+  // Additional sources based on target format (for backward compatibility)
   if (targetDir.includes('.claude')) {
-    // For Claude Code, also check if there are commands in claude-agents or other locations
-    const cwdClaudeAgentsDir = join(process.cwd(), 'claude-agents');
-    if (existsSync(cwdClaudeAgentsDir)) {
-      sourceDirs.push(cwdClaudeAgentsDir);
-    } else {
-      sourceDirs.push(join(sourcePath, 'claude-agents'));
-    }
+    // For Claude Code, also check if there are commands in claude-agents
+    sourceDirs.push(join(packageRoot, 'claude-agents'));
   } else if (targetDir.includes('.opencode')) {
-    // For OpenCode, check opencode-agents or other locations
-    const cwdOpenCodeAgentsDir = join(process.cwd(), 'opencode-agents');
-    if (existsSync(cwdOpenCodeAgentsDir)) {
-      sourceDirs.push(cwdOpenCodeAgentsDir);
-    } else {
-      sourceDirs.push(join(sourcePath, 'opencode-agents'));
-    }
+    // For OpenCode, check opencode-agents
+    sourceDirs.push(join(packageRoot, 'opencode-agents'));
   }
 
   return sourceDirs;
@@ -77,7 +66,8 @@ export async function copyCommands(
   converter: FormatConverter | CommandConverter,
   sourcePath: string,
   targetPath: string,
-  setupDirs: string[]
+  setupDirs: string[],
+  packageRoot: string
 ): Promise<number> {
   let fileCount = 0;
 
@@ -93,7 +83,7 @@ export async function copyCommands(
     // Copy commands with format-aware source resolution
     if (setupDir.includes('command')) {
       console.log(`📋 Copying commands to ${setupDir}...`);
-      const sourceDirs = getCommandSourceDirs(sourcePath, setupDir);
+      const sourceDirs = getCommandSourceDirs(sourcePath, setupDir, packageRoot);
       console.log(`Source dirs: ${sourceDirs.join(', ')}`);
       let commandsCopied = 0;
 
@@ -189,7 +179,8 @@ export async function copyCommands(
 export async function copySkills(
   sourcePath: string,
   targetPath: string,
-  setupDirs: string[]
+  setupDirs: string[],
+  packageRoot: string
 ): Promise<number> {
   let fileCount = 0;
 
@@ -205,11 +196,11 @@ export async function copySkills(
 
       console.log(`📦 Copying skills to ${setupDir}...`);
 
-      // Check multiple possible source locations
+      // Check multiple possible source locations (prioritize CodeFlow repository)
       const sourceDirs = [
-        join(process.cwd(), 'base-skills'),
+        join(packageRoot, 'base-skills'),
         join(sourcePath, 'base-skills'),
-        join(getPackageRoot(), 'base-skills'),
+        join(process.cwd(), 'base-skills'),
       ];
 
       let skillsCopied = 0;
@@ -329,10 +320,61 @@ export async function setup(
     return dirs;
   });
 
-  const sourcePath = join(process.cwd(), 'command');
+  // Try multiple strategies to find CodeFlow root
+  let packageRoot = getPackageRoot();
+
+  // First try environment variable override
+  if (process.env.CODEFLOW_ROOT && existsSync(join(process.env.CODEFLOW_ROOT, 'base-agents'))) {
+    packageRoot = process.env.CODEFLOW_ROOT;
+  }
+  // If the root doesn't look right, try alternative approaches
+  else if (
+    !existsSync(join(packageRoot, 'base-agents')) ||
+    !existsSync(join(packageRoot, 'command'))
+  ) {
+    // Try current working directory
+    const cwd = process.cwd();
+    if (existsSync(join(cwd, 'base-agents')) && existsSync(join(cwd, 'command'))) {
+      packageRoot = cwd;
+    } else {
+      // For compiled binaries, try to find the actual project root by searching parent directories
+      let searchDir = cwd;
+      while (searchDir !== '/') {
+        if (existsSync(join(searchDir, 'base-agents')) && existsSync(join(searchDir, 'command'))) {
+          packageRoot = searchDir;
+          break;
+        }
+        searchDir = dirname(searchDir);
+      }
+    }
+  }
+  // If the root doesn't look right, try alternative approaches
+  else if (
+    !existsSync(join(packageRoot, 'base-agents')) ||
+    !existsSync(join(packageRoot, 'command'))
+  ) {
+    // Try current working directory
+    const cwd = process.cwd();
+    if (existsSync(join(cwd, 'base-agents')) && existsSync(join(cwd, 'command'))) {
+      packageRoot = cwd;
+    } else {
+      // For compiled binaries, try to find the actual project root by searching parent directories
+      let searchDir = cwd;
+      while (searchDir !== '/') {
+        if (existsSync(join(searchDir, 'base-agents')) && existsSync(join(searchDir, 'command'))) {
+          packageRoot = searchDir;
+          break;
+        }
+        searchDir = dirname(searchDir);
+      }
+    }
+  }
+
+  const sourcePath = join(packageRoot, 'command');
   const targetPath = inputPath;
 
   try {
+    console.log(`🔧 Package root: ${packageRoot}`);
     console.log(`🚀 Setting up Codeflow for ${projectTypes.join(' and ')}...`);
     console.log(`📁 Source: ${sourcePath}`);
     console.log(`📁 Target: ${targetPath}`);
@@ -341,12 +383,18 @@ export async function setup(
     const commandConverter = new CommandConverter();
 
     // Copy commands and agents
-    const commandCount = await copyCommands(commandConverter, sourcePath, targetPath, setupDirs);
+    const commandCount = await copyCommands(
+      commandConverter,
+      sourcePath,
+      targetPath,
+      setupDirs,
+      packageRoot
+    );
 
     // Copy skills separately since it has different logic
     const skillsSetupDirs = setupDirs.filter((dir) => dir.includes('skills'));
-    const skillsPath = join(process.cwd(), 'base-skills');
-    const skillCount = await copySkills(skillsPath, targetPath, skillsSetupDirs);
+    const skillsPath = join(getPackageRoot(), 'base-skills');
+    const skillCount = await copySkills(skillsPath, targetPath, skillsSetupDirs, packageRoot);
 
     const fileCount = commandCount + skillCount;
 
@@ -423,25 +471,17 @@ export async function setup(
   }
 }
 
-export function getAgentSourceDirs(sourcePath: string, _targetFormat: SupportedFormat): string[] {
+export function getAgentSourceDirs(_sourcePath: string, _targetFormat: SupportedFormat): string[] {
   const sourceDirs: string[] = [];
   const packageRoot = getPackageRoot();
 
-  // ONLY source: base-agents directory (single source of truth)
+  // ONLY source: base-agents directory from CodeFlow repository (single source of truth)
   // Pre-converted platform directories (.claude/agents, .opencode/agent, .cursor/agents)
   // are TARGETS, not sources - never include them as sources to avoid double conversion
-  // Try in order: cwd, package root, sourcePath
-  const baseAgentsCandidates = [
-    join(process.cwd(), 'base-agents'),
-    join(packageRoot, 'base-agents'),
-    join(sourcePath, 'base-agents'),
-  ];
+  const baseAgentsDir = join(packageRoot, 'base-agents');
 
-  for (const candidate of baseAgentsCandidates) {
-    if (existsSync(candidate)) {
-      sourceDirs.push(candidate);
-      break;
-    }
+  if (existsSync(baseAgentsDir)) {
+    sourceDirs.push(baseAgentsDir);
   }
 
   return sourceDirs;

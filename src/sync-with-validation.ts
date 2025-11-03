@@ -1,15 +1,11 @@
 #!/usr/bin/env bun
 
-
-
-
-
 /**
  * Enhanced Sync Script with YAML Validation
  * Ensures all files have valid YAML before syncing to local and global directories
  */
 
-import { readdir, writeFile, mkdir } from 'fs/promises';
+import { readdir, writeFile, mkdir, readFile } from 'fs/promises';
 import { existsSync } from 'fs';
 import { join, basename } from 'path';
 import { homedir } from 'os';
@@ -23,11 +19,13 @@ import {
 } from './conversion/agent-parser';
 import { FormatConverter } from './conversion/format-converter';
 
-interface SyncOptions {
+export interface SyncOptions {
   global?: boolean;
   fix?: boolean;
   validate?: boolean;
   verbose?: boolean;
+  force?: boolean;
+  dryRun?: boolean;
 }
 
 interface SyncResult {
@@ -37,7 +35,7 @@ interface SyncResult {
   errors: string[];
 }
 
-class SyncManager {
+export class SyncManager {
   private projectRoot: string;
   private homeDir: string;
 
@@ -219,7 +217,7 @@ class SyncManager {
           convertedContent = serializeCommand(convertedCommand as Command);
         } else if (isSkill) {
           // Skills are copied as-is for now (no conversion needed)
-          const content = await Bun.file(sourcePath).text();
+          const content = await readFile(sourcePath, 'utf-8');
           convertedContent = content;
         } else {
           const agent = await parseAgentFile(sourcePath, 'base');

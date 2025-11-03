@@ -1,12 +1,10 @@
-import { spawn } from 'node:child_process';
+import { spawn, exec } from 'node:child_process';
 import { join } from 'node:path';
+import { readFile, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
-import { writeFile, readFile } from 'node:fs/promises';
+import { homedir } from 'node:os';
 import CLIErrorHandler from './error-handler.js';
-
-
-
-
+import { getCodeflowRoot } from '../utils/path-resolver.js';
 
 interface _MCPServerConfig {
   name: string;
@@ -154,7 +152,7 @@ export async function mcpServer(
   action: string,
   options: { background?: boolean; port?: number } = {}
 ) {
-  const codeflowDir = join(import.meta.dir, '../..');
+  const codeflowDir = getCodeflowRoot();
   const serverPath = join(codeflowDir, 'mcp/codeflow-server.mjs');
 
   // Validate server path exists
@@ -329,7 +327,7 @@ export async function mcpServer(
 }
 
 export async function mcpConfigure(client: string, options: { remove?: boolean } = {}) {
-  const codeflowDir = join(import.meta.dir, '../..');
+  const codeflowDir = getCodeflowRoot();
   const serverPath = join(codeflowDir, 'mcp/codeflow-server.mjs');
 
   try {

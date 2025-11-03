@@ -8,6 +8,7 @@ import {
 } from '../security/opencode-permissions.js';
 // import { applyPermissionInheritance } from '../security/validation';
 import CLIErrorHandler from './error-handler.js';
+import { getCodeflowRoot } from '../utils/path-resolver.js';
 
 async function* walkDir(dir: string): AsyncGenerator<string> {
   const files = await readdir(dir, { withFileTypes: true });
@@ -27,8 +28,7 @@ export async function pull(projectPath: string | undefined) {
     const resolvedProjectPath = resolveProjectPath(projectPath);
 
     // Load config - find the codeflow installation directory
-    // import.meta.dir gives us the src/cli directory
-    const codeflowDir = join(import.meta.dir, '../..');
+    const codeflowDir = getCodeflowRoot();
     const configPath = join(codeflowDir, 'config.json');
 
     // Validate config file exists

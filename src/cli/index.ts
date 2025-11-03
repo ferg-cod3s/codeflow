@@ -20,6 +20,7 @@ import packageJson from '../../package.json';
 import { join, resolve, sep } from 'node:path';
 import { existsSync } from 'node:fs';
 import { homedir } from 'node:os';
+import { getCodeflowRoot } from '../utils/path-resolver.js';
 
 const HELP_TEXT = `codeflow - Intelligent AI workflow management and development automation
 
@@ -188,7 +189,7 @@ function getFormatDirectory(
   format: 'base' | 'claude-code' | 'opencode',
   projectPath: string
 ): string {
-  const codeflowRoot = join(import.meta.dir, '../..');
+  const codeflowRoot = getCodeflowRoot();
 
   switch (format) {
     case 'base':
@@ -327,212 +328,225 @@ if (values.help || command === 'help' || !command) {
   process.exit(0);
 }
 
-switch (command) {
-  case 'setup': {
-    const setupPath = args[1];
-    const safeSetupPath = safeResolve(process.cwd(), setupPath || '.', [process.cwd(), homedir()]);
-    await setup(safeSetupPath, {
-      global: values.global,
-      force: values.force,
-      type: values.type,
-    });
-    break;
-  }
-  case 'status': {
-    const statusPath = args[1];
-    const safeStatusPath = safeResolve(process.cwd(), statusPath || '.', [
-      process.cwd(),
-      homedir(),
-    ]);
-    await status(safeStatusPath);
-    break;
-  }
-  case 'sync': {
-    const syncPath = args[1];
-    const safeSyncPath = safeResolve(process.cwd(), syncPath || '.', [process.cwd(), homedir()]);
-    await sync(safeSyncPath, {
-      global: values.global,
-      force: values.force,
-      dryRun: values['dry-run'],
-      verbose: true,
-    });
-    break;
-  }
-  case 'fix-models': {
-    // For fix-models, default to global. Check if --local was passed
-    const hasLocalFlag =
-      values.local || process.argv.includes('--local') || process.argv.includes('-l');
-    await fixModels({
-      dryRun: values['dry-run'],
-      verbose: values.help || false,
-      global: !hasLocalFlag, // Default to global unless --local is specified
-      allProjects: values['all-projects'],
-    });
-    break;
-  }
-  case 'convert': {
-    // Support flag-based usage: --source, --target, --project
-    if (values.source && values.target) {
-      const projectPath = values.project || process.cwd();
+async function main() {
+  switch (command) {
+    case 'setup': {
+      const setupPath = args[1];
+      const safeSetupPath = safeResolve(process.cwd(), setupPath || '.', [
+        process.cwd(),
+        homedir(),
+      ]);
+      await setup(safeSetupPath, {
+        global: values.global,
+        force: values.force,
+        type: values.type,
+      });
+      break;
+    }
+    case 'status': {
+      const statusPath = args[1];
+      const safeStatusPath = safeResolve(process.cwd(), statusPath || '.', [
+        process.cwd(),
+        homedir(),
+      ]);
+      await status(safeStatusPath);
+      break;
+    }
+    case 'sync': {
+      const syncPath = args[1];
+      const safeSyncPath = safeResolve(process.cwd(), syncPath || '.', [process.cwd(), homedir()]);
+      await sync(safeSyncPath, {
+        global: values.global,
+        force: values.force,
+        dryRun: values['dry-run'],
+        verbose: true,
+      });
+      break;
+    }
+    case 'fix-models': {
+      // For fix-models, default to global. Check if --local was passed
+      const hasLocalFlag =
+        values.local || process.argv.includes('--local') || process.argv.includes('-l');
+      await fixModels({
+        dryRun: values['dry-run'],
+        verbose: values.help || false,
+        global: !hasLocalFlag, // Default to global unless --local is specified
+        allProjects: values['all-projects'],
+      });
+      break;
+    }
+    case 'convert': {
+      // Support flag-based usage: --source, --target, --project
+      if (values.source && values.target) {
+        const projectPath = values.project || process.cwd();
 
-      // Determine source and target directories based on format and project
-      const sourceFormat = values.source as 'base' | 'claude-code' | 'opencode';
-      const targetFormat = values.target as 'base' | 'claude-code' | 'opencode';
+        // Determine source and target directories based on format and project
+        const sourceFormat = values.source as 'base' | 'claude-code' | 'opencode';
+        const targetFormat = values.target as 'base' | 'claude-code' | 'opencode';
 
-      const sourceDir = getFormatDirectory(sourceFormat, projectPath);
-      const targetDir = getFormatDirectory(targetFormat, projectPath);
+        const sourceDir = getFormatDirectory(sourceFormat, projectPath);
+        const targetDir = getFormatDirectory(targetFormat, projectPath);
 
-      if (targetFormat === 'base') {
+        if (targetFormat === 'base') {
+          console.error('Error: Cannot convert to base format');
+          process.exit(1);
+        }
+
+        await convert(sourceDir, targetDir, targetFormat as 'claude-code' | 'opencode');
+        break;
+      }
+
+      const source = args[1];
+      const target = args[2];
+      const format = args[3] as 'base' | 'claude-code' | 'opencode';
+
+      if (!source || !target || !format) {
+        console.error('Error: convert requires source, target, and format arguments');
+        console.error('Usage: codeflow convert <source> <target> <format>');
+        console.error('Formats: base, claude-code, opencode');
+        process.exit(1);
+      }
+
+      if (!['base', 'claude-code', 'opencode'].includes(format)) {
+        console.error(`Error: Invalid format '${format}'`);
+        console.error('Valid formats: base, claude-code, opencode');
+        process.exit(1);
+      }
+
+      if (format === 'base') {
         console.error('Error: Cannot convert to base format');
         process.exit(1);
       }
 
-      await convert(sourceDir, targetDir, targetFormat as 'claude-code' | 'opencode');
+      await convert(source, target, format as 'claude-code' | 'opencode');
+      break;
+    }
+    case 'watch': {
+      const watchAction = args[1];
+
+      if (watchAction === 'start') {
+        const watchPath = args[2];
+        await startWatch(watchPath);
+      } else {
+        console.error(`Error: Unknown watch action '${watchAction}'`);
+        console.error('Available actions: start');
+        process.exit(1);
+      }
       break;
     }
 
-    const source = args[1];
-    const target = args[2];
-    const format = args[3] as 'base' | 'claude-code' | 'opencode';
-
-    if (!source || !target || !format) {
-      console.error('Error: convert requires source, target, and format arguments');
-      console.error('Usage: codeflow convert <source> <target> <format>');
-      console.error('Formats: base, claude-code, opencode');
-      process.exit(1);
+    case 'validate': {
+      await validate({
+        format: values.format || 'all',
+        path: args[1],
+        checkDuplicates: values['check-duplicates'],
+        canonicalCheck: values['canonical-check'],
+        fix: values.fix,
+        verbose: values.verbose,
+      });
+      break;
     }
 
-    if (!['base', 'claude-code', 'opencode'].includes(format)) {
-      console.error(`Error: Invalid format '${format}'`);
-      console.error('Valid formats: base, claude-code, opencode');
-      process.exit(1);
+    case 'list': {
+      const listPath = args[1];
+      const safeListPath = safeResolve(process.cwd(), listPath || '.', [process.cwd(), homedir()]);
+      await list(safeListPath, {
+        type: values.type || 'all',
+        platform: values.platform || 'all',
+        format: values.format || 'table',
+        verbose: values.verbose,
+      });
+      break;
     }
 
-    if (format === 'base') {
-      console.error('Error: Cannot convert to base format');
-      process.exit(1);
+    case 'info': {
+      const itemName = args[1];
+      if (!itemName) {
+        console.error('Error: info requires an item name');
+        console.error('Usage: codeflow info <item-name>');
+        process.exit(1);
+      }
+      const infoPath = args[2];
+      const safeInfoPath = safeResolve(process.cwd(), infoPath || '.', [process.cwd(), homedir()]);
+      await info(itemName, safeInfoPath, {
+        format: values.format || 'detailed',
+        showContent: values['show-content'],
+      });
+      break;
     }
 
-    await convert(source, target, format as 'claude-code' | 'opencode');
-    break;
-  }
-  case 'watch': {
-    const watchAction = args[1];
-
-    if (watchAction === 'start') {
-      const watchPath = args[2];
-      await startWatch(watchPath);
-    } else {
-      console.error(`Error: Unknown watch action '${watchAction}'`);
-      console.error('Available actions: start');
-      process.exit(1);
+    case 'update': {
+      const updateAction = args[1];
+      await update({
+        check: updateAction === 'check' || values.check,
+        force: values.force,
+        verbose: values.verbose,
+      });
+      break;
     }
-    break;
-  }
 
-  case 'validate': {
-    await validate({
-      format: values.format || 'all',
-      path: args[1],
-      checkDuplicates: values['check-duplicates'],
-      canonicalCheck: values['canonical-check'],
-      fix: values.fix,
-      verbose: values.verbose,
-    });
-    break;
-  }
-
-  case 'list': {
-    const listPath = args[1];
-    const safeListPath = safeResolve(process.cwd(), listPath || '.', [process.cwd(), homedir()]);
-    await list(safeListPath, {
-      type: values.type || 'all',
-      platform: values.platform || 'all',
-      format: values.format || 'table',
-      verbose: values.verbose,
-    });
-    break;
-  }
-
-  case 'info': {
-    const itemName = args[1];
-    if (!itemName) {
-      console.error('Error: info requires an item name');
-      console.error('Usage: codeflow info <item-name>');
-      process.exit(1);
+    case 'clean': {
+      const cleanPath = args[1];
+      const safeCleanPath = safeResolve(process.cwd(), cleanPath || '.', [
+        process.cwd(),
+        homedir(),
+      ]);
+      await clean(safeCleanPath, {
+        dryRun: values['dry-run'],
+        force: values.force,
+        verbose: values.verbose,
+        type: values.type || 'all',
+      });
+      break;
     }
-    const infoPath = args[2];
-    const safeInfoPath = safeResolve(process.cwd(), infoPath || '.', [process.cwd(), homedir()]);
-    await info(itemName, safeInfoPath, {
-      format: values.format || 'detailed',
-      showContent: values['show-content'],
-    });
-    break;
-  }
 
-  case 'update': {
-    const updateAction = args[1];
-    await update({
-      check: updateAction === 'check' || values.check,
-      force: values.force,
-      verbose: values.verbose,
-    });
-    break;
-  }
+    case 'export': {
+      const exportPath = args[1];
+      const safeExportPath = safeResolve(process.cwd(), exportPath || '.', [
+        process.cwd(),
+        homedir(),
+      ]);
+      await exportProject({
+        projectRoot: safeExportPath,
+        format: values.format || 'json',
+        output: values.output,
+        includeContent: values['include-content'],
+        verbose: values.verbose,
+      });
+      break;
+    }
 
-  case 'clean': {
-    const cleanPath = args[1];
-    const safeCleanPath = safeResolve(process.cwd(), cleanPath || '.', [process.cwd(), homedir()]);
-    await clean(safeCleanPath, {
-      dryRun: values['dry-run'],
-      force: values.force,
-      verbose: values.verbose,
-      type: values.type || 'all',
-    });
-    break;
-  }
+    case 'research': {
+      const researchQuery = args[1];
+      await research({
+        query: researchQuery,
+        output: values.output,
+        'include-web': values['include-web'],
+        specialists: values.specialists,
+        verbose: values.verbose,
+        'min-quality': values['min-quality'],
+      });
+      break;
+    }
 
-  case 'export': {
-    const exportPath = args[1];
-    const safeExportPath = safeResolve(process.cwd(), exportPath || '.', [
-      process.cwd(),
-      homedir(),
-    ]);
-    await exportProject({
-      projectRoot: safeExportPath,
-      format: values.format || 'json',
-      output: values.output,
-      includeContent: values['include-content'],
-      verbose: values.verbose,
-    });
-    break;
-  }
+    case 'build-manifest': {
+      await buildManifest({
+        output: values.output,
+        dryRun: values['dry-run'],
+        verbose: values.verbose,
+        projectRoot: values.project || process.cwd(),
+      });
+      break;
+    }
 
-  case 'research': {
-    const researchQuery = args[1];
-    await research({
-      query: researchQuery,
-      output: values.output,
-      'include-web': values['include-web'],
-      specialists: values.specialists,
-      verbose: values.verbose,
-      'min-quality': values['min-quality'],
-    });
-    break;
+    default:
+      console.error(`Error: Unknown command '${command}'`);
+      console.error("Run 'codeflow --help' for usage information");
+      process.exit(1);
   }
-
-  case 'build-manifest': {
-    await buildManifest({
-      output: values.output,
-      dryRun: values['dry-run'],
-      verbose: values.verbose,
-      projectRoot: values.project || process.cwd(),
-    });
-    break;
-  }
-
-  default:
-    console.error(`Error: Unknown command '${command}'`);
-    console.error("Run 'codeflow --help' for usage information");
-    process.exit(1);
 }
+
+main().catch((error) => {
+  console.error('CLI Error:', error);
+  process.exit(1);
+});

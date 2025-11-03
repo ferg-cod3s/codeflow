@@ -7758,12 +7758,28 @@ class YamlProcessor {
         };
       }
       const frontmatterText = frontmatterMatch[1];
-      const body = frontmatterMatch[2] || "";
+      let body = frontmatterMatch[2] || "";
       let frontmatter;
       if (frontmatterText.trim() === "") {
         frontmatter = {};
       } else {
         frontmatter = $parse(frontmatterText) || {};
+      }
+      let secondFrontmatterMatch = body.match(/^---[\s]*\n([\s\S]*?)\n---[\s]*(\n[\s\S]*)?$/);
+      if (!secondFrontmatterMatch) {
+        secondFrontmatterMatch = body.match(/^[\s]*([\s\S]*?)\n---[\s]*(\n[\s\S]*)?$/);
+      }
+      if (secondFrontmatterMatch) {
+        const secondFrontmatterText = secondFrontmatterMatch[1];
+        const secondBody = secondFrontmatterMatch[2] || "";
+        let secondFrontmatter;
+        if (secondFrontmatterText.trim() === "") {
+          secondFrontmatter = {};
+        } else {
+          secondFrontmatter = $parse(secondFrontmatterText) || {};
+        }
+        frontmatter = { ...frontmatter, ...secondFrontmatter };
+        body = secondBody;
       }
       return {
         success: true,
@@ -8121,17 +8137,17 @@ function parseWithFallback(content) {
 }
 async function parseAgentsFromDirectory(directory, format) {
   const { readdir: readdir2 } = await import("fs/promises");
-  const { join: join2 } = await import("path");
-  const { existsSync: existsSync3 } = await import("fs");
+  const { join: join3 } = await import("path");
+  const { existsSync: existsSync4 } = await import("fs");
   const agents = [];
   const errors2 = [];
-  if (!existsSync3(directory)) {
+  if (!existsSync4(directory)) {
     return { agents, errors: errors2 };
   }
   try {
     const files = await readdir2(directory);
     for (const item of files) {
-      const itemPath = join2(directory, item);
+      const itemPath = join3(directory, item);
       const stat2 = await import("fs/promises").then((fs) => fs.stat(itemPath));
       if (stat2.isDirectory()) {
         try {
@@ -8321,11 +8337,31 @@ __export(exports_format_converter, {
 });
 
 class FormatConverter {
+  internalFields = [
+    "output_format",
+    "requires_structured_output",
+    "validation_rules",
+    "primary_objective",
+    "anti_objectives",
+    "intended_followups"
+  ];
+  filterInternalFields(frontmatter) {
+    const filtered = { ...frontmatter };
+    const removedFields = [];
+    for (const field of this.internalFields) {
+      if (field in filtered) {
+        delete filtered[field];
+        removedFields.push(field);
+      }
+    }
+    return filtered;
+  }
   baseToClaudeCode(agent) {
     if (agent.format !== "base") {
       throw new Error(`Expected base format, got ${agent.format}`);
     }
-    const baseAgent = agent.frontmatter;
+    const filteredFrontmatter = this.filterInternalFields(agent.frontmatter);
+    const baseAgent = filteredFrontmatter;
     let toolsString;
     if (baseAgent.tools && typeof baseAgent.tools === "object") {
       const enabledTools = Object.entries(baseAgent.tools).filter(([, enabled]) => enabled === true).map(([tool]) => tool);
@@ -8358,7 +8394,8 @@ class FormatConverter {
     if (agent.format !== "base") {
       throw new Error(`Expected base format, got ${agent.format}`);
     }
-    const baseAgent = agent.frontmatter;
+    const filteredFrontmatter = this.filterInternalFields(agent.frontmatter);
+    const baseAgent = filteredFrontmatter;
     const openCodeFrontmatter = {
       name: baseAgent.name || agent.name,
       description: baseAgent.description,
@@ -9119,8 +9156,8 @@ import { parseArgs } from "util";
 
 // src/cli/status.ts
 import { readdir } from "fs/promises";
-import { join } from "path";
-import { existsSync as existsSync2 } from "fs";
+import { join as join2 } from "path";
+import { existsSync as existsSync3 } from "fs";
 
 // src/cli/error-handler.ts
 import { existsSync } from "fs";
@@ -9293,6 +9330,53 @@ class CLIErrorHandler {
 }
 var error_handler_default = CLIErrorHandler;
 
+// src/utils/path-resolver.ts
+import { fileURLToPath } from "url";
+import { dirname, join, resolve } from "path";
+import { existsSync as existsSync2 } from "fs";
+var __filename = "/home/f3rg/src/github/codeflow/src/utils/path-resolver.ts";
+function getCodeflowRoot() {
+  if (process.env.CODEFLOW_ROOT) {
+    return resolve(process.env.CODEFLOW_ROOT);
+  }
+  let currentModulePath;
+  try {
+    currentModulePath = fileURLToPath(import.meta.url);
+    console.error(`[DEBUG] import.meta.url: ${import.meta.url}`);
+    console.error(`[DEBUG] currentModulePath: ${currentModulePath}`);
+  } catch (error) {
+    console.error(`[DEBUG] import.meta.url failed: ${error}`);
+    if (typeof __filename !== "undefined") {
+      currentModulePath = __filename;
+      console.error(`[DEBUG] Using __filename: ${currentModulePath}`);
+    } else {
+      const cwd2 = process.cwd();
+      console.error(`[DEBUG] Using cwd: ${cwd2}`);
+      if (existsSync2(join(cwd2, "package.json")) && existsSync2(join(cwd2, "base-agents"))) {
+        return cwd2;
+      }
+      currentModulePath = join(cwd2, "src", "utils", "path-resolver.ts");
+    }
+  }
+  const currentDir = dirname(currentModulePath);
+  const root = join(currentDir, "../..");
+  console.error(`[DEBUG] currentDir: ${currentDir}`);
+  console.error(`[DEBUG] calculated root: ${root}`);
+  const resolvedRoot = resolve(root);
+  console.error(`[DEBUG] resolvedRoot: ${resolvedRoot}`);
+  if (existsSync2(join(resolvedRoot, "base-agents")) && existsSync2(join(resolvedRoot, "command"))) {
+    console.error(`[DEBUG] Validation passed, returning: ${resolvedRoot}`);
+    return resolvedRoot;
+  }
+  const cwd = process.cwd();
+  if (existsSync2(join(cwd, "base-agents")) && existsSync2(join(cwd, "command"))) {
+    console.error(`[DEBUG] Using cwd as fallback: ${cwd}`);
+    return cwd;
+  }
+  console.error(`[DEBUG] Returning calculated root as last resort: ${resolvedRoot}`);
+  return resolvedRoot;
+}
+
 // src/cli/status.ts
 async function status(projectPath) {
   const resolvedPath = projectPath || process.cwd();
@@ -9301,29 +9385,29 @@ async function status(projectPath) {
     error_handler_default.displayValidationResult(pathValidation, "project directory");
     return;
   }
-  const codeflowDir = join(import.meta.dir, "../..");
-  const targetBase = join(resolvedPath, ".opencode");
+  const codeflowDir = getCodeflowRoot();
+  const targetBase = join2(resolvedPath, ".opencode");
   error_handler_default.displayProgress(`Checking status for: ${resolvedPath}`);
   error_handler_default.displayProgress(`Checking: commands, agents`);
   try {
     let upToDateCount = 0;
     let outdatedCount = 0;
     let missingCount = 0;
-    const sourceCommandDir = join(codeflowDir, "command");
-    if (existsSync2(sourceCommandDir)) {
+    const sourceCommandDir = join2(codeflowDir, "command");
+    if (existsSync3(sourceCommandDir)) {
       const sourceFiles = await readdir(sourceCommandDir);
       const mdFiles = sourceFiles.filter((f) => f.endsWith(".md"));
       for (const file of mdFiles) {
         const possibleLocations = [
-          join(targetBase, "command"),
-          join(resolvedPath, ".claude", "commands"),
-          join(resolvedPath, ".cursor", "mcp.json")
+          join2(targetBase, "command"),
+          join2(resolvedPath, ".claude", "commands"),
+          join2(resolvedPath, ".cursor", "mcp.json")
         ];
         const foundInProject = possibleLocations.some((location) => {
           if (location.includes("mcp.json")) {
-            return existsSync2(location);
+            return existsSync3(location);
           }
-          return existsSync2(join(location, file));
+          return existsSync3(join2(location, file));
         });
         if (!foundInProject) {
           console.log(`\u274C command/${file} (missing in project)`);
@@ -9334,14 +9418,14 @@ async function status(projectPath) {
         }
       }
     }
-    const sourceAgentDir = join(codeflowDir, "codeflow-agents");
-    const targetAgentDir = join(targetBase, "agent");
-    if (existsSync2(sourceAgentDir)) {
+    const sourceAgentDir = join2(codeflowDir, "codeflow-agents");
+    const targetAgentDir = join2(targetBase, "agent");
+    if (existsSync3(sourceAgentDir)) {
       const sourceFiles = await readdir(sourceAgentDir);
       const mdFiles = sourceFiles.filter((f) => f.endsWith(".md"));
       for (const file of mdFiles) {
-        const targetFile = join(targetAgentDir, file);
-        if (!existsSync2(targetFile)) {
+        const targetFile = join2(targetAgentDir, file);
+        if (!existsSync3(targetFile)) {
           console.log(`\u274C agent/${file} (missing in project)`);
           missingCount++;
         } else {
@@ -9374,15 +9458,15 @@ async function status(projectPath) {
 // src/cli/setup.ts
 init_agent_parser();
 init_command_converter();
-import { join as join2, dirname } from "path";
-import { existsSync as existsSync3 } from "fs";
+import { join as join3, dirname as dirname2 } from "path";
+import { existsSync as existsSync4 } from "fs";
 import { readdir as readdir2, mkdir as mkdir2, copyFile, writeFile, readFile as readFile3 } from "fs/promises";
-import { fileURLToPath } from "url";
+import { fileURLToPath as fileURLToPath2 } from "url";
 function getPackageRoot() {
   try {
-    const __filename2 = fileURLToPath(import.meta.url);
-    const __dirname2 = dirname(__filename2);
-    return dirname(dirname(__dirname2));
+    const __filename2 = fileURLToPath2(import.meta.url);
+    const __dirname2 = dirname2(__filename2);
+    return dirname2(dirname2(__dirname2));
   } catch {
     return process.cwd();
   }
@@ -9399,54 +9483,39 @@ function getTargetFormat(setupDir) {
   }
   return null;
 }
-function getCommandSourceDirs(sourcePath, targetDir) {
+function getCommandSourceDirs(_sourcePath, targetDir, packageRoot) {
   const sourceDirs = [];
-  const cwdCommandDir = join2(process.cwd(), "command");
-  if (existsSync3(cwdCommandDir)) {
-    sourceDirs.push(cwdCommandDir);
-  } else {
-    sourceDirs.push(join2(sourcePath, "command"));
-  }
+  sourceDirs.push(join3(packageRoot, "command"));
   if (targetDir.includes(".claude")) {
-    const cwdClaudeAgentsDir = join2(process.cwd(), "claude-agents");
-    if (existsSync3(cwdClaudeAgentsDir)) {
-      sourceDirs.push(cwdClaudeAgentsDir);
-    } else {
-      sourceDirs.push(join2(sourcePath, "claude-agents"));
-    }
+    sourceDirs.push(join3(packageRoot, "claude-agents"));
   } else if (targetDir.includes(".opencode")) {
-    const cwdOpenCodeAgentsDir = join2(process.cwd(), "opencode-agents");
-    if (existsSync3(cwdOpenCodeAgentsDir)) {
-      sourceDirs.push(cwdOpenCodeAgentsDir);
-    } else {
-      sourceDirs.push(join2(sourcePath, "opencode-agents"));
-    }
+    sourceDirs.push(join3(packageRoot, "opencode-agents"));
   }
   return sourceDirs;
 }
-async function copyCommands(converter, sourcePath, targetPath, setupDirs) {
+async function copyCommands(converter, sourcePath, targetPath, setupDirs, packageRoot) {
   let fileCount = 0;
   for (const setupDir of setupDirs) {
-    const targetDir = join2(targetPath, setupDir);
-    if (!existsSync3(targetDir)) {
+    const targetDir = join3(targetPath, setupDir);
+    if (!existsSync4(targetDir)) {
       await mkdir2(targetDir, { recursive: true });
       console.log(`  \u2713 Created directory: ${setupDir}`);
     }
     if (setupDir.includes("command")) {
       console.log(`\uD83D\uDCCB Copying commands to ${setupDir}...`);
-      const sourceDirs = getCommandSourceDirs(sourcePath, setupDir);
+      const sourceDirs = getCommandSourceDirs(sourcePath, setupDir, packageRoot);
       console.log(`Source dirs: ${sourceDirs.join(", ")}`);
       let commandsCopied = 0;
       for (const sourceDir of sourceDirs) {
-        if (existsSync3(sourceDir)) {
+        if (existsSync4(sourceDir)) {
           try {
             const files = await readdir2(sourceDir, { withFileTypes: true });
             console.log(`Found ${files.length} files in ${sourceDir}`);
             for (const file of files) {
               if (file.isFile() && file.name.endsWith(".md")) {
                 try {
-                  const sourceFile = join2(sourceDir, file.name);
-                  const targetFile = join2(targetDir, file.name);
+                  const sourceFile = join3(sourceDir, file.name);
+                  const targetFile = join3(targetDir, file.name);
                   if (targetDir.includes(".opencode")) {
                     try {
                       if (converter instanceof CommandConverter) {
@@ -9515,41 +9584,41 @@ async function copyCommands(converter, sourcePath, targetPath, setupDirs) {
   }
   return fileCount;
 }
-async function copySkills(sourcePath, targetPath, setupDirs) {
+async function copySkills(sourcePath, targetPath, setupDirs, packageRoot) {
   let fileCount = 0;
   for (const setupDir of setupDirs) {
     if (setupDir.includes("skills")) {
-      const targetDir = join2(targetPath, setupDir);
-      if (!existsSync3(targetDir)) {
+      const targetDir = join3(targetPath, setupDir);
+      if (!existsSync4(targetDir)) {
         await mkdir2(targetDir, { recursive: true });
         console.log(`  \u2713 Created directory: ${setupDir}`);
       }
       console.log(`\uD83D\uDCE6 Copying skills to ${setupDir}...`);
       const sourceDirs = [
-        join2(process.cwd(), "base-skills"),
-        join2(sourcePath, "base-skills"),
-        join2(getPackageRoot(), "base-skills")
+        join3(packageRoot, "base-skills"),
+        join3(sourcePath, "base-skills"),
+        join3(process.cwd(), "base-skills")
       ];
       let skillsCopied = 0;
       for (const sourceDir of sourceDirs) {
-        if (existsSync3(sourceDir)) {
+        if (existsSync4(sourceDir)) {
           try {
             const files = await readdir2(sourceDir, { withFileTypes: true });
             console.log(`Found ${files.length} items in ${sourceDir}`);
             for (const file of files) {
               if (file.isFile() && file.name.endsWith(".md")) {
                 try {
-                  const sourceFile = join2(sourceDir, file.name);
-                  const targetFile = join2(targetDir, file.name);
+                  const sourceFile = join3(sourceDir, file.name);
+                  const targetFile = join3(targetDir, file.name);
                   await copyFile(sourceFile, targetFile);
                   skillsCopied++;
                 } catch (error) {
                   console.error(`\u274C Failed to copy skill ${file.name}: ${error.message}`);
                 }
               } else if (file.isDirectory()) {
-                const sourceCategoryDir = join2(sourceDir, file.name);
-                const targetCategoryDir = join2(targetDir, file.name);
-                if (!existsSync3(targetCategoryDir)) {
+                const sourceCategoryDir = join3(sourceDir, file.name);
+                const targetCategoryDir = join3(targetDir, file.name);
+                if (!existsSync4(targetCategoryDir)) {
                   await mkdir2(targetCategoryDir, { recursive: true });
                 }
                 try {
@@ -9557,8 +9626,8 @@ async function copySkills(sourcePath, targetPath, setupDirs) {
                   for (const categoryFile of categoryFiles) {
                     if (categoryFile.isFile() && categoryFile.name.endsWith(".md")) {
                       try {
-                        const sourceSkillFile = join2(sourceCategoryDir, categoryFile.name);
-                        const targetSkillFile = join2(targetCategoryDir, categoryFile.name);
+                        const sourceSkillFile = join3(sourceCategoryDir, categoryFile.name);
+                        const targetSkillFile = join3(targetCategoryDir, categoryFile.name);
                         await copyFile(sourceSkillFile, targetSkillFile);
                         skillsCopied++;
                       } catch (error) {
@@ -9620,24 +9689,57 @@ async function setup(inputPath, options) {
     }
     return dirs;
   });
-  const sourcePath = join2(process.cwd(), "command");
+  let packageRoot = getPackageRoot();
+  if (process.env.CODEFLOW_ROOT && existsSync4(join3(process.env.CODEFLOW_ROOT, "base-agents"))) {
+    packageRoot = process.env.CODEFLOW_ROOT;
+  } else if (!existsSync4(join3(packageRoot, "base-agents")) || !existsSync4(join3(packageRoot, "command"))) {
+    const cwd = process.cwd();
+    if (existsSync4(join3(cwd, "base-agents")) && existsSync4(join3(cwd, "command"))) {
+      packageRoot = cwd;
+    } else {
+      let searchDir = cwd;
+      while (searchDir !== "/") {
+        if (existsSync4(join3(searchDir, "base-agents")) && existsSync4(join3(searchDir, "command"))) {
+          packageRoot = searchDir;
+          break;
+        }
+        searchDir = dirname2(searchDir);
+      }
+    }
+  } else if (!existsSync4(join3(packageRoot, "base-agents")) || !existsSync4(join3(packageRoot, "command"))) {
+    const cwd = process.cwd();
+    if (existsSync4(join3(cwd, "base-agents")) && existsSync4(join3(cwd, "command"))) {
+      packageRoot = cwd;
+    } else {
+      let searchDir = cwd;
+      while (searchDir !== "/") {
+        if (existsSync4(join3(searchDir, "base-agents")) && existsSync4(join3(searchDir, "command"))) {
+          packageRoot = searchDir;
+          break;
+        }
+        searchDir = dirname2(searchDir);
+      }
+    }
+  }
+  const sourcePath = join3(packageRoot, "command");
   const targetPath = inputPath;
   try {
+    console.log(`\uD83D\uDD27 Package root: ${packageRoot}`);
     console.log(`\uD83D\uDE80 Setting up Codeflow for ${projectTypes.join(" and ")}...`);
     console.log(`\uD83D\uDCC1 Source: ${sourcePath}`);
     console.log(`\uD83D\uDCC1 Target: ${targetPath}`);
     const commandConverter = new CommandConverter;
-    const commandCount = await copyCommands(commandConverter, sourcePath, targetPath, setupDirs);
+    const commandCount = await copyCommands(commandConverter, sourcePath, targetPath, setupDirs, packageRoot);
     const skillsSetupDirs = setupDirs.filter((dir) => dir.includes("skills"));
-    const skillsPath = join2(process.cwd(), "base-skills");
-    const skillCount = await copySkills(skillsPath, targetPath, skillsSetupDirs);
+    const skillsPath = join3(getPackageRoot(), "base-skills");
+    const skillCount = await copySkills(skillsPath, targetPath, skillsSetupDirs, packageRoot);
     const fileCount = commandCount + skillCount;
-    const readmePath = join2(targetPath, "README.md");
-    const isMainProject = targetPath === process.cwd() && existsSync3(join2(targetPath, "package.json"));
+    const readmePath = join3(targetPath, "README.md");
+    const isMainProject = targetPath === process.cwd() && existsSync4(join3(targetPath, "package.json"));
     if (!isMainProject) {
       const typeDescription = projectTypes.length > 1 ? "multi-platform" : projectTypes[0];
       let readmeContent = "";
-      if (existsSync3(readmePath)) {
+      if (existsSync4(readmePath)) {
         readmeContent = await readFile3(readmePath, "utf-8");
         if (readmeContent.includes("Generated by Codeflow CLI")) {} else {
           readmeContent += `
@@ -9694,19 +9796,12 @@ Generated by Codeflow CLI
     throw error;
   }
 }
-function getAgentSourceDirs(sourcePath, _targetFormat) {
+function getAgentSourceDirs(_sourcePath, _targetFormat) {
   const sourceDirs = [];
   const packageRoot = getPackageRoot();
-  const baseAgentsCandidates = [
-    join2(process.cwd(), "base-agents"),
-    join2(packageRoot, "base-agents"),
-    join2(sourcePath, "base-agents")
-  ];
-  for (const candidate of baseAgentsCandidates) {
-    if (existsSync3(candidate)) {
-      sourceDirs.push(candidate);
-      break;
-    }
+  const baseAgentsDir = join3(packageRoot, "base-agents");
+  if (existsSync4(baseAgentsDir)) {
+    sourceDirs.push(baseAgentsDir);
   }
   return sourceDirs;
 }
@@ -9715,7 +9810,7 @@ async function copyAgentsWithConversion(sourcePath, targetPath, targetFormat) {
   const sourceDirs = getAgentSourceDirs(sourcePath, targetFormat);
   let agentsConverted = 0;
   for (const sourceDir of sourceDirs) {
-    if (existsSync3(sourceDir)) {
+    if (existsSync4(sourceDir)) {
       try {
         const { agents, errors: errors2 } = await parseAgentsFromDirectory(sourceDir, "base");
         console.log(`Found ${agents.length} agents in ${sourceDir}`);
@@ -9730,7 +9825,7 @@ async function copyAgentsWithConversion(sourcePath, targetPath, targetFormat) {
           try {
             const convertedAgent = converter.convert(agent, targetFormat);
             const serialized = serializeAgent(convertedAgent);
-            const targetFile = join2(targetPath, `${agent.name}.md`);
+            const targetFile = join3(targetPath, `${agent.name}.md`);
             await writeFile(targetFile, serialized);
             agentsConverted++;
           } catch (error) {
@@ -9747,12 +9842,12 @@ async function copyAgentsWithConversion(sourcePath, targetPath, targetFormat) {
 
 // src/cli/convert.ts
 init_agent_parser();
-import { join as join4 } from "path";
-import { existsSync as existsSync4 } from "fs";
+import { join as join5 } from "path";
+import { existsSync as existsSync5 } from "fs";
 import { mkdir as mkdir3, writeFile as writeFile3 } from "fs/promises";
 
 // src/security/opencode-permissions.ts
-import { join as join3 } from "path";
+import { join as join4 } from "path";
 import { readFile as readFile4, readdir as readdir3, writeFile as writeFile2 } from "fs/promises";
 
 // src/security/validation.ts
@@ -9813,19 +9908,19 @@ var DEFAULT_OPENCODE_PERMISSIONS = {
   },
   defaultAllowedDirectories: [
     process.cwd(),
-    join3(process.cwd(), "src"),
-    join3(process.cwd(), "tests"),
-    join3(process.cwd(), "docs"),
-    join3(process.cwd(), "thoughts"),
-    join3(process.cwd(), "packages", "*", "src"),
-    join3(process.cwd(), "packages", "*", "tests")
+    join4(process.cwd(), "src"),
+    join4(process.cwd(), "tests"),
+    join4(process.cwd(), "docs"),
+    join4(process.cwd(), "thoughts"),
+    join4(process.cwd(), "packages", "*", "src"),
+    join4(process.cwd(), "packages", "*", "tests")
   ]
 };
 async function applyOpenCodePermissionsToDirectory(dirPath, config) {
   await setDirectoryPermissions(dirPath, config.osPermissions.directories);
   const entries = await readdir3(dirPath, { withFileTypes: true });
   for (const entry of entries) {
-    const fullPath = join3(dirPath, entry.name);
+    const fullPath = join4(dirPath, entry.name);
     if (entry.isDirectory()) {
       await setDirectoryPermissions(fullPath, config.osPermissions.directories);
     } else if (entry.name.endsWith(".md")) {
@@ -9966,7 +10061,7 @@ async function convert(source, target, format) {
     const agentOnly = agents.filter((item) => ("mode" in item.frontmatter) && item.frontmatter.mode !== "command");
     const convertedAgents = converter.convertBatch(agentOnly, format);
     error_handler_default.displayProgress(`Converted ${convertedAgents.length} agents to ${format} format`);
-    if (!existsSync4(target)) {
+    if (!existsSync5(target)) {
       await mkdir3(target, { recursive: true });
       error_handler_default.displayProgress(`Created target directory: ${target}`);
     }
@@ -9978,11 +10073,11 @@ async function convert(source, target, format) {
         let filePath;
         if (format === "claude-code") {
           const category = findAgentCategory(agent.frontmatter.name);
-          const categoryPath = join4(target, category);
+          const categoryPath = join5(target, category);
           await mkdir3(categoryPath, { recursive: true });
-          filePath = join4(categoryPath, filename);
+          filePath = join5(categoryPath, filename);
         } else {
-          filePath = join4(target, filename);
+          filePath = join5(target, filename);
         }
         const serialized = serializeAgent(agent);
         await writeFile3(filePath, serialized);
@@ -10034,20 +10129,20 @@ async function convert(source, target, format) {
 
 // src/cli/sync.ts
 init_agent_parser();
-import { existsSync as existsSync8 } from "fs";
-import { readdir as readdir6, copyFile as copyFile3, mkdir as mkdir5 } from "fs/promises";
-import { join as join7 } from "path";
+import { existsSync as existsSync10 } from "fs";
+import { readdir as readdir7, copyFile as copyFile3, mkdir as mkdir6, writeFile as writeFile6 } from "fs/promises";
+import { join as join9 } from "path";
 
 // src/sync/canonical-syncer.ts
 import { readFile as readFile5, readdir as readdir4 } from "fs/promises";
-import { existsSync as existsSync6 } from "fs";
+import { existsSync as existsSync7 } from "fs";
 import { mkdir as mkdir4, copyFile as copyFile2, stat as stat2 } from "fs/promises";
 import path, { basename as basename2 } from "path";
 import os from "os";
 
 // src/utils/manifest-discovery.ts
-import { join as join5, dirname as dirname2 } from "path";
-import { existsSync as existsSync5, copyFileSync, statSync } from "fs";
+import { join as join6, dirname as dirname3 } from "path";
+import { existsSync as existsSync6, copyFileSync, statSync } from "fs";
 async function findAgentManifest(options = {}) {
   const {
     cwd = process.cwd(),
@@ -10057,8 +10152,8 @@ async function findAgentManifest(options = {}) {
   let currentDir = cwd;
   let level = 0;
   while (level <= maxDepth) {
-    const manifestPath = join5(currentDir, "AGENT_MANIFEST.json");
-    if (existsSync5(manifestPath)) {
+    const manifestPath = join6(currentDir, "AGENT_MANIFEST.json");
+    if (existsSync6(manifestPath)) {
       return {
         path: manifestPath,
         isLegacy: false,
@@ -10066,8 +10161,8 @@ async function findAgentManifest(options = {}) {
       };
     }
     if (allowLegacy) {
-      const legacyPath = join5(currentDir, ".codeflow", "AGENT_MANIFEST.json");
-      if (existsSync5(legacyPath)) {
+      const legacyPath = join6(currentDir, ".codeflow", "AGENT_MANIFEST.json");
+      if (existsSync6(legacyPath)) {
         return {
           path: legacyPath,
           isLegacy: true,
@@ -10075,7 +10170,7 @@ async function findAgentManifest(options = {}) {
         };
       }
     }
-    const parentDir = dirname2(currentDir);
+    const parentDir = dirname3(currentDir);
     if (parentDir === currentDir) {
       break;
     }
@@ -10147,7 +10242,7 @@ class CanonicalSyncer {
     for (const agent of agents) {
       const sourceFile = agent.sources[options.sourceFormat];
       try {
-        if (!sourceFile || !existsSync6(sourceFile)) {
+        if (!sourceFile || !existsSync7(sourceFile)) {
           result.errors.push({
             agent: agent.name,
             type: "filesystem" /* FILE_SYSTEM */,
@@ -10319,7 +10414,7 @@ class CanonicalSyncer {
     const tempFiles = [];
     const codeflowRoot = path.join(process.cwd());
     const sourceCommandDir = path.join(codeflowRoot, "command");
-    if (!existsSync6(sourceCommandDir)) {
+    if (!existsSync7(sourceCommandDir)) {
       return tempFiles;
     }
     const { CommandConverter: CommandConverter2 } = await Promise.resolve().then(() => (init_command_converter(), exports_command_converter));
@@ -10394,14 +10489,14 @@ class CanonicalSyncer {
 }
 
 // src/cli/sync.ts
-import { homedir } from "os";
+import { homedir as homedir2 } from "os";
 
 // src/yaml/command-validator.ts
 init_validation_engine();
 init_yaml_processor();
 import { readFile as readFile6, readdir as readdir5 } from "fs/promises";
-import { join as join6 } from "path";
-import { existsSync as existsSync7 } from "fs";
+import { join as join7 } from "path";
+import { existsSync as existsSync8 } from "fs";
 
 class CommandValidator {
   validator;
@@ -10413,7 +10508,7 @@ class CommandValidator {
   }
   async validateDirectory(directoryPath, format = "opencode") {
     const startTime = performance.now();
-    if (!existsSync7(directoryPath)) {
+    if (!existsSync8(directoryPath)) {
       throw new Error(`Directory does not exist: ${directoryPath}`);
     }
     const errors2 = [];
@@ -10757,7 +10852,7 @@ class CommandValidator {
     async function scanDirectory(dir) {
       const entries = await readdir5(dir, { withFileTypes: true });
       for (const entry of entries) {
-        const fullPath = join6(dir, entry.name);
+        const fullPath = join7(dir, entry.name);
         if (entry.isDirectory()) {
           await scanDirectory(fullPath);
         } else if (entry.isFile() && entry.name.endsWith(".md")) {
@@ -10779,7 +10874,7 @@ class CommandValidator {
     async function scanDirectory(dir) {
       const entries = await readdir5(dir, { withFileTypes: true });
       for (const entry of entries) {
-        const fullPath = join6(dir, entry.name);
+        const fullPath = join7(dir, entry.name);
         if (entry.isDirectory()) {
           await scanDirectory(fullPath);
         } else {
@@ -10814,6 +10909,527 @@ class CommandValidator {
   }
 }
 
+// src/sync-with-validation.ts
+import { readdir as readdir6, writeFile as writeFile5, mkdir as mkdir5, readFile as readFile8 } from "fs/promises";
+import { existsSync as existsSync9 } from "fs";
+import { join as join8, basename as basename3 } from "path";
+import { homedir } from "os";
+
+// src/utils/yaml-validator.ts
+init_dist();
+import { readFile as readFile7, writeFile as writeFile4 } from "fs/promises";
+var YAML_FIXES = [
+  {
+    pattern: /^(\s*(?:description|help|prompt|text|message|content|value|default|example|note|comment|label|title|name|tooltip|placeholder|error|warning|info|success):\s*)([^"'\n]*?)\s*:\s*([^"'\n]*?)$/gm,
+    fix: (match, prefix, beforeColon, afterColon) => {
+      if (beforeColon && afterColon) {
+        const value = `${beforeColon}: ${afterColon}`.trim();
+        return `${prefix}'${value}'`;
+      }
+      return match;
+    },
+    description: "Quote values containing colons"
+  },
+  {
+    pattern: /^(\s*(?:description|help|prompt|text|message|content|value|default|example|note|comment|label|title|name|tooltip|placeholder|error|warning|info|success):\s*)([^"'\n]*?\(.*?:.*?\)[^"'\n]*?)$/gm,
+    fix: (match, prefix, value) => {
+      if (!value.startsWith('"') && !value.startsWith("'")) {
+        return `${prefix}'${value}'`;
+      }
+      return match;
+    },
+    description: "Quote values with parentheses containing colons"
+  },
+  {
+    pattern: /^(\s*(?:description|help|prompt|text|message|content|value|instructions):\s*)([^"'\n][^\n]*\n\s+[^\n]+)/gm,
+    fix: (match, prefix, value) => {
+      const lines = value.split(`
+`).map((l) => l.trim());
+      return `${prefix}|
+  ${lines.join(`
+  `)}`;
+    },
+    description: "Use pipe notation for multiline strings"
+  }
+];
+function validateYAML(content) {
+  const errors2 = [];
+  const warnings = [];
+  try {
+    $parse(content);
+    return { valid: true, errors: errors2, warnings };
+  } catch (error) {
+    const errorMessage = error.message || "Unknown YAML error";
+    const line = error.mark?.line;
+    const column = error.mark?.column;
+    errors2.push(`YAML Parse Error at line ${line}, column ${column}: ${errorMessage}`);
+    const fixed = attemptAutoFix(content, error);
+    if (fixed && fixed !== content) {
+      try {
+        $parse(fixed);
+        warnings.push("YAML was auto-fixed");
+        return { valid: true, errors: [], warnings, fixed };
+      } catch {
+        errors2.push("Auto-fix attempted but failed");
+      }
+    }
+    return { valid: false, errors: errors2, warnings };
+  }
+}
+function attemptAutoFix(content, error) {
+  let fixed = content;
+  for (const fix of YAML_FIXES) {
+    fixed = fixed.replace(fix.pattern, fix.fix);
+  }
+  if (error.message.includes("incomplete explicit mapping pair")) {
+    const lines = fixed.split(`
+`);
+    const errorLine = error.mark?.line - 1;
+    if (errorLine >= 0 && errorLine < lines.length) {
+      const line = lines[errorLine];
+      const match = line.match(/^(\s*)(description|help|prompt|text|message|content|value):\s*(.+)$/);
+      if (match) {
+        const [, indent, key, value] = match;
+        if (value.includes(":") && !value.startsWith('"') && !value.startsWith("'")) {
+          lines[errorLine] = `${indent}${key}: '${value}'`;
+          fixed = lines.join(`
+`);
+        }
+      }
+    }
+  }
+  return fixed;
+}
+async function validateMarkdownYAML(filePath) {
+  try {
+    const content = await readFile7(filePath, "utf-8");
+    if (!content.startsWith(`---
+`)) {
+      return { valid: true, errors: [], warnings: ["No frontmatter found"] };
+    }
+    const parts = content.split(`---
+`);
+    if (parts.length < 3) {
+      return {
+        valid: false,
+        errors: ["Invalid frontmatter structure"],
+        warnings: []
+      };
+    }
+    const frontmatter = parts[1];
+    const result = validateYAML(frontmatter);
+    if (filePath.includes("/skills/") || filePath.includes("\\skills\\")) {
+      const skillValidation = validateSkillFrontmatter(frontmatter);
+      result.errors.push(...skillValidation.errors);
+      result.warnings.push(...skillValidation.warnings);
+      result.valid = result.valid && skillValidation.valid;
+    }
+    if (result.fixed) {
+      const newContent = `---
+${result.fixed}---
+${parts.slice(2).join(`---
+`)}`;
+      result.fixed = newContent;
+    }
+    return result;
+  } catch (error) {
+    return {
+      valid: false,
+      errors: [`Failed to read file: ${error.message}`],
+      warnings: []
+    };
+  }
+}
+function validateSkillFrontmatter(frontmatter) {
+  const errors2 = [];
+  const warnings = [];
+  try {
+    const parsed = $parse(frontmatter);
+    if (!parsed.name) {
+      errors2.push("Missing required field: name");
+    } else if (typeof parsed.name !== "string") {
+      errors2.push('Field "name" must be a string');
+    } else if (!/^[a-z0-9-]+$/.test(parsed.name)) {
+      errors2.push('Field "name" must be hyphen-case (lowercase letters, numbers, and hyphens only)');
+    }
+    if (!parsed.description) {
+      errors2.push("Missing required field: description");
+    } else if (typeof parsed.description !== "string") {
+      errors2.push('Field "description" must be a string');
+    } else if (parsed.description.length < 20) {
+      errors2.push('Field "description" must be at least 20 characters long');
+    }
+    if (parsed.noReply === undefined) {
+      errors2.push("Missing required field: noReply");
+    } else if (typeof parsed.noReply !== "boolean") {
+      errors2.push('Field "noReply" must be a boolean');
+    } else if (!parsed.noReply) {
+      errors2.push('Field "noReply" must be true for skills (required for message insertion persistence)');
+    }
+    if (parsed.category && typeof parsed.category !== "string") {
+      errors2.push('Field "category" must be a string');
+    }
+    if (parsed.tags && !Array.isArray(parsed.tags)) {
+      errors2.push('Field "tags" must be an array');
+    }
+    return {
+      valid: errors2.length === 0,
+      errors: errors2,
+      warnings
+    };
+  } catch (error) {
+    return {
+      valid: false,
+      errors: [`Failed to parse skill frontmatter: ${error.message}`],
+      warnings: []
+    };
+  }
+}
+async function fixYAMLFile(filePath) {
+  const result = await validateMarkdownYAML(filePath);
+  if (result.fixed) {
+    try {
+      await writeFile4(filePath, result.fixed, "utf-8");
+      console.log(`\u2705 Fixed YAML in ${filePath}`);
+      return true;
+    } catch (error) {
+      console.error(`\u274C Failed to write fixed file: ${error}`);
+      return false;
+    }
+  }
+  return result.valid;
+}
+if (false) {}
+
+// src/sync-with-validation.ts
+init_agent_parser();
+
+class SyncManager {
+  projectRoot;
+  homeDir;
+  constructor() {
+    this.projectRoot = process.cwd();
+    this.homeDir = homedir();
+  }
+  getPaths(global = false) {
+    const base = global ? this.homeDir : this.projectRoot;
+    return {
+      agents: {
+        source: join8(this.projectRoot, "base-agents"),
+        claude: join8(base, ".claude", "agents"),
+        opencode: join8(base, ".opencode", "agent"),
+        globalClaude: join8(this.homeDir, ".claude", "agents"),
+        globalOpenCode: join8(this.homeDir, ".config", "opencode", "agent")
+      },
+      commands: {
+        source: join8(this.projectRoot, "command"),
+        claude: join8(base, ".claude", "commands"),
+        opencode: join8(base, ".opencode", "command"),
+        globalClaude: join8(this.homeDir, ".claude", "commands"),
+        globalOpenCode: join8(this.homeDir, ".config", "opencode", "command")
+      },
+      skills: {
+        source: join8(this.projectRoot, "base-skills"),
+        claude: join8(base, ".claude", "skills"),
+        opencode: join8(base, ".opencode", "skill"),
+        globalClaude: join8(this.homeDir, ".claude", "skills"),
+        globalOpenCode: join8(this.homeDir, ".config", "opencode", "skill")
+      }
+    };
+  }
+  async findAllMarkdownFiles(dir) {
+    const files = [];
+    try {
+      const entries = await readdir6(dir, { withFileTypes: true });
+      for (const entry of entries) {
+        const fullPath = join8(dir, entry.name);
+        if (entry.isDirectory()) {
+          const subFiles = await this.findAllMarkdownFiles(fullPath);
+          files.push(...subFiles);
+        } else if (entry.isFile() && entry.name.endsWith(".md")) {
+          files.push(fullPath);
+        }
+      }
+    } catch {}
+    return files;
+  }
+  getTargetFormat(targetPath) {
+    if (targetPath.includes(".claude")) {
+      return "claude-code";
+    } else if (targetPath.includes(".opencode")) {
+      return "opencode";
+    } else if (targetPath.includes(".cursor")) {
+      return "cursor";
+    }
+    return "base";
+  }
+  isCommandFile(filePath) {
+    if (filePath.includes("/command/") || filePath.includes("\\command\\")) {
+      return true;
+    }
+    const paths = this.getPaths();
+    if (filePath.startsWith(paths.commands.source)) {
+      return true;
+    }
+    const commandSourcePath = join8(this.projectRoot, "command");
+    if (filePath.startsWith(commandSourcePath)) {
+      return true;
+    }
+    return false;
+  }
+  isSkillFile(filePath) {
+    if (filePath.includes("/skills/") || filePath.includes("\\skills\\")) {
+      return true;
+    }
+    const paths = this.getPaths();
+    if (filePath.startsWith(paths.skills.source)) {
+      return true;
+    }
+    const skillsSourcePath = join8(this.projectRoot, "base-skills");
+    if (filePath.startsWith(skillsSourcePath)) {
+      return true;
+    }
+    return false;
+  }
+  async syncFile(sourcePath, targetPath, options) {
+    try {
+      let wasFixed = false;
+      if (options.validate !== false) {
+        const validation = await validateMarkdownYAML(sourcePath);
+        if (!validation.valid) {
+          if (options.fix) {
+            const fixed = await fixYAMLFile(sourcePath);
+            if (!fixed) {
+              if (options.verbose) {
+                console.error(`  \u274C Cannot fix YAML in ${basename3(sourcePath)}`);
+              }
+              return "error";
+            }
+            if (options.verbose) {
+              console.log(`  \uD83D\uDD27 Fixed YAML in ${basename3(sourcePath)}`);
+            }
+            wasFixed = true;
+          } else {
+            if (options.verbose) {
+              console.error(`  \u26A0\uFE0F  Skipping ${basename3(sourcePath)} - invalid YAML`);
+            }
+            return "skipped";
+          }
+        } else if (validation.fixed) {
+          wasFixed = true;
+        }
+      }
+      const targetFormat = this.getTargetFormat(targetPath);
+      const isCommand = this.isCommandFile(sourcePath);
+      const isSkill = this.isSkillFile(sourcePath);
+      let convertedContent;
+      try {
+        if (isCommand) {
+          const command = await parseCommandFile(sourcePath, "base");
+          const converter = new FormatConverter;
+          const convertedCommand = converter.convert(command, targetFormat);
+          convertedContent = serializeCommand(convertedCommand);
+        } else if (isSkill) {
+          const content = await readFile8(sourcePath, "utf-8");
+          convertedContent = content;
+        } else {
+          const agent = await parseAgentFile(sourcePath, "base");
+          const converter = new FormatConverter;
+          const convertedAgent = converter.convert(agent, targetFormat);
+          convertedContent = serializeAgent(convertedAgent);
+        }
+      } catch (conversionError) {
+        if (options.verbose) {
+          console.error(`  \u274C Conversion failed for ${basename3(sourcePath)}: ${conversionError.message}`);
+        }
+        return "error";
+      }
+      const targetDir = join8(targetPath, "..");
+      if (!existsSync9(targetDir)) {
+        await mkdir5(targetDir, { recursive: true });
+      }
+      await writeFile5(targetPath, convertedContent, "utf-8");
+      if (options.verbose) {
+        console.log(`  \u2705 ${basename3(sourcePath)} \u2192 ${targetPath}`);
+      }
+      return wasFixed ? "fixed" : "copied";
+    } catch (error) {
+      if (options.verbose) {
+        console.error(`  \u274C Error syncing ${basename3(sourcePath)}: ${error.message}`);
+      }
+      return "error";
+    }
+  }
+  async syncDirectory(sourceDir, targetDirs, options) {
+    const result = {
+      copied: 0,
+      fixed: 0,
+      skipped: 0,
+      errors: []
+    };
+    if (!existsSync9(sourceDir)) {
+      result.errors.push(`Source directory not found: ${sourceDir}`);
+      return result;
+    }
+    const mdFiles = await this.findAllMarkdownFiles(sourceDir);
+    for (const file of mdFiles) {
+      const relativePath = file.replace(sourceDir + "/", "");
+      const sourcePath = join8(sourceDir, relativePath);
+      for (const targetDir of targetDirs) {
+        if (!existsSync9(targetDir)) {
+          await mkdir5(targetDir, { recursive: true });
+        }
+        const targetPath = join8(targetDir, relativePath);
+        const status2 = await this.syncFile(sourcePath, targetPath, options);
+        switch (status2) {
+          case "copied":
+            result.copied++;
+            break;
+          case "fixed":
+            result.fixed++;
+            result.copied++;
+            break;
+          case "skipped":
+            result.skipped++;
+            break;
+          case "error":
+            result.errors.push(`Failed to sync ${file} to ${targetDir}`);
+            break;
+        }
+      }
+    }
+    return result;
+  }
+  async sync(options = {}) {
+    console.log(`\uD83D\uDD04 Codeflow Sync with Validation
+`);
+    const paths = this.getPaths(options.global);
+    const results = {
+      agents: { copied: 0, fixed: 0, skipped: 0, errors: [] },
+      commands: { copied: 0, fixed: 0, skipped: 0, errors: [] },
+      skills: { copied: 0, fixed: 0, skipped: 0, errors: [] }
+    };
+    console.log("\uD83D\uDCE6 Syncing agents...");
+    const agentTargets = options.global ? [paths.agents.globalClaude, paths.agents.globalOpenCode] : [paths.agents.claude, paths.agents.opencode];
+    const agentResult = await this.syncDirectory(paths.agents.source, agentTargets, options);
+    results.agents = agentResult;
+    console.log(`
+\uD83D\uDCE6 Syncing commands...`);
+    const commandTargets = options.global ? [paths.commands.globalClaude, paths.commands.globalOpenCode] : [paths.commands.claude, paths.commands.opencode];
+    const commandResult = await this.syncDirectory(paths.commands.source, commandTargets, options);
+    results.commands = commandResult;
+    console.log(`
+\uD83D\uDCE6 Syncing skills...`);
+    const skillTargets = options.global ? [paths.skills.globalClaude, paths.skills.globalOpenCode] : [paths.skills.claude, paths.skills.opencode];
+    const skillResult = await this.syncDirectory(paths.skills.source, skillTargets, options);
+    results.skills = skillResult;
+    console.log(`
+\uD83D\uDCCA Sync Summary:`);
+    console.log("\u2500".repeat(40));
+    const totalCopied = results.agents.copied + results.commands.copied + results.skills.copied;
+    const totalFixed = results.agents.fixed + results.commands.fixed + results.skills.fixed;
+    const totalSkipped = results.agents.skipped + results.commands.skipped + results.skills.skipped;
+    const totalErrors = results.agents.errors.length + results.commands.errors.length + results.skills.errors.length;
+    console.log(`\u2705 Copied: ${totalCopied} files`);
+    if (totalFixed > 0) {
+      console.log(`\uD83D\uDD27 Fixed: ${totalFixed} files`);
+    }
+    if (totalSkipped > 0) {
+      console.log(`\u23ED\uFE0F  Skipped: ${totalSkipped} files (invalid YAML)`);
+    }
+    if (totalErrors > 0) {
+      console.log(`\u274C Errors: ${totalErrors}`);
+      if (results.agents.errors.length > 0) {
+        console.log(`
+Agent sync errors:`);
+        results.agents.errors.forEach((err) => console.log(`  - ${err}`));
+      }
+      if (results.commands.errors.length > 0) {
+        console.log(`
+Command sync errors:`);
+        results.commands.errors.forEach((err) => console.log(`  - ${err}`));
+      }
+      if (results.skills.errors.length > 0) {
+        console.log(`
+Skill sync errors:`);
+        results.skills.errors.forEach((err) => console.log(`  - ${err}`));
+      }
+    }
+    if (options.global) {
+      console.log(`
+\u2728 Global sync complete!`);
+      console.log("   Files synced to ~/.config/claude and ~/.config/opencode");
+    } else {
+      console.log(`
+\u2728 Local sync complete!`);
+      console.log("   Files synced to .claude and .opencode directories");
+    }
+    if (totalSkipped > 0 && !options.fix) {
+      console.log(`
+\uD83D\uDCA1 Tip: Use --fix flag to automatically fix YAML issues`);
+    }
+  }
+  async validateAll() {
+    console.log(`\uD83D\uDD0D Validating all files...
+`);
+    const paths = this.getPaths();
+    let hasErrors = false;
+    console.log("\uD83D\uDCE6 Validating agents...");
+    const agentFiles = existsSync9(paths.agents.source) ? await readdir6(paths.agents.source) : [];
+    for (const file of agentFiles.filter((f) => f.endsWith(".md"))) {
+      const filePath = join8(paths.agents.source, file);
+      const result = await validateMarkdownYAML(filePath);
+      if (!result.valid) {
+        console.log(`  \u274C ${file}: ${result.errors.join(", ")}`);
+        hasErrors = true;
+      } else if (result.warnings.length > 0) {
+        console.log(`  \u26A0\uFE0F  ${file}: ${result.warnings.join(", ")}`);
+      } else {
+        console.log(`  \u2705 ${file}`);
+      }
+    }
+    console.log(`
+\uD83D\uDCE6 Validating commands...`);
+    const commandFiles = existsSync9(paths.commands.source) ? await readdir6(paths.commands.source) : [];
+    for (const file of commandFiles.filter((f) => f.endsWith(".md"))) {
+      const filePath = join8(paths.commands.source, file);
+      const result = await validateMarkdownYAML(filePath);
+      if (!result.valid) {
+        console.log(`  \u274C ${file}: ${result.errors.join(", ")}`);
+        hasErrors = true;
+      } else if (result.warnings.length > 0) {
+        console.log(`  \u26A0\uFE0F  ${file}: ${result.warnings.join(", ")}`);
+      } else {
+        console.log(`  \u2705 ${file}`);
+      }
+    }
+    console.log(`
+\uD83D\uDCE6 Validating skills...`);
+    const skillFiles = existsSync9(paths.skills.source) ? await this.findAllMarkdownFiles(paths.skills.source) : [];
+    for (const file of skillFiles) {
+      const fileName = basename3(file);
+      const result = await validateMarkdownYAML(file);
+      if (!result.valid) {
+        console.log(`  \u274C ${fileName}: ${result.errors.join(", ")}`);
+        hasErrors = true;
+      } else if (result.warnings.length > 0) {
+        console.log(`  \u26A0\uFE0F  ${fileName}: ${result.warnings.join(", ")}`);
+      } else {
+        console.log(`  \u2705 ${fileName}`);
+      }
+    }
+    if (hasErrors) {
+      console.log(`
+\u274C Validation failed! Use --fix flag to auto-fix issues.`);
+      process.exit(1);
+    } else {
+      console.log(`
+\u2705 All files have valid YAML!`);
+    }
+  }
+}
+if (false) {}
+
 // src/cli/sync.ts
 async function isValidCommandFile(filePath) {
   try {
@@ -10826,9 +11442,10 @@ async function isValidCommandFile(filePath) {
 }
 async function sync(projectPath, options = {}) {
   const target = options.target || (options.global ? "global" : "project");
-  const resolvedPath = target === "global" ? homedir() : projectPath || process.cwd();
-  const manifestPath = join7(process.cwd(), "AGENT_MANIFEST.json");
-  const hasManifest = existsSync8(manifestPath);
+  const cwd = process.cwd() || ".";
+  const resolvedPath = target === "global" ? homedir2() : projectPath || cwd;
+  const manifestPath = join9(cwd, "AGENT_MANIFEST.json");
+  const hasManifest = existsSync10(manifestPath);
   if (hasManifest) {
     const syncer = new CanonicalSyncer;
     try {
@@ -10863,40 +11480,57 @@ async function sync(projectPath, options = {}) {
       }
       const totalProcessed = result.synced.length + result.skipped.length + result.errors.length;
       console.log(`
-\uD83D\uDCCA Summary: ${result.synced.length}/${totalProcessed} files synced successfully`);
+\uD83D\uDCCA Agent Summary: ${result.synced.length}/${totalProcessed} files synced successfully`);
     } catch (error) {
       console.error(`\u274C Canonical sync failed: ${error.message}`);
       process.exit(1);
     }
+    try {
+      const skillsSyncManager = new SyncManager;
+      await skillsSyncManager.sync({
+        global: target === "global",
+        force: options.force,
+        dryRun: options.dryRun,
+        verbose: true
+      });
+    } catch (error) {
+      console.error(`\u274C Skills sync failed: ${error.message}`);
+    }
     return;
   }
   if (target === "global") {
-    console.error("\u274C Global sync requires AGENT_MANIFEST.json. Run setup first.");
-    process.exit(1);
+    const syncManager = new SyncManager;
+    await syncManager.sync({
+      global: true,
+      force: options.force,
+      dryRun: options.dryRun,
+      verbose: true
+    });
+    return;
   }
-  if (!existsSync8(resolvedPath)) {
+  if (!existsSync10(resolvedPath)) {
     console.error(`\u274C Directory does not exist: ${resolvedPath}`);
     process.exit(1);
   }
-  const codeflowDir = join7(import.meta.dir, "../..");
+  const codeflowDir = getCodeflowRoot();
   console.log(`\uD83D\uDD04 Syncing from: ${codeflowDir}`);
   console.log(`\uD83D\uDCE6 Syncing to: ${resolvedPath}
 `);
   let totalSynced = 0;
   try {
-    const sourceCommandDir = join7(codeflowDir, "command");
-    const targetCommandDir = join7(resolvedPath, ".opencode/command");
-    if (existsSync8(sourceCommandDir)) {
-      if (!existsSync8(targetCommandDir)) {
-        await mkdir5(targetCommandDir, { recursive: true });
+    const sourceCommandDir = join9(codeflowDir, "command");
+    const targetCommandDir = join9(resolvedPath, ".opencode/command");
+    if (existsSync10(sourceCommandDir)) {
+      if (!existsSync10(targetCommandDir)) {
+        await mkdir6(targetCommandDir, { recursive: true });
         console.log(`  \u2713 Created directory: .opencode/command`);
       }
-      const files = await readdir6(sourceCommandDir);
+      const files = await readdir7(sourceCommandDir);
       const mdFiles = files.filter((f) => f.endsWith(".md"));
       for (const file of mdFiles) {
-        const sourceFile = join7(sourceCommandDir, file);
-        const targetFile = join7(targetCommandDir, file);
-        const targetExists = existsSync8(targetFile);
+        const sourceFile = join9(sourceCommandDir, file);
+        const targetFile = join9(targetCommandDir, file);
+        const targetExists = existsSync10(targetFile);
         let needsOverwrite = !targetExists || options.force;
         if (targetExists && !options.force) {
           const isValid = await isValidCommandFile(targetFile);
@@ -10919,11 +11553,11 @@ async function sync(projectPath, options = {}) {
         }
       }
     }
-    const sourceAgentDir = join7(codeflowDir, "codeflow-agents");
-    const targetAgentDir = join7(resolvedPath, ".opencode/agent");
-    if (existsSync8(sourceAgentDir)) {
-      if (!existsSync8(targetAgentDir)) {
-        await mkdir5(targetAgentDir, { recursive: true });
+    const sourceAgentDir = join9(codeflowDir, "codeflow-agents");
+    const targetAgentDir = join9(resolvedPath, ".opencode/agent");
+    if (existsSync10(sourceAgentDir)) {
+      if (!existsSync10(targetAgentDir)) {
+        await mkdir6(targetAgentDir, { recursive: true });
         console.log(`  \u2713 Created directory: .opencode/agent`);
       }
       const { agents, errors: parseErrors } = await parseAgentsFromDirectory(sourceAgentDir, "base");
@@ -10941,9 +11575,9 @@ async function sync(projectPath, options = {}) {
       for (const agent of convertedAgents) {
         try {
           const filename = `${agent.frontmatter.name}.md`;
-          const targetFile = join7(targetAgentDir, filename);
+          const targetFile = join9(targetAgentDir, filename);
           const serialized = serializeAgent(agent);
-          await Bun.write(targetFile, serialized);
+          await writeFile6(targetFile, serialized, "utf-8");
           console.log(`  \u2713 Synced agent: ${filename}`);
           totalSynced++;
         } catch (error) {
@@ -10990,15 +11624,15 @@ async function startWatch(projectPath) {
 }
 
 // src/cli/fix-models.ts
-import { readFile as readFile7, writeFile as writeFile4 } from "fs/promises";
-import { existsSync as existsSync10, readdirSync } from "fs";
-import { join as join9 } from "path";
-import { homedir as homedir2 } from "os";
+import { readFile as readFile9, writeFile as writeFile7 } from "fs/promises";
+import { existsSync as existsSync12, readdirSync } from "fs";
+import { join as join11 } from "path";
+import { homedir as homedir3 } from "os";
 import { execSync } from "child_process";
 
 // src/catalog/model-fixer.ts
-import { readFileSync, existsSync as existsSync9 } from "fs";
-import { join as join8 } from "path";
+import { readFileSync, existsSync as existsSync11 } from "fs";
+import { join as join10 } from "path";
 
 class ModelFixer {
   modelConfig;
@@ -11007,8 +11641,8 @@ class ModelFixer {
   }
   loadModelConfig(projectRoot) {
     try {
-      const configPath = join8(projectRoot, "config", "models.json");
-      if (existsSync9(configPath)) {
+      const configPath = join10(projectRoot, "config", "models.json");
+      if (existsSync11(configPath)) {
         const config = JSON.parse(readFileSync(configPath, "utf-8"));
         return config;
       }
@@ -11019,6 +11653,7 @@ class ModelFixer {
       opencode: {
         commands: "opencode/code-supernova",
         agents: "opencode/grok-code",
+        skills: "opencode/grok-code",
         fallback: "opencode/grok-code"
       },
       claude: {
@@ -11037,7 +11672,7 @@ class ModelFixer {
     if (target === "claude-code") {
       correctModel = this.modelConfig.claude.default;
     } else if (target === "opencode") {
-      correctModel = itemType === "command" ? this.modelConfig.opencode.commands : this.modelConfig.opencode.agents;
+      correctModel = itemType === "command" ? this.modelConfig.opencode.commands : itemType === "skill" ? this.modelConfig.opencode.agents : this.modelConfig.opencode.agents;
     } else {
       return content;
     }
@@ -11083,12 +11718,14 @@ async function fixModels(options = {}) {
   }
   const results = {};
   if (isGlobal) {
-    console.log("\u2139\uFE0F  OpenCode agents/commands are stored per-project, not globally");
+    results.openCodeCommands = await fixDirectory(join11(homedir3(), ".config", "opencode", "command"), "opencode", "command", modelFixer, options);
+    results.openCodeAgents = await fixDirectory(join11(homedir3(), ".config", "opencode", "agent"), "opencode", "agent", modelFixer, options);
+    results.openCodeSkills = await fixDirectory(join11(homedir3(), ".config", "opencode", "skills"), "opencode", "skill", modelFixer, options);
+    results.claudeCommands = await fixDirectory(join11(homedir3(), ".claude", "commands"), "claude-code", "command", modelFixer, options);
+    results.claudeAgents = await fixDirectory(join11(homedir3(), ".claude", "agents"), "claude-code", "agent", modelFixer, options);
     if (options.allProjects) {
       await fixAllOpenCodeProjects(modelFixer, options, results);
     }
-    results.claudeCommands = await fixDirectory(join9(homedir2(), ".claude", "commands"), "claude-code", "command", modelFixer, options);
-    results.claudeAgents = await fixDirectory(join9(homedir2(), ".claude", "agents"), "claude-code", "agent", modelFixer, options);
   }
   printSummary(results, options);
 }
@@ -11099,7 +11736,7 @@ async function fixDirectory(dirPath, target, itemType, modelFixer, options) {
     errors: 0,
     details: []
   };
-  if (!existsSync10(dirPath)) {
+  if (!existsSync12(dirPath)) {
     if (options.verbose) {
       console.log(`\u23ED\uFE0F  Skipping ${dirPath} (directory doesn't exist)`);
     }
@@ -11110,13 +11747,13 @@ async function fixDirectory(dirPath, target, itemType, modelFixer, options) {
   try {
     const files = readdirSync(dirPath).filter((f) => f.endsWith(".md"));
     for (const file of files) {
-      const filePath = join9(dirPath, file);
+      const filePath = join11(dirPath, file);
       try {
-        const content = await readFile7(filePath, "utf-8");
+        const content = await readFile9(filePath, "utf-8");
         const fixedContent = modelFixer.fixModel(content, target, itemType);
         if (content !== fixedContent) {
           if (!options.dryRun) {
-            await writeFile4(filePath, fixedContent, "utf-8");
+            await writeFile7(filePath, fixedContent, "utf-8");
           }
           result.fixed++;
           result.details.push(`\u2713 Fixed ${file}`);
@@ -11146,19 +11783,19 @@ async function fixAllOpenCodeProjects(modelFixer, options, results) {
   console.log("\uD83D\uDD0D Searching for OpenCode projects...");
   try {
     const searchPaths = [
-      join9(homedir2(), "src"),
-      join9(homedir2(), "projects"),
-      join9(homedir2(), "development"),
-      homedir2()
+      join11(homedir3(), "src"),
+      join11(homedir3(), "projects"),
+      join11(homedir3(), "development"),
+      homedir3()
     ];
     const opencodeProjects = [];
     for (const searchPath of searchPaths) {
-      if (!existsSync10(searchPath))
+      if (!existsSync12(searchPath))
         continue;
       try {
         const output = execSync(`find "${searchPath}" -name ".opencode" -type d 2>/dev/null | head -20`, { encoding: "utf-8", maxBuffer: 1024 * 1024 });
         const projects = output.trim().split(`
-`).filter((path2) => path2 && existsSync10(join9(path2, "agent")) || existsSync10(join9(path2, "command"))).map((path2) => path2.replace("/.opencode", ""));
+`).filter((path2) => path2 && existsSync12(join11(path2, "agent")) || existsSync12(join11(path2, "command"))).map((path2) => path2.replace("/.opencode", ""));
         opencodeProjects.push(...projects);
       } catch (error) {}
     }
@@ -11172,8 +11809,8 @@ async function fixAllOpenCodeProjects(modelFixer, options, results) {
       const projectName = projectPath.split("/").pop() || `project-${i + 1}`;
       console.log(`
 \uD83D\uDCC2 Processing project: ${projectName}`);
-      const agentResult = await fixDirectory(join9(projectPath, ".opencode", "agent"), "opencode", "agent", modelFixer, options);
-      const commandResult = await fixDirectory(join9(projectPath, ".opencode", "command"), "opencode", "command", modelFixer, options);
+      const agentResult = await fixDirectory(join11(projectPath, ".opencode", "agent"), "opencode", "agent", modelFixer, options);
+      const commandResult = await fixDirectory(join11(projectPath, ".opencode", "command"), "opencode", "command", modelFixer, options);
       results[`openCodeProject_${projectName}_agents`] = agentResult;
       results[`openCodeProject_${projectName}_commands`] = commandResult;
     }
@@ -11213,7 +11850,7 @@ ${name}:`);
     console.log(`
 \u2705 Model configurations fixed successfully!`);
     console.log("\uD83C\uDFAF Claude Code agents and commands should now work correctly");
-    console.log("\u2139\uFE0F  OpenCode agents/commands are managed per-project");
+    console.log("\u2139\uFE0F  OpenCode also supports per-project agents/commands with --all-projects");
   } else if (totalErrors === 0) {
     console.log(`
 \u2705 All model configurations are already correct!`);
@@ -11224,12 +11861,11 @@ ${name}:`);
     console.log("   Run with --verbose for detailed error information");
   }
 }
-if (false) {}
 
 // src/conversion/validator.ts
 init_validation_engine();
-import { readFile as readFile8, readdir as readdir7, stat as stat3 } from "fs/promises";
-import { existsSync as existsSync11 } from "fs";
+import { readFile as readFile10, readdir as readdir8, stat as stat3 } from "fs/promises";
+import { existsSync as existsSync13 } from "fs";
 import path2 from "path";
 class AgentValidator {
   validationEngine;
@@ -11334,7 +11970,7 @@ class AgentValidator {
     async function findMarkdownFiles(dir, baseDir = "") {
       const files = [];
       try {
-        const entries = await readdir7(dir);
+        const entries = await readdir8(dir);
         for (const entry of entries) {
           const fullPath = path2.join(dir, entry);
           const stats = await stat3(fullPath);
@@ -11353,12 +11989,12 @@ class AgentValidator {
     for (const directory of agentDirectories) {
       const files = await findMarkdownFiles(directory);
       for (const file of files) {
-        const basename3 = path2.basename(file, ".md");
+        const basename4 = path2.basename(file, ".md");
         const format = this.detectFormatFromPath(file);
-        if (!agentsByName[basename3]) {
-          agentsByName[basename3] = [];
+        if (!agentsByName[basename4]) {
+          agentsByName[basename4] = [];
         }
-        agentsByName[basename3].push({
+        agentsByName[basename4].push({
           file,
           format,
           directory: path2.dirname(file)
@@ -11418,7 +12054,7 @@ class AgentValidator {
         ]
       };
     }
-    if (!existsSync11(manifestPath)) {
+    if (!existsSync13(manifestPath)) {
       return {
         valid: false,
         manifestAgents: 0,
@@ -11432,11 +12068,11 @@ class AgentValidator {
         ]
       };
     }
-    const manifest = JSON.parse(await readFile8(manifestPath, "utf-8"));
+    const manifest = JSON.parse(await readFile10(manifestPath, "utf-8"));
     const errors2 = [];
     for (const agent of manifest.canonical_agents || []) {
       for (const [format, filePath] of Object.entries(agent.sources || {})) {
-        if (!existsSync11(filePath)) {
+        if (!existsSync13(filePath)) {
           errors2.push({
             agent: agent.name,
             issue: `Missing canonical ${format} file: ${filePath}`
@@ -11445,9 +12081,9 @@ class AgentValidator {
       }
       if (errors2.length === 0 && agent.sources) {
         try {
-          const baseContent = await readFile8(agent.sources.base, "utf-8");
-          const claudeContent = await readFile8(agent.sources["claude-code"], "utf-8");
-          const opencodeContent = await readFile8(agent.sources.opencode, "utf-8");
+          const baseContent = await readFile10(agent.sources.base, "utf-8");
+          const claudeContent = await readFile10(agent.sources["claude-code"], "utf-8");
+          const opencodeContent = await readFile10(agent.sources.opencode, "utf-8");
           const baseDesc = this.extractDescription(baseContent);
           const claudeDesc = this.extractDescription(claudeContent);
           const opencodeDesc = this.extractDescription(opencodeContent);
@@ -11665,8 +12301,8 @@ class AgentValidator {
 
 // src/cli/validate.ts
 init_agent_parser();
-import { readdir as readdir8, stat as stat4 } from "fs/promises";
-import { existsSync as existsSync12 } from "fs";
+import { readdir as readdir9, stat as stat4 } from "fs/promises";
+import { existsSync as existsSync14 } from "fs";
 import path3 from "path";
 async function validate(options) {
   const validator = new AgentValidator;
@@ -11696,7 +12332,7 @@ async function validate(options) {
     async function findMarkdownFiles(dir) {
       const foundFiles = [];
       try {
-        const entries = await readdir8(dir);
+        const entries = await readdir9(dir);
         for (const entry of entries) {
           const fullPath = path3.join(dir, entry);
           const stats = await stat4(fullPath);
@@ -11714,7 +12350,7 @@ async function validate(options) {
     }
     for (const dir of dirsToSearch) {
       const fullDir = path3.isAbsolute(dir) ? dir : path3.join(searchPath, dir);
-      if (existsSync12(fullDir)) {
+      if (existsSync14(fullDir)) {
         const foundFiles = await findMarkdownFiles(fullDir);
         files.push(...foundFiles);
       }
@@ -11888,12 +12524,12 @@ Top error categories:`);
 }
 
 // src/cli/list.ts
-import { existsSync as existsSync13, readdirSync as readdirSync2 } from "fs";
-import { join as join10, resolve } from "path";
-import { readFile as readFile9 } from "fs/promises";
+import { existsSync as existsSync15, readdirSync as readdirSync2 } from "fs";
+import { join as join12, resolve as resolve3 } from "path";
+import { readFile as readFile11 } from "fs/promises";
 async function extractMetadata(filePath) {
   try {
-    const content = await readFile9(filePath, "utf-8");
+    const content = await readFile11(filePath, "utf-8");
     const stats = { size: Buffer.byteLength(content, "utf8") };
     const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---/);
     if (frontmatterMatch) {
@@ -11918,7 +12554,7 @@ async function extractMetadata(filePath) {
   }
 }
 async function listDirectory(dir, type) {
-  if (!existsSync13(dir)) {
+  if (!existsSync15(dir)) {
     return [];
   }
   try {
@@ -11927,7 +12563,7 @@ async function listDirectory(dir, type) {
     async function scanDirectory(currentDir) {
       const entries = readdirSync2(currentDir, { withFileTypes: true });
       for (const entry of entries) {
-        const fullPath = join10(currentDir, entry.name);
+        const fullPath = join12(currentDir, entry.name);
         if (entry.isDirectory() && isBaseFormat) {
           await scanDirectory(fullPath);
         } else if (entry.isFile() && entry.name.endsWith(".md")) {
@@ -11942,7 +12578,7 @@ async function listDirectory(dir, type) {
           }
           let actualType = type;
           try {
-            const content = await readFile9(fullPath, "utf-8");
+            const content = await readFile11(fullPath, "utf-8");
             const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---/);
             if (frontmatterMatch) {
               const frontmatter = frontmatterMatch[1];
@@ -11999,15 +12635,15 @@ function formatAsSimple(items) {
 `);
 }
 async function list(projectPath = process.cwd(), options = {}) {
-  const projectPathResolved = resolve(projectPath);
+  const projectPathResolved = resolve3(projectPath);
   const { type = "all", platform = "all", format = "table", verbose = false } = options;
   console.log(`\uD83D\uDCCB Listing Codeflow items in: ${projectPathResolved}`);
   const items = [];
   if (type === "agents" || type === "all") {
     const agentDirs = [".claude/agents", ".opencode/agent", "codeflow-agents"];
     for (const dir of agentDirs) {
-      const fullPath = join10(projectPathResolved, dir);
-      if (existsSync13(fullPath)) {
+      const fullPath = join12(projectPathResolved, dir);
+      if (existsSync15(fullPath)) {
         const agentItems = await listDirectory(fullPath, "agent");
         items.push(...agentItems);
       }
@@ -12016,8 +12652,8 @@ async function list(projectPath = process.cwd(), options = {}) {
   if (type === "commands" || type === "all") {
     const commandDirs = [".claude/commands", ".opencode/command", "command"];
     for (const dir of commandDirs) {
-      const fullPath = join10(projectPathResolved, dir);
-      if (existsSync13(fullPath)) {
+      const fullPath = join12(projectPathResolved, dir);
+      if (existsSync15(fullPath)) {
         const commandItems = await listDirectory(fullPath, "command");
         items.push(...commandItems);
       }
@@ -12077,39 +12713,39 @@ ${output}`);
 }
 
 // src/cli/info.ts
-import { existsSync as existsSync14 } from "fs";
-import { join as join11, resolve as resolve2 } from "path";
-import { readFile as readFile10 } from "fs/promises";
+import { existsSync as existsSync16 } from "fs";
+import { join as join13, resolve as resolve4 } from "path";
+import { readFile as readFile12 } from "fs/promises";
 async function info(itemName, projectPath = process.cwd(), options = {}) {
-  const projectPathResolved = resolve2(projectPath);
+  const projectPathResolved = resolve4(projectPath);
   const { format = "detailed", showContent = false } = options;
   console.log(`\uD83D\uDD0D Getting info for: ${itemName}`);
   console.log(`\uD83D\uDCC1 Project path: ${projectPathResolved}`);
   const searchLocations = [
     {
-      path: join11(projectPathResolved, ".claude", "agents", `${itemName}.md`),
+      path: join13(projectPathResolved, ".claude", "agents", `${itemName}.md`),
       type: "agent",
       platform: "claude-code"
     },
     {
-      path: join11(projectPathResolved, ".opencode", "agent", `${itemName}.md`),
+      path: join13(projectPathResolved, ".opencode", "agent", `${itemName}.md`),
       type: "agent",
       platform: "opencode"
     },
     {
-      path: join11(projectPathResolved, ".claude", "commands", `${itemName}.md`),
+      path: join13(projectPathResolved, ".claude", "commands", `${itemName}.md`),
       type: "command",
       platform: "claude-code"
     },
     {
-      path: join11(projectPathResolved, ".opencode", "command", `${itemName}.md`),
+      path: join13(projectPathResolved, ".opencode", "command", `${itemName}.md`),
       type: "command",
       platform: "opencode"
     }
   ];
   let foundItem = null;
   for (const location of searchLocations) {
-    if (existsSync14(location.path)) {
+    if (existsSync16(location.path)) {
       foundItem = location;
       break;
     }
@@ -12122,7 +12758,7 @@ async function info(itemName, projectPath = process.cwd(), options = {}) {
   console.log(`\u2705 Found ${foundItem.type}: ${itemName} (${foundItem.platform})`);
   console.log(`\uD83D\uDCC4 Path: ${foundItem.path}`);
   try {
-    const content = await readFile10(foundItem.path, "utf-8");
+    const content = await readFile12(foundItem.path, "utf-8");
     const stats = { size: Buffer.byteLength(content, "utf8"), lines: content.split(`
 `).length };
     console.log(`\uD83D\uDCCA File stats: ${Math.round(stats.size / 1024)}KB, ${stats.lines} lines`);
@@ -12180,7 +12816,7 @@ import { execSync as execSync2 } from "child_process";
 // package.json
 var package_default = {
   name: "@agentic-codeflow/cli",
-  version: "0.20.1",
+  version: "0.20.4",
   description: "AI Agent & Command Distribution Platform with Verbalized Sampling - Deploy 33+ specialized AI agents and workflow commands with integrated VS strategy generation to any project instantly",
   type: "module",
   bin: {
@@ -12316,7 +12952,7 @@ var package_default = {
     prepack: "bun run typecheck",
     "prepack:node": "npm run typecheck:node",
     "build:cli": "esbuild src/cli/index.ts --bundle --platform=node --target=node18 --format=esm --outfile=dist/cli.js --packages=external && chmod +x dist/cli.js",
-    "build:cli:node": "esbuild src/cli/index.ts --bundle --platform=node --target=node18 --outfile=dist/cli.js",
+    "build:cli:node": "esbuild src/cli/index.ts --bundle --platform=node --target=node18 --format=esm --packages=external --outfile=dist/cli.js",
     prepare: "echo 'Husky prepared'"
   },
   dependencies: {
@@ -12427,18 +13063,18 @@ async function update(options = {}) {
 }
 
 // src/cli/clean.ts
-import { existsSync as existsSync15, readdirSync as readdirSync3, unlinkSync } from "fs";
-import { join as join12, resolve as resolve3 } from "path";
+import { existsSync as existsSync17, readdirSync as readdirSync3, unlinkSync } from "fs";
+import { join as join14, resolve as resolve5 } from "path";
 function cleanCache(projectPath) {
-  const cacheDirs = [join12(projectPath, ".cache"), join12(projectPath, "node_modules/.cache")];
+  const cacheDirs = [join14(projectPath, ".cache"), join14(projectPath, "node_modules/.cache")];
   const files = [];
   let totalSize = 0;
   for (const cacheDir of cacheDirs) {
-    if (existsSync15(cacheDir)) {
+    if (existsSync17(cacheDir)) {
       try {
         const items = readdirSync3(cacheDir, { recursive: true });
         for (const item of items) {
-          const itemPath = join12(cacheDir, item.toString());
+          const itemPath = join14(cacheDir, item.toString());
           try {
             const stats = __require("fs").statSync(itemPath);
             if (stats.isFile()) {
@@ -12459,15 +13095,15 @@ function cleanTemp(projectPath) {
   let totalSize = 0;
   const checkDirectories = [
     projectPath,
-    join12(projectPath, ".claude"),
-    join12(projectPath, ".opencode")
+    join14(projectPath, ".claude"),
+    join14(projectPath, ".opencode")
   ];
   for (const dir of checkDirectories) {
-    if (existsSync15(dir)) {
+    if (existsSync17(dir)) {
       try {
         const items = readdirSync3(dir, { recursive: true });
         for (const item of items) {
-          const itemPath = join12(dir, item.toString());
+          const itemPath = join14(dir, item.toString());
           const itemStr = item.toString();
           if (itemStr.endsWith(".tmp") || itemStr.endsWith(".temp") || itemStr === ".DS_Store" || itemStr === "Thumbs.db" || itemStr.includes("/temp/")) {
             try {
@@ -12490,17 +13126,17 @@ function cleanOrphaned(projectPath) {
   const files = [];
   let totalSize = 0;
   const orphanedPatterns = [
-    join12(projectPath, ".claude", "commands", "*.bak"),
-    join12(projectPath, ".opencode", "command", "*.bak")
+    join14(projectPath, ".claude", "commands", "*.bak"),
+    join14(projectPath, ".opencode", "command", "*.bak")
   ];
   for (const pattern of orphanedPatterns) {
     const dir = pattern.replace("/*.bak", "");
-    if (existsSync15(dir)) {
+    if (existsSync17(dir)) {
       try {
         const items = readdirSync3(dir);
         for (const item of items) {
           if (item.endsWith(".bak")) {
-            const filePath = join12(dir, item);
+            const filePath = join14(dir, item);
             try {
               const stats = __require("fs").statSync(filePath);
               files.push(filePath);
@@ -12516,7 +13152,7 @@ function cleanOrphaned(projectPath) {
   return { files, size: totalSize };
 }
 async function clean(projectPath = process.cwd(), options = {}) {
-  const projectPathResolved = resolve3(projectPath);
+  const projectPathResolved = resolve5(projectPath);
   const { dryRun = false, force = false, verbose = false, type = "all" } = options;
   console.log(`\uD83E\uDDF9 Cleaning Codeflow project: ${projectPathResolved}`);
   if (dryRun) {
@@ -12615,12 +13251,12 @@ async function clean(projectPath = process.cwd(), options = {}) {
 }
 
 // src/cli/export.ts
-import { existsSync as existsSync16, readdirSync as readdirSync4 } from "fs";
-import { join as join13, resolve as resolve4 } from "path";
-import { readFile as readFile11, writeFile as writeFile5 } from "fs/promises";
+import { existsSync as existsSync18, readdirSync as readdirSync4 } from "fs";
+import { join as join15, resolve as resolve6 } from "path";
+import { readFile as readFile13, writeFile as writeFile8 } from "fs/promises";
 async function exportProject(options = {}) {
   const projectPath = options.projectRoot || process.cwd();
-  const projectPathResolved = resolve4(projectPath);
+  const projectPathResolved = resolve6(projectPath);
   const { format = "json", output, includeContent = true, verbose = false } = options;
   console.log(`\uD83D\uDCE4 Exporting Codeflow project: ${projectPathResolved}`);
   const exportedItems = [];
@@ -12628,14 +13264,14 @@ async function exportProject(options = {}) {
   console.log("\uD83E\uDD16 Collecting agents...");
   const agentDirs = [".claude/agents", ".opencode/agent"];
   for (const dir of agentDirs) {
-    const fullPath = join13(projectPathResolved, dir);
-    if (existsSync16(fullPath)) {
+    const fullPath = join15(projectPathResolved, dir);
+    if (existsSync18(fullPath)) {
       try {
         const files = readdirSync4(fullPath).filter((f) => f.endsWith(".md"));
         for (const file of files) {
-          const filePath = join13(fullPath, file);
+          const filePath = join15(fullPath, file);
           try {
-            const content = includeContent ? await readFile11(filePath, "utf-8") : undefined;
+            const content = includeContent ? await readFile13(filePath, "utf-8") : undefined;
             const stats = __require("fs").statSync(filePath);
             let platform = "base";
             if (dir.includes(".claude")) {
@@ -12669,14 +13305,14 @@ async function exportProject(options = {}) {
   console.log("\uD83D\uDCAC Collecting commands...");
   const commandDirs = [".claude/commands", ".opencode/command"];
   for (const dir of commandDirs) {
-    const fullPath = join13(projectPathResolved, dir);
-    if (existsSync16(fullPath)) {
+    const fullPath = join15(projectPathResolved, dir);
+    if (existsSync18(fullPath)) {
       try {
         const files = readdirSync4(fullPath).filter((f) => f.endsWith(".md"));
         for (const file of files) {
-          const filePath = join13(fullPath, file);
+          const filePath = join15(fullPath, file);
           try {
-            const content = includeContent ? await readFile11(filePath, "utf-8") : undefined;
+            const content = includeContent ? await readFile13(filePath, "utf-8") : undefined;
             const stats = __require("fs").statSync(filePath);
             let platform = "base";
             if (dir.includes(".claude")) {
@@ -12714,7 +13350,7 @@ async function exportProject(options = {}) {
   }
   const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
   const defaultOutput = `codeflow-export-${timestamp}.${format}`;
-  const outputPath = output ? resolve4(output) : join13(projectPathResolved, defaultOutput);
+  const outputPath = output ? resolve6(output) : join15(projectPathResolved, defaultOutput);
   try {
     let exportData;
     switch (format) {
@@ -12767,7 +13403,7 @@ ${item.content?.split(`
       default:
         throw new Error(`Unsupported export format: ${format}`);
     }
-    await writeFile5(outputPath, exportData, "utf-8");
+    await writeFile8(outputPath, exportData, "utf-8");
     console.log(`
 \u2705 Export completed successfully!`);
     console.log(`\uD83D\uDCC4 Exported to: ${outputPath}`);
@@ -12797,9 +13433,9 @@ ${item.content?.split(`
 }
 
 // src/cli/research.ts
-import { join as join14 } from "path";
-import { existsSync as existsSync17 } from "fs";
-import { writeFile as writeFile6 } from "fs/promises";
+import { join as join16 } from "path";
+import { existsSync as existsSync19 } from "fs";
+import { writeFile as writeFile9 } from "fs/promises";
 
 class ResearchCLI {
   projectRoot;
@@ -12816,8 +13452,8 @@ class ResearchCLI {
   }
   async initialize() {
     try {
-      const agenticMcpPath = join14(this.projectRoot, "packages", "agentic-mcp", "dist");
-      if (!existsSync17(agenticMcpPath)) {
+      const agenticMcpPath = join16(this.projectRoot, "packages", "agentic-mcp", "dist");
+      if (!existsSync19(agenticMcpPath)) {
         this.agentRegistry = { agents: [] };
         this.workflowOrchestrator = {
           executeResearchWorkflow: async (_options) => ({
@@ -12944,7 +13580,7 @@ class ResearchCLI {
   async saveResults(result, outputPath) {
     try {
       const content = this.formatResultsAsMarkdown(result);
-      await writeFile6(outputPath, content, "utf-8");
+      await writeFile9(outputPath, content, "utf-8");
       console.log(`
 \uD83D\uDCBE Results saved to: ${outputPath}`);
     } catch (error) {
@@ -13090,9 +13726,9 @@ async function research(options) {
 }
 
 // src/cli/build-manifest.ts
-import { readdir as readdir9, writeFile as writeFile7, mkdir as mkdir6 } from "fs/promises";
-import { join as join15, dirname as dirname3 } from "path";
-import { existsSync as existsSync18 } from "fs";
+import { readdir as readdir10, writeFile as writeFile10, mkdir as mkdir7 } from "fs/promises";
+import { join as join17, dirname as dirname4 } from "path";
+import { existsSync as existsSync20 } from "fs";
 function getCategoryFromName(name) {
   if (name.includes("codebase"))
     return "core-workflow";
@@ -13119,17 +13755,17 @@ function getCategoryFromName(name) {
   return "specialized";
 }
 async function scanAgentsDirectory(projectRoot) {
-  const agentsDir = join15(projectRoot, "base-agents");
-  if (!existsSync18(agentsDir)) {
+  const agentsDir = join17(projectRoot, "base-agents");
+  if (!existsSync20(agentsDir)) {
     throw new Error(`Codeflow agents directory not found: ${agentsDir}`);
   }
   const agents = [];
-  const categories = await readdir9(agentsDir);
+  const categories = await readdir10(agentsDir);
   for (const category of categories) {
-    const categoryPath = join15(agentsDir, category);
-    if (!existsSync18(categoryPath))
+    const categoryPath = join17(agentsDir, category);
+    if (!existsSync20(categoryPath))
       continue;
-    const files = await readdir9(categoryPath);
+    const files = await readdir10(categoryPath);
     const mdFiles = files.filter((f) => f.endsWith(".md"));
     for (const file of mdFiles) {
       const agentName = file.replace(".md", "");
@@ -13191,11 +13827,11 @@ async function buildManifest(options = {}) {
       console.log(JSON.stringify(manifest, null, 2));
       return;
     }
-    const outputDir = dirname3(output);
-    if (outputDir !== "." && !existsSync18(outputDir)) {
-      await mkdir6(outputDir, { recursive: true });
+    const outputDir = dirname4(output);
+    if (outputDir !== "." && !existsSync20(outputDir)) {
+      await mkdir7(outputDir, { recursive: true });
     }
-    await writeFile7(output, JSON.stringify(manifest, null, 2));
+    await writeFile10(output, JSON.stringify(manifest, null, 2));
     console.log(`
 \u2705 Agent manifest created successfully!`);
     console.log(`\uD83D\uDCDD ${output} contains ${manifest.total_agents} agents`);
@@ -13216,9 +13852,9 @@ async function buildManifest(options = {}) {
 }
 
 // src/cli/index.ts
-import { join as join16, resolve as resolve5, sep } from "path";
-import { existsSync as existsSync19 } from "fs";
-import { homedir as homedir3 } from "os";
+import { join as join18, resolve as resolve7, sep } from "path";
+import { existsSync as existsSync21 } from "fs";
+import { homedir as homedir4 } from "os";
 var HELP_TEXT = `codeflow - Intelligent AI workflow management and development automation
 
 CodeFlow is a CLI built with Bun and TypeScript that manages agents and commands for AI-assisted development workflows.
@@ -13230,7 +13866,7 @@ Commands:
    setup [project-path]       Set up codeflow directory structure and copy agents/commands
    status [project-path]      Check which files are up-to-date or outdated
    sync [project-path]        Synchronize agents and commands with global configuration
-   fix-models [options]       Fix model configurations (default: global, use --local for project)
+   fix-models [options]       Fix model configurations (default: global, use --local or --all-projects)
    convert <source> <target> <format>  Convert agents between formats
    watch start [options]      Start automatic file synchronization daemon
    build-manifest [options]   Build or rebuild the agent manifest file
@@ -13253,7 +13889,8 @@ Options:
   --source <format>         Source format: base, claude-code, opencode
   --target <format>         Target format: base, claude-code, opencode
   --source-format <format>  Source format for sync (default: base)
-  --local                   Fix models in current project (for fix-models command)
+   --local                   Fix models in current project (for fix-models command)
+  --all-projects             Fix models in all discovered projects (for fix-models command)
 
 Examples:
   codeflow setup ~/my-project
@@ -13264,8 +13901,9 @@ Examples:
   codeflow sync                        # Sync to project directories
   codeflow sync --global               # Sync to global directories (~/.claude, ~/.config/opencode)
   codeflow sync --global --dry-run     # Preview global sync changes
-  codeflow fix-models                  # Fix model IDs globally
-  codeflow fix-models --local          # Fix model IDs in current project
+   codeflow fix-models                  # Fix model IDs globally
+   codeflow fix-models --local          # Fix model IDs in current project
+   codeflow fix-models --all-projects   # Fix model IDs in all discovered projects
   codeflow convert ./codeflow-agents ./claude-agents claude-code
   codeflow watch start --global
   codeflow list                        # List all available agents and commands
@@ -13353,10 +13991,10 @@ function safeResolve(base, candidate, allowedRoots = []) {
   if (candidate.includes("..")) {
     throw new Error(`Path traversal detected: ${candidate} contains ".."`);
   }
-  const resolved = join16(base, candidate);
-  const normalized = resolve5(resolved);
+  const resolved = join18(base, candidate);
+  const normalized = resolve7(resolved);
   const isAllowed = allowedRoots.length === 0 || allowedRoots.some((root) => {
-    const rootNormalized = resolve5(root);
+    const rootNormalized = resolve7(root);
     return normalized.startsWith(rootNormalized + sep) || normalized === rootNormalized;
   });
   if (!isAllowed) {
@@ -13365,17 +14003,17 @@ function safeResolve(base, candidate, allowedRoots = []) {
   return normalized;
 }
 function getFormatDirectory(format, projectPath) {
-  const codeflowRoot = join16(import.meta.dir, "../..");
+  const codeflowRoot = getCodeflowRoot();
   switch (format) {
     case "base":
-      return join16(codeflowRoot, "codeflow-agents");
+      return join18(codeflowRoot, "codeflow-agents");
     case "claude-code": {
-      const projectClaudeDir = join16(projectPath, ".claude", "agents");
-      return existsSync19(projectClaudeDir) ? projectClaudeDir : join16(codeflowRoot, "claude-agents");
+      const projectClaudeDir = join18(projectPath, ".claude", "agents");
+      return existsSync21(projectClaudeDir) ? projectClaudeDir : join18(codeflowRoot, "claude-agents");
     }
     case "opencode": {
-      const projectOpenCodeDir = join16(projectPath, ".opencode", "agent");
-      return existsSync19(projectOpenCodeDir) ? projectOpenCodeDir : join16(codeflowRoot, "opencode-agents");
+      const projectOpenCodeDir = join18(projectPath, ".opencode", "agent");
+      return existsSync21(projectOpenCodeDir) ? projectOpenCodeDir : join18(codeflowRoot, "opencode-agents");
     }
     default:
       throw new Error(`Unknown format: ${format}`);
@@ -13489,189 +14127,201 @@ if (values.help || command === "help" || !command) {
   console.log(HELP_TEXT);
   process.exit(0);
 }
-switch (command) {
-  case "setup": {
-    const setupPath = args[1];
-    const safeSetupPath = safeResolve(process.cwd(), setupPath || ".", [process.cwd(), homedir3()]);
-    await setup(safeSetupPath, {
-      global: values.global,
-      force: values.force,
-      type: values.type
-    });
-    break;
-  }
-  case "status": {
-    const statusPath = args[1];
-    const safeStatusPath = safeResolve(process.cwd(), statusPath || ".", [
-      process.cwd(),
-      homedir3()
-    ]);
-    await status(safeStatusPath);
-    break;
-  }
-  case "sync": {
-    const syncPath = args[1];
-    const safeSyncPath = safeResolve(process.cwd(), syncPath || ".", [process.cwd(), homedir3()]);
-    await sync(safeSyncPath, {
-      global: values.global,
-      force: values.force,
-      dryRun: values["dry-run"],
-      verbose: true
-    });
-    break;
-  }
-  case "fix-models": {
-    const hasLocalFlag = values.local || process.argv.includes("--local") || process.argv.includes("-l");
-    await fixModels({
-      dryRun: values["dry-run"],
-      verbose: values.help || false,
-      global: !hasLocalFlag,
-      allProjects: values["all-projects"]
-    });
-    break;
-  }
-  case "convert": {
-    if (values.source && values.target) {
-      const projectPath = values.project || process.cwd();
-      const sourceFormat = values.source;
-      const targetFormat = values.target;
-      const sourceDir = getFormatDirectory(sourceFormat, projectPath);
-      const targetDir = getFormatDirectory(targetFormat, projectPath);
-      if (targetFormat === "base") {
+async function main() {
+  switch (command) {
+    case "setup": {
+      const setupPath = args[1];
+      const safeSetupPath = safeResolve(process.cwd(), setupPath || ".", [
+        process.cwd(),
+        homedir4()
+      ]);
+      await setup(safeSetupPath, {
+        global: values.global,
+        force: values.force,
+        type: values.type
+      });
+      break;
+    }
+    case "status": {
+      const statusPath = args[1];
+      const safeStatusPath = safeResolve(process.cwd(), statusPath || ".", [
+        process.cwd(),
+        homedir4()
+      ]);
+      await status(safeStatusPath);
+      break;
+    }
+    case "sync": {
+      const syncPath = args[1];
+      const safeSyncPath = safeResolve(process.cwd(), syncPath || ".", [process.cwd(), homedir4()]);
+      await sync(safeSyncPath, {
+        global: values.global,
+        force: values.force,
+        dryRun: values["dry-run"],
+        verbose: true
+      });
+      break;
+    }
+    case "fix-models": {
+      const hasLocalFlag = values.local || process.argv.includes("--local") || process.argv.includes("-l");
+      await fixModels({
+        dryRun: values["dry-run"],
+        verbose: values.help || false,
+        global: !hasLocalFlag,
+        allProjects: values["all-projects"]
+      });
+      break;
+    }
+    case "convert": {
+      if (values.source && values.target) {
+        const projectPath = values.project || process.cwd();
+        const sourceFormat = values.source;
+        const targetFormat = values.target;
+        const sourceDir = getFormatDirectory(sourceFormat, projectPath);
+        const targetDir = getFormatDirectory(targetFormat, projectPath);
+        if (targetFormat === "base") {
+          console.error("Error: Cannot convert to base format");
+          process.exit(1);
+        }
+        await convert(sourceDir, targetDir, targetFormat);
+        break;
+      }
+      const source = args[1];
+      const target = args[2];
+      const format = args[3];
+      if (!source || !target || !format) {
+        console.error("Error: convert requires source, target, and format arguments");
+        console.error("Usage: codeflow convert <source> <target> <format>");
+        console.error("Formats: base, claude-code, opencode");
+        process.exit(1);
+      }
+      if (!["base", "claude-code", "opencode"].includes(format)) {
+        console.error(`Error: Invalid format '${format}'`);
+        console.error("Valid formats: base, claude-code, opencode");
+        process.exit(1);
+      }
+      if (format === "base") {
         console.error("Error: Cannot convert to base format");
         process.exit(1);
       }
-      await convert(sourceDir, targetDir, targetFormat);
+      await convert(source, target, format);
       break;
     }
-    const source = args[1];
-    const target = args[2];
-    const format = args[3];
-    if (!source || !target || !format) {
-      console.error("Error: convert requires source, target, and format arguments");
-      console.error("Usage: codeflow convert <source> <target> <format>");
-      console.error("Formats: base, claude-code, opencode");
-      process.exit(1);
+    case "watch": {
+      const watchAction = args[1];
+      if (watchAction === "start") {
+        const watchPath = args[2];
+        await startWatch(watchPath);
+      } else {
+        console.error(`Error: Unknown watch action '${watchAction}'`);
+        console.error("Available actions: start");
+        process.exit(1);
+      }
+      break;
     }
-    if (!["base", "claude-code", "opencode"].includes(format)) {
-      console.error(`Error: Invalid format '${format}'`);
-      console.error("Valid formats: base, claude-code, opencode");
-      process.exit(1);
+    case "validate": {
+      await validate({
+        format: values.format || "all",
+        path: args[1],
+        checkDuplicates: values["check-duplicates"],
+        canonicalCheck: values["canonical-check"],
+        fix: values.fix,
+        verbose: values.verbose
+      });
+      break;
     }
-    if (format === "base") {
-      console.error("Error: Cannot convert to base format");
-      process.exit(1);
+    case "list": {
+      const listPath = args[1];
+      const safeListPath = safeResolve(process.cwd(), listPath || ".", [process.cwd(), homedir4()]);
+      await list(safeListPath, {
+        type: values.type || "all",
+        platform: values.platform || "all",
+        format: values.format || "table",
+        verbose: values.verbose
+      });
+      break;
     }
-    await convert(source, target, format);
-    break;
-  }
-  case "watch": {
-    const watchAction = args[1];
-    if (watchAction === "start") {
-      const watchPath = args[2];
-      await startWatch(watchPath);
-    } else {
-      console.error(`Error: Unknown watch action '${watchAction}'`);
-      console.error("Available actions: start");
-      process.exit(1);
+    case "info": {
+      const itemName = args[1];
+      if (!itemName) {
+        console.error("Error: info requires an item name");
+        console.error("Usage: codeflow info <item-name>");
+        process.exit(1);
+      }
+      const infoPath = args[2];
+      const safeInfoPath = safeResolve(process.cwd(), infoPath || ".", [process.cwd(), homedir4()]);
+      await info(itemName, safeInfoPath, {
+        format: values.format || "detailed",
+        showContent: values["show-content"]
+      });
+      break;
     }
-    break;
-  }
-  case "validate": {
-    await validate({
-      format: values.format || "all",
-      path: args[1],
-      checkDuplicates: values["check-duplicates"],
-      canonicalCheck: values["canonical-check"],
-      fix: values.fix,
-      verbose: values.verbose
-    });
-    break;
-  }
-  case "list": {
-    const listPath = args[1];
-    const safeListPath = safeResolve(process.cwd(), listPath || ".", [process.cwd(), homedir3()]);
-    await list(safeListPath, {
-      type: values.type || "all",
-      platform: values.platform || "all",
-      format: values.format || "table",
-      verbose: values.verbose
-    });
-    break;
-  }
-  case "info": {
-    const itemName = args[1];
-    if (!itemName) {
-      console.error("Error: info requires an item name");
-      console.error("Usage: codeflow info <item-name>");
-      process.exit(1);
+    case "update": {
+      const updateAction = args[1];
+      await update({
+        check: updateAction === "check" || values.check,
+        force: values.force,
+        verbose: values.verbose
+      });
+      break;
     }
-    const infoPath = args[2];
-    const safeInfoPath = safeResolve(process.cwd(), infoPath || ".", [process.cwd(), homedir3()]);
-    await info(itemName, safeInfoPath, {
-      format: values.format || "detailed",
-      showContent: values["show-content"]
-    });
-    break;
+    case "clean": {
+      const cleanPath = args[1];
+      const safeCleanPath = safeResolve(process.cwd(), cleanPath || ".", [
+        process.cwd(),
+        homedir4()
+      ]);
+      await clean(safeCleanPath, {
+        dryRun: values["dry-run"],
+        force: values.force,
+        verbose: values.verbose,
+        type: values.type || "all"
+      });
+      break;
+    }
+    case "export": {
+      const exportPath = args[1];
+      const safeExportPath = safeResolve(process.cwd(), exportPath || ".", [
+        process.cwd(),
+        homedir4()
+      ]);
+      await exportProject({
+        projectRoot: safeExportPath,
+        format: values.format || "json",
+        output: values.output,
+        includeContent: values["include-content"],
+        verbose: values.verbose
+      });
+      break;
+    }
+    case "research": {
+      const researchQuery = args[1];
+      await research({
+        query: researchQuery,
+        output: values.output,
+        "include-web": values["include-web"],
+        specialists: values.specialists,
+        verbose: values.verbose,
+        "min-quality": values["min-quality"]
+      });
+      break;
+    }
+    case "build-manifest": {
+      await buildManifest({
+        output: values.output,
+        dryRun: values["dry-run"],
+        verbose: values.verbose,
+        projectRoot: values.project || process.cwd()
+      });
+      break;
+    }
+    default:
+      console.error(`Error: Unknown command '${command}'`);
+      console.error("Run 'codeflow --help' for usage information");
+      process.exit(1);
   }
-  case "update": {
-    const updateAction = args[1];
-    await update({
-      check: updateAction === "check" || values.check,
-      force: values.force,
-      verbose: values.verbose
-    });
-    break;
-  }
-  case "clean": {
-    const cleanPath = args[1];
-    const safeCleanPath = safeResolve(process.cwd(), cleanPath || ".", [process.cwd(), homedir3()]);
-    await clean(safeCleanPath, {
-      dryRun: values["dry-run"],
-      force: values.force,
-      verbose: values.verbose,
-      type: values.type || "all"
-    });
-    break;
-  }
-  case "export": {
-    const exportPath = args[1];
-    const safeExportPath = safeResolve(process.cwd(), exportPath || ".", [
-      process.cwd(),
-      homedir3()
-    ]);
-    await exportProject({
-      projectRoot: safeExportPath,
-      format: values.format || "json",
-      output: values.output,
-      includeContent: values["include-content"],
-      verbose: values.verbose
-    });
-    break;
-  }
-  case "research": {
-    const researchQuery = args[1];
-    await research({
-      query: researchQuery,
-      output: values.output,
-      "include-web": values["include-web"],
-      specialists: values.specialists,
-      verbose: values.verbose,
-      "min-quality": values["min-quality"]
-    });
-    break;
-  }
-  case "build-manifest": {
-    await buildManifest({
-      output: values.output,
-      dryRun: values["dry-run"],
-      verbose: values.verbose,
-      projectRoot: values.project || process.cwd()
-    });
-    break;
-  }
-  default:
-    console.error(`Error: Unknown command '${command}'`);
-    console.error("Run 'codeflow --help' for usage information");
-    process.exit(1);
 }
+main().catch((error) => {
+  console.error("CLI Error:", error);
+  process.exit(1);
+});
