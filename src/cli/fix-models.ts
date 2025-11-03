@@ -1,15 +1,6 @@
-#!/usr/bin/env bun
-
 /**
  * Fix model configurations for OpenCode and Claude Code
  * This ensures all agents and commands use the correct model format for each platform
- *
- * Usage:
- *   bun run src/cli/fix-models.ts --global          # Fix global Claude Code agents/commands
- *   bun run src/cli/fix-models.ts --global --all-projects  # Fix all OpenCode projects + global
- *   bun run src/cli/fix-models.ts --local           # Fix local project agents/commands
- *   bun run src/cli/fix-models.ts --dry-run        # Preview changes without applying
- *   bun run src/cli/fix-models.ts --verbose        # Show detailed output
  */
 
 import { readFile, writeFile } from 'fs/promises';
@@ -291,17 +282,4 @@ function printSummary(results: Record<string, FixResult>, options: FixOptions): 
     console.log('\n⚠️  Some errors occurred during processing');
     console.log('   Run with --verbose for detailed error information');
   }
-}
-
-// CLI entry point
-if (import.meta.main) {
-  const args = process.argv.slice(2);
-  const options: FixOptions = {
-    dryRun: args.includes('--dry-run'),
-    verbose: args.includes('--verbose') || args.includes('-v'),
-    global: !args.includes('--local'),
-    allProjects: args.includes('--all-projects'),
-  };
-
-  await fixModels(options);
 }

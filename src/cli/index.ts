@@ -32,7 +32,7 @@ Commands:
    setup [project-path]       Set up codeflow directory structure and copy agents/commands
    status [project-path]      Check which files are up-to-date or outdated
    sync [project-path]        Synchronize agents and commands with global configuration
-   fix-models [options]       Fix model configurations (default: global, use --local for project)
+   fix-models [options]       Fix model configurations (default: global, use --local or --all-projects)
    convert <source> <target> <format>  Convert agents between formats
    watch start [options]      Start automatic file synchronization daemon
    build-manifest [options]   Build or rebuild the agent manifest file
@@ -55,7 +55,8 @@ Options:
   --source <format>         Source format: base, claude-code, opencode
   --target <format>         Target format: base, claude-code, opencode
   --source-format <format>  Source format for sync (default: base)
-  --local                   Fix models in current project (for fix-models command)
+   --local                   Fix models in current project (for fix-models command)
+  --all-projects             Fix models in all discovered projects (for fix-models command)
 
 Examples:
   codeflow setup ~/my-project
@@ -66,8 +67,9 @@ Examples:
   codeflow sync                        # Sync to project directories
   codeflow sync --global               # Sync to global directories (~/.claude, ~/.config/opencode)
   codeflow sync --global --dry-run     # Preview global sync changes
-  codeflow fix-models                  # Fix model IDs globally
-  codeflow fix-models --local          # Fix model IDs in current project
+   codeflow fix-models                  # Fix model IDs globally
+   codeflow fix-models --local          # Fix model IDs in current project
+   codeflow fix-models --all-projects   # Fix model IDs in all discovered projects
   codeflow convert ./codeflow-agents ./claude-agents claude-code
   codeflow watch start --global
   codeflow list                        # List all available agents and commands
