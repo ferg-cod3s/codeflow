@@ -47,15 +47,32 @@ export async function fixModels(options: FixOptions = {}): Promise<void> {
 
   // Fix models
   if (isGlobal) {
-    // OpenCode doesn't use global directories for agents/commands
-    // They are stored in project-specific .opencode directories
-    console.log('ℹ️  OpenCode agents/commands are stored per-project, not globally');
+    // Fix OpenCode global directories
+    results.openCodeCommands = await fixDirectory(
+      join(homedir(), '.config', 'opencode', 'command'),
+      'opencode',
+      'command',
+      modelFixer,
+      options
+    );
 
-    if (options.allProjects) {
-      // Fix OpenCode agents/commands in all discovered projects
-      await fixAllOpenCodeProjects(modelFixer, options, results);
-    }
+    results.openCodeAgents = await fixDirectory(
+      join(homedir(), '.config', 'opencode', 'agent'),
+      'opencode',
+      'agent',
+      modelFixer,
+      options
+    );
 
+    results.openCodeSkills = await fixDirectory(
+      join(homedir(), '.config', 'opencode', 'skills'),
+      'opencode',
+      'skill',
+      modelFixer,
+      options
+    );
+
+    // Fix Claude Code global directories
     results.claudeCommands = await fixDirectory(
       join(homedir(), '.claude', 'commands'),
       'claude-code',
@@ -71,6 +88,11 @@ export async function fixModels(options: FixOptions = {}): Promise<void> {
       modelFixer,
       options
     );
+
+    if (options.allProjects) {
+      // Also fix OpenCode agents/commands in all discovered projects
+      await fixAllOpenCodeProjects(modelFixer, options, results);
+    }
   }
 
   // Print summary
@@ -80,7 +102,7 @@ export async function fixModels(options: FixOptions = {}): Promise<void> {
 async function fixDirectory(
   dirPath: string,
   target: 'claude-code' | 'opencode',
-  itemType: 'agent' | 'command',
+  itemType: 'agent' | 'command' | 'skill',
   modelFixer: ModelFixer,
   options: FixOptions
 ): Promise<FixResult> {
@@ -260,7 +282,7 @@ function printSummary(results: Record<string, FixResult>, options: FixOptions): 
   } else if (totalFixed > 0) {
     console.log('\n✅ Model configurations fixed successfully!');
     console.log('🎯 Claude Code agents and commands should now work correctly');
-    console.log('ℹ️  OpenCode agents/commands are managed per-project');
+    console.log('ℹ️  OpenCode also supports per-project agents/commands with --all-projects');
   } else if (totalErrors === 0) {
     console.log('\n✅ All model configurations are already correct!');
   }

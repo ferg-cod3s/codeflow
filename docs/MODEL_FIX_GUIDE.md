@@ -6,16 +6,16 @@ This guide explains how to fix model configurations for OpenCode and Claude Code
 
 The original issue was that global agents were only setting models for Claude Code, not OpenCode. This was because:
 
-1. **OpenCode stores agents/commands per-project** in `.opencode/agent` and `.opencode/command` directories
+1. **OpenCode uses global directories** at `~/.config/opencode/agent` and `~/.config/opencode/command`
 2. **Claude Code uses global directories** at `~/.claude/agents` and `~/.claude/commands`
-3. The original script incorrectly assumed OpenCode used global directories like `~/.config/opencode/agent`
+3. The original script incorrectly assumed OpenCode only used per-project directories
 
 ## Solution
 
-Updated the model fix script to:
+Updated model fix script to:
 
-1. ✅ **Recognize OpenCode's per-project storage** - no global directories to fix
-2. ✅ **Fix Claude Code global agents/commands** as before
+1. ✅ **Fix OpenCode global agents/commands** at `~/.config/opencode/`
+2. ✅ **Fix Claude Code global agents/commands** at `~/.claude/`
 3. ✅ **Optional: Fix all OpenCode projects** with `--all-projects` flag
 4. ✅ **Provide clear messaging** about what's being fixed
 
@@ -68,11 +68,18 @@ bun run src/cli/fix-models.ts --global --dry-run --verbose
 - **Model**: Uses `claude-sonnet-4-20250514` (from config/models.json)
 - **Format**: No provider prefix (e.g., `claude-sonnet-4-20250514`)
 
+### OpenCode (Global)
+
+- **Location**: `~/.config/opencode/agent` and `~/.config/opencode/command`
+- **Model**: Uses `opencode/grok-code` (from config/models.json)
+- **Format**: Provider/model format (e.g., `opencode/grok-code`)
+
 ### OpenCode (Per-Project)
 
 - **Location**: `.opencode/agent` and `.opencode/command` in each project
 - **Model**: Uses `opencode/grok-code` (from config/models.json)
 - **Format**: Provider/model format (e.g., `opencode/grok-code`)
+- **Note**: Fixed with `--all-projects` flag
 
 ## Configuration
 

@@ -3,10 +3,6 @@
  * Ensures correct model configuration when installing agents and commands
  */
 
-
-
-
-
 import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 
@@ -14,6 +10,7 @@ export interface ModelConfig {
   opencode: {
     commands: string;
     agents: string;
+    skills: string;
     fallback?: string;
   };
   claude: {
@@ -44,6 +41,7 @@ export class ModelFixer {
       opencode: {
         commands: 'opencode/code-supernova',
         agents: 'opencode/grok-code',
+        skills: 'opencode/grok-code',
         fallback: 'opencode/grok-code',
       },
       claude: {
@@ -58,7 +56,7 @@ export class ModelFixer {
   fixModel(
     content: string,
     target: 'claude-code' | 'opencode',
-    itemType: 'agent' | 'command'
+    itemType: 'agent' | 'command' | 'skill'
   ): string {
     // Extract frontmatter
     const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---/);
@@ -77,7 +75,9 @@ export class ModelFixer {
       correctModel =
         itemType === 'command'
           ? this.modelConfig.opencode.commands
-          : this.modelConfig.opencode.agents;
+          : itemType === 'skill'
+            ? this.modelConfig.opencode.agents // Skills use same model as agents
+            : this.modelConfig.opencode.agents;
     } else {
       return content; // Unknown target, don't modify
     }
