@@ -313,6 +313,22 @@ try {
         type: 'boolean',
         default: false,
       },
+      'check-duplicates': {
+        type: 'boolean',
+        default: false,
+      },
+      'canonical-check': {
+        type: 'boolean',
+        default: false,
+      },
+      cleanup: {
+        type: 'boolean',
+        default: true,
+      },
+      fix: {
+        type: 'boolean',
+        default: false,
+      },
     },
     strict: true,
     allowPositionals: true,
@@ -461,7 +477,6 @@ async function main() {
         canonicalCheck: values['canonical-check'],
         fix: values.fix,
         verbose: values.verbose,
-        global: values.global,
       });
       break;
     }

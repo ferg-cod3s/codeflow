@@ -7735,9 +7735,9 @@ class YamlProcessor {
   }
   parse(content) {
     try {
-      const frontmatterMatch = content.match(/^---[\s]*\n([\s\S]*?)\n---[\s]*(\n[\s\S]*)?$/);
+      const frontmatterMatch = content.match(/^---\s*\n(.*?)\n---\s*\n(.*)$/s);
       if (!frontmatterMatch) {
-        const altMatch = content.match(/^---[\s]*\n---[\s]*(\n[\s\S]*)?$/);
+        const altMatch = content.match(/^---\s*\n---\s*\n(.*)$/s);
         if (altMatch) {
           return {
             success: true,
@@ -7765,9 +7765,15 @@ class YamlProcessor {
       } else {
         frontmatter = $parse(frontmatterText) || {};
       }
-      let secondFrontmatterMatch = body.match(/^---[\s]*\n([\s\S]*?)\n---[\s]*(\n[\s\S]*)?$/);
+      let secondFrontmatterMatch = null;
+      const codeBlockPattern = /```[\s\S]*?```/g;
+      const bodyWithoutCodeBlocks = body.replace(codeBlockPattern, "[CODE_BLOCK]");
+      secondFrontmatterMatch = bodyWithoutCodeBlocks.match(/^---[\s]*\n([\s\S]*?)\n---[\s]*(\n[\s\S]*)?$/);
       if (!secondFrontmatterMatch) {
-        secondFrontmatterMatch = body.match(/^[\s]*([\s\S]*?)\n---[\s]*(\n[\s\S]*)?$/);
+        const possibleMatch = bodyWithoutCodeBlocks.match(/^[\s]*([\s\S]*?)\n---[\s]*(\n[\s\S]*)?$/);
+        if (possibleMatch && possibleMatch[1] && /^[a-zA-Z_][a-zA-Z0-9_]*\s*:/m.test(possibleMatch[1])) {
+          secondFrontmatterMatch = possibleMatch;
+        }
       }
       if (secondFrontmatterMatch) {
         const secondFrontmatterText = secondFrontmatterMatch[1];
@@ -9140,6 +9146,11 @@ class CommandConverter {
   }
   async convertFile(filePath, targetFormat) {
     const content = await readFile2(filePath, "utf-8");
+    if (filePath.includes("document.md")) {
+      console.error(`[DEBUG] Reading document.md: ${filePath}`);
+      console.error(`[DEBUG] First 100 chars: ${content.substring(0, 100)}`);
+      console.error(`[DEBUG] Starts with ---?: ${content.startsWith("---")}`);
+    }
     if (targetFormat === "claude-code") {
       return this.convertToClaudeCode(content, filePath);
     } else {
@@ -9334,7 +9345,7 @@ var error_handler_default = CLIErrorHandler;
 import { fileURLToPath } from "url";
 import { dirname, join, resolve } from "path";
 import { existsSync as existsSync2 } from "fs";
-var __filename = "/home/f3rg/src/github/codeflow/src/utils/path-resolver.ts";
+var __filename = "/Users/johnferguson/Github/codeflow/src/utils/path-resolver.ts";
 function getCodeflowRoot() {
   if (process.env.CODEFLOW_ROOT) {
     return resolve(process.env.CODEFLOW_ROOT);
@@ -9692,20 +9703,6 @@ async function setup(inputPath, options) {
   let packageRoot = getPackageRoot();
   if (process.env.CODEFLOW_ROOT && existsSync4(join3(process.env.CODEFLOW_ROOT, "base-agents"))) {
     packageRoot = process.env.CODEFLOW_ROOT;
-  } else if (!existsSync4(join3(packageRoot, "base-agents")) || !existsSync4(join3(packageRoot, "command"))) {
-    const cwd = process.cwd();
-    if (existsSync4(join3(cwd, "base-agents")) && existsSync4(join3(cwd, "command"))) {
-      packageRoot = cwd;
-    } else {
-      let searchDir = cwd;
-      while (searchDir !== "/") {
-        if (existsSync4(join3(searchDir, "base-agents")) && existsSync4(join3(searchDir, "command"))) {
-          packageRoot = searchDir;
-          break;
-        }
-        searchDir = dirname2(searchDir);
-      }
-    }
   } else if (!existsSync4(join3(packageRoot, "base-agents")) || !existsSync4(join3(packageRoot, "command"))) {
     const cwd = process.cwd();
     if (existsSync4(join3(cwd, "base-agents")) && existsSync4(join3(cwd, "command"))) {
@@ -11099,7 +11096,6 @@ async function fixYAMLFile(filePath) {
   }
   return result.valid;
 }
-if (false) {}
 
 // src/sync-with-validation.ts
 init_agent_parser();
@@ -11428,7 +11424,6 @@ Skill sync errors:`);
     }
   }
 }
-if (false) {}
 
 // src/cli/sync.ts
 async function isValidCommandFile(filePath) {
@@ -11797,7 +11792,7 @@ async function fixAllOpenCodeProjects(modelFixer, options, results) {
         const projects = output.trim().split(`
 `).filter((path2) => path2 && existsSync12(join11(path2, "agent")) || existsSync12(join11(path2, "command"))).map((path2) => path2.replace("/.opencode", ""));
         opencodeProjects.push(...projects);
-      } catch (error) {}
+      } catch {}
     }
     if (opencodeProjects.length === 0) {
       console.log("  No OpenCode projects found");
@@ -12301,171 +12296,114 @@ class AgentValidator {
 
 // src/cli/validate.ts
 init_agent_parser();
-import { readdir as readdir9, stat as stat4 } from "fs/promises";
 import { existsSync as existsSync14 } from "fs";
+import { mkdir as mkdir7, rm, writeFile as writeFile8 } from "fs/promises";
 import path3 from "path";
+async function createValidationEnvironment() {
+  const timestamp = Date.now();
+  const tmpDir = path3.join(process.cwd(), "tmp", `validation-${timestamp}`);
+  await mkdir7(tmpDir, { recursive: true });
+  await mkdir7(path3.join(tmpDir, "claude-agents"), { recursive: true });
+  await mkdir7(path3.join(tmpDir, "opencode-agents"), { recursive: true });
+  return tmpDir;
+}
+async function cleanupValidationEnvironment(tmpDir) {
+  try {
+    await rm(tmpDir, { recursive: true, force: true });
+  } catch (error) {
+    error_handler_default.displayWarning(`Failed to cleanup ${tmpDir}: ${error.message}`);
+  }
+}
 async function validate(options) {
   const validator = new AgentValidator;
   const format = options.format || "all";
-  const searchPath = options.path || ".";
-  const pathValidation = error_handler_default.validatePath(searchPath, "directory");
+  const sourcePath = options.path || "base-agents";
+  const shouldCleanup = options.cleanup !== false;
+  const pathValidation = error_handler_default.validatePath(sourcePath, "directory");
   if (!pathValidation.valid) {
-    error_handler_default.displayValidationResult(pathValidation, "search path");
+    error_handler_default.displayValidationResult(pathValidation, "source path");
     return;
   }
+  let tmpDir = null;
   try {
-    const directories = {
-      "claude-code": ["claude-agents", ".claude/agents"],
-      opencode: ["opencode-agents", ".opencode/agent"],
-      base: ["agent", "codeflow-agents"],
-      all: [
-        "agent",
-        "codeflow-agents",
-        "claude-agents",
-        "opencode-agents",
-        ".claude/agents",
-        ".opencode/agent"
-      ]
-    };
-    const dirsToSearch = directories[format] || directories.all;
-    const files = [];
-    async function findMarkdownFiles(dir) {
-      const foundFiles = [];
-      try {
-        const entries = await readdir9(dir);
-        for (const entry of entries) {
-          const fullPath = path3.join(dir, entry);
-          const stats = await stat4(fullPath);
-          if (stats.isDirectory()) {
-            const subFiles = await findMarkdownFiles(fullPath);
-            foundFiles.push(...subFiles);
-          } else if (entry.endsWith(".md")) {
-            foundFiles.push(fullPath);
-          }
-        }
-      } catch (error) {
-        error_handler_default.displayWarning(`Could not read directory ${dir}: ${error.message}`, ["Check directory permissions", "Verify the directory exists"]);
-      }
-      return foundFiles;
-    }
-    for (const dir of dirsToSearch) {
-      const fullDir = path3.isAbsolute(dir) ? dir : path3.join(searchPath, dir);
-      if (existsSync14(fullDir)) {
-        const foundFiles = await findMarkdownFiles(fullDir);
-        files.push(...foundFiles);
-      }
-    }
-    error_handler_default.displayProgress(`Validating ${files.length} agent files (format: ${format})`);
-    if (options.checkDuplicates) {
-      error_handler_default.displayProgress("Checking for duplicate agents");
-      const duplicateResult = await validator.validateNoDuplicates([
-        "codeflow-agents",
-        "claude-agents",
-        "opencode-agents"
-      ]);
-      console.log(`\uD83D\uDCCA Duplicate Detection Results:`);
-      console.log(`  Total unique agents: ${duplicateResult.totalAgents}`);
-      console.log(`  Canonical agents (exactly 3 formats): ${duplicateResult.canonicalAgentCount}`);
-      console.log(`  Duplicate issues found: ${duplicateResult.duplicates.length}`);
-      if (duplicateResult.duplicates.length > 0) {
-        console.log(`
-\u274C Duplicate Issues:`);
-        duplicateResult.duplicates.forEach((dup) => {
-          if (dup.issue === "missing_canonical_formats") {
-            console.log(`  ${dup.agentName}: Missing formats ${dup.missingFormats?.join(", ")}`);
-          } else {
-            console.log(`  ${dup.agentName}: ${dup.totalCopies} copies (expected 3)`);
-            dup.extraCopies?.forEach((file) => console.log(`    Extra: ${file}`));
-          }
-        });
-      }
-      const criticalIssues = duplicateResult.duplicates?.filter((d) => ["canonical_conflict", "schema_missing", "permission_violation"].includes(d.issue)) || [];
-      if (criticalIssues.length > 0) {
-        error_handler_default.displayError(error_handler_default.createErrorContext("validate", "duplicate_detection", "critical_validation_issues", "No critical validation issues", `${criticalIssues.length} critical issues found`, "Address critical issues before proceeding", {
-          requiresUserInput: true,
-          suggestions: [
-            "Fix canonical conflicts by ensuring consistent agent definitions",
-            "Add missing schema files",
-            "Check and fix permission violations"
-          ]
-        }));
-        process.exit(1);
-      }
-      const legacyIssues = duplicateResult.duplicates?.filter((d) => d.issue === "legacy_duplicate") || [];
-      if (legacyIssues.length > 0) {
-        error_handler_default.displayWarning(`${legacyIssues.length} legacy duplicates found`, [
-          "Consider consolidating duplicate agents",
-          "Check if legacy duplicates are still needed"
-        ]);
-      }
-    }
-    if (options.canonicalCheck) {
-      error_handler_default.displayProgress("Validating canonical source integrity");
-      try {
-        const canonicalResult = await validator.validateCanonicalIntegrity();
-        console.log(`\uD83D\uDCCA Canonical Integrity Results:`);
-        console.log(`  Expected agents: ${canonicalResult.expectedCount}`);
-        console.log(`  Manifest agents: ${canonicalResult.manifestAgents}`);
-        console.log(`  Integrity issues: ${canonicalResult.errors.length}`);
-        if (canonicalResult.errors.length > 0) {
-          console.log(`
-\u274C Integrity Issues:`);
-          canonicalResult.errors.forEach((error) => {
-            console.log(`  ${error.agent}: ${error.issue}`);
-            if (error.suggestion) {
-              console.log(`    \uD83D\uDCA1 ${error.suggestion}`);
-            }
-          });
-        }
-        if (!canonicalResult.valid) {
-          error_handler_default.displayError(error_handler_default.createErrorContext("validate", "canonical_integrity", "canonical_validation_failed", "Valid canonical integrity", `${canonicalResult.errors.length} integrity issues found`, "Fix integrity issues and try again", {
-            requiresUserInput: true,
-            suggestions: [
-              "Ensure AGENT_MANIFEST.json exists and is valid",
-              "Run setup from the codeflow repository root",
-              "Copy the manifest manually if needed"
-            ]
-          }));
-          process.exit(1);
-        }
-      } catch (error) {
-        error_handler_default.displayError(error_handler_default.createErrorContext("validate", "canonical_integrity", "canonical_validation_error", "Successful canonical validation", error.message, "Check AGENT_MANIFEST.json and try again", {
-          requiresUserInput: true,
-          suggestions: [
-            "Ensure AGENT_MANIFEST.json exists and is valid",
-            "Run setup from the codeflow repository root",
-            "Copy the manifest manually if needed"
-          ]
-        }));
-        process.exit(1);
-      }
-    }
-    const agents = [];
-    const parseErrors = [];
-    for (const file of files) {
-      try {
-        const formatType = file.includes("claude-agents") || file.includes(".claude/") ? "claude-code" : file.includes("opencode-agents") || file.includes(".opencode/") ? "opencode" : file.includes("codeflow-agents") || file.includes("/agent/") ? "base" : "base";
-        const agent = await parseAgentFile(file, formatType);
-        if (agent) {
-          agents.push(agent);
-        }
-      } catch (error) {
-        console.log(`\u274C DEBUG: Parse error for ${file}: ${error.message}`);
-        parseErrors.push({ file, error: error.message });
-      }
-    }
+    error_handler_default.displayProgress("Starting simplified validation with isolated environment");
+    console.log("\uD83D\uDD0D DEBUG: Using new simplified validation approach");
+    error_handler_default.displayProgress(`Parsing source agents from ${sourcePath}`);
+    const { agents, errors: parseErrors } = await parseAgentsFromDirectory(sourcePath, "base");
     if (parseErrors.length > 0) {
-      error_handler_default.displayWarning(`${parseErrors.length} files failed to parse`, [
-        "Check file formats and syntax",
+      error_handler_default.displayWarning(`${parseErrors.length} agents failed to parse`, [
+        "Check agent file formats and syntax",
         "Run with --verbose for detailed error information"
       ]);
-      parseErrors.forEach(({ file, error }) => {
-        console.error(`  ${file}: ${error}`);
-      });
     }
-    const { results, summary } = await validator.validateBatchWithDetails(agents);
+    if (agents.length === 0) {
+      error_handler_default.displayWarning("No agents found to validate", [
+        "Check that source directory contains valid agent files",
+        "Verify directory path is correct"
+      ]);
+      return;
+    }
+    error_handler_default.displayProgress(`Found ${agents.length} source agents`);
+    tmpDir = await createValidationEnvironment();
+    error_handler_default.displayProgress(`Created validation environment: ${tmpDir}`);
+    error_handler_default.displayProgress("Converting agents to platform formats");
+    const converter = new FormatConverter;
+    const agentOnly = agents.filter((item) => ("mode" in item.frontmatter) && item.frontmatter.mode !== "command");
+    const convertedAgents = converter.convertBatch(agentOnly, "claude-code");
+    error_handler_default.displayProgress(`Converted ${convertedAgents.length} agents to Claude Code format`);
+    let claudeWriteCount = 0;
+    for (const agent of convertedAgents) {
+      try {
+        const filename = `${agent.frontmatter.name}.md`;
+        const filePath = path3.join(tmpDir, "claude-agents", filename);
+        const serialized = serializeAgent(agent);
+        await writeFile8(filePath, serialized);
+        claudeWriteCount++;
+      } catch (error) {
+        error_handler_default.displayWarning(`Failed to write Claude Code agent ${agent.frontmatter.name}: ${error.message}`);
+      }
+    }
+    const openCodeAgents = converter.convertBatch(agentOnly, "opencode");
+    error_handler_default.displayProgress(`Converted ${openCodeAgents.length} agents to OpenCode format`);
+    let openCodeWriteCount = 0;
+    for (const agent of openCodeAgents) {
+      try {
+        const filename = `${agent.frontmatter.name}.md`;
+        const filePath = path3.join(tmpDir, "opencode-agents", filename);
+        const serialized = serializeAgent(agent);
+        await writeFile8(filePath, serialized);
+        openCodeWriteCount++;
+      } catch (error) {
+        error_handler_default.displayWarning(`Failed to write OpenCode agent ${agent.frontmatter.name}: ${error.message}`);
+      }
+    }
+    error_handler_default.displayProgress(`Generated ${claudeWriteCount} Claude Code agents and ${openCodeWriteCount} OpenCode agents`);
+    const validationDirs = [];
+    if (format === "all" || format === "claude-code") {
+      validationDirs.push(path3.join(tmpDir, "claude-agents"));
+    }
+    if (format === "all" || format === "opencode") {
+      validationDirs.push(path3.join(tmpDir, "opencode-agents"));
+    }
+    if (format === "all" || format === "base") {
+      validationDirs.push(sourcePath);
+    }
+    error_handler_default.displayProgress(`Validating agents in isolated environment`);
+    const allAgents = [];
+    const allParseErrors = [];
+    for (const dir of validationDirs) {
+      if (existsSync14(dir)) {
+        const dirFormat = dir.includes("claude-agents") ? "claude-code" : dir.includes("opencode-agents") ? "opencode" : "base";
+        const { agents: dirAgents, errors: errors2 } = await parseAgentsFromDirectory(dir, dirFormat);
+        const agentOnly2 = dirAgents.filter((item) => ("mode" in item.frontmatter) && item.frontmatter.mode !== "command");
+        allAgents.push(...agentOnly2);
+        allParseErrors.push(...errors2.map((e) => ({ ...e, filePath: `${dir}/${path3.basename(e.filePath)}` })));
+      }
+    }
+    const { results, summary } = await validator.validateBatchWithDetails(allAgents);
     console.log(`
 \uD83D\uDCCA Validation Summary:`);
+    console.log(`  Environment: ${tmpDir}`);
     console.log(`  Total: ${summary.total}`);
     console.log(`  \u2705 Valid: ${summary.valid}`);
     console.log(`  \u274C Errors: ${summary.errors}`);
@@ -12506,26 +12444,35 @@ Top error categories:`);
 \uD83D\uDD27 Fix suggestions written to: agent-fixes.txt`);
       await Bun.write("agent-fixes.txt", fixScript);
     }
+    if (shouldCleanup && tmpDir) {
+      error_handler_default.displayProgress("Cleaning up validation environment");
+      await cleanupValidationEnvironment(tmpDir);
+    }
     if (summary.errors > 0) {
       error_handler_default.displayWarning(`Validation completed with ${summary.errors} errors`, [
         "Review the validation results above",
         "Fix critical issues before proceeding",
-        "Use --fix option to generate fix suggestions"
+        "Use --fix option to generate fix suggestions",
+        "Validation was performed in isolated tmp environment"
       ]);
       process.exit(1);
     }
     error_handler_default.displaySuccess("Agent validation completed successfully", [
-      "All agents passed validation",
-      "No critical issues found"
+      "All agents passed validation in isolated environment",
+      "No critical issues found",
+      "Used tmp/ directory for isolated testing"
     ]);
   } catch (error) {
+    if (tmpDir && shouldCleanup) {
+      await cleanupValidationEnvironment(tmpDir);
+    }
     error_handler_default.handleCommonError(error, "validate");
   }
 }
 
 // src/cli/list.ts
 import { existsSync as existsSync15, readdirSync as readdirSync2 } from "fs";
-import { join as join12, resolve as resolve3 } from "path";
+import { join as join12, resolve as resolve2 } from "path";
 import { readFile as readFile11 } from "fs/promises";
 async function extractMetadata(filePath) {
   try {
@@ -12635,7 +12582,7 @@ function formatAsSimple(items) {
 `);
 }
 async function list(projectPath = process.cwd(), options = {}) {
-  const projectPathResolved = resolve3(projectPath);
+  const projectPathResolved = resolve2(projectPath);
   const { type = "all", platform = "all", format = "table", verbose = false } = options;
   console.log(`\uD83D\uDCCB Listing Codeflow items in: ${projectPathResolved}`);
   const items = [];
@@ -12714,10 +12661,10 @@ ${output}`);
 
 // src/cli/info.ts
 import { existsSync as existsSync16 } from "fs";
-import { join as join13, resolve as resolve4 } from "path";
+import { join as join13, resolve as resolve3 } from "path";
 import { readFile as readFile12 } from "fs/promises";
 async function info(itemName, projectPath = process.cwd(), options = {}) {
-  const projectPathResolved = resolve4(projectPath);
+  const projectPathResolved = resolve3(projectPath);
   const { format = "detailed", showContent = false } = options;
   console.log(`\uD83D\uDD0D Getting info for: ${itemName}`);
   console.log(`\uD83D\uDCC1 Project path: ${projectPathResolved}`);
@@ -12816,7 +12763,7 @@ import { execSync as execSync2 } from "child_process";
 // package.json
 var package_default = {
   name: "@agentic-codeflow/cli",
-  version: "0.20.4",
+  version: "0.20.5",
   description: "AI Agent & Command Distribution Platform with Verbalized Sampling - Deploy 33+ specialized AI agents and workflow commands with integrated VS strategy generation to any project instantly",
   type: "module",
   bin: {
@@ -12844,6 +12791,7 @@ var package_default = {
   author: "Codeflow Team <team@codeflow.dev>",
   license: "MIT",
   files: [
+    "dist/cli.js",
     "src/cli/**/*",
     "src/config/**/*",
     "src/utils/**/*",
@@ -12894,6 +12842,7 @@ var package_default = {
     "test:e2e:node": "node --loader ts-node/esm run-tests.ts e2e",
     "test:e2e:sequential": "bun run scripts/run-e2e-tests.ts",
     "test:e2e:sequential:node": "node --loader ts-node/esm scripts/run-e2e-tests.ts",
+    "migrate-opencode-agents": "bun run scripts/migrate-opencode-agents.ts",
     "test:watch": "bun test --watch",
     "test:watch:node": "node --loader ts-node/esm node_modules/.bin/mocha --watch tests/**/*.test.ts",
     "test:coverage": "bun run run-tests.ts --coverage",
@@ -13064,7 +13013,7 @@ async function update(options = {}) {
 
 // src/cli/clean.ts
 import { existsSync as existsSync17, readdirSync as readdirSync3, unlinkSync } from "fs";
-import { join as join14, resolve as resolve5 } from "path";
+import { join as join14, resolve as resolve4 } from "path";
 function cleanCache(projectPath) {
   const cacheDirs = [join14(projectPath, ".cache"), join14(projectPath, "node_modules/.cache")];
   const files = [];
@@ -13152,7 +13101,7 @@ function cleanOrphaned(projectPath) {
   return { files, size: totalSize };
 }
 async function clean(projectPath = process.cwd(), options = {}) {
-  const projectPathResolved = resolve5(projectPath);
+  const projectPathResolved = resolve4(projectPath);
   const { dryRun = false, force = false, verbose = false, type = "all" } = options;
   console.log(`\uD83E\uDDF9 Cleaning Codeflow project: ${projectPathResolved}`);
   if (dryRun) {
@@ -13252,11 +13201,11 @@ async function clean(projectPath = process.cwd(), options = {}) {
 
 // src/cli/export.ts
 import { existsSync as existsSync18, readdirSync as readdirSync4 } from "fs";
-import { join as join15, resolve as resolve6 } from "path";
-import { readFile as readFile13, writeFile as writeFile8 } from "fs/promises";
+import { join as join15, resolve as resolve5 } from "path";
+import { readFile as readFile13, writeFile as writeFile9 } from "fs/promises";
 async function exportProject(options = {}) {
   const projectPath = options.projectRoot || process.cwd();
-  const projectPathResolved = resolve6(projectPath);
+  const projectPathResolved = resolve5(projectPath);
   const { format = "json", output, includeContent = true, verbose = false } = options;
   console.log(`\uD83D\uDCE4 Exporting Codeflow project: ${projectPathResolved}`);
   const exportedItems = [];
@@ -13350,7 +13299,7 @@ async function exportProject(options = {}) {
   }
   const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
   const defaultOutput = `codeflow-export-${timestamp}.${format}`;
-  const outputPath = output ? resolve6(output) : join15(projectPathResolved, defaultOutput);
+  const outputPath = output ? resolve5(output) : join15(projectPathResolved, defaultOutput);
   try {
     let exportData;
     switch (format) {
@@ -13403,7 +13352,7 @@ ${item.content?.split(`
       default:
         throw new Error(`Unsupported export format: ${format}`);
     }
-    await writeFile8(outputPath, exportData, "utf-8");
+    await writeFile9(outputPath, exportData, "utf-8");
     console.log(`
 \u2705 Export completed successfully!`);
     console.log(`\uD83D\uDCC4 Exported to: ${outputPath}`);
@@ -13435,7 +13384,7 @@ ${item.content?.split(`
 // src/cli/research.ts
 import { join as join16 } from "path";
 import { existsSync as existsSync19 } from "fs";
-import { writeFile as writeFile9 } from "fs/promises";
+import { writeFile as writeFile10 } from "fs/promises";
 
 class ResearchCLI {
   projectRoot;
@@ -13580,7 +13529,7 @@ class ResearchCLI {
   async saveResults(result, outputPath) {
     try {
       const content = this.formatResultsAsMarkdown(result);
-      await writeFile9(outputPath, content, "utf-8");
+      await writeFile10(outputPath, content, "utf-8");
       console.log(`
 \uD83D\uDCBE Results saved to: ${outputPath}`);
     } catch (error) {
@@ -13726,7 +13675,7 @@ async function research(options) {
 }
 
 // src/cli/build-manifest.ts
-import { readdir as readdir10, writeFile as writeFile10, mkdir as mkdir7 } from "fs/promises";
+import { readdir as readdir9, writeFile as writeFile11, mkdir as mkdir8 } from "fs/promises";
 import { join as join17, dirname as dirname4 } from "path";
 import { existsSync as existsSync20 } from "fs";
 function getCategoryFromName(name) {
@@ -13760,12 +13709,12 @@ async function scanAgentsDirectory(projectRoot) {
     throw new Error(`Codeflow agents directory not found: ${agentsDir}`);
   }
   const agents = [];
-  const categories = await readdir10(agentsDir);
+  const categories = await readdir9(agentsDir);
   for (const category of categories) {
     const categoryPath = join17(agentsDir, category);
     if (!existsSync20(categoryPath))
       continue;
-    const files = await readdir10(categoryPath);
+    const files = await readdir9(categoryPath);
     const mdFiles = files.filter((f) => f.endsWith(".md"));
     for (const file of mdFiles) {
       const agentName = file.replace(".md", "");
@@ -13829,9 +13778,9 @@ async function buildManifest(options = {}) {
     }
     const outputDir = dirname4(output);
     if (outputDir !== "." && !existsSync20(outputDir)) {
-      await mkdir7(outputDir, { recursive: true });
+      await mkdir8(outputDir, { recursive: true });
     }
-    await writeFile10(output, JSON.stringify(manifest, null, 2));
+    await writeFile11(output, JSON.stringify(manifest, null, 2));
     console.log(`
 \u2705 Agent manifest created successfully!`);
     console.log(`\uD83D\uDCDD ${output} contains ${manifest.total_agents} agents`);
@@ -13852,9 +13801,19 @@ async function buildManifest(options = {}) {
 }
 
 // src/cli/index.ts
-import { join as join18, resolve as resolve7, sep } from "path";
-import { existsSync as existsSync21 } from "fs";
+import { readFileSync as readFileSync2, existsSync as existsSync21 } from "fs";
+import { join as join18, resolve as resolve6, sep } from "path";
 import { homedir as homedir4 } from "os";
+var packageJson;
+try {
+  packageJson = JSON.parse(readFileSync2(new URL("../../package.json", import.meta.url), "utf-8"));
+} catch {
+  try {
+    packageJson = JSON.parse(readFileSync2(new URL("package.json", import.meta.url), "utf-8"));
+  } catch {
+    packageJson = { name: "@agentic-codeflow/cli", version: "0.20.6" };
+  }
+}
 var HELP_TEXT = `codeflow - Intelligent AI workflow management and development automation
 
 CodeFlow is a CLI built with Bun and TypeScript that manages agents and commands for AI-assisted development workflows.
@@ -13878,6 +13837,7 @@ Commands:
    clean [path]               Clean up cache, temp, and orphaned files
    export [path]              Export project setup to a file
    research "<query>" [options]  Execute deep research workflow for codebase analysis
+   migrate-opencode-agents [action]  Migrate OpenCode agents to flat structure
 
 Options:
   -f, --force               Force overwrite existing setup
@@ -13890,7 +13850,8 @@ Options:
   --target <format>         Target format: base, claude-code, opencode
   --source-format <format>  Source format for sync (default: base)
    --local                   Fix models in current project (for fix-models command)
-  --all-projects             Fix models in all discovered projects (for fix-models command)
+   --all-projects             Fix models in all discovered projects (for fix-models command)
+   --global                  Validate global agent directories (~/.claude, ~/.config/opencode)
 
 Examples:
   codeflow setup ~/my-project
@@ -13906,9 +13867,12 @@ Examples:
    codeflow fix-models --all-projects   # Fix model IDs in all discovered projects
   codeflow convert ./codeflow-agents ./claude-agents claude-code
   codeflow watch start --global
-  codeflow list                        # List all available agents and commands
-  codeflow list --type agents          # List only agents
-  codeflow list --platform claude-code # List Claude Code items only
+   codeflow list                        # List all available agents and commands
+   codeflow list --type agents          # List only agents
+   codeflow list --platform claude-code # List Claude Code items only
+   codeflow migrate-opencode-agents check    # Check if migration is needed
+   codeflow migrate-opencode-agents migrate  # Migrate to flat structure
+   codeflow migrate-opencode-agents rollback  # Rollback migration
 
 SETUP OPTIONS:
   Use 'codeflow setup' to initialize agents and commands in your project
@@ -13992,9 +13956,9 @@ function safeResolve(base, candidate, allowedRoots = []) {
     throw new Error(`Path traversal detected: ${candidate} contains ".."`);
   }
   const resolved = join18(base, candidate);
-  const normalized = resolve7(resolved);
+  const normalized = resolve6(resolved);
   const isAllowed = allowedRoots.length === 0 || allowedRoots.some((root) => {
-    const rootNormalized = resolve7(root);
+    const rootNormalized = resolve6(root);
     return normalized.startsWith(rootNormalized + sep) || normalized === rootNormalized;
   });
   if (!isAllowed) {
@@ -14120,7 +14084,7 @@ try {
 var args = positionals.slice(2);
 var command = args[0];
 if (values.version) {
-  console.log(`Codeflow ${package_default.version}`);
+  console.log(`Codeflow ${packageJson.version}`);
   process.exit(0);
 }
 if (values.help || command === "help" || !command) {
@@ -14312,6 +14276,23 @@ async function main() {
         dryRun: values["dry-run"],
         verbose: values.verbose,
         projectRoot: values.project || process.cwd()
+      });
+      break;
+    }
+    case "migrate-opencode-agents": {
+      const { spawn } = await import("child_process");
+      const action = args[1] || "check";
+      if (!["check", "migrate", "rollback"].includes(action)) {
+        console.error("Error: Invalid action");
+        console.error("Usage: codeflow migrate-opencode-agents <check|migrate|rollback>");
+        process.exit(1);
+      }
+      const migrateProcess = spawn("bun", ["run", "scripts/migrate-opencode-agents.ts", action], {
+        stdio: "inherit",
+        cwd: process.cwd()
+      });
+      migrateProcess.on("exit", (code) => {
+        process.exit(code || 0);
       });
       break;
     }

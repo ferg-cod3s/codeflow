@@ -61,6 +61,26 @@ All agents inherit models from global OpenCode configuration - no individual mod
 opencode config set model provider/model-name
 ```
 
+### Simplified Validation System
+
+**Isolated Environment**: Validation now uses isolated `tmp/validation-{timestamp}/` directories instead of scanning main repository directories.
+
+**Benefits**:
+
+- ✅ Complete isolation from development directories
+- ✅ Tests actual conversion process end-to-end
+- ✅ Removes complex exclusion logic
+- ✅ Uses existing conversion pipeline
+- ✅ Simplified, maintainable code structure
+
+**Process**:
+
+1. Parse source agents from `base-agents/` only
+2. Create isolated `tmp/validation-{timestamp}/` environment
+3. Convert agents to `tmp/claude-agents/` and `tmp/opencode-agents/`
+4. Validate only in tmp directories
+5. Report results and cleanup automatically
+
 ## Development Commands
 
 ```bash
@@ -72,7 +92,10 @@ bun run test:integration  # Integration tests only
 bun run test:e2e         # E2E tests only
 
 # Agent Management
-codeflow validate         # Validate agent definitions
+codeflow validate         # Validate agents in isolated tmp environment
+codeflow validate --format claude-code  # Validate specific platform format
+codeflow validate --format opencode     # Validate OpenCode format
+codeflow validate --format all          # Validate all formats
 codeflow convert-all     # Generate platform formats
 
 # VS Integration

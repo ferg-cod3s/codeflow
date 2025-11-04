@@ -1,7 +1,5 @@
 # Codeflow Agent Synchronization Scripts
 
-
-
 <!-- VERBALIZED SAMPLING INTEGRATION -->
 <!-- ================================ -->
 
@@ -9,13 +7,13 @@
 **Confidence**: 71.0%
 
 **Available Strategies**:
+
 1. **Code-Path Analysis** (Confidence: 71.0%)
    - Plan: Identify entry points and main execution flows, Trace key decision branches and conditional logic...
 2. **Pattern Discovery** (Confidence: 71.0%)
    - Plan: Scan codebase for repeated code structures, Identify naming conventions and architectural patterns...
 3. **Architecture Mapping** (Confidence: 71.0%)
    - Plan: Identify major components and modules, Map data flow and dependencies between components...
-
 
 This directory contains scripts and tools for managing agent synchronization across all three agent directories.
 
@@ -74,6 +72,49 @@ bun run codeflow sync-global
 # Check global sync status
 bun run codeflow list-differences
 ```
+
+## Validation System
+
+### Isolated Tmp Environment
+
+The validation system uses isolated `tmp/` directories for testing instead of scanning main repository directories.
+
+**Directory Structure**:
+
+```
+tmp/
+├── validation-{timestamp}/
+│   ├── claude-agents/     # Generated Claude Code format agents
+│   └── opencode-agents/    # Generated OpenCode format agents
+```
+
+**Benefits**:
+
+- Complete isolation from development directories
+- Tests actual conversion process end-to-end
+- No complex exclusion logic needed
+- Automatic cleanup after validation
+
+**Usage**:
+
+```bash
+# Validate all formats in isolated environment
+bun run codeflow validate --format all
+
+# Validate specific format
+bun run codeflow validate --format claude-code
+
+# Keep tmp directory for debugging (advanced)
+# Modify validate.ts to set shouldCleanup = false
+```
+
+**Process**:
+
+1. Parse source agents from `base-agents/` only
+2. Create isolated `tmp/validation-{timestamp}/` environment
+3. Convert agents using existing pipeline
+4. Validate only in tmp directories
+5. Report results and cleanup automatically
 
 ## Directory Structure
 
