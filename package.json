@@ -28,6 +28,7 @@
   "author": "Codeflow Team <team@codeflow.dev>",
   "license": "MIT",
   "files": [
+    "dist/cli.js",
     "src/cli/**/*",
     "src/config/**/*",
     "src/utils/**/*",
