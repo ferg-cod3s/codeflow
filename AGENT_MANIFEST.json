@@ -1412,7 +1412,7 @@
     }
   ],
   "total_agents": 141,
-  "last_updated": "2025-11-04T12:38:37.634Z",
+  "last_updated": "2025-11-04T12:51:07.484Z",
   "canonical_directories": [
     "base-agents/",
     ".claude/agents/",
