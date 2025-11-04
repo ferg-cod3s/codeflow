@@ -16,12 +16,20 @@ import { clean } from './clean.js';
 import { exportProject } from './export.js';
 import { research } from './research.js';
 import { buildManifest } from './build-manifest.js';
-import { readFileSync } from 'node:fs';
-const packageJson = JSON.parse(
-  readFileSync(new URL('../../package.json', import.meta.url), 'utf-8')
-);
+import { readFileSync, existsSync } from 'node:fs';
+let packageJson;
+try {
+  packageJson = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf-8'));
+} catch {
+  // Fallback for published package - try current directory
+  try {
+    packageJson = JSON.parse(readFileSync(new URL('package.json', import.meta.url), 'utf-8'));
+  } catch {
+    // Final fallback - use minimal info
+    packageJson = { name: '@agentic-codeflow/cli', version: '0.20.6' };
+  }
+}
 import { join, resolve, sep } from 'node:path';
-import { existsSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { getCodeflowRoot } from '../utils/path-resolver.js';
 
