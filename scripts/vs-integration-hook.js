@@ -9,7 +9,6 @@
 
 import { execSync } from 'child_process';
 import { existsSync, readFileSync } from 'fs';
-import { join } from 'path';
 
 const VS_CLI_PATH = 'src/verbalized-sampling/cli.ts';
 
@@ -98,7 +97,7 @@ function autoInjectVS() {
         }
       );
     }
-  } catch (error) {
+  } catch {
     console.log('⚠️  VS auto-injection failed, continuing...');
   }
 }

@@ -1,4 +1,4 @@
-import { join, dirname, resolve } from 'node:path';
+import { join, dirname } from 'node:path';
 import { existsSync } from 'node:fs';
 import { readdir, mkdir, copyFile, writeFile, readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
@@ -326,27 +326,6 @@ export async function setup(
   // First try environment variable override
   if (process.env.CODEFLOW_ROOT && existsSync(join(process.env.CODEFLOW_ROOT, 'base-agents'))) {
     packageRoot = process.env.CODEFLOW_ROOT;
-  }
-  // If the root doesn't look right, try alternative approaches
-  else if (
-    !existsSync(join(packageRoot, 'base-agents')) ||
-    !existsSync(join(packageRoot, 'command'))
-  ) {
-    // Try current working directory
-    const cwd = process.cwd();
-    if (existsSync(join(cwd, 'base-agents')) && existsSync(join(cwd, 'command'))) {
-      packageRoot = cwd;
-    } else {
-      // For compiled binaries, try to find the actual project root by searching parent directories
-      let searchDir = cwd;
-      while (searchDir !== '/') {
-        if (existsSync(join(searchDir, 'base-agents')) && existsSync(join(searchDir, 'command'))) {
-          packageRoot = searchDir;
-          break;
-        }
-        searchDir = dirname(searchDir);
-      }
-    }
   }
   // If the root doesn't look right, try alternative approaches
   else if (

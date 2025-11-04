@@ -524,9 +524,7 @@ Examples:
 }
 
 // Run if called directly - disabled when bundled
-if (false && process.argv.length > 2) {
-  main().catch((error) => {
-    console.error('❌ Sync failed:', error.message);
-    process.exit(1);
-  });
-}
+// main().catch((error) => {
+//   console.error('❌ Sync failed:', error.message);
+//   process.exit(1);
+// });

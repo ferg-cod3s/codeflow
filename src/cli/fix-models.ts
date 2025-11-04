@@ -191,7 +191,7 @@ async function fixAllOpenCodeProjects(
           .map((path) => path.replace('/.opencode', ''));
 
         opencodeProjects.push(...projects);
-      } catch (error) {
+      } catch {
         // Find command failed, continue
       }
     }

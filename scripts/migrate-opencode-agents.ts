@@ -11,7 +11,6 @@
 import { readdir, stat, writeFile, mkdir, rm } from 'fs/promises';
 import { existsSync } from 'fs';
 import path from 'path';
-import { homedir } from 'os';
 import { getGlobalPaths } from '../src/cli/global.js';
 
 interface MigrationResult {
@@ -295,7 +294,7 @@ async function main() {
   const migrator = new OpenCodeAgentMigrator();
 
   switch (command) {
-    case 'check':
+    case 'check': {
       console.log('🔍 Checking if OpenCode agent migration is needed...');
       const needsMigration = await migrator.needsMigration();
 
@@ -306,8 +305,10 @@ async function main() {
         console.log('✅ No migration needed (agents already in flat structure)');
       }
       break;
+    }
 
-    case 'migrate':
+    case 'migrate': {
+      console.log('🚀 Starting OpenCode agent migration...');
       const needsMigrate = await migrator.needsMigration();
 
       if (!needsMigrate) {
@@ -327,10 +328,12 @@ async function main() {
         console.log('   Rollback: bun run migrate-opencode-agents rollback');
       }
       break;
+    }
 
-    case 'rollback':
+    case 'rollback': {
       await migrator.rollback();
       break;
+    }
 
     default:
       console.log('OpenCode Agent Migration Tool');

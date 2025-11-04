@@ -1,8 +1,7 @@
-import { spawn, exec } from 'node:child_process';
+import { spawn } from 'node:child_process';
 import { join } from 'node:path';
 import { readFile, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
-import { homedir } from 'node:os';
 import CLIErrorHandler from './error-handler.js';
 import { getCodeflowRoot } from '../utils/path-resolver.js';
 
