@@ -1,13 +1,7 @@
 import { AgentValidator } from '../conversion/validator.js';
-import {
-  parseAgentsFromDirectory,
-  serializeAgent,
-  Agent,
-  parseAgentFile,
-} from '../conversion/agent-parser.js';
-import { FormatConverter } from '../conversion/format-converter.js';
+import { Agent, parseAgentFile } from '../conversion/agent-parser.js';
 import { existsSync } from 'fs';
-import { mkdir, rm, writeFile, readdir, stat } from 'fs/promises';
+import { readdir, stat } from 'fs/promises';
 import path from 'path';
 import { CommandValidator, ValidationError, ValidationWarning } from '../yaml/command-validator.js';
 import CLIErrorHandler from './error-handler.js';
@@ -109,7 +103,6 @@ export async function validate(options: {
 
           if (stats.isDirectory()) {
             // Skip generated folders that are in .gitignore
-            const dirName = path.basename(fullPath);
             const generatedFolders = ['.claude', '.opencode', '.cursor'];
             if (generatedFolders.some((genFolder) => fullPath.includes(genFolder))) {
               continue;
@@ -135,7 +128,6 @@ export async function validate(options: {
       const fullDir = path.isAbsolute(dir) ? dir : path.join(searchPath, dir);
       if (existsSync(fullDir)) {
         // Skip if this is a generated directory
-        const dirName = path.basename(fullDir);
         const generatedDirs = ['.claude', '.opencode', '.cursor', 'opencode-agents'];
         if (generatedDirs.some((genDir) => fullDir.includes(genDir))) {
           continue;
@@ -613,7 +605,7 @@ export async function validateGlobalDirectory(
     }
 
     // Validate agents
-    const { results, summary } = await validator.validateBatchWithDetails(agents);
+    const { results } = await validator.validateBatchWithDetails(agents);
 
     return {
       format,
