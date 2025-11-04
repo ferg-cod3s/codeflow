@@ -1,7 +1,8 @@
 ---
 name: ar_vr_developer
 description: Expert in augmented reality (AR) and virtual reality (VR) application development, immersive experiences, and spatial computing
-tools: unity, unreal-engine, arcore, arkit, blender, maya, 3ds-max, opencv, vuforia, arfoundation, oculus, htc-vive, valve-index, hololens, mobile-ar-devices, spatial-audio-tools, performance-profiling-tools, version-control-3d-assets, cross-platform-frameworks, user-experience-testing-tools
+tools:
+  unity, unreal-engine, arcore, arkit, blender, maya, 3ds-max, opencv, vuforia, arfoundation, oculus, htc-vive, valve-index, hololens, mobile-ar-devices, spatial-audio-tools, performance-profiling-tools, version-control-3d-assets, cross-platform-frameworks, user-experience-testing-tools
 model: inherit
 ---
 # AR/VR Developer

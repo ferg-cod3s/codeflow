@@ -45,11 +45,12 @@ export class YamlProcessor {
    */
   parse(content: string): Result<ParsedYaml, YamlError> {
     try {
-      // Extract frontmatter and body
-      const frontmatterMatch = content.match(/^---[\s]*\n([\s\S]*?)\n---[\s]*(\n[\s\S]*)?$/);
+      // Extract frontmatter and body - be more strict to avoid matching --- in markdown content
+      // Look for --- at start, followed by YAML-like content, then ---, then rest of content
+      const frontmatterMatch = content.match(/^---\s*\n(.*?)\n---\s*\n(.*)$/s);
       if (!frontmatterMatch) {
         // Try alternative pattern for empty frontmatter
-        const altMatch = content.match(/^---[\s]*\n---[\s]*(\n[\s\S]*)?$/);
+        const altMatch = content.match(/^---\s*\n---\s*\n(.*)$/s);
         if (altMatch) {
           return {
             success: true,
@@ -83,12 +84,33 @@ export class YamlProcessor {
       }
 
       // Check if body contains a second frontmatter block (with or without opening ---)
-      // Try to match second frontmatter block that might be missing its opening ---
-      let secondFrontmatterMatch = body.match(/^---[\s]*\n([\s\S]*?)\n---[\s]*(\n[\s\S]*)?$/);
+      // Only treat as second frontmatter if it looks like YAML (key: value pairs)
+      // and not in a markdown code block
+
+      let secondFrontmatterMatch = null;
+
+      // First, check if there's a markdown code block with --- that we should ignore
+      const codeBlockPattern = /```[\s\S]*?```/g;
+      const bodyWithoutCodeBlocks = body.replace(codeBlockPattern, '[CODE_BLOCK]');
+
+      // Try to match second frontmatter block in content that's not in code blocks
+      secondFrontmatterMatch = bodyWithoutCodeBlocks.match(
+        /^---[\s]*\n([\s\S]*?)\n---[\s]*(\n[\s\S]*)?$/
+      );
 
       if (!secondFrontmatterMatch) {
         // Try pattern without opening --- (for cases where it was consumed by first regex)
-        secondFrontmatterMatch = body.match(/^[\s]*([\s\S]*?)\n---[\s]*(\n[\s\S]*)?$/);
+        // But only match if it looks like YAML (contains key: value pattern)
+        const possibleMatch = bodyWithoutCodeBlocks.match(
+          /^[\s]*([\s\S]*?)\n---[\s]*(\n[\s\S]*)?$/
+        );
+        if (
+          possibleMatch &&
+          possibleMatch[1] &&
+          /^[a-zA-Z_][a-zA-Z0-9_]*\s*:/m.test(possibleMatch[1])
+        ) {
+          secondFrontmatterMatch = possibleMatch;
+        }
       }
       if (secondFrontmatterMatch) {
         // Parse the second frontmatter block and merge it

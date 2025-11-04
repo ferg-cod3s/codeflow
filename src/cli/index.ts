@@ -16,7 +16,10 @@ import { clean } from './clean.js';
 import { exportProject } from './export.js';
 import { research } from './research.js';
 import { buildManifest } from './build-manifest.js';
-import packageJson from '../../package.json';
+import { readFileSync } from 'node:fs';
+const packageJson = JSON.parse(
+  readFileSync(new URL('../../package.json', import.meta.url), 'utf-8')
+);
 import { join, resolve, sep } from 'node:path';
 import { existsSync } from 'node:fs';
 import { homedir } from 'node:os';
@@ -45,6 +48,7 @@ Commands:
    clean [path]               Clean up cache, temp, and orphaned files
    export [path]              Export project setup to a file
    research "<query>" [options]  Execute deep research workflow for codebase analysis
+   migrate-opencode-agents [action]  Migrate OpenCode agents to flat structure
 
 Options:
   -f, --force               Force overwrite existing setup
@@ -57,7 +61,8 @@ Options:
   --target <format>         Target format: base, claude-code, opencode
   --source-format <format>  Source format for sync (default: base)
    --local                   Fix models in current project (for fix-models command)
-  --all-projects             Fix models in all discovered projects (for fix-models command)
+   --all-projects             Fix models in all discovered projects (for fix-models command)
+   --global                  Validate global agent directories (~/.claude, ~/.config/opencode)
 
 Examples:
   codeflow setup ~/my-project
@@ -73,9 +78,12 @@ Examples:
    codeflow fix-models --all-projects   # Fix model IDs in all discovered projects
   codeflow convert ./codeflow-agents ./claude-agents claude-code
   codeflow watch start --global
-  codeflow list                        # List all available agents and commands
-  codeflow list --type agents          # List only agents
-  codeflow list --platform claude-code # List Claude Code items only
+   codeflow list                        # List all available agents and commands
+   codeflow list --type agents          # List only agents
+   codeflow list --platform claude-code # List Claude Code items only
+   codeflow migrate-opencode-agents check    # Check if migration is needed
+   codeflow migrate-opencode-agents migrate  # Migrate to flat structure
+   codeflow migrate-opencode-agents rollback  # Rollback migration
 
 SETUP OPTIONS:
   Use 'codeflow setup' to initialize agents and commands in your project
@@ -312,7 +320,9 @@ try {
   throw error;
 }
 
-// Remove the first two positionals (bun and script path)
+// Remove script path from positionals (handle both node and bun)
+// Node.js: [node, script.js, command, ...]
+// Bun: [bun, script.js, command, ...]
 const args = positionals.slice(2);
 const command = args[0];
 
@@ -443,6 +453,7 @@ async function main() {
         canonicalCheck: values['canonical-check'],
         fix: values.fix,
         verbose: values.verbose,
+        global: values.global,
       });
       break;
     }
@@ -535,6 +546,27 @@ async function main() {
         dryRun: values['dry-run'],
         verbose: values.verbose,
         projectRoot: values.project || process.cwd(),
+      });
+      break;
+    }
+
+    case 'migrate-opencode-agents': {
+      const { spawn } = await import('child_process');
+      const action = args[1] || 'check';
+
+      if (!['check', 'migrate', 'rollback'].includes(action)) {
+        console.error('Error: Invalid action');
+        console.error('Usage: codeflow migrate-opencode-agents <check|migrate|rollback>');
+        process.exit(1);
+      }
+
+      const migrateProcess = spawn('bun', ['run', 'scripts/migrate-opencode-agents.ts', action], {
+        stdio: 'inherit',
+        cwd: process.cwd(),
+      });
+
+      migrateProcess.on('exit', (code) => {
+        process.exit(code || 0);
       });
       break;
     }

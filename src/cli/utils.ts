@@ -1,11 +1,8 @@
 import { join, dirname, resolve } from 'node:path';
 import { existsSync, mkdirSync } from 'node:fs';
-import { readdir, stat, readFile } from 'node:fs/promises';
+import { readdir, stat, readFile, writeFile } from 'node:fs/promises';
 import { homedir } from 'node:os';
-
-
-
-
+import { createHash } from 'node:crypto';
 
 interface AgenticConfig {
   thoughts: string;
@@ -54,18 +51,16 @@ function stripYamlFrontmatter(text: string): string {
 }
 
 async function getFileHash(path: string, ignoreFrontmatter: boolean = false): Promise<string> {
-  const file = Bun.file(path);
-
   if (ignoreFrontmatter && path.endsWith('.md')) {
-    const text = await file.text();
+    const text = await readFile(path, 'utf-8');
     const contentWithoutFrontmatter = stripYamlFrontmatter(text);
-    const encoder = new TextEncoder();
-    const hasher = new Bun.CryptoHasher('sha256');
-    hasher.update(encoder.encode(contentWithoutFrontmatter));
+    const hasher = createHash('sha256');
+    hasher.update(contentWithoutFrontmatter, 'utf8');
     return hasher.digest('hex');
   } else {
-    const hasher = new Bun.CryptoHasher('sha256');
-    hasher.update(await file.arrayBuffer());
+    const content = await readFile(path);
+    const hasher = createHash('sha256');
+    hasher.update(content);
     return hasher.digest('hex');
   }
 }

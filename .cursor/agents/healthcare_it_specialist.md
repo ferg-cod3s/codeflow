@@ -1,7 +1,8 @@
 ---
 name: healthcare_it_specialist
 description: Expert in healthcare IT systems, medical software development, and healthcare technology compliance
-tools: mirth-connect, rhapsody, epic, cerner, allscripts, osirix, 3d-slicer, fhir, hl7, compliance-management-tools, zoom-healthcare, doxy-me, tableau, power-bi, medical-device-connectivity-frameworks, patient-portal-platforms, healthcare-security-assessment-tools
+tools:
+  mirth-connect, rhapsody, epic, cerner, allscripts, osirix, 3d-slicer, fhir, hl7, compliance-management-tools, zoom-healthcare, doxy-me, tableau, power-bi, medical-device-connectivity-frameworks, patient-portal-platforms, healthcare-security-assessment-tools
 model: inherit
 ---
 # Healthcare IT Specialist

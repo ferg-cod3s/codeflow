@@ -420,6 +420,11 @@ export class CommandConverter {
    */
   async convertFile(filePath: string, targetFormat: 'claude-code' | 'opencode'): Promise<string> {
     const content = await readFile(filePath, 'utf-8');
+    if (filePath.includes('document.md')) {
+      console.error(`[DEBUG] Reading document.md: ${filePath}`);
+      console.error(`[DEBUG] First 100 chars: ${content.substring(0, 100)}`);
+      console.error(`[DEBUG] Starts with ---?: ${content.startsWith('---')}`);
+    }
 
     if (targetFormat === 'claude-code') {
       return this.convertToClaudeCode(content, filePath);

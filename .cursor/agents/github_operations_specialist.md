@@ -1,7 +1,8 @@
 ---
 name: github_operations_specialist
 description: GitHub CLI operations specialist for repository management, PR workflows, issue tracking, and CI/CD integration. Uses gh CLI for authenticated GitHub operations.
-tools: read, bash
+tools:
+  read, bash
 model: inherit
 ---
 # Role Definition

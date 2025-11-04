@@ -1,7 +1,8 @@
 ---
 name: webassembly_developer
 description: Master WebAssembly development with Emscripten, WASI, and modern WASM toolchains. Specializes in high-performance web applications, cross-language compilation, and browser-based computing.
-tools: bash, edit, read, write, glob, grep, list, task
+tools:
+  bash, edit, read, write, glob, grep, list, task
 model: inherit
 ---
 # WebAssembly Development Expert

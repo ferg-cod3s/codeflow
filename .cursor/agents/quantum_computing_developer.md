@@ -1,7 +1,8 @@
 ---
 name: quantum_computing_developer
 description: Expert in quantum computing algorithms, quantum software development, and quantum-classical hybrid systems
-tools: qiskit, cirq, q-sharp, pennylane, ibm-quantum-experience, aws-braket, azure-quantum, qiskit-aer, cirq-simulator, quantum-circuit-design-tools, quantum-error-correction-libraries, quantum-machine-learning-frameworks, quantum-cryptography-toolkits, high-performance-computing-clusters, matlab, mathematica, version-control-quantum-code
+tools:
+  qiskit, cirq, q-sharp, pennylane, ibm-quantum-experience, aws-braket, azure-quantum, qiskit-aer, cirq-simulator, quantum-circuit-design-tools, quantum-error-correction-libraries, quantum-machine-learning-frameworks, quantum-cryptography-toolkits, high-performance-computing-clusters, matlab, mathematica, version-control-quantum-code
 model: inherit
 ---
 # Quantum Computing Developer

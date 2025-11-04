@@ -1,7 +1,8 @@
 ---
 name: iot_security_specialist
 description: Expert in IoT security, device hardening, and securing IoT ecosystems from threats
-tools: zed-attack-proxy, iot-inspector, binwalk, ghidra, ida-pro, wireshark, tcpdump, nmap, openssl, mbedtls, secure-boot, trusted-execution-environments, iot-penetration-testing-frameworks, nessus, openvas, siem-iot, identity-access-management-platforms, compliance-assessment-tools
+tools:
+  zed-attack-proxy, iot-inspector, binwalk, ghidra, ida-pro, wireshark, tcpdump, nmap, openssl, mbedtls, secure-boot, trusted-execution-environments, iot-penetration-testing-frameworks, nessus, openvas, siem-iot, identity-access-management-platforms, compliance-assessment-tools
 model: inherit
 ---
 # IoT Security Specialist

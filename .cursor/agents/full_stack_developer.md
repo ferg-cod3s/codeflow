@@ -1,7 +1,8 @@
 ---
 name: full_stack_developer
 description: Generalist implementation developer focused on end-to-end feature delivery (UI → API → data) within established architectural, security, performance, and infrastructure guidelines. Provides cohesive, maintainable full-stack solutions while deferring deep specialization decisions to appropriate expert agents.
-tools: read, write, edit, bash, grep, glob, list, patch
+tools:
+  read, write, edit, bash, grep, glob, list, patch
 model: inherit
 ---
 output_format: AGENT_OUTPUT_V1

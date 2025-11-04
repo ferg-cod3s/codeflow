@@ -1,10 +1,17 @@
 import { AgentValidator } from '../conversion/validator.js';
-import { parseAgentFile } from '../conversion/agent-parser.js';
-import { readdir, stat } from 'fs/promises';
+import {
+  parseAgentsFromDirectory,
+  serializeAgent,
+  Agent,
+  parseAgentFile,
+} from '../conversion/agent-parser.js';
+import { FormatConverter } from '../conversion/format-converter.js';
 import { existsSync } from 'fs';
+import { mkdir, rm, writeFile, readdir, stat } from 'fs/promises';
 import path from 'path';
 import { CommandValidator, ValidationError, ValidationWarning } from '../yaml/command-validator.js';
 import CLIErrorHandler from './error-handler.js';
+import { getGlobalPaths } from './global.js';
 
 /**
  * Validate agent format compliance and detect duplicates
@@ -16,10 +23,51 @@ export async function validate(options: {
   canonicalCheck?: boolean;
   fix?: boolean;
   verbose?: boolean;
+  global?: boolean;
 }) {
   const validator = new AgentValidator();
   const format = options.format || 'all';
-  const searchPath = options.path || '.';
+  let searchPath = options.path || '.';
+
+  // Handle global validation
+  if (options.global) {
+    CLIErrorHandler.displayProgress('Validating global agent directories');
+    const globalPaths = getGlobalPaths();
+
+    // Validate each global format
+    const globalResults = [];
+
+    // Validate base agents
+    if (format === 'all' || format === 'base') {
+      if (existsSync(globalPaths.agents.base)) {
+        const result = await validateGlobalDirectory(globalPaths.agents.base, 'base');
+        globalResults.push(result);
+      }
+    }
+
+    // Validate Claude Code agents
+    if (format === 'all' || format === 'claude-code') {
+      if (existsSync(globalPaths.agents.claudeCode)) {
+        const result = await validateGlobalDirectory(globalPaths.agents.claudeCode, 'claude-code');
+        globalResults.push(result);
+      }
+    }
+
+    // Validate OpenCode agents
+    if (format === 'all' || format === 'opencode') {
+      if (existsSync(globalPaths.agents.opencode)) {
+        const result = await validateGlobalDirectory(globalPaths.agents.opencode, 'opencode');
+        globalResults.push(result);
+
+        // Special check: OpenCode requires flat structure
+        await validateOpenCodeFlatStructure(globalPaths.agents.opencode);
+      }
+    }
+
+    // Aggregate and display results
+    displayGlobalValidationResults(globalResults, { format, verbose: options.verbose });
+    return;
+  }
 
   // Validate search path
   const pathValidation = CLIErrorHandler.validatePath(searchPath, 'directory');
@@ -30,17 +78,19 @@ export async function validate(options: {
 
   try {
     // Find agent files based on format
+    // Note: Excluding generated folders that are in .gitignore (.claude/agents, .claude/commands, .opencode/agent, .opencode/command, .cursor/agents)
+    // Also excluding legacy opencode-agents/ (generated output)
     const directories = {
-      'claude-code': ['claude-agents', '.claude/agents'],
-      opencode: ['opencode-agents', '.opencode/agent'],
-      base: ['agent', 'codeflow-agents'],
+      'claude-code': ['claude-agents'], // Exclude .claude/agents (generated)
+      opencode: [], // Exclude opencode-agents (generated output)
+      base: ['agent', 'codeflow-agents', 'base-agents'], // Include base-agents as source
       all: [
         'agent',
         'codeflow-agents',
+        'base-agents', // Source agents
         'claude-agents',
-        'opencode-agents',
-        '.claude/agents',
-        '.opencode/agent',
+        // Excluding generated folders: .claude/agents, .claude/commands, .opencode/agent, .opencode/command, .cursor/agents
+        // Excluding legacy output: opencode-agents
       ],
     };
 
@@ -58,6 +108,12 @@ export async function validate(options: {
           const stats = await stat(fullPath);
 
           if (stats.isDirectory()) {
+            // Skip generated folders that are in .gitignore
+            const dirName = path.basename(fullPath);
+            const generatedFolders = ['.claude', '.opencode', '.cursor'];
+            if (generatedFolders.some((genFolder) => fullPath.includes(genFolder))) {
+              continue;
+            }
             const subFiles = await findMarkdownFiles(fullPath);
             foundFiles.push(...subFiles);
           } else if (entry.endsWith('.md')) {
@@ -78,6 +134,12 @@ export async function validate(options: {
     for (const dir of dirsToSearch) {
       const fullDir = path.isAbsolute(dir) ? dir : path.join(searchPath, dir);
       if (existsSync(fullDir)) {
+        // Skip if this is a generated directory
+        const dirName = path.basename(fullDir);
+        const generatedDirs = ['.claude', '.opencode', '.cursor', 'opencode-agents'];
+        if (generatedDirs.some((genDir) => fullDir.includes(genDir))) {
+          continue;
+        }
         const foundFiles = await findMarkdownFiles(fullDir);
         files.push(...foundFiles);
       }
@@ -337,9 +399,10 @@ export async function validateCommands(options: CommandValidationOptions = {}) {
 
   try {
     // Determine directories to search based on format
+    // Note: Excluding generated folders that are in .gitignore (.claude/commands, .opencode/command)
     const directories = {
-      opencode: ['.opencode/command', 'opencode-commands'],
-      'claude-code': ['.claude/commands', 'claude-commands'],
+      opencode: ['opencode-commands'], // Exclude .opencode/command (generated)
+      'claude-code': ['claude-commands'], // Exclude .claude/commands (generated)
     };
 
     const dirsToSearch = directories[format] || directories.opencode;
@@ -486,4 +549,179 @@ export function generateCommandFixReport(
   });
 
   return fixes.join('\n');
+}
+
+/**
+ * Validate a global directory for agents
+ */
+export async function validateGlobalDirectory(
+  dirPath: string,
+  format: 'base' | 'claude-code' | 'opencode'
+): Promise<{
+  format: string;
+  path: string;
+  agents: Agent[];
+  errors: any[];
+  warnings: any[];
+}> {
+  const validator = new AgentValidator();
+  const agents: Agent[] = [];
+  const errors: any[] = [];
+  const warnings: any[] = [];
+
+  try {
+    // Find all .md files in directory and subdirectories
+    async function findMarkdownFiles(dir: string): Promise<string[]> {
+      const foundFiles: string[] = [];
+      try {
+        const entries = await readdir(dir);
+
+        for (const entry of entries) {
+          const fullPath = path.join(dir, entry);
+          const stats = await stat(fullPath);
+
+          if (stats.isDirectory()) {
+            const subFiles = await findMarkdownFiles(fullPath);
+            foundFiles.push(...subFiles);
+          } else if (entry.endsWith('.md')) {
+            foundFiles.push(fullPath);
+          }
+        }
+      } catch (error) {
+        // Directory doesn't exist or can't be read
+        CLIErrorHandler.displayWarning(
+          `Could not read directory ${dir}: ${(error as Error).message}`,
+          ['Check directory permissions', 'Verify the directory exists']
+        );
+      }
+
+      return foundFiles;
+    }
+
+    const files = await findMarkdownFiles(dirPath);
+
+    // Parse and validate each agent
+    for (const file of files) {
+      try {
+        const agent = await parseAgentFile(file, format);
+        if (agent) {
+          agents.push(agent);
+        }
+      } catch (error) {
+        errors.push({ file, error: (error as Error).message });
+      }
+    }
+
+    // Validate agents
+    const { results, summary } = await validator.validateBatchWithDetails(agents);
+
+    return {
+      format,
+      path: dirPath,
+      agents,
+      errors: results.flatMap((r) => r.errors),
+      warnings: results.flatMap((r) => r.warnings),
+    };
+  } catch (error) {
+    return {
+      format,
+      path: dirPath,
+      agents: [],
+      errors: [{ error: (error as Error).message }],
+      warnings,
+    };
+  }
+}
+
+/**
+ * Validate that OpenCode agents are in flat structure
+ */
+export async function validateOpenCodeFlatStructure(opencodePath: string): Promise<void> {
+  try {
+    const entries = await readdir(opencodePath);
+    const subdirectories: string[] = [];
+    for (const entry of entries) {
+      const fullPath = path.join(opencodePath, entry);
+      try {
+        const stats = await stat(fullPath);
+        if (stats.isDirectory()) {
+          subdirectories.push(entry);
+        }
+      } catch {
+        // Ignore errors
+      }
+    }
+
+    if (subdirectories.length > 0) {
+      const errorMessage = `OpenCode agents found in subdirectories (invalid structure). Found ${subdirectories.length} subdirectories: ${subdirectories.slice(0, 3).join(', ')}${subdirectories.length > 3 ? '...' : ''}. OpenCode requires flat structure - agents must be directly in the agent directory. Run "codeflow migrate-opencode-agents" to fix this issue.`;
+      throw new Error(errorMessage);
+    }
+  } catch (error) {
+    // Re-throw if it's our validation error
+    if (
+      error instanceof Error &&
+      error.message.includes('OpenCode agents found in subdirectories')
+    ) {
+      throw error;
+    }
+
+    CLIErrorHandler.displayWarning(
+      `Could not validate OpenCode flat structure: ${(error as Error).message}`,
+      ['Check directory permissions', 'Verify directory exists']
+    );
+  }
+}
+
+/**
+ * Display aggregated global validation results
+ */
+export function displayGlobalValidationResults(
+  results: any[],
+  options: { format?: string; verbose?: boolean }
+): void {
+  console.log(`\n📊 Global Validation Results:`);
+
+  let totalAgents = 0;
+  let totalErrors = 0;
+  let totalWarnings = 0;
+
+  results.forEach((result) => {
+    totalAgents += result.agents.length;
+    totalErrors += result.errors.length;
+    totalWarnings += result.warnings.length;
+
+    console.log(`  ${result.format}:`);
+    console.log(`    Path: ${result.path}`);
+    console.log(`    Agents: ${result.agents.length}`);
+    console.log(`    Errors: ${result.errors.length}`);
+    console.log(`    Warnings: ${result.warnings.length}`);
+
+    if (result.errors.length > 0 && result.errors.length <= 5) {
+      console.log(`    Recent errors:`);
+      result.errors.slice(0, 3).forEach((error: any) => {
+        console.log(
+          `      • ${error.file || 'Unknown'}: ${error.error || error.message || 'Unknown error'}`
+        );
+      });
+    }
+  });
+
+  console.log(`\n📊 Summary:`);
+  console.log(`  Total agents: ${totalAgents}`);
+  console.log(`  ✅ Valid: ${totalAgents - totalErrors}`);
+  console.log(`  ❌ Errors: ${totalErrors}`);
+  console.log(`  ⚠️  Warnings: ${totalWarnings}`);
+
+  if (totalErrors > 0) {
+    CLIErrorHandler.displayWarning(`Global validation completed with ${totalErrors} errors`, [
+      'Review the validation results above',
+      'Fix critical issues before proceeding',
+    ]);
+    process.exit(1);
+  }
+
+  CLIErrorHandler.displaySuccess('Global agent validation completed successfully', [
+    'All global agents passed validation',
+    'No critical issues found',
+  ]);
 }

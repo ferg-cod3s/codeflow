@@ -1,8 +1,4 @@
-#!/usr/bin/env bun
-
-
-
-
+#!/usr/bin/env node
 
 /**
  * YAML Validator Utility
@@ -10,7 +6,7 @@
  */
 
 import * as yaml from 'yaml';
-import { readFile, writeFile } from 'fs/promises';
+import { readFile, writeFile } from 'node:fs/promises';
 
 export interface ValidationResult {
   valid: boolean;
@@ -312,8 +308,8 @@ export async function validateDirectory(dirPath: string): Promise<{
   };
 }
 
-// CLI interface
-if (import.meta.main) {
+// CLI interface - disabled when bundled (ES modules don't have module.parent)
+if (false && process.argv.length > 2) {
   const args = process.argv.slice(2);
 
   if (args.length === 0) {

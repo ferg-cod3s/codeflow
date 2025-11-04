@@ -1,14 +1,14 @@
-#!/usr/bin/env bun
+#!/usr/bin/env node
 
 /**
  * Enhanced Sync Script with YAML Validation
  * Ensures all files have valid YAML before syncing to local and global directories
  */
 
-import { readdir, writeFile, mkdir, readFile } from 'fs/promises';
-import { existsSync } from 'fs';
-import { join, basename } from 'path';
-import { homedir } from 'os';
+import { readdir, writeFile, mkdir, readFile } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
+import { join, basename } from 'node:path';
+import { homedir } from 'node:os';
 import { validateMarkdownYAML, fixYAMLFile } from './utils/yaml-validator';
 import {
   parseAgentFile,
@@ -523,8 +523,8 @@ Examples:
   }
 }
 
-// Run if called directly
-if (import.meta.main) {
+// Run if called directly - disabled when bundled
+if (false && process.argv.length > 2) {
   main().catch((error) => {
     console.error('❌ Sync failed:', error.message);
     process.exit(1);

@@ -78,6 +78,7 @@
     "test:e2e:node": "node --loader ts-node/esm run-tests.ts e2e",
     "test:e2e:sequential": "bun run scripts/run-e2e-tests.ts",
     "test:e2e:sequential:node": "node --loader ts-node/esm scripts/run-e2e-tests.ts",
+    "migrate-opencode-agents": "bun run scripts/migrate-opencode-agents.ts",
     "test:watch": "bun test --watch",
     "test:watch:node": "node --loader ts-node/esm node_modules/.bin/mocha --watch tests/**/*.test.ts",
     "test:coverage": "bun run run-tests.ts --coverage",

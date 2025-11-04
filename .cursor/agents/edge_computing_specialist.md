@@ -1,7 +1,8 @@
 ---
 name: edge_computing_specialist
 description: Expert in edge computing architectures, distributed systems, and real-time data processing at the network edge
-tools: docker, containerd, podman, kubernetes, k3s, openshift, aws-outposts, azure-stack, google-anthos, cloudflare, akamai, fastly, mqtt, kafka, rabbitmq, influxdb, timescaledb, tensorflow-lite, onnx-runtime, wireshark, tcpdump, haproxy, nginx, envoy, ansible, terraform
+tools:
+  docker, containerd, podman, kubernetes, k3s, openshift, aws-outposts, azure-stack, google-anthos, cloudflare, akamai, fastly, mqtt, kafka, rabbitmq, influxdb, timescaledb, tensorflow-lite, onnx-runtime, wireshark, tcpdump, haproxy, nginx, envoy, ansible, terraform
 model: inherit
 ---
 # Edge Computing Specialist
