@@ -49,7 +49,6 @@ Commands:
    export [path]              Export project setup to a file
    research "<query>" [options]  Execute deep research workflow for codebase analysis
    migrate-opencode-agents [action]  Migrate OpenCode agents to flat structure
-   migrate-opencode-agents [action]  Migrate OpenCode agents to flat structure
 
 Options:
   -f, --force               Force overwrite existing setup
