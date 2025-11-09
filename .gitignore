@@ -3,13 +3,10 @@
 node_modules/
 bun.lockb
 .DS_Store
-.claude/agents/
-.claude/commands/
-.opencode/command/
+.claude/
+.opencode/
 opencode-agents/
 claude-agents/
-!.opencode/
-!.claude/
 
 # Standard ignore patterns
 target/

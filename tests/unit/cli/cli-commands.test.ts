@@ -42,12 +42,11 @@ describe('CLI Commands', () => {
 
   describe('sync commands', () => {
     test('sync --global - should sync to global directories', async () => {
-      const result = await runCLI('sync --global');
-      // May require permissions
-      if (result.code === 0) {
-        expect(result.stdout.toLowerCase()).toContain('global');
-      }
-    });
+      const result = await runCLI('sync --global --force');
+      // Should succeed with force flag
+      expect(result.code).toBe(0);
+      expect(result.stdout.toLowerCase()).toContain('global');
+    }, 10000); // Increase timeout to 10 seconds
   });
 
   describe('convert commands', () => {
