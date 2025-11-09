@@ -215,3 +215,14 @@ git tag v0.17.4 && git push origin v0.17.4
 ---
 
 _CodeFlow provides quick access to all available agents and their usage patterns._
+
+## Platform Adapter Specifications
+
+For detailed technical specifications of each platform adapter (OpenCode, Claude Code, Cursor), including:
+- Directory structure requirements (flat vs. nested)
+- YAML frontmatter field formats
+- Permission system differences
+- Format conversion rules
+- Validation and best practices
+
+**See:** [`docs/PLATFORM_ADAPTERS.md`](docs/PLATFORM_ADAPTERS.md)
