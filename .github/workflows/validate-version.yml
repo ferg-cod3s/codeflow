@@ -1,0 +1,110 @@
+name: Validate Version Bump
+
+on:
+  pull_request:
+    branches:
+      - main
+      - master
+    paths:
+      - 'package.json'
+      - 'src/**'
+      - '.github/workflows/**'
+
+jobs:
+  check-version:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Get current version
+        id: current-version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Current PR version: $VERSION"
+
+      - name: Get base branch version
+        id: base-version
+        run: |
+          git fetch origin ${{ github.base_ref }}
+          BASE_VERSION=$(git show origin/${{ github.base_ref }}:package.json | node -p "JSON.parse(require('fs').readFileSync('/dev/stdin', 'utf-8')).version")
+          echo "version=$BASE_VERSION" >> $GITHUB_OUTPUT
+          echo "Base branch version: $BASE_VERSION"
+
+      - name: Compare versions
+        id: compare
+        run: |
+          CURRENT="${{ steps.current-version.outputs.version }}"
+          BASE="${{ steps.base-version.outputs.version }}"
+
+          if [ "$CURRENT" = "$BASE" ]; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "⚠️ Version not changed: $CURRENT"
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "✅ Version bumped: $BASE → $CURRENT"
+          fi
+
+      - name: Check if version bump is required
+        run: |
+          # Allow certain labels to skip version check
+          SKIP_LABELS="${{ contains(github.event.pull_request.labels.*.name, 'skip-version-check') || contains(github.event.pull_request.labels.*.name, 'documentation') || contains(github.event.pull_request.labels.*.name, 'chore') }}"
+
+          if [ "${{ steps.compare.outputs.changed }}" = "false" ] && [ "$SKIP_LABELS" = "false" ]; then
+            echo "❌ Version was not bumped in package.json"
+            echo ""
+            echo "Please bump the version using one of these methods:"
+            echo "  • npm version patch  (for bug fixes: 0.20.10 → 0.20.11)"
+            echo "  • npm version minor  (for new features: 0.20.10 → 0.21.0)"
+            echo "  • npm version major  (for breaking changes: 0.20.10 → 1.0.0)"
+            echo ""
+            echo "Or add one of these labels to skip this check:"
+            echo "  • skip-version-check"
+            echo "  • documentation"
+            echo "  • chore"
+            exit 1
+          else
+            echo "✅ Version check passed"
+          fi
+
+      - name: Validate semantic version format
+        if: steps.compare.outputs.changed == 'true'
+        run: |
+          VERSION="${{ steps.current-version.outputs.version }}"
+
+          # Check if version follows semantic versioning (X.Y.Z)
+          if ! echo "$VERSION" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.]+)?$'; then
+            echo "❌ Invalid version format: $VERSION"
+            echo "Version must follow semantic versioning: MAJOR.MINOR.PATCH"
+            echo "Examples: 0.20.10, 1.0.0, 2.1.3-beta.1"
+            exit 1
+          fi
+
+          echo "✅ Version format is valid: $VERSION"
+
+      - name: Comment on PR
+        if: steps.compare.outputs.changed == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const current = '${{ steps.current-version.outputs.version }}';
+            const base = '${{ steps.base-version.outputs.version }}';
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `✅ **Version Bump Detected**\n\n` +
+                    `- Base: \`${base}\`\n` +
+                    `- New: \`${current}\`\n\n` +
+                    `A git tag \`v${current}\` will be automatically created when this PR is merged.`
+            });
