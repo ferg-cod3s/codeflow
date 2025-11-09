@@ -91,6 +91,11 @@ bun run test:unit         # Unit tests only
 bun run test:integration  # Integration tests only
 bun run test:e2e         # E2E tests only
 
+# Build Process
+bun run build             # Build CLI and generate platform agents
+bun run build:cli         # Build CLI only
+bun run build:agents      # Generate platform agent folders
+
 # Agent Management
 codeflow validate         # Validate agents in isolated tmp environment
 codeflow validate --format claude-code  # Validate specific platform format
@@ -150,12 +155,19 @@ Automated releases via GitHub Actions:
 git tag v0.17.4 && git push origin v0.17.4
 ```
 
-**Process**: Type check → Version update → OIDC auth → NPM publish → GitHub release
+**Process**: Type check → Build agents → Version update → OIDC auth → NPM publish → GitHub release
 
-## Current Version (v0.17.4)
+**Build Pipeline**:
 
-- ✅ **137 agents + 58 commands** across 8 categories
+- Automatically generates `claude-agents/` and `opencode-agents/` folders
+- Includes platform-specific agent distributions in npm package
+- Ensures up-to-date agents in every release
+
+## Current Version (v0.20.8)
+
+- ✅ **141 agents + 58 commands** across 8 categories
 - ✅ **Platform support**: Claude Code (categorized) + OpenCode (flat)
+- ✅ **Automated build pipeline** generates platform-specific distributions
 - ✅ **Node.js compatibility** and automated publishing
 - ✅ **VS integration** with 80.2/100 average quality score
 
@@ -184,12 +196,19 @@ Automated releases via GitHub Actions:
 git tag v0.17.4 && git push origin v0.17.4
 ```
 
-**Process**: Type check → Version update → OIDC auth → NPM publish → GitHub release
+**Process**: Type check → Build agents → Version update → OIDC auth → NPM publish → GitHub release
 
-## Current Version (v0.17.4)
+**Build Pipeline**:
 
-- ✅ **137 agents + 58 commands** across 8 categories
+- Automatically generates `claude-agents/` and `opencode-agents/` folders
+- Includes platform-specific agent distributions in npm package
+- Ensures up-to-date agents in every release
+
+## Current Version (v0.20.8)
+
+- ✅ **141 agents + 58 commands** across 8 categories
 - ✅ **Platform support**: Claude Code (categorized) + OpenCode (flat)
+- ✅ **Automated build pipeline** generates platform-specific distributions
 - ✅ **Node.js compatibility** and automated publishing
 - ✅ **VS integration** with 80.2/100 average quality score
 
