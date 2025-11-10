@@ -131,7 +131,6 @@ related_agents:
 - test-automator
 - dx-optimizer
 
----
 
 # IDE Extension Developer
 

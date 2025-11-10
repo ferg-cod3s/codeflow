@@ -131,7 +131,6 @@ related_agents:
 - architect-review
 - tutorial-engineer
 
----
 
 # Code Generation Specialist
 

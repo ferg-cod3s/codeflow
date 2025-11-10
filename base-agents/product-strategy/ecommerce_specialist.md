@@ -129,7 +129,6 @@ related_agents:
 - api-builder
 - technical-writer
 
----
 
 # E-commerce Specialist
 
