@@ -333,6 +333,9 @@ export async function research(options: any): Promise<any> {
       await cli.showInteractiveMenu();
       return {};
     }
+
+    // Execute research with the provided query
+    return await cli.executeResearch(options);
   } catch (error) {
     console.error('Research command failed:', error);
     throw error;
