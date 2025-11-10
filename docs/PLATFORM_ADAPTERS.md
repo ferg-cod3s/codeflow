@@ -6,6 +6,7 @@ This document describes the exact specifications for each AI platform adapter in
 
 - [OpenCode Adapter](#opencode-adapter)
 - [Claude Code Adapter](#claude-code-adapter)
+- [Cursor Adapter](#cursor-adapter)
 - [Format Conversion](#format-conversion)
 
 ---
@@ -190,21 +191,138 @@ Key methods:
 
 ---
 
+## Cursor Adapter
+
+**Official Documentation:** https://cursor.com/docs/agent/modes
+
+### Directory Structure
+
+```
+.cursor/
+├── agents/
+│   ├── agent-1.md       # Supports nested directories
+│   ├── agent-2.md
+│   └── category/
+│       └── agent-3.md
+└── commands/
+    ├── command-1.md
+    └── command-2.md
+```
+
+✅ **Cursor supports nested directory structures** for agents, similar to Claude Code.
+
+### Agent File Format
+
+**Important:** Cursor agents use **the same format as Claude Code agents**. The only difference is the directory location (`.cursor/` instead of `.claude/`).
+
+Cursor agents are Markdown files with YAML frontmatter:
+
+```yaml
+---
+name: agent-name                           # Optional - inferred from filename
+description: Agent description             # Required - minimum 20 characters
+tools: Read, Write, Edit, Bash, WebFetch  # Optional - comma-separated string
+model: inherit                             # Optional - inherit|sonnet|opus|haiku
+---
+
+Agent prompt and instructions go here...
+```
+
+### Required Fields
+
+- `description` - Agent purpose and capabilities (minimum 20 characters recommended)
+
+### Optional Fields
+
+- `name` - Agent identifier (defaults to filename without .md)
+- `tools` - Comma-separated tool names (e.g., `"Read, Write, Edit"`)
+- `model` - Model selection (`inherit`, `sonnet`, `opus`, `haiku`)
+
+### Forbidden Fields
+
+The following fields are **NOT supported** in Cursor format (same as Claude Code):
+
+- ❌ `mode` - Cursor doesn't use agent modes
+- ❌ `temperature` - Model configuration is managed at IDE level
+- ❌ `permission` - Cursor uses `tools` string format, not permission objects
+
+### Command File Format
+
+Cursor commands use the **base command schema** with YAML frontmatter:
+
+```yaml
+---
+name: command-name
+mode: command
+description: Command description
+inputs:
+  - name: arg1
+    type: string
+    required: true
+outputs:
+  - name: result
+    type: file
+cache_strategy:
+  type: agent_specific
+  ttl: 0
+success_signals:
+  - 'Success message'
+---
+
+Command execution logic using $1, $2 for arguments...
+```
+
+### Discovery Process
+
+Cursor agents are discovered by scanning `.cursor/agents/` recursively for `.md` files.
+
+**Selection Criteria:**
+1. All `.md` files in `.cursor/agents/` (excluding `README.md`)
+2. Supports nested subdirectories
+3. Agent name derived from filename if not specified in frontmatter
+
+### Implementation
+
+**File:** `src/conversion/format-converter.ts`
+
+**Key Implementation Note:** Cursor format conversion uses the **same logic as Claude Code**:
+
+```typescript
+case 'cursor':
+  // Cursor uses same format as Claude Code
+  return this.baseToClaudeCode(agent);
+```
+
+**Conversion Behavior:**
+- `base → cursor` uses `baseToClaudeCode()`
+- `cursor → base` uses `claudeCodeToBase()`
+- `opencode → cursor` uses `baseToClaudeCode()`
+- Commands: Special handling to preserve command schema
+
+**Note:** Cursor agents are functionally identical to Claude Code agents. The only distinction is the directory path.
+
+---
+
 ## Format Conversion
 
 **File:** `src/conversion/format-converter.ts`
 
 ### Conversion Matrix
 
-| From → To | Base | Claude Code | OpenCode |
-|-----------|------|-------------|----------|
-| **Base** | — | ✅ | ✅ |
-| **Claude Code** | ✅ | — | ✅ |
-| **OpenCode** | ✅ | ✅ | — |
+| From → To | Base | Claude Code | Cursor | OpenCode |
+|-----------|------|-------------|--------|----------|
+| **Base** | — | ✅ | ✅ | ✅ |
+| **Claude Code** | ✅ | — | ✅* | ✅ |
+| **Cursor** | ✅ | ✅* | — | ✅ |
+| **OpenCode** | ✅ | ✅ | ✅ | — |
+
+\* Claude Code ↔ Cursor conversions are trivial (formats are identical, only directory differs)
 
 ### Key Conversion Rules
 
-#### Base → Claude Code
+#### Base → Claude Code / Cursor
+
+**Note:** Cursor uses identical conversion logic as Claude Code (same format).
 
 1. **Tools conversion:** Object `{read: true}` → String `"Read"`
 2. **Model conversion:** Any model → `inherit|sonnet|opus|haiku`
@@ -220,7 +338,7 @@ tools:
 mode: subagent
 temperature: 0.7
 
-# → Claude Code
+# → Claude Code / Cursor
 tools: Read, Write
 model: inherit
 # (mode and temperature removed)
@@ -360,7 +478,9 @@ npm run typecheck
 ## Version History
 
 - **v0.20.10** - Documentation compliance verification
-  - Verified all adapters match official specs
+  - Verified all adapters match official specs (OpenCode, Claude Code, Cursor)
+  - Added comprehensive Cursor adapter documentation
   - Confirmed OpenCode flat structure requirement
   - Added validation for permission formats
   - Documented internal metadata field filtering
+  - Updated conversion matrix to include Cursor format
