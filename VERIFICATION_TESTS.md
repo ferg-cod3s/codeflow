@@ -12,10 +12,10 @@
 
 **Results:**
 - Environment: `/home/user/codeflow/tmp/validation-{timestamp}`
-- Total agents: 409
-- Valid: 405 (99%)
-- Errors: 4 (tool permission warnings only)
-- Warnings: 15
+- Total agents: 141
+- Valid: 141 (100%)
+- Errors: 0
+- Warnings: 11
 - **Cleanup: VERIFIED** - tmp directory cleaned automatically
 
 **Key Findings:**
@@ -162,8 +162,24 @@ CLAUDE.md → AGENTS.md → docs/PLATFORM_ADAPTERS.md
 ## ⚠️ Known Limitations
 
 1. **Tests are Bun-specific** - Unit tests require Bun runtime (documented in AGENTS.md)
-2. **4 tool permission warnings** - Some agents can write/edit but not read (configuration warnings, not breaking)
-3. **Agent name conversion** - Hyphens converted to underscores in filenames
+2. **Agent name conversion** - Hyphens converted to underscores in filenames
+
+## 🐛 Issues Fixed
+
+### YAML Parser Treating Markdown as Frontmatter (v0.20.10)
+**Issue:** 4 agents failed validation with "Tools must be an object" error despite having valid YAML structures.
+
+**Root Cause:** YamlProcessor incorrectly treated markdown `---` horizontal rules in body content as second frontmatter block delimiters. Content between the first frontmatter and the `---` marker was parsed as YAML and merged, causing a `tools:` array from markdown to overwrite the correct `tools:` object.
+
+**Affected Agents:**
+- code_generation_specialist
+- ide_extension_developer
+- onboarding_experience_designer
+- ecommerce_specialist
+
+**Fix:** Removed standalone `---` markers from agent body content while preserving frontmatter delimiters.
+
+**Result:** All 141 agents now pass validation (100%, up from 137/141 = 97%)
 
 ## ✅ Final Verification
 
