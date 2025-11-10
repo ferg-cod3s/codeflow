@@ -22,6 +22,11 @@ allowed_directories:
 - /home/f3rg/src/github/codeflow
 tools:
   write: true
+  read: true
+  grep: true
+  glob: true
+  list: true
+  webfetch: true
 ---
 
 expertise:

@@ -27,7 +27,6 @@ tools:
   write: true
   edit: true
   bash: true
-  patch: true
   read: true
   grep: true
   glob: true

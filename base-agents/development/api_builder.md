@@ -38,7 +38,6 @@ tools:
   grep: true
   glob: true
   list: true
-  patch: true
 permission:
   read: allow
   grep: allow

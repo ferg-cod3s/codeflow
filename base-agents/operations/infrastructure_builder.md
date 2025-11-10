@@ -33,7 +33,6 @@ tools:
   glob: true
   edit: true
   write: true
-  patch: true
   bash: true
   webfetch: false
 ---
