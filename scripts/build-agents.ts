@@ -10,8 +10,8 @@
 import { readdir, mkdir, rm, writeFile } from 'node:fs/promises';
 import { join, relative, dirname, basename } from 'node:path';
 import { existsSync } from 'node:fs';
-import { parseAgentFile, serializeAgent } from '../src/conversion/agent-parser';
-import { FormatConverter } from '../src/conversion/format-converter';
+import { parseAgentFile, serializeAgent } from '../src/conversion/agent-parser.js';
+import { FormatConverter } from '../src/conversion/format-converter.js';
 
 interface BuildStats {
   claudeAgents: number;
