@@ -554,38 +554,12 @@ describe('Agent Validation', () => {
 
     expect(baseResult.agents.length).toBeGreaterThan(0);
 
-    // Test Claude Code agents
-    const claudeResult = await parseAgentsFromDirectory(
-      path.join(codeflowRoot, 'claude-agents'),
-      'claude-code'
-    );
-
-    if (claudeResult.errors.length > 0) {
-      console.warn('Claude Code agent parsing errors:', claudeResult.errors);
-    }
-
-    // May not have Claude Code agents, so just check for no critical errors
-    expect(
-      claudeResult.errors.filter((e) => e.message.includes('Failed to read directory')).length
-    ).toBe(0);
-
-    // Test OpenCode agents (may not exist in deprecated directory)
-    const opencodeResult = await parseAgentsFromDirectory(
-      path.join(codeflowRoot, 'deprecated', 'opencode-agents'),
-      'opencode'
-    );
-
-    if (opencodeResult.errors.length > 0) {
-      console.warn('OpenCode agent parsing errors:', opencodeResult.errors);
-    }
-
-    // OpenCode agents may not exist, so just check that parsing doesn't fail
-    expect(
-      opencodeResult.errors.filter((e) => e.message.includes('Failed to read directory')).length
-    ).toBe(0);
+    // Note: Pre-built claude-agents/ and opencode-agents/ folders have been removed
+    // Runtime conversion via CanonicalSyncer is used instead
+    // Tests only validate base-agents/ parsing
 
     // All agents should have required fields
-    const allAgents = [...baseResult.agents, ...claudeResult.agents, ...opencodeResult.agents];
+    const allAgents = baseResult.agents;
 
     for (const agent of allAgents) {
       expect(agent.name).toBeDefined();

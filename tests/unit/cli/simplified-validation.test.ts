@@ -151,14 +151,14 @@ describe('Simplified Validation System', () => {
       if (environmentLog) {
         const envPath = environmentLog.split('Created validation environment: ')[1];
 
-        // Check that both subdirectories were created
-        const claudeAgentsDir = join(envPath, 'claude-agents');
-        const openCodeAgentsDir = join(envPath, 'opencode-agents');
+        // Check that platform-specific subdirectories were created (runtime conversion)
+        const claudeAgentsDir = join(envPath, '.claude', 'agents');
+        const openCodeAgentsDir = join(envPath, '.opencode', 'agent');
 
         expect(existsSync(claudeAgentsDir)).toBe(true);
         expect(existsSync(openCodeAgentsDir)).toBe(true);
 
-        // Check that agents were generated
+        // Check that agents were generated via CanonicalSyncer
         const claudeAgents = await readdir(claudeAgentsDir);
         const openCodeAgents = await readdir(openCodeAgentsDir);
 

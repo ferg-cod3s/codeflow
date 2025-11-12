@@ -39,9 +39,9 @@ describe('Manifest Discovery Utilities', () => {
             description: 'Test agent for unit tests',
             category: 'test',
             sources: {
-              base: 'codeflow-agents/test/test-agent.md',
-              'claude-code': 'claude-agents/test-agent.md',
-              opencode: 'opencode-agents/test-agent.md',
+              base: 'base-agents/test/test-agent.md',
+              'claude-code': '.claude/agents/test-agent.md',
+              opencode: '.opencode/agent/test-agent.md',
             },
           },
         ],

@@ -43,13 +43,12 @@ describe('Setup Integration', () => {
     // Verify commands directory was created
     expect(existsSync(join(projectDir, '.claude', 'commands'))).toBe(true);
 
-    // Verify command files were copied (the main bug fix)
+    // Verify command files were copied via CanonicalSyncer
     const commandFiles = await readdir(join(projectDir, '.claude', 'commands'));
     const mdFiles = commandFiles.filter((f) => f.endsWith('.md'));
 
-    // With Phase 3 improvements, we now copy from multiple sources
-    // Primary: 7 command files from command/ directory
-    // Fallback: 29 agent files from claude-agents/ directory (treated as commands)
+    // CanonicalSyncer syncs commands from base-commands/ directory
+    // Pre-built agent folders (claude-agents/, opencode-agents/) have been removed
     expect(mdFiles.length).toBeGreaterThanOrEqual(7);
     expect(mdFiles).toContain('research.md');
     expect(mdFiles).toContain('plan.md');
@@ -71,10 +70,10 @@ describe('Setup Integration', () => {
     expect(existsSync(join(projectDir, '.opencode', 'command'))).toBe(true);
     expect(existsSync(join(projectDir, '.opencode', 'agent'))).toBe(true);
 
-    // Verify command files were copied (setup copies from multiple source directories)
+    // Verify command files were copied via CanonicalSyncer
     const commandFiles = await readdir(join(projectDir, '.opencode', 'command'));
     const mdFiles = commandFiles.filter((f) => f.endsWith('.md'));
-    expect(mdFiles.length).toBeGreaterThanOrEqual(7); // Setup copies from command/ + fallback directories
+    expect(mdFiles.length).toBeGreaterThanOrEqual(7); // CanonicalSyncer syncs from base-commands/
     expect(mdFiles).toContain('research.md');
     expect(mdFiles).toContain('plan.md');
     expect(mdFiles).toContain('execute.md');
@@ -88,10 +87,10 @@ describe('Setup Integration', () => {
     expect(existsSync(join(projectDir, '.opencode', 'command'))).toBe(true);
     expect(existsSync(join(projectDir, '.opencode', 'agent'))).toBe(true);
 
-    // Verify command files were copied
+    // Verify command files were copied via CanonicalSyncer
     const opencodeCommandFiles = await readdir(join(projectDir, '.opencode', 'command'));
     const opencodeMdFiles = opencodeCommandFiles.filter((f) => f.endsWith('.md'));
-    expect(opencodeMdFiles.length).toBeGreaterThanOrEqual(7); // Setup copies from multiple directories
+    expect(opencodeMdFiles.length).toBeGreaterThanOrEqual(7); // CanonicalSyncer syncs from base-commands/
   });
 
   test('should create README with setup instructions', async () => {
