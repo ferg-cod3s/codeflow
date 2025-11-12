@@ -119,7 +119,7 @@ export class HealthChecker {
       try {
         // Check if agent registry files exist and are readable
         const agentDirs = [
-          join(process.cwd(), 'codeflow-agents'),
+          join(process.cwd(), 'base-agents'),
           join(process.cwd(), '.claude', 'agents'),
           join(process.cwd(), '.opencode', 'agent'),
         ];

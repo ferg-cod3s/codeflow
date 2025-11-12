@@ -81,7 +81,7 @@ export async function syncAllFormats(options: SyncFormatsOptions = {}) {
     const codeflowDir = getCodeflowRoot();
 
     const directories = {
-      base: join(codeflowDir, 'codeflow-agents'), // Updated to use codeflow-agents directory
+      base: join(codeflowDir, 'base-agents'), // Updated to use base-agents directory
       claudeCode: join(codeflowDir, 'claude-agents'),
       opencode: join(codeflowDir, 'opencode-agents'),
     };
@@ -359,7 +359,7 @@ export async function showFormatDifferences() {
     const codeflowDir = getCodeflowRoot();
 
     const directories = {
-      base: join(codeflowDir, 'codeflow-agents'), // Updated to use codeflow-agents directory
+      base: join(codeflowDir, 'base-agents'), // Updated to use base-agents directory
       'claude-code': join(codeflowDir, 'claude-agents'),
       opencode: join(codeflowDir, 'opencode-agents'),
     };

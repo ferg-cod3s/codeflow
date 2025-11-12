@@ -67,7 +67,7 @@ function getCategoryFromName(name: string): string {
 }
 
 /**
- * Scan codeflow-agents directory and build manifest
+ * Scan base-agents directory and build manifest
  */
 interface DiscoveredAgent {
   name: string;

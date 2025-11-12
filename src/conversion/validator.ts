@@ -313,13 +313,13 @@ export class AgentValidator {
             .filter(
               (l) =>
                 (l.format === 'base' &&
-                  l.file.includes('codeflow-agents/') &&
+                  l.file.includes('base-agents/') &&
                   !l.file.includes('backup/')) ||
                 (l.format === 'claude-code' &&
-                  (l.file.includes('claude-agents/') || l.file.includes('.claude/agents/')) &&
+                  l.file.includes('.claude/agents/') &&
                   !l.file.includes('backup/')) ||
                 (l.format === 'opencode' &&
-                  (l.file.includes('opencode-agents/') || l.file.includes('.opencode/agent/')) &&
+                  l.file.includes('.opencode/agent/') &&
                   !l.file.includes('backup/'))
             )
             .map((c) => c.file),
@@ -344,11 +344,9 @@ export class AgentValidator {
       canonicalAgentCount: Object.keys(agentsByName).filter(
         (name) =>
           agentsByName[name].length >= 3 && // At least 3 formats (may have extras)
-          agentsByName[name].some((l) => l.directory.includes('codeflow-agents')) &&
-          (agentsByName[name].some((l) => l.directory.includes('claude-agents')) ||
-            agentsByName[name].some((l) => l.directory.includes('.claude'))) &&
-          (agentsByName[name].some((l) => l.directory.includes('opencode-agents')) ||
-            agentsByName[name].some((l) => l.directory.includes('.opencode')))
+          agentsByName[name].some((l) => l.directory.includes('base-agents')) &&
+          agentsByName[name].some((l) => l.directory.includes('.claude')) &&
+          agentsByName[name].some((l) => l.directory.includes('.opencode'))
       ).length,
       duplicates,
     };
@@ -594,11 +592,10 @@ export class AgentValidator {
    * Helper method to detect format from file path
    */
   private detectFormatFromPath(filePath: string): string {
-    if (filePath.includes('codeflow-agents/')) return 'base';
+    if (filePath.includes('base-agents/')) return 'base';
     if (filePath.includes('.claude/agents/')) return 'claude-code';
     if (filePath.includes('.opencode/agent/')) return 'opencode';
-    if (filePath.includes('claude-agents/')) return 'claude-code';
-    if (filePath.includes('opencode-agents/')) return 'opencode';
+    if (filePath.includes('.cursor/agents/')) return 'claude-code';
     return 'unknown';
   }
 

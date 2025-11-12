@@ -62,7 +62,7 @@ async function listDirectory(dir: string, type: 'agent' | 'command'): Promise<Li
 
   try {
     const items: ListItem[] = [];
-    const isBaseFormat = dir.includes('codeflow-agents') || dir.endsWith('command');
+    const isBaseFormat = dir.includes('base-agents') || dir.endsWith('command');
 
     async function scanDirectory(currentDir: string): Promise<void> {
       const entries = readdirSync(currentDir, { withFileTypes: true });
@@ -80,7 +80,7 @@ async function listDirectory(dir: string, type: 'agent' | 'command'): Promise<Li
             platform = 'claude-code';
           } else if (dir.includes('.opencode')) {
             platform = 'opencode';
-          } else if (dir.includes('codeflow-agents') || dir === 'command') {
+          } else if (dir.includes('base-agents') || dir === 'command') {
             platform = 'base';
           }
 
@@ -193,7 +193,7 @@ export async function list(
 
   // Collect agents
   if (type === 'agents' || type === 'all') {
-    const agentDirs = ['.claude/agents', '.opencode/agent', 'codeflow-agents'];
+    const agentDirs = ['.claude/agents', '.opencode/agent', 'base-agents'];
 
     for (const dir of agentDirs) {
       const fullPath = join(projectPathResolved, dir);

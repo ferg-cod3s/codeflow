@@ -59,7 +59,7 @@ export async function status(projectPath?: string) {
     }
 
     // Check agents
-    const sourceAgentDir = join(codeflowDir, 'codeflow-agents');
+    const sourceAgentDir = join(codeflowDir, 'base-agents');
     const targetAgentDir = join(targetBase, 'agent');
 
     if (existsSync(sourceAgentDir)) {

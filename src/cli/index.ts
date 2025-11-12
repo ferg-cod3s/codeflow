@@ -84,7 +84,7 @@ Examples:
    codeflow fix-models                  # Fix model IDs globally
    codeflow fix-models --local          # Fix model IDs in current project
    codeflow fix-models --all-projects   # Fix model IDs in all discovered projects
-  codeflow convert ./codeflow-agents ./claude-agents claude-code
+  codeflow convert ./base-agents ./claude-agents claude-code
   codeflow watch start --global
    codeflow list                        # List all available agents and commands
    codeflow list --type agents          # List only agents
@@ -209,20 +209,14 @@ function getFormatDirectory(
 
   switch (format) {
     case 'base':
-      // Base format refers to the global codeflow agent directory
-      return join(codeflowRoot, 'codeflow-agents');
-    case 'claude-code': {
-      // For projects, use .claude/agents if it exists, otherwise use global
-      const projectClaudeDir = join(projectPath, '.claude', 'agents');
-      return existsSync(projectClaudeDir) ? projectClaudeDir : join(codeflowRoot, 'claude-agents');
-    }
-    case 'opencode': {
-      // For projects, use .opencode/agent if it exists, otherwise use global
-      const projectOpenCodeDir = join(projectPath, '.opencode', 'agent');
-      return existsSync(projectOpenCodeDir)
-        ? projectOpenCodeDir
-        : join(codeflowRoot, 'opencode-agents');
-    }
+      // Base format refers to the canonical base-agents directory
+      return join(codeflowRoot, 'base-agents');
+    case 'claude-code':
+      // For projects, use .claude/agents (generated at runtime by CanonicalSyncer)
+      return join(projectPath, '.claude', 'agents');
+    case 'opencode':
+      // For projects, use .opencode/agent (generated at runtime by CanonicalSyncer)
+      return join(projectPath, '.opencode', 'agent');
     default:
       throw new Error(`Unknown format: ${format}`);
   }

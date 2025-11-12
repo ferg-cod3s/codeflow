@@ -129,9 +129,9 @@ async function checkProjectHealth(projectPath: string) {
     }
   }
 
-  // Check for codeflow-agents source
+  // Check for base-agents source
   const codeflowRoot = getCodeflowRoot();
-  if (!existsSync(join(codeflowRoot, 'codeflow-agents'))) {
+  if (!existsSync(join(codeflowRoot, 'base-agents'))) {
     issues.push({
       severity: 'error',
       message: 'Codeflow agents source not found - CLI may be corrupted',
@@ -146,7 +146,7 @@ async function checkProjectHealth(projectPath: string) {
  */
 async function countAgents(_projectPath: string): Promise<number> {
   const codeflowRoot = getCodeflowRoot();
-  const sourceDir = join(codeflowRoot, 'codeflow-agents');
+  const sourceDir = join(codeflowRoot, 'base-agents');
 
   if (!existsSync(sourceDir)) return 0;
 

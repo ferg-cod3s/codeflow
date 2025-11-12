@@ -88,7 +88,7 @@ export class CatalogIndexBuilder {
       items: [],
     };
 
-    // Process existing agents from codeflow-agents/
+    // Process existing agents from base-agents/
     const agents = await this.scanAgents();
     index.items.push(...agents);
     index.stats.agents = agents.length;
@@ -110,7 +110,7 @@ export class CatalogIndexBuilder {
   }
 
   private async scanAgents(): Promise<CatalogItem[]> {
-    const agentsDir = join(this.projectRoot, 'codeflow-agents');
+    const agentsDir = join(this.projectRoot, 'base-agents');
     const items: CatalogItem[] = [];
 
     if (!existsSync(agentsDir)) {
