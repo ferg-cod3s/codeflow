@@ -1,4 +1,4 @@
-import { readFile, readdir } from 'fs/promises';
+import { readFile, readdir, writeFile } from 'fs/promises';
 import { existsSync } from 'fs';
 import { mkdir, copyFile, stat } from 'fs/promises';
 import path, { basename } from 'path';
@@ -213,7 +213,7 @@ export class CanonicalSyncer {
     options: SyncOptions
   ): Promise<string[]> {
     const { agent, sourceFile } = agentData;
-    const targetPaths = this.getTargetPaths(agent.name, options.target);
+    const targetPaths = this.getTargetPaths(agent.name, options.target, options.projectPath);
     const tempFiles: string[] = [];
 
     // Create temp file for each target path
@@ -346,14 +346,15 @@ export class CanonicalSyncer {
   /**
    * Get target paths for an agent
    */
-  private getTargetPaths(agentName: string, target: string): string[] {
+  private getTargetPaths(agentName: string, target: string, projectPath?: string): string[] {
     const paths = [];
 
     if (target === 'project' || target === 'all') {
       // Project-specific locations
-      paths.push(path.join(process.cwd(), '.claude', 'agents', `${agentName}.md`));
-      paths.push(path.join(process.cwd(), '.cursor', 'agents', `${agentName}.md`));
-      paths.push(path.join(process.cwd(), '.opencode', 'agent', `${agentName}.md`));
+      const projectRoot = projectPath || process.cwd();
+      paths.push(path.join(projectRoot, '.claude', 'agents', `${agentName}.md`));
+      paths.push(path.join(projectRoot, '.cursor', 'agents', `${agentName}.md`));
+      paths.push(path.join(projectRoot, '.opencode', 'agent', `${agentName}.md`));
     }
 
     if (target === 'global' || target === 'all') {
@@ -403,7 +404,7 @@ export class CanonicalSyncer {
       }
 
       const content = yamlResult.data;
-      await Bun.write(targetPath, content);
+      await writeFile(targetPath, content, 'utf-8');
     }
   }
 
@@ -510,7 +511,7 @@ export class CanonicalSyncer {
 
             // Convert command format based on target
             const convertedContent = await converter.convertFile(sourceFile, target.format);
-            await Bun.write(tempPath, convertedContent);
+            await writeFile(tempPath, convertedContent, 'utf-8');
             tempFiles.push(tempPath);
           } catch (error) {
             console.error(`Failed to sync command ${file}: ${(error as Error).message}`);
