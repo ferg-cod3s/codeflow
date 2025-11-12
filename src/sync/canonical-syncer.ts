@@ -118,6 +118,10 @@ export class CanonicalSyncer {
       if (options.target === 'global' || options.target === 'all' || options.target === 'project') {
         const commandTempFiles = await this.syncCommands(options);
         tempFiles.push(...commandTempFiles);
+
+        // Sync skills (flattened for both Claude and OpenCode)
+        const skillTempFiles = await this.syncSkills(options);
+        tempFiles.push(...skillTempFiles);
       }
 
       // Phase 4: Commit all temp files to final locations
@@ -508,6 +512,90 @@ export class CanonicalSyncer {
     }
 
     return tempFiles;
+  }
+
+  /**
+   * Sync skills to global/project directories
+   * Skills are flattened for both Claude and OpenCode (no subdirectories)
+   */
+  private async syncSkills(options: SyncOptions): Promise<string[]> {
+    const tempFiles: string[] = [];
+    const codeflowRoot = path.join(process.cwd());
+    const sourceSkillsDir = path.join(codeflowRoot, 'base-skills');
+
+    if (!existsSync(sourceSkillsDir)) {
+      return tempFiles; // No skills to sync
+    }
+
+    try {
+      // Recursively find all markdown files in base-skills
+      const allFiles = await this.findMarkdownFilesRecursive(sourceSkillsDir);
+
+      for (const sourceFile of allFiles) {
+        // Flatten skills - use only filename, no subdirectories
+        const filename = path.basename(sourceFile);
+
+        // Determine target paths based on sync target
+        const targetPaths: string[] = [];
+
+        if (options.target === 'global' || options.target === 'all') {
+          targetPaths.push(
+            path.join(os.homedir(), '.claude', 'skills', filename),
+            path.join(os.homedir(), '.config', 'opencode', 'skill', filename)
+          );
+        }
+
+        if (options.target === 'project' || options.target === 'all') {
+          const projectPath = options.projectPath || process.cwd();
+          targetPaths.push(
+            path.join(projectPath, '.claude', 'skills', filename),
+            path.join(projectPath, '.opencode', 'skill', filename)
+          );
+        }
+
+        for (const targetPath of targetPaths) {
+          const tempPath = `${targetPath}.tmp`;
+
+          try {
+            // Ensure target directory exists
+            const targetDir = path.dirname(targetPath);
+            await mkdir(targetDir, { recursive: true });
+
+            // Copy skill file directly (no format conversion needed)
+            await copyFile(sourceFile, tempPath);
+            tempFiles.push(tempPath);
+          } catch (error) {
+            console.error(`Failed to sync skill ${filename}: ${(error as Error).message}`);
+          }
+        }
+      }
+    } catch (error) {
+      console.error(`Failed to sync skills: ${(error as Error).message}`);
+    }
+
+    return tempFiles;
+  }
+
+  /**
+   * Recursively find all markdown files in a directory
+   */
+  private async findMarkdownFilesRecursive(dir: string): Promise<string[]> {
+    const files: string[] = [];
+
+    const entries = await readdir(dir, { withFileTypes: true });
+
+    for (const entry of entries) {
+      const fullPath = path.join(dir, entry.name);
+
+      if (entry.isDirectory()) {
+        const subFiles = await this.findMarkdownFilesRecursive(fullPath);
+        files.push(...subFiles);
+      } else if (entry.isFile() && entry.name.endsWith('.md')) {
+        files.push(fullPath);
+      }
+    }
+
+    return files;
   }
 
   /**
