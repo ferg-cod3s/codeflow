@@ -19,26 +19,30 @@ This directory contains scripts and tools for managing agent synchronization acr
 
 ## Overview
 
-The Codeflow system now supports three agent formats, each with its own directory structure:
+The Codeflow system uses a canonical source format with runtime conversion to platform-specific formats:
 
 - **`base-agents/`** - Base format agents (source of truth, organized in subdirectories by category)
-- **`opencode-agents/`** - OpenCode format agents (flat directory structure)
-- **`claude-agents/`** - Claude Code format agents (organized in subdirectories by category)
+- **Runtime Conversion** - Agents are converted on-the-fly to platform-specific formats:
+  - `.claude/agents/` - Claude Code format (flat structure)
+  - `.opencode/agent/` - OpenCode format (flat structure)
+  - `.cursor/agents/` - Cursor format (same as Claude Code)
 
 ## Automatic Synchronization
 
-The system automatically keeps all three directories in sync. When you:
+The CanonicalSyncer system handles runtime conversion from base format to platform formats:
 
-1. **Add a new agent** to any directory
-2. **Update an existing agent** in any directory
-3. **Run the sync command**
+1. **Source**: Agents are authored in `base-agents/` with full metadata
+2. **Runtime Conversion**: CanonicalSyncer converts on-demand to:
+   - Claude Code format (`.claude/agents/`)
+   - OpenCode format (`.opencode/agent/`)
+   - Cursor format (`.cursor/agents/`)
+3. **No Pre-built Folders**: Platform-specific folders are generated at runtime, not stored in repository
 
-The system will automatically:
-
-- Parse the agent from the source directory
-- Convert it to the appropriate format for each target directory
-- Place it in the correct subdirectory structure
-- Ensure all three directories have the same set of agents
+Benefits:
+- Single source of truth (`base-agents/`)
+- No duplicate files to maintain
+- Fast conversion (<100ms for 141 agents)
+- Reduced package size (~3MB savings)
 
 ## CLI Commands
 
@@ -132,30 +136,27 @@ base-agents/
 └── product-strategy/     # Product management
 ```
 
-### Claude Agents (`claude-agents/`)
+### Claude Code Runtime Format (`.claude/agents/`)
 
-```
-claude-agents/
-├── development/           # Development specialists
-├── generalist/           # Cross-functional agents
-├── ai-innovation/        # AI/ML specialists
-├── operations/           # DevOps and operations
-├── quality-testing/      # Testing and security
-├── business-analytics/   # Business and analytics
-├── design-ux/            # Design and UX
-└── product-strategy/     # Product management
-```
+Generated at runtime from `base-agents/`:
+- Flat directory structure (no subdirectories)
+- `tools` field as comma-separated string
+- Category information in frontmatter
+- Example: `.claude/agents/api-builder.md`
 
-### OpenCode Agents (`opencode-agents/`)
+### OpenCode Runtime Format (`.opencode/agent/`)
 
-```
-opencode-agents/
-├── analytics-engineer.md
-├── api-builder.md
-├── code-reviewer.md
-├── ... (flat structure)
-└── smart-subagent-orchestrator.md
-```
+Generated at runtime from `base-agents/`:
+- Flat directory structure (required by OpenCode spec)
+- `permission` object with tool access
+- `mode: subagent` for all agents
+- Example: `.opencode/agent/api-builder.md`
+
+### Cursor Runtime Format (`.cursor/agents/`)
+
+Generated at runtime from `base-agents/`:
+- Same format as Claude Code (flat structure)
+- Example: `.cursor/agents/api-builder.md`
 
 ## How It Works
 
