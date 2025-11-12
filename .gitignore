@@ -64,6 +64,7 @@ Desktop.ini
 coverage/
 .nyc_output/
 test-results/
+test-reports/
 playwright-report/
 cypress/videos/
 cypress/screenshots/
