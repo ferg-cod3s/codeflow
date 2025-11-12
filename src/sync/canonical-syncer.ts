@@ -352,6 +352,7 @@ export class CanonicalSyncer {
     if (target === 'project' || target === 'all') {
       // Project-specific locations
       paths.push(path.join(process.cwd(), '.claude', 'agents', `${agentName}.md`));
+      paths.push(path.join(process.cwd(), '.cursor', 'agents', `${agentName}.md`));
       paths.push(path.join(process.cwd(), '.opencode', 'agent', `${agentName}.md`));
     }
 
@@ -359,6 +360,7 @@ export class CanonicalSyncer {
       // Global locations
       const homeDir = os.homedir();
       paths.push(path.join(homeDir, '.claude', 'agents', `${agentName}.md`));
+      paths.push(path.join(homeDir, '.cursor', 'agents', `${agentName}.md`));
       paths.push(path.join(homeDir, '.config', 'opencode', 'agent', `${agentName}.md`));
     }
 
@@ -432,7 +434,7 @@ export class CanonicalSyncer {
    * Detect target format from path
    */
   private detectTargetFormat(targetPath: string): string {
-    if (targetPath.includes('.claude/')) return 'claude-code';
+    if (targetPath.includes('.claude/') || targetPath.includes('.cursor/')) return 'claude-code';
     if (targetPath.includes('.opencode/') || targetPath.includes('.config/opencode/'))
       return 'opencode';
     return 'base';
@@ -470,6 +472,10 @@ export class CanonicalSyncer {
               format: 'claude-code',
             },
             {
+              path: path.join(os.homedir(), '.cursor', 'commands', file),
+              format: 'claude-code',
+            },
+            {
               path: path.join(os.homedir(), '.config', 'opencode', 'command', file),
               format: 'opencode',
             }
@@ -481,6 +487,10 @@ export class CanonicalSyncer {
           targetPaths.push(
             {
               path: path.join(projectPath, '.claude', 'commands', file),
+              format: 'claude-code',
+            },
+            {
+              path: path.join(projectPath, '.cursor', 'commands', file),
               format: 'claude-code',
             },
             {
@@ -541,6 +551,7 @@ export class CanonicalSyncer {
         if (options.target === 'global' || options.target === 'all') {
           targetPaths.push(
             path.join(os.homedir(), '.claude', 'skills', filename),
+            path.join(os.homedir(), '.cursor', 'skills', filename),
             path.join(os.homedir(), '.config', 'opencode', 'skill', filename)
           );
         }
@@ -549,6 +560,7 @@ export class CanonicalSyncer {
           const projectPath = options.projectPath || process.cwd();
           targetPaths.push(
             path.join(projectPath, '.claude', 'skills', filename),
+            path.join(projectPath, '.cursor', 'skills', filename),
             path.join(projectPath, '.opencode', 'skill', filename)
           );
         }
