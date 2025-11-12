@@ -215,6 +215,7 @@ jobs:
 
           # Clean up
           rm -rf test-workspace
+        shell: bash
 
       - name: Test Unicode file handling
         run: |
@@ -223,6 +224,7 @@ jobs:
           echo "Unicode content: 你好世界 🌍" > "unicode-test/测试文件.txt"
           ls -la unicode-test/
           rm -rf unicode-test
+        shell: bash
 
       - name: Test path resolution
         run: bun test tests/platform/cross-platform.test.ts -t "Platform-Specific Path Resolution" --timeout 15000

@@ -349,8 +349,8 @@ function hashAgentData(normalizedData) {
  * Build the complete agent registry from all priority directories
  *
  * Priority order (later directories override earlier ones):
- * 1. Canonical global codeflow agents (codeflow-agents/**)
- * 2. Canonical global opencode agents (opencode-agents/**)
+ * 1. Canonical global base agents (base-agents/**)
+ * 2. Runtime OpenCode agents (.opencode/agent/)
  * 3. Legacy agents (deprecated/**) - only if CODEFLOW_INCLUDE_LEGACY=1
  * 4. Global user agents
  * 5. Project-specific agents
@@ -363,9 +363,9 @@ async function buildAgentRegistry() {
 
   // Define agent directories in priority order (lower priority first)
   const agentDirs = [
-    // Canonical global codeflow agents (lowest priority)
-    { dir: path.join(codeflowRoot, 'codeflow-agents'), format: 'base', category: 'canonical' },
-    { dir: path.join(codeflowRoot, 'opencode-agents'), format: 'opencode', category: 'canonical' },
+    // Canonical global base agents (lowest priority)
+    { dir: path.join(codeflowRoot, 'base-agents'), format: 'base', category: 'canonical' },
+    { dir: path.join(codeflowRoot, '.opencode', 'agent'), format: 'opencode', category: 'canonical' },
 
     // Legacy agents (conditionally included)
     ...(includeLegacy

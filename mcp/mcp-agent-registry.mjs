@@ -202,7 +202,7 @@ async function buildMcpAgentRegistry() {
   // Define MCP agent directories in priority order (lower priority first)
   const mcpAgentDirs = [
     // Codeflow MCP agents (lowest priority)
-    { dir: path.join(codeflowRoot, 'codeflow-agents'), label: 'Codeflow Agents' },
+    { dir: path.join(codeflowRoot, 'base-agents'), label: 'Codeflow Agents' },
 
     // Global user MCP agents (medium priority)
     { dir: path.join(os.homedir(), '.codeflow', 'agents'), label: 'Global User MCP Agents' },

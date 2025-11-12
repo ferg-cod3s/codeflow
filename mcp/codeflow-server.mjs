@@ -120,7 +120,7 @@ async function buildTools() {
   let agentFiles = [];
   const agentDirs = [
     path.join(paths.codeflowRoot, '.opencode', 'agent'),
-    path.join(paths.codeflowRoot, 'codeflow-agents'),
+    path.join(paths.codeflowRoot, 'base-agents'),
     path.join(process.cwd(), '.opencode', 'agent'),
     path.join(process.cwd(), '.claude', 'agents'),
   ];
