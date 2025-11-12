@@ -188,15 +188,15 @@ describe('Clean Command', () => {
           {
             name: 'referenced-agent',
             sources: {
-              base: 'codeflow-agents/development/referenced-agent.md'
+              base: 'base-agents/development/referenced-agent.md'
             }
           }
         ]
       }));
 
       // Create referenced file
-      await mkdir(join(testProjectRoot, 'codeflow-agents', 'development'), { recursive: true });
-      await writeFile(join(testProjectRoot, 'codeflow-agents', 'development', 'referenced-agent.md'), 'referenced agent');
+      await mkdir(join(testProjectRoot, 'base-agents', 'development'), { recursive: true });
+      await writeFile(join(testProjectRoot, 'base-agents', 'development', 'referenced-agent.md'), 'referenced agent');
 
       // Create orphaned file
       await writeFile(join(testProjectRoot, 'orphaned-agent.md'), 'orphaned agent');
@@ -210,7 +210,7 @@ describe('Clean Command', () => {
       expect(result).toBeDefined();
 
       // Referenced file should still exist
-      expect(existsSync(join(testProjectRoot, 'codeflow-agents', 'development', 'referenced-agent.md'))).toBe(true);
+      expect(existsSync(join(testProjectRoot, 'base-agents', 'development', 'referenced-agent.md'))).toBe(true);
     });
   });
 
@@ -378,7 +378,7 @@ describe('Clean Command', () => {
       // Create CodeFlow project structure
       await mkdir(join(testProjectRoot, '.claude', 'agents'), { recursive: true });
       await mkdir(join(testProjectRoot, '.opencode', 'agent'), { recursive: true });
-      await mkdir(join(testProjectRoot, 'codeflow-agents'), { recursive: true });
+      await mkdir(join(testProjectRoot, 'base-agents'), { recursive: true });
 
       // Create cache files
       await mkdir(join(testProjectRoot, '.cache'), { recursive: true });

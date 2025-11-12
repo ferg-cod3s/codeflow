@@ -197,8 +197,8 @@ describe('Watch Command', () => {
 
   describe('Auto-Sync Triggers', () => {
     test('should trigger sync on agent file changes', async () => {
-      await mkdir(join(testProjectRoot, 'codeflow-agents'), { recursive: true });
-      await writeFile(join(testProjectRoot, 'codeflow-agents', 'test-agent.md'), 'Test agent');
+      await mkdir(join(testProjectRoot, 'base-agents'), { recursive: true });
+      await writeFile(join(testProjectRoot, 'base-agents', 'test-agent.md'), 'Test agent');
 
       const result = await startWatch(testProjectRoot, {
         autoSync: true,
@@ -208,7 +208,7 @@ describe('Watch Command', () => {
       expect(result).toBeDefined();
 
       // Modify agent file
-      await writeFile(join(testProjectRoot, 'codeflow-agents', 'test-agent.md'), 'Modified agent');
+      await writeFile(join(testProjectRoot, 'base-agents', 'test-agent.md'), 'Modified agent');
 
       // Wait for sync trigger
       await new Promise((resolve) => setTimeout(resolve, 100));
@@ -434,8 +434,8 @@ describe('Watch Command', () => {
       expect(result).toBeDefined();
 
       // Create agent file to trigger sync
-      await mkdir(join(testProjectRoot, 'codeflow-agents'), { recursive: true });
-      await writeFile(join(testProjectRoot, 'codeflow-agents', 'sync-agent.md'), 'Sync agent');
+      await mkdir(join(testProjectRoot, 'base-agents'), { recursive: true });
+      await writeFile(join(testProjectRoot, 'base-agents', 'sync-agent.md'), 'Sync agent');
 
       // Wait for sync event
       await new Promise((resolve) => setTimeout(resolve, 100));

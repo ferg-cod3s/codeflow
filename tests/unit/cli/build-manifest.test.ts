@@ -64,7 +64,7 @@ describe('Build Manifest', () => {
       expect(result).toBeUndefined(); // buildManifest returns void
     });
 
-    test('should handle empty codeflow-agents directory', async () => {
+    test('should handle empty base-agents directory', async () => {
       const result = await buildManifest({
         projectRoot: testProjectRoot,
         dryRun: true,
@@ -73,7 +73,7 @@ describe('Build Manifest', () => {
       expect(result).toBeUndefined();
     });
 
-    test('should handle missing codeflow-agents directory', async () => {
+    test('should handle missing base-agents directory', async () => {
       await rm(agentsDir, { recursive: true, force: true });
 
       await expect(

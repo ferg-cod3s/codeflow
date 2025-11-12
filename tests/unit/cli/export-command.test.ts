@@ -264,7 +264,7 @@ describe('Export Command', () => {
       // Create CodeFlow project structure
       await mkdir(join(testProjectRoot, '.claude', 'agents'), { recursive: true });
       await mkdir(join(testProjectRoot, '.opencode', 'agent'), { recursive: true });
-      await mkdir(join(testProjectRoot, 'codeflow-agents'), { recursive: true });
+      await mkdir(join(testProjectRoot, 'base-agents'), { recursive: true });
       await mkdir(join(testProjectRoot, 'command'), { recursive: true });
 
       await writeFile(
