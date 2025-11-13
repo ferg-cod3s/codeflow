@@ -164,11 +164,7 @@ If any escalation trigger fires: halt implementation beyond safe stub; produce e
 
 ## 7. Output Formats (AGENT_OUTPUT_V1)
 
-All final responses MUST return JSON object as first fenced block (```json) followed by any explanatory notes.
-
-Schema (AGENT_OUTPUT_V1):
-
-```json
+All final responses MUST return JSON object as first fenced block ([CODE_BLOCK]json
 {
   "summary": "<concise outcome or proposed plan>",
   "plan": [{ "step": 1, "action": "", "rationale": "", "status": "pending|in_progress|completed" }],
@@ -200,55 +196,7 @@ Schema (AGENT_OUTPUT_V1):
   "next_actions": ["Implement migration after DBA review"],
   "notes": "Optional human-readable elaboration"
 }
-```
-
-If an escalation is required, set summary to start with: "ESCALATION_REQUIRED: " and populate escalations array.
-
-## 8. Collaboration & Escalation
-
-| Scenario                | Trigger Phrase / Condition                               | Escalate To            | Provide Before Escalation                     |
-| ----------------------- | -------------------------------------------------------- | ---------------------- | --------------------------------------------- |
-| Auth model shift        | Need new token rotation or session invalidation strategy | security-scanner       | Current flow diagram + risk summary           |
-| Data volume risk        | Migration > 1M rows or requires batching windows         | database-expert        | Table schema, row estimates, migration sketch |
-| Latency hotspot         | Requires profiling or algorithm redesign                 | performance-engineer   | Baseline timings + suspected bottleneck       |
-| Service boundary change | Extract new microservice or event redesign               | system-architect       | Current + proposed boundaries table           |
-| Multi-region / HA       | Cross-region failover requirement                        | infrastructure-builder | Availability goals + RTO/RPO targets          |
-| UX pattern divergence   | Net-new interaction paradigm                             | ux-optimizer           | User journey & rationale                      |
-| Complex API contract    | Streaming, version negotiation, breaking change          | api-builder            | Contract diff & compatibility notes           |
-| Monitoring new model    | Distributed tracing schema changes                       | monitoring-expert      | Observability gaps list                       |
-
-## 9. Quality Standards
-
-- Deterministic Builds: No undocumented dependency introduction.
-- Test Coverage: Critical logic paths touched must have positive + negative + boundary test.
-- Reversibility: Multi-file changes should be partitioned into coherent, reversible groups.
-- Consistency: Follow naming, directory structure, linting rules—no novel patterns without justification.
-- Minimal Surface Area: Avoid exporting internal helpers unnecessarily.
-- Security Hygiene: Use existing sanitization/validation utilities; never hand-roll crypto.
-- Documentation: Update README/module-level docs when adding new public behaviors.
-
-## 10. Best Practices
-
-- Start Vertical: Deliver smallest end-to-end slice first; expand iteratively.
-- Prefer Composition over premature abstraction; refactor only after 2–3 concrete use cases.
-- Log Intentionally: Only actionable and bounded logs; avoid noisy debug leftovers.
-- Fail Fast, Recover Gracefully: Validate early, return precise errors with established shape.
-- Avoid Temporal Coupling: Keep migrations deploy-safe (forward compatible first).
-- Explicit TODO Debt Markers: Use TODO(tag: context) for deferred improvements, not silent omissions.
-- Always Summarize Delta: Provide human-understandable description of rationale for each changed file.
-
-## 11. Guardrail Enforcement Tactics
-
-Before any large action:
-
-1. Run boundary checklist: security?/performance?/architecture?/data scale?
-2. If ANY answer uncertain → produce escalation entry instead of proceeding.
-3. Never silently implement speculative abstractions.
-4. Reject vague requests: ask for clarification or produce assumptions block.
-
-## 12. Example Response (Abbreviated)
-
-```json
+[CODE_BLOCK]json
 {
   "summary": "Implement user profile display: new React component + GET /api/profile endpoint.",
   "plan": [

@@ -12,7 +12,6 @@ permission:
   list: allow
   glob: allow
   write: allow
-  patch: allow
 category: quality-testing
 tags:
   - error-analysis

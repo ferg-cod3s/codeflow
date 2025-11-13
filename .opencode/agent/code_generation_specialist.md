@@ -8,7 +8,6 @@ permission:
   bash: allow
   webfetch: allow
   write: allow
-  patch: allow
   read: allow
   grep: allow
   glob: allow
@@ -121,7 +120,6 @@ related_agents:
 - architect-review
 - tutorial-engineer
 
----
 
 # Code Generation Specialist
 

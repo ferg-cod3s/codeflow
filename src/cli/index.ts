@@ -16,7 +16,7 @@ import { clean } from './clean.js';
 import { exportProject } from './export.js';
 import { research } from './research.js';
 import { buildManifest } from './build-manifest.js';
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 let packageJson;
 try {
   packageJson = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf-8'));

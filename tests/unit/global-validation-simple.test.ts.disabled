@@ -4,15 +4,11 @@
  */
 
 import { describe, test, expect, beforeAll, afterAll, beforeEach } from 'bun:test';
-import { writeFile, mkdir, readdir, rm } from 'fs/promises';
+import { writeFile, mkdir, rm } from 'fs/promises';
 import { existsSync } from 'fs';
 import { join } from 'path';
 import { setupTests, cleanupTests, TEST_DIR } from '../setup.ts';
-import {
-  validateGlobalDirectory,
-  validateOpenCodeFlatStructure,
-  displayGlobalValidationResults,
-} from '../../src/cli/validate.js';
+import { validate } from '../../src/cli/validate.js';
 
 // Helper to create test global structure
 async function createTestGlobalStructure() {
@@ -23,7 +19,7 @@ async function createTestGlobalStructure() {
   };
 
   // Create directories
-  for (const [format, dir] of Object.entries(globalDirs)) {
+  for (const [, dir] of Object.entries(globalDirs)) {
     await mkdir(dir, { recursive: true });
   }
 

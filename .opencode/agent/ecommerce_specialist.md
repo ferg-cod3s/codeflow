@@ -8,6 +8,10 @@ permission:
   bash: deny
   webfetch: allow
   write: allow
+  read: allow
+  grep: allow
+  glob: allow
+  list: allow
 category: product-strategy
 tags:
   - ecommerce
@@ -116,7 +120,6 @@ related_agents:
 - api-builder
 - technical-writer
 
----
 
 # E-commerce Specialist
 

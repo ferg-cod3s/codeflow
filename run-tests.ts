@@ -1,9 +1,5 @@
 #!/usr/bin/env bun
 
-
-
-
-
 /**
  * Codeflow Test Runner
  * Runs all test suites and generates coverage reports
@@ -68,7 +64,12 @@ class TestRunner {
     },
 
     // Integration tests
-    { name: 'End-to-End', path: 'tests/e2e/integration.test.ts', type: 'e2e', timeout: 60000 },
+    {
+      name: 'End-to-End',
+      path: 'tests/e2e/complete-workflow.test.ts',
+      type: 'e2e',
+      timeout: 60000,
+    },
   ];
 
   private results: TestResults[] = [];
