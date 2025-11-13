@@ -38,7 +38,6 @@ failure_modes:
 
 **Input**: $ARGUMENTS
 
-
 You are tasked with creating git commits for the changes made during this session. This command uses intelligent caching to optimize performance and maintain consistency across similar commit operations.
 
 ## Purpose

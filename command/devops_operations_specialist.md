@@ -4,6 +4,7 @@ description: Expert DevOps and operations specialist focused on infrastructure
 temperature: 0.1
 category: utility
 ---
+
 output_format: AGENT_OUTPUT_V1
 requires_structured_output: true
 validation_rules:

@@ -153,7 +153,6 @@ changelog:
 
 **Input**: $ARGUMENTS
 
-
 The `impact-analysis` command provides comprehensive analysis of the potential impact of code changes, dependency updates, or architectural decisions across your codebase.
 
 ## Overview

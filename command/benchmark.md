@@ -149,7 +149,6 @@ changelog:
 
 **Input**: $ARGUMENTS
 
-
 The `benchmark` command runs comprehensive performance benchmarks, load tests, and profiling to ensure your applications can handle expected and peak loads.
 
 ## Overview

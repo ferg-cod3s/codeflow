@@ -9,7 +9,7 @@ inputs:
   - name: format
     type: string
     required: false
-    default: "keepachangelog"
+    default: 'keepachangelog'
     description: Changelog format (keepachangelog, conventional)
   - name: version
     type: string
@@ -48,6 +48,7 @@ Create or update a CHANGELOG.md file that tracks all notable changes to the proj
 ## Inputs
 
 - **format** (optional): Changelog format to use
+
   - `keepachangelog` (default): Keep a Changelog format
   - `conventional`: Generated from conventional commits
 
@@ -70,31 +71,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
 - New features added but not yet released
 
 ### Changed
+
 - Changes in existing functionality
 
 ### Deprecated
+
 - Soon-to-be removed features
 
 ### Removed
+
 - Now removed features
 
 ### Fixed
+
 - Bug fixes
 
 ### Security
+
 - Security vulnerability fixes
 
 ## [1.0.0] - 2025-10-29
 
 ### Added
+
 - Initial release
 - Feature X implementation
 - Feature Y implementation
 
 ### Fixed
+
 - Bug #123: Description of bug fix
 
 [Unreleased]: https://github.com/user/repo/compare/v1.0.0...HEAD
@@ -126,6 +135,7 @@ git log --pretty=format:"%h %s"
 ### 3. Categorize Changes
 
 Parse commit messages for conventional commit prefixes:
+
 - `feat:` → **Added**
 - `fix:` → **Fixed**
 - `docs:` → **Documentation** (or Changed)
@@ -140,12 +150,14 @@ Parse commit messages for conventional commit prefixes:
 ### 4. Generate or Update Changelog
 
 **For New Changelog:**
+
 1. Create CHANGELOG.md with standard header
 2. Add Unreleased section with categories
 3. Add version sections from git history
 4. Add comparison links at bottom
 
 **For Existing Changelog:**
+
 1. Read current CHANGELOG.md
 2. Update Unreleased section with new entries
 3. If version provided, convert Unreleased to versioned section
@@ -155,19 +167,23 @@ Parse commit messages for conventional commit prefixes:
 ### 5. Format Entries
 
 Each entry should be:
+
 - Clear and concise
 - User-facing (not implementation details)
 - Actionable (what changed, not how)
 - Linked to issues/PRs when relevant
 
 Example:
+
 ```markdown
 ### Added
+
 - User authentication via OAuth2 (#123)
 - Dark mode support for all pages (#145)
 - Export functionality for reports (#167)
 
 ### Fixed
+
 - Navigation menu not closing on mobile (#142)
 - Database connection timeout in production (#158)
 ```
@@ -274,6 +290,7 @@ Encourage team to use conventional commits:
 Types: feat, fix, docs, style, refactor, perf, test, chore, security
 
 Example:
+
 ```
 feat(auth): add OAuth2 authentication
 
@@ -303,15 +320,18 @@ The command will:
 ## [Unreleased]
 
 ### Added
+
 - New feature X from commit abc123
 - New feature Y from commit def456
 
 ### Fixed
+
 - Bug fix for issue #789
 
 ## [1.0.0] - 2025-10-29
 
 ### Added
+
 - Initial release
 - Core functionality
 

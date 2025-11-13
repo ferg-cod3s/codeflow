@@ -32,7 +32,6 @@ failure_modes:
 
 **Input**: $ARGUMENTS
 
-
 Resume the previous task from where it left off. This prompt analyzes conversation history to identify the last completed step and continues with the next pending action without repeating prior work.
 
 ## Purpose

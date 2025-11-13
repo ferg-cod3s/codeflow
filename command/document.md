@@ -47,7 +47,6 @@ failure_modes:
 
 **Input**: $ARGUMENTS
 
-
 You are tasked with producing high-quality documentation based on the implemented feature, its plan, and the code. This command uses intelligent caching to optimize documentation generation and maintain consistency across similar features.
 
 ## Purpose

@@ -45,6 +45,7 @@ Systematic workflow for fixing bugs with proper documentation, testing, and vers
 ## Purpose
 
 Guide developers through a structured bug fix process that ensures:
+
 - Proper documentation of the bug
 - Reproducible test cases
 - Clean fix implementation
@@ -108,6 +109,7 @@ echo "Working on issue #$ISSUE_NUMBER"
 #### 1.2 Understand the Bug
 
 Review:
+
 - Issue description and reproduction steps
 - Related code areas
 - Recent changes that might have introduced the bug
@@ -137,6 +139,7 @@ git checkout -b fix/issue-${ISSUE_NUMBER}-short-description
 ```
 
 Branch naming conventions:
+
 - `fix/issue-<number>-<short-desc>` for bugs with issues
 - `fix/<short-desc>` for quick fixes without issues
 - `hotfix/<short-desc>` for critical production bugs
@@ -175,6 +178,7 @@ npm test -- bug-reproduction.test.ts
 ```
 
 If unable to reproduce:
+
 1. Request clarification on issue
 2. Update issue with findings
 3. Add "needs-reproduction" label
@@ -184,11 +188,13 @@ If unable to reproduce:
 #### 4.1 Identify Root Cause
 
 Analyze the code to find:
+
 - Where the bug originates
 - Why the bug occurs
 - Scope of impact
 
 Use debugging tools:
+
 ```bash
 # Add debugging breakpoints
 # Use console.log or debugger statements
@@ -198,12 +204,14 @@ Use debugging tools:
 #### 4.2 Implement Minimal Fix
 
 Principles:
+
 - **Minimal changes**: Fix only what's necessary
 - **No refactoring**: Save refactoring for separate PRs
 - **Maintain style**: Follow existing code patterns
 - **Add comments**: Explain non-obvious fixes
 
 Example fix:
+
 ```typescript
 // Before (buggy code)
 function validateUsername(username: string): ValidationResult {
@@ -241,6 +249,7 @@ npm test -- path/to/related-tests/
 #### 5.3 Add Additional Tests
 
 Add tests for:
+
 - Edge cases around the fix
 - Different variations of the bug
 - Regression prevention
@@ -264,6 +273,7 @@ describe('Username validation fixes', () => {
 #### 5.4 Manual Testing
 
 If applicable:
+
 1. Test in development environment
 2. Verify fix in browser/application
 3. Test with various inputs
@@ -274,6 +284,7 @@ If applicable:
 #### 6.1 Self-Review
 
 Review your changes:
+
 ```bash
 # View your changes
 git diff main
@@ -283,6 +294,7 @@ git diff main path/to/file.ts
 ```
 
 Checklist:
+
 - [ ] Fix is minimal and focused
 - [ ] No unrelated changes
 - [ ] No commented-out code
@@ -329,6 +341,7 @@ Fixes #123"
 ```
 
 Commit message format:
+
 ```
 fix: <short summary>
 
@@ -392,6 +405,7 @@ EOF
 The `Fixes #123` in PR body automatically links and closes issue when PR merges.
 
 Alternatively:
+
 ```bash
 # Link manually
 gh pr edit --add-project "Project Name"
@@ -490,7 +504,7 @@ function processUser(user) {
 // Before
 async function loadData() {
   const data = await fetchData();
-  setState(data);  // May be stale if component unmounted
+  setState(data); // May be stale if component unmounted
 }
 
 // After
@@ -498,7 +512,9 @@ async function loadData() {
   let isCancelled = false;
   const data = await fetchData();
   if (!isCancelled) setState(data);
-  return () => { isCancelled = true; };
+  return () => {
+    isCancelled = true;
+  };
 }
 ```
 

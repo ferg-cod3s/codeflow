@@ -157,7 +157,6 @@ changelog:
 
 **Input**: $ARGUMENTS
 
-
 The `audit` command performs comprehensive audits of your codebase, dependencies, and infrastructure against security standards, compliance frameworks, and best practices.
 
 ## Overview
