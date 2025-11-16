@@ -1,18 +1,28 @@
 import { AgentValidator } from '../conversion/validator.js';
-import { parseAgentsFromDirectory, serializeAgent, Agent } from '../conversion/agent-parser.js';
+import {
+  parseAgentsFromDirectory,
+  serializeAgent,
+  Agent,
+  ParseError,
+} from '../conversion/agent-parser.js';
 import { FormatConverter } from '../conversion/format-converter.js';
 import { existsSync } from 'fs';
 import { mkdir, rm, writeFile, readdir } from 'fs/promises';
 import path from 'path';
-import { CommandValidator, ValidationError, ValidationWarning } from '../yaml/command-validator.js';
+import {
+  CommandValidator,
+  ValidationError as CommandValidationError,
+  ValidationWarning as CommandValidationWarning,
+} from '../yaml/command-validator.js';
+import { ValidationError, ValidationWarning } from '../conversion/validator.js';
 import CLIErrorHandler from './error-handler.js';
 
 export interface GlobalValidationResult {
   format: 'base' | 'claude-code' | 'opencode';
   path: string;
   agents: Agent[];
-  errors: Array<ValidationError | string>;
-  warnings: Array<ValidationWarning | string>;
+  errors: Array<ValidationError | CommandValidationError | ParseError | string>;
+  warnings: Array<ValidationWarning | CommandValidationWarning | string>;
 }
 
 export interface GlobalValidationOptions {
@@ -345,7 +355,7 @@ export async function validateCommands(options: CommandValidationOptions = {}) {
       allResults.forEach((result, index) => {
         if (result.errors.length > 0) {
           console.log(`\nDirectory ${index + 1}:`);
-          result.errors.forEach((error: ValidationError, errorIndex: number) => {
+          result.errors.forEach((error: CommandValidationError, errorIndex: number) => {
             console.log(`  ${errorIndex + 1}. ${error.file}: ${error.message}`);
             if (error.suggestion) {
               console.log(`     💡 ${error.suggestion}`);
@@ -360,7 +370,7 @@ export async function validateCommands(options: CommandValidationOptions = {}) {
       allResults.forEach((result, index) => {
         if (result.warnings.length > 0) {
           console.log(`\nDirectory ${index + 1}:`);
-          result.warnings.forEach((warning: ValidationWarning, warningIndex: number) => {
+          result.warnings.forEach((warning: CommandValidationWarning, warningIndex: number) => {
             console.log(`  ${warningIndex + 1}. ${warning.message}`);
             if (warning.suggestion) {
               console.log(`     💡 ${warning.suggestion}`);
@@ -440,7 +450,7 @@ export function generateCommandFixReport(
   results.forEach((item, index) => {
     fixes.push(`\n### File ${index + 1}: ${item.file}`);
     if (item.result.errors) {
-      item.result.errors.forEach((error: ValidationError, errorIndex: number) => {
+      item.result.errors.forEach((error: CommandValidationError, errorIndex: number) => {
         fixes.push(`  Error ${errorIndex + 1}: ${error.message}`);
         if (error.suggestion) {
           fixes.push(`    Suggestion: ${error.suggestion}`);
@@ -483,8 +493,8 @@ export async function validateGlobalDirectory(
 
   const { results } = await validator.validateBatchWithDetails(agentOnly);
 
-  const allErrors: Array<ValidationError | string> = [];
-  const allWarnings: Array<ValidationWarning | string> = [];
+  const allErrors: Array<ValidationError | CommandValidationError | ParseError | string> = [];
+  const allWarnings: Array<ValidationWarning | CommandValidationWarning | string> = [];
 
   for (const result of results) {
     result.errors.forEach((e) => allErrors.push(e));
@@ -508,7 +518,7 @@ export async function validateOpenCodeFlatStructure(opencodePath: string): Promi
     return;
   }
 
-  const entries = await rm.readdir?.(opencodePath as any);
+  const entries = await readdir(opencodePath);
 
   const subdirs: string[] = [];
   const dirents = await (

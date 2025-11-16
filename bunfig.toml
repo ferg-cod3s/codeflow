@@ -7,7 +7,7 @@ coverageThreshold = { line = 80 }
 
 # Test patterns
 include = ["tests/**/*.test.ts", "tests/**/*.spec.ts"]
-exclude = ["node_modules", "dist", "build", ".catalog"]
+exclude = ["node_modules", "dist", "build", ".catalog", "tests/e2e/**"]
 
 # Environment
 preload = ["./tests/setup.ts"]

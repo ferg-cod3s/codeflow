@@ -145,7 +145,6 @@ export class CommandConverter {
    * Used when source is already in OpenCode format
    */
   private ensureOpenCodeDefaults(frontmatter: CommandMetadata): CommandMetadata {
-    console.log(`[DEBUG] ensureOpenCodeDefaults input:`, JSON.stringify(frontmatter, null, 2));
     const converted: CommandMetadata = {
       ...frontmatter,
       mode: 'command',
@@ -154,8 +153,6 @@ export class CommandConverter {
       last_updated: frontmatter.last_updated || new Date().toISOString().split('T')[0],
       command_schema_version: frontmatter.command_schema_version || '1.0',
     };
-    console.log(`[DEBUG] ensureOpenCodeDefaults output:`, JSON.stringify(converted, null, 2));
-    console.log(`[DEBUG] ensureOpenCodeDefaults output:`, JSON.stringify(converted, null, 2));
 
     // Preserve inputs as-is
     if (frontmatter.inputs) {
@@ -404,17 +401,38 @@ export class CommandConverter {
 
       return transformed;
     } else {
-      // Convert $ARGUMENTS to {{variable}}
-      // Use the first required input, or first input if no required ones
-      let primaryParam = 'arguments'; // fallback
+      // Convert to Claude Code format
+      // Handle both $ARGUMENTS to {{variable}} and filtering extra {{variables}}
+      let transformed = body;
 
+      // First, handle $ARGUMENTS conversion
       if (inputs && inputs.length > 0) {
         const requiredInputs = inputs.filter((i) => i.required);
         const firstInput = requiredInputs.length > 0 ? requiredInputs[0] : inputs[0];
-        primaryParam = firstInput.name;
+        const primaryParam = firstInput.name;
+        transformed = transformed.replace(/\$ARGUMENTS/g, `{{${primaryParam}}}`);
       }
 
-      return body.replace(/\$ARGUMENTS/g, `{{${primaryParam}}}`);
+      // Then, filter out extra {{variables}} that aren't the primary parameter
+      if (inputs && inputs.length > 0) {
+        const requiredInputs = inputs.filter((i) => i.required);
+        const primaryInput = requiredInputs.length > 0 ? requiredInputs[0] : inputs[0];
+        const primaryParam = primaryInput.name;
+
+        // Find all {{variable}} patterns
+        const variablePattern = /\{\{(\w+)\}\}/g;
+        const matches = [...body.matchAll(variablePattern)];
+
+        // Replace variables that are not the primary parameter with empty string
+        matches.forEach((match) => {
+          const variableName = match[1];
+          if (variableName !== primaryParam) {
+            transformed = transformed.replace(match[0], '');
+          }
+        });
+      }
+
+      return transformed;
     }
   }
 
