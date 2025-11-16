@@ -132,3 +132,4 @@ docs/thoughts.md
 # Broken verbalized-sampling files (temporarily disabled)
 scripts/batch-vs-injection.ts.broken
 src/verbalized-sampling/*.ts.broken
+.gitignore

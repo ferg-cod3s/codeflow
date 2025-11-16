@@ -145,14 +145,17 @@ export class CommandConverter {
    * Used when source is already in OpenCode format
    */
   private ensureOpenCodeDefaults(frontmatter: CommandMetadata): CommandMetadata {
+    console.log(`[DEBUG] ensureOpenCodeDefaults input:`, JSON.stringify(frontmatter, null, 2));
     const converted: CommandMetadata = {
       ...frontmatter,
       mode: 'command',
-      model: frontmatter.model || 'opencode/grok-code',
+      model: frontmatter.model || 'anthropic/claude-3-5-sonnet-20241022',
       version: frontmatter.version || '2.1.0-optimized',
       last_updated: frontmatter.last_updated || new Date().toISOString().split('T')[0],
       command_schema_version: frontmatter.command_schema_version || '1.0',
     };
+    console.log(`[DEBUG] ensureOpenCodeDefaults output:`, JSON.stringify(converted, null, 2));
+    console.log(`[DEBUG] ensureOpenCodeDefaults output:`, JSON.stringify(converted, null, 2));
 
     // Preserve inputs as-is
     if (frontmatter.inputs) {
@@ -259,7 +262,7 @@ export class CommandConverter {
       name: frontmatter.name,
       description: frontmatter.description,
       mode: 'command',
-      model: 'opencode/grok-code',
+      model: 'anthropic/claude-3-5-sonnet-20241022',
       version: '2.1.0-optimized',
       last_updated: new Date().toISOString().split('T')[0],
       command_schema_version: '1.0',

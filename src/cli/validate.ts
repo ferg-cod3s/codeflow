@@ -2,10 +2,23 @@ import { AgentValidator } from '../conversion/validator.js';
 import { parseAgentsFromDirectory, serializeAgent, Agent } from '../conversion/agent-parser.js';
 import { FormatConverter } from '../conversion/format-converter.js';
 import { existsSync } from 'fs';
-import { mkdir, rm, writeFile } from 'fs/promises';
+import { mkdir, rm, writeFile, readdir } from 'fs/promises';
 import path from 'path';
 import { CommandValidator, ValidationError, ValidationWarning } from '../yaml/command-validator.js';
 import CLIErrorHandler from './error-handler.js';
+
+export interface GlobalValidationResult {
+  format: 'base' | 'claude-code' | 'opencode';
+  path: string;
+  agents: Agent[];
+  errors: Array<ValidationError | string>;
+  warnings: Array<ValidationWarning | string>;
+}
+
+export interface GlobalValidationOptions {
+  format?: 'all' | 'base' | 'claude-code' | 'opencode';
+  verbose?: boolean;
+}
 
 /**
  * Create isolated tmp environment for validation
@@ -438,4 +451,113 @@ export function generateCommandFixReport(
   });
 
   return fixes.join('\n');
+}
+
+/**
+ * Validates agents in a global directory for a given format.
+ * This is a lightweight wrapper around AgentValidator for tests and legacy usage.
+ */
+export async function validateGlobalDirectory(
+  dirPath: string,
+  format: 'base' | 'claude-code' | 'opencode'
+): Promise<GlobalValidationResult> {
+  const validator = new AgentValidator();
+
+  if (!existsSync(dirPath)) {
+    return {
+      format,
+      path: dirPath,
+      agents: [],
+      errors: [`Directory not found: ${dirPath}`],
+      warnings: [],
+    };
+  }
+
+  const { agents, errors } = await parseAgentsFromDirectory(dirPath, format);
+  const agentOnly = agents.filter((item): item is Agent => {
+    if ('mode' in item.frontmatter && item.frontmatter.mode === 'command') {
+      return false;
+    }
+    return true;
+  });
+
+  const { results } = await validator.validateBatchWithDetails(agentOnly);
+
+  const allErrors: Array<ValidationError | string> = [];
+  const allWarnings: Array<ValidationWarning | string> = [];
+
+  for (const result of results) {
+    result.errors.forEach((e) => allErrors.push(e));
+    result.warnings.forEach((w) => allWarnings.push(w));
+  }
+
+  return {
+    format,
+    path: dirPath,
+    agents: agentOnly,
+    errors: [...errors, ...allErrors],
+    warnings: allWarnings,
+  };
+}
+
+/**
+ * Ensures OpenCode agents directory uses a flat structure (no nested subdirectories).
+ */
+export async function validateOpenCodeFlatStructure(opencodePath: string): Promise<void> {
+  if (!existsSync(opencodePath)) {
+    return;
+  }
+
+  const entries = await rm.readdir?.(opencodePath as any);
+
+  const subdirs: string[] = [];
+  const dirents = await (
+    await import('fs/promises')
+  ).readdir(opencodePath, { withFileTypes: true });
+  for (const entry of dirents) {
+    if (entry.isDirectory()) {
+      subdirs.push(entry.name);
+    }
+  }
+
+  if (subdirs.length > 0) {
+    throw new Error(
+      `OpenCode agents found in subdirectories: ${subdirs.join(', ')}. ` +
+        'OpenCode expects a flat agent directory structure.'
+    );
+  }
+}
+
+/**
+ * Displays aggregated validation results for global directories.
+ */
+export function displayGlobalValidationResults(
+  results: GlobalValidationResult[],
+  options: GlobalValidationOptions
+): void {
+  const totalAgents = results.reduce((sum, r) => sum + r.agents.length, 0);
+  const totalErrors = results.reduce((sum, r) => sum + r.errors.length, 0);
+  const totalWarnings = results.reduce((sum, r) => sum + r.warnings.length, 0);
+
+  console.log('\n📊 Global Validation Summary:');
+  console.log(`  Formats: ${options.format || 'all'}`);
+  console.log(`  Total agents: ${totalAgents}`);
+  console.log(`  Errors: ${totalErrors}`);
+  console.log(`  Warnings: ${totalWarnings}`);
+
+  if (options.verbose) {
+    for (const result of results) {
+      console.log(`\nFormat: ${result.format} (${result.path})`);
+      console.log(`  Agents: ${result.agents.length}`);
+      console.log(`  Errors: ${result.errors.length}`);
+      console.log(`  Warnings: ${result.warnings.length}`);
+    }
+  }
+
+  if (totalErrors > 0) {
+    CLIErrorHandler.displayWarning(`Global validation completed with ${totalErrors} errors`, [
+      'Review validation results for each format',
+      'Fix critical issues before deployment',
+    ]);
+  }
 }

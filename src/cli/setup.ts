@@ -450,20 +450,21 @@ export async function setup(
   }
 }
 
-export function getAgentSourceDirs(_sourcePath: string, _targetFormat: SupportedFormat): string[] {
-  const sourceDirs: string[] = [];
-  const packageRoot = getPackageRoot();
-
-  // ONLY source: base-agents directory from CodeFlow repository (single source of truth)
-  // Pre-converted platform directories (.claude/agents, .opencode/agent, .cursor/agents)
-  // are TARGETS, not sources - never include them as sources to avoid double conversion
-  const baseAgentsDir = join(packageRoot, 'base-agents');
-
-  if (existsSync(baseAgentsDir)) {
-    sourceDirs.push(baseAgentsDir);
+export function getAgentSourceDirs(sourcePath: string, _targetFormat: SupportedFormat): string[] {
+  // Prefer a local base-agents directory under the provided sourcePath (used in tests)
+  const localBaseAgents = join(sourcePath, 'base-agents');
+  if (existsSync(localBaseAgents)) {
+    return [localBaseAgents];
   }
 
-  return sourceDirs;
+  // Fallback to the CodeFlow package root base-agents (single source of truth)
+  const packageRoot = getPackageRoot();
+  const packageBaseAgents = join(packageRoot, 'base-agents');
+  if (existsSync(packageBaseAgents)) {
+    return [packageBaseAgents];
+  }
+
+  return [];
 }
 
 export async function copyAgentsWithConversion(

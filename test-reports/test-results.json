@@ -1,67 +1,74 @@
 {
-  "timestamp": "2025-11-04T12:51:09.612Z",
+  "timestamp": "2025-11-16T16:12:04.102Z",
   "suites": [
     {
       "suite": "CLI Commands",
-      "passed": 8,
+      "passed": 0,
       "failed": 0,
       "skipped": 0,
-      "duration": 2474
+      "duration": 3553
     },
     {
       "suite": "Format Conversion",
-      "passed": 10,
+      "passed": 0,
+      "failed": 0,
+      "skipped": 0,
+      "duration": 136
+    },
+    {
+      "suite": "Agent Validation",
+      "passed": 0,
+      "failed": 0,
+      "skipped": 0,
+      "duration": 261
+    },
+    {
+      "suite": "Command Validation",
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "duration": 209
+    },
+    {
+      "suite": "OpenCode Syntax Validation",
+      "passed": 0,
+      "failed": 0,
+      "skipped": 0,
+      "duration": 89
+    },
+    {
+      "suite": "OpenCode Variable Substitution",
+      "passed": 0,
+      "failed": 0,
+      "skipped": 0,
+      "duration": 80
+    },
+    {
+      "suite": "OpenCode Integration",
+      "passed": 0,
+      "failed": 0,
+      "skipped": 0,
+      "duration": 107
+    },
+    {
+      "suite": "End-to-End",
+      "passed": 0,
       "failed": 0,
       "skipped": 0,
       "duration": 132
     },
     {
-      "suite": "Agent Validation",
-      "passed": 11,
-      "failed": 0,
-      "skipped": 0,
-      "duration": 571
-    },
-    {
-      "suite": "Command Validation",
-      "passed": 17,
-      "failed": 0,
-      "skipped": 0,
-      "duration": 473
-    },
-    {
-      "suite": "OpenCode Syntax Validation",
-      "passed": 7,
-      "failed": 0,
-      "skipped": 0,
-      "duration": 61
-    },
-    {
-      "suite": "OpenCode Variable Substitution",
-      "passed": 7,
-      "failed": 0,
-      "skipped": 0,
-      "duration": 53
-    },
-    {
-      "suite": "OpenCode Integration",
-      "passed": 5,
-      "failed": 0,
-      "skipped": 0,
-      "duration": 154
-    },
-    {
       "suite": "End-to-End",
-      "passed": 7,
-      "failed": 0,
+      "passed": 0,
+      "failed": 1,
       "skipped": 0,
-      "duration": 442
+      "duration": 132
     }
   ],
   "totals": {
-    "passed": 72,
-    "failed": 0,
+    "passed": 0,
+    "failed": 2,
     "skipped": 0,
-    "duration": 4360
+    "duration": 4699
   }
 }

@@ -216,8 +216,8 @@ This is a test agent.`;
       const baseResult = await validateGlobalDirectory(globalDirs.base, 'base');
       const claudeCodeResult = await validateGlobalDirectory(globalDirs.claudeCode, 'claude-code');
 
-      // OpenCode validation should pass
-      await expect(validateOpenCodeFlatStructure(globalDirs.opencode)).resolves.not.toThrow();
+      // OpenCode validation should pass (no rejection/error)
+      await expect(validateOpenCodeFlatStructure(globalDirs.opencode)).resolves.toBeUndefined();
 
       // Check results
       expect(baseResult.agents.length).toBe(1);

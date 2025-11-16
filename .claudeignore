@@ -29,3 +29,6 @@ test-integration-*/
 # Personal notes
 docs/THOUGHTS.md
 docs/thoughts.md
+
+# OpenCode generated files
+.opencode/

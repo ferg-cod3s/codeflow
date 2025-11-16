@@ -12,10 +12,13 @@ import { join, relative, dirname, basename } from 'node:path';
 import { existsSync } from 'node:fs';
 import { parseAgentFile, serializeAgent } from '../src/conversion/agent-parser.js';
 import { FormatConverter } from '../src/conversion/format-converter.js';
+import { CommandConverter } from '../src/conversion/command-converter.js';
 
 interface BuildStats {
   claudeAgents: number;
   opencodeAgents: number;
+  claudeCommands: number;
+  opencodeCommands: number;
   errors: string[];
 }
 
@@ -130,15 +133,94 @@ async function buildOpenCodeAgents(
 }
 
 /**
+ * Build Claude Code commands (with subdirectories)
+ */
+async function buildClaudeCommands(
+  sourceDir: string,
+  targetDir: string
+): Promise<{ count: number; errors: string[] }> {
+  const errors: string[] = [];
+  let count = 0;
+
+  // Find all markdown files in command directory
+  const files = await findMarkdownFiles(sourceDir);
+
+  for (const sourceFile of files) {
+    try {
+      // Convert command using CommandConverter
+      const converter = new CommandConverter();
+      const claudeCommand = await converter.convertFile(sourceFile, 'claude-code');
+
+      // Preserve directory structure relative to command
+      const relativePath = relative(sourceDir, sourceFile);
+      const targetFile = join(targetDir, relativePath);
+
+      // Ensure target directory exists
+      const targetDirPath = dirname(targetFile);
+      if (!existsSync(targetDirPath)) {
+        await mkdir(targetDirPath, { recursive: true });
+      }
+
+      // Write converted command
+      await writeFile(targetFile, claudeCommand, 'utf-8');
+
+      count++;
+    } catch (error) {
+      errors.push(`Error processing ${sourceFile} for Claude Code command: ${error}`);
+    }
+  }
+
+  return { count, errors };
+}
+
+/**
+ * Build OpenCode commands (flattened, no subdirectories)
+ */
+async function buildOpenCodeCommands(
+  sourceDir: string,
+  targetDir: string
+): Promise<{ count: number; errors: string[] }> {
+  const errors: string[] = [];
+  let count = 0;
+
+  // Find all markdown files in command directory
+  const files = await findMarkdownFiles(sourceDir);
+
+  for (const sourceFile of files) {
+    try {
+      // Convert command using CommandConverter
+      const converter = new CommandConverter();
+      const opencodeCommand = await converter.convertFile(sourceFile, 'opencode');
+
+      // Flatten structure - use only filename, no subdirectories
+      const filename = basename(sourceFile);
+      const targetFile = join(targetDir, filename);
+
+      // Write converted command
+      await writeFile(targetFile, opencodeCommand, 'utf-8');
+
+      count++;
+    } catch (error) {
+      errors.push(`Error processing ${sourceFile} for OpenCode command: ${error}`);
+    }
+  }
+
+  return { count, errors };
+}
+
+/**
  * Main build function
  */
 async function main() {
   const projectRoot = process.cwd();
   const baseAgentsDir = join(projectRoot, 'base-agents');
+  const commandDir = join(projectRoot, 'command');
   const claudeAgentsDir = join(projectRoot, 'claude-agents');
   const opencodeAgentsDir = join(projectRoot, 'opencode-agents');
+  const claudeCommandsDir = join(projectRoot, '.claude', 'commands');
+  const opencodeCommandsDir = join(projectRoot, '.opencode', 'command');
 
-  console.log('🏗️  Building agent distributions...\n');
+  console.log('🏗️  Building agent and command distributions...\n');
 
   // Clean existing directories
   if (existsSync(claudeAgentsDir)) {
@@ -147,14 +229,24 @@ async function main() {
   if (existsSync(opencodeAgentsDir)) {
     await rm(opencodeAgentsDir, { recursive: true, force: true });
   }
+  if (existsSync(claudeCommandsDir)) {
+    await rm(claudeCommandsDir, { recursive: true, force: true });
+  }
+  if (existsSync(opencodeCommandsDir)) {
+    await rm(opencodeCommandsDir, { recursive: true, force: true });
+  }
 
   // Create fresh directories
   await mkdir(claudeAgentsDir, { recursive: true });
   await mkdir(opencodeAgentsDir, { recursive: true });
+  await mkdir(claudeCommandsDir, { recursive: true });
+  await mkdir(opencodeCommandsDir, { recursive: true });
 
   const stats: BuildStats = {
     claudeAgents: 0,
     opencodeAgents: 0,
+    claudeCommands: 0,
+    opencodeCommands: 0,
     errors: [],
   };
 
@@ -172,11 +264,27 @@ async function main() {
   stats.errors.push(...opencodeResult.errors);
   console.log(`   ✓ Generated ${opencodeResult.count} OpenCode agents\n`);
 
+  // Build Claude Code commands (with subdirectories)
+  console.log('📁 Building Claude Code commands...');
+  const claudeCommandsResult = await buildClaudeCommands(commandDir, claudeCommandsDir);
+  stats.claudeCommands = claudeCommandsResult.count;
+  stats.errors.push(...claudeCommandsResult.errors);
+  console.log(`   ✓ Generated ${claudeCommandsResult.count} Claude Code commands\n`);
+
+  // Build OpenCode commands (flattened)
+  console.log('📄 Building OpenCode commands (flattened)...');
+  const opencodeCommandsResult = await buildOpenCodeCommands(commandDir, opencodeCommandsDir);
+  stats.opencodeCommands = opencodeCommandsResult.count;
+  stats.errors.push(...opencodeCommandsResult.errors);
+  console.log(`   ✓ Generated ${opencodeCommandsResult.count} OpenCode commands\n`);
+
   // Report results
   console.log('✅ Build complete!\n');
   console.log(`📊 Statistics:`);
   console.log(`   - Claude Code agents: ${stats.claudeAgents} (with subdirectories)`);
   console.log(`   - OpenCode agents: ${stats.opencodeAgents} (flattened)`);
+  console.log(`   - Claude Code commands: ${stats.claudeCommands}`);
+  console.log(`   - OpenCode commands: ${stats.opencodeCommands} (flattened)`);
 
   if (stats.errors.length > 0) {
     console.log(`\n⚠️  Encountered ${stats.errors.length} errors:`);
@@ -189,7 +297,16 @@ async function main() {
     console.log(
       `\n⚠️  Warning: Agent count mismatch! Claude Code: ${stats.claudeAgents}, OpenCode: ${stats.opencodeAgents}`
     );
-    console.log('   This suggests conversion issues - both platforms should have the same agents.');
+    console.log('   This suggests conversion issues - both platforms should have same agents.');
+    process.exit(1);
+  }
+
+  // Verify both platforms have equal command counts
+  if (stats.claudeCommands !== stats.opencodeCommands) {
+    console.log(
+      `\n⚠️  Warning: Command count mismatch! Claude Code: ${stats.claudeCommands}, OpenCode: ${stats.opencodeCommands}`
+    );
+    console.log('   This suggests conversion issues - both platforms should have same commands.');
     process.exit(1);
   }
 
