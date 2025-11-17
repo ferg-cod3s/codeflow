@@ -28,7 +28,7 @@ intended_followups:
 - compliance-expert
 - performance-engineer
 allowed_directories:
-- /home/f3rg/src/github/codeflow
+- ${WORKSPACE}
 tools:
   read: true
   grep: true

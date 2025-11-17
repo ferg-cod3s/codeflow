@@ -19,12 +19,11 @@ intended_followups:
 - full-stack-developer
 - code-reviewer
 allowed_directories:
-- /home/f3rg/src/github/codeflow
+- ${WORKSPACE}
 tools:
   write: true
   edit: true
   bash: true
-  patch: true
   read: true
   grep: true
   glob: true
@@ -132,7 +131,6 @@ related_agents:
 - test-automator
 - dx-optimizer
 
----
 
 # IDE Extension Developer
 

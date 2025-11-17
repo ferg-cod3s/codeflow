@@ -23,12 +23,11 @@ intended_followups:
   - release-manager
   - cost-optimizer
 allowed_directories:
-  - /home/f3rg/src/github/codeflow
+  - ${WORKSPACE}
 tools:
   write: true
   edit: true
   bash: true
-  patch: true
   read: true
   grep: true
   glob: true

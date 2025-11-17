@@ -17,7 +17,7 @@ intended_followups:
 - code-reviewer
 - compliance-expert
 allowed_directories:
-- /home/f3rg/src/github/codeflow
+- ${WORKSPACE}
 tools:
   read: true
   write: true
@@ -26,13 +26,11 @@ tools:
   grep: true
   glob: true
   list: true
-  patch: true
 permission:
   read: allow
   grep: allow
   glob: allow
   list: allow
-  patch: allow
   # Deny-first: Sensitive files
   edit:
     "*": allow

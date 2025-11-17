@@ -22,7 +22,7 @@ intended_followups:
   - deployment-engineer
   - release-manager
 allowed_directories:
-  - /home/f3rg/src/github/codeflow
+  - ${WORKSPACE}
 tools:
   read: true
   grep: true
@@ -30,7 +30,6 @@ tools:
   glob: true
   edit: true
   write: true
-  patch: true
   bash: true
   webfetch: false
 ---

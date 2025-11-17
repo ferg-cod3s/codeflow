@@ -28,7 +28,7 @@ intended_followups:
 - monitoring-expert
 - system-architect
 allowed_directories:
-- /home/f3rg/src/github/codeflow
+- ${WORKSPACE}
 tools:
   read: true
   grep: true

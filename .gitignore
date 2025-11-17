@@ -132,3 +132,16 @@ docs/thoughts.md
 # Broken verbalized-sampling files (temporarily disabled)
 scripts/batch-vs-injection.ts.broken
 src/verbalized-sampling/*.ts.broken
+
+# Generated/converted output (should be regenerated from base sources)
+converted/
+
+# Additional test coverage patterns
+coverage/
+.coverage
+htmlcov/
+*.cover
+.hypothesis/
+.pytest_cache/
+*.lcov
+lcov.info

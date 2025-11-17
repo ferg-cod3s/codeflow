@@ -1,24 +1,25 @@
 # Test Results Report
 
-**Generated:** 2025-11-04T12:51:09.612Z
+**Generated:** 2025-11-16T16:12:04.102Z
 
 ## Summary
 
-- **Total Tests:** 72
-- **Passed:** 72 ✅
-- **Failed:** 0 ❌
+- **Total Tests:** 2
+- **Passed:** 0 ✅
+- **Failed:** 2 ❌
 - **Skipped:** 0 ⏭️
-- **Duration:** 4.36s
+- **Duration:** 4.70s
 
 ## Test Suites
 
 | Suite | Passed | Failed | Skipped | Duration |
 |-------|--------|--------|---------|----------|
-| ✅ CLI Commands | 8 | 0 | 0 | 2.47s |
-| ✅ Format Conversion | 10 | 0 | 0 | 0.13s |
-| ✅ Agent Validation | 11 | 0 | 0 | 0.57s |
-| ✅ Command Validation | 17 | 0 | 0 | 0.47s |
-| ✅ OpenCode Syntax Validation | 7 | 0 | 0 | 0.06s |
-| ✅ OpenCode Variable Substitution | 7 | 0 | 0 | 0.05s |
-| ✅ OpenCode Integration | 5 | 0 | 0 | 0.15s |
-| ✅ End-to-End | 7 | 0 | 0 | 0.44s |
+| ✅ CLI Commands | 0 | 0 | 0 | 3.55s |
+| ✅ Format Conversion | 0 | 0 | 0 | 0.14s |
+| ✅ Agent Validation | 0 | 0 | 0 | 0.26s |
+| ❌ Command Validation | 0 | 1 | 0 | 0.21s |
+| ✅ OpenCode Syntax Validation | 0 | 0 | 0 | 0.09s |
+| ✅ OpenCode Variable Substitution | 0 | 0 | 0 | 0.08s |
+| ✅ OpenCode Integration | 0 | 0 | 0 | 0.11s |
+| ✅ End-to-End | 0 | 0 | 0 | 0.13s |
+| ❌ End-to-End | 0 | 1 | 0 | 0.13s |

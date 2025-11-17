@@ -16,7 +16,7 @@ intended_followups:
 - code-reviewer
 - compliance-expert
 allowed_directories:
-- /home/f3rg/src/github/codeflow
+- ${WORKSPACE}
 tools:
   write: true
 ---
