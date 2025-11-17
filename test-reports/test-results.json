@@ -1,53 +1,74 @@
 {
-  "timestamp": "2025-10-30T11:01:15.975Z",
+  "timestamp": "2025-11-16T16:12:04.102Z",
   "suites": [
     {
       "suite": "CLI Commands",
-      "passed": 8,
+      "passed": 0,
       "failed": 0,
       "skipped": 0,
-      "duration": 1604
+      "duration": 3553
     },
     {
       "suite": "Format Conversion",
-      "passed": 10,
+      "passed": 0,
       "failed": 0,
       "skipped": 0,
-      "duration": 151
+      "duration": 136
     },
     {
       "suite": "Agent Validation",
-      "passed": 11,
+      "passed": 0,
       "failed": 0,
       "skipped": 0,
-      "duration": 292
+      "duration": 261
     },
     {
       "suite": "Command Validation",
-      "passed": 16,
+      "passed": 0,
       "failed": 1,
       "skipped": 0,
-      "duration": 262
+      "duration": 209
     },
     {
       "suite": "OpenCode Syntax Validation",
-      "passed": 7,
+      "passed": 0,
       "failed": 0,
       "skipped": 0,
-      "duration": 104
+      "duration": 89
     },
     {
       "suite": "OpenCode Variable Substitution",
-      "passed": 7,
+      "passed": 0,
       "failed": 0,
       "skipped": 0,
-      "duration": 104
+      "duration": 80
+    },
+    {
+      "suite": "OpenCode Integration",
+      "passed": 0,
+      "failed": 0,
+      "skipped": 0,
+      "duration": 107
+    },
+    {
+      "suite": "End-to-End",
+      "passed": 0,
+      "failed": 0,
+      "skipped": 0,
+      "duration": 132
+    },
+    {
+      "suite": "End-to-End",
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "duration": 132
     }
   ],
   "totals": {
-    "passed": 59,
-    "failed": 1,
+    "passed": 0,
+    "failed": 2,
     "skipped": 0,
-    "duration": 2517
+    "duration": 4699
   }
 }

@@ -24,7 +24,6 @@ tools:
   write: true
   edit: true
   bash: true
-  patch: true
   read: true
   grep: true
   glob: true
@@ -132,7 +131,6 @@ related_agents:
 - architect-review
 - tutorial-engineer
 
----
 
 # Code Generation Specialist
 

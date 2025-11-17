@@ -3,12 +3,10 @@
 node_modules/
 bun.lockb
 .DS_Store
-.claude/agents/
-.claude/commands/
-.opencode/command/
+.claude/
+.opencode/
 opencode-agents/
-!.opencode/
-!.claude/
+claude-agents/
 
 # Standard ignore patterns
 target/
@@ -131,3 +129,7 @@ test-integration-*/
 # Thoughts documentation (personal notes)
 docs/THOUGHTS.md
 docs/thoughts.md
+# Broken verbalized-sampling files (temporarily disabled)
+scripts/batch-vs-injection.ts.broken
+src/verbalized-sampling/*.ts.broken
+.gitignore
