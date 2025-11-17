@@ -11,13 +11,13 @@ CodeFlow includes **141 specialized agents** organized into **8 categories**, ea
 | Category | Agent Count | Description |
 |----------|-------------|-------------|
 | Development | 62 | Programming language experts and development specialists |
-| Business Analytics | 18 | Data analysis, BI, and business intelligence |
-| Operations | 17 | DevOps, infrastructure, cloud, and system operations |
-| Quality/Testing | 15 | QA, testing, security, and compliance |
+| Business Analytics | 18 | Business functions, marketing, SEO, and specialized domains |
+| Operations | 17 | DevOps, infrastructure, deployment, and monitoring |
+| Quality/Testing | 15 | QA, testing, security, code review, and performance |
 | AI Innovation | 11 | AI/ML, data science, and emerging technologies |
-| Generalist | 9 | General-purpose and cross-functional agents |
-| Design/UX | 5 | Design, UX, and creative work |
-| Product Strategy | 4 | Product management and strategy |
+| Generalist | 9 | Agent management, research, and cross-functional tasks |
+| Design/UX | 5 | Design, UX, accessibility, and visual validation |
+| Product Strategy | 4 | Domain-specific specialization (fintech, healthcare, e-commerce) |
 
 ## Agent Categories
 
@@ -26,52 +26,52 @@ CodeFlow includes **141 specialized agents** organized into **8 categories**, ea
 Agents specializing in artificial intelligence, machine learning, and emerging technologies.
 
 **Agents**:
-- `ai_agent_builder` - Build and optimize AI agents
-- `ai_automation_engineer` - Automate workflows with AI
-- `ai_governance_specialist` - AI ethics and governance
-- `ai_integration_architect` - Integrate AI into systems
-- `ai_prompt_engineer` - Expert prompt engineering
+- `ai_engineer` - AI engineering and development
+- `ai_integration_expert` - Integrate AI into systems
+- `ar_vr_developer` - Augmented and virtual reality development
+- `computer_vision_engineer` - Computer vision and image processing
+- `data_engineer` - Data pipeline and engineering
 - `data_scientist` - Data science and ML modeling
-- `llm_expert` - Large language model specialist
 - `ml_engineer` - Machine learning engineering
-- `ml_ops_engineer` - MLOps and model deployment
-- `nlp_engineer` - Natural language processing
-- `semantic_search_engineer` - Semantic search and embeddings
+- `mlops_engineer` - MLOps and model deployment
+- `prompt_engineer` - Expert prompt engineering
+- `quant_analyst` - Quantitative analysis and modeling
+- `quantum_computing_developer` - Quantum computing development
 
 ### 2. Business Analytics (18 agents)
 
-Agents focused on data analysis, business intelligence, and analytics.
+Agents focused on business functions, marketing, SEO, and specialized business domains.
 
 **Agents**:
-- `analyst` - General business analysis
-- `bi_developer` - Business intelligence development
+- `blockchain_developer` - Blockchain and Web3 development
 - `business_analyst` - Business process analysis
-- `business_intelligence_analyst` - BI and reporting
-- `competitive_intelligence_analyst` - Market and competitor analysis
-- `cost_optimization_analyst` - Cost reduction and optimization
-- `customer_insights_analyst` - Customer behavior analysis
-- `data_analyst` - Data analysis and visualization
-- `data_engineer` - Data pipeline and ETL
-- `data_governance_specialist` - Data quality and governance
-- `data_warehouse_architect` - Data warehouse design
-- `financial_analyst` - Financial modeling and analysis
-- `fraud_detection_specialist` - Fraud detection and prevention
-- `marketing_analyst` - Marketing analytics
-- `predictive_analyst` - Predictive modeling
-- `reporting_specialist` - Report generation and automation
-- `risk_analyst` - Risk assessment and management
-- `supply_chain_analyst` - Supply chain optimization
+- `content_marketer` - Content marketing and strategy
+- `customer_support` - Customer support operations
+- `growth_engineer` - Growth hacking and optimization
+- `legal_advisor` - Legal compliance and guidance
+- `payment_integration` - Payment system integration
+- `programmatic_seo_engineer` - Automated SEO at scale
+- `risk_manager` - Risk assessment and management
+- `sales_automator` - Sales automation and tools
+- `seo_cannibalization_detector` - Detect SEO cannibalization issues
+- `seo_content_auditor` - SEO content auditing
+- `seo_content_planner` - SEO content planning
+- `seo_content_refresher` - Update and refresh SEO content
+- `seo_content_writer` - SEO-optimized content writing
+- `seo_keyword_strategist` - Keyword research and strategy
+- `seo_meta_optimizer` - Meta tags and descriptions optimization
+- `seo_snippet_hunter` - Featured snippet optimization
 
 ### 3. Design/UX (5 agents)
 
-Agents specializing in design, user experience, and creative work.
+Agents specializing in design, user experience, accessibility, and SEO authority.
 
 **Agents**:
-- `accessibility_specialist` - Web accessibility (WCAG, a11y)
-- `design_system_architect` - Design system creation
-- `frontend_designer` - Frontend design and prototyping
+- `accessibility_pro` - Web accessibility (WCAG, a11y) expert
+- `seo_authority_builder` - Build domain and page authority
 - `ui_ux_designer` - UI/UX design and research
-- `visual_designer` - Visual design and branding
+- `ui_visual_validator` - Visual UI validation and testing
+- `ux_optimizer` - UX optimization and improvement
 
 ### 4. Development (62 agents)
 
@@ -168,72 +168,72 @@ The largest category, containing programming language experts and specialized de
 
 ### 5. Generalist (9 agents)
 
-General-purpose agents for cross-functional tasks.
+General-purpose agents for cross-functional tasks, agent management, and research.
 
 **Agents**:
-- `architect` - General software architecture
-- `code_reviewer` - Code review and quality
-- `consultant` - Technical consulting
-- `educator` - Teaching and training
-- `mentor` - Mentorship and guidance
-- `problem_solver` - General problem solving
-- `researcher` - Research and investigation
-- `technical_writer` - Technical documentation
-- `translator` - Code and documentation translation
+- `agent_architect` - Design and architect agent systems
+- `agent_ecosystem_manager` - Manage agent ecosystems
+- `code_generation_specialist` - Specialized code generation
+- `ide_extension_developer` - IDE and editor extension development
+- `onboarding_experience_designer` - Design onboarding experiences
+- `research_analyzer` - Analyze research and data
+- `research_locator` - Find and locate research resources
+- `smart_subagent_orchestrator` - Orchestrate multiple subagents
+- `web_search_researcher` - Web search and research
 
 ### 6. Operations (17 agents)
 
-DevOps, infrastructure, cloud, and system operations specialists.
+DevOps, infrastructure, deployment, monitoring, and system operations specialists.
 
 **Agents**:
-- `cicd_engineer` - CI/CD pipeline development
-- `cloud_cost_optimizer` - Cloud cost management
-- `cloud_migration_specialist` - Cloud migration
-- `cloud_security_engineer` - Cloud security
-- `configuration_manager` - Configuration management
-- `containerization_specialist` - Docker and containers
-- `devops_engineer` - DevOps practices
-- `disaster_recovery_specialist` - DR and backup
-- `infrastructure_engineer` - Infrastructure as code
-- `monitoring_specialist` - Monitoring and observability
+- `cost_optimizer` - Cost optimization and management
+- `deployment_engineer` - Deployment engineering
+- `deployment_wizard` - Deployment automation and wizardry
+- `devops_operations_specialist` - DevOps operations expert
+- `devops_troubleshooter` - DevOps troubleshooting
+- `dx_optimizer` - Developer experience optimization
+- `error_monitoring_specialist` - Error monitoring and tracking
+- `github_operations_specialist` - GitHub operations and automation
+- `infrastructure_builder` - Infrastructure building and IaC
+- `monitoring_expert` - Monitoring and observability expert
 - `network_engineer` - Network design and management
-- `platform_engineer` - Platform engineering
+- `observability_engineer` - Observability and telemetry
+- `operations_incident_commander` - Incident command and response
 - `release_manager` - Release management
-- `site_reliability_engineer` - SRE practices
-- `system_administrator` - System administration
-- `terraform_specialist` - Terraform and IaC
-- `troubleshooter` - System troubleshooting
+- `sentry-incident-commander` - Sentry incident management
+- `sentry-release-manager` - Sentry release tracking
+- `terraform_specialist` - Terraform and IaC specialist
 
 ### 7. Product Strategy (4 agents)
 
-Product management and strategic planning.
+Product management, domain-specific specialization, and strategic planning.
 
 **Agents**:
-- `innovation_strategist` - Innovation and strategy
-- `product_manager` - Product management
-- `product_strategist` - Product strategy
-- `roadmap_planner` - Product roadmap planning
+- `content_localization_coordinator` - Content localization and internationalization
+- `ecommerce_specialist` - E-commerce platforms and strategy
+- `fintech_engineer` - Financial technology engineering
+- `healthcare_it_specialist` - Healthcare IT and compliance
 
 ### 8. Quality/Testing (15 agents)
 
-Quality assurance, testing, security, and compliance.
+Quality assurance, testing, security, code review, and performance.
 
 **Agents**:
-- `accessibility_tester` - Accessibility testing
-- `automation_tester` - Test automation
+- `architect_review` - Architecture review and validation
+- `backend_security_coder` - Backend security best practices
+- `code_reviewer` - Code review and quality
 - `compliance_expert` - Regulatory compliance
-- `load_tester` - Performance and load testing
-- `penetration_tester` - Security testing
-- `privacy_specialist` - Privacy and data protection
-- `qa_engineer` - Quality assurance
-- `security_auditor` - Security audits
-- `security_engineer` - Security engineering
-- `test_architect` - Test strategy and architecture
-- `test_automation_engineer` - Automated testing
-- `test_data_engineer` - Test data management
-- `usability_tester` - Usability testing
-- `validation_engineer` - Validation and verification
-- `vulnerability_scanner` - Vulnerability detection
+- `frontend_security_coder` - Frontend security best practices
+- `mobile_security_coder` - Mobile security best practices
+- `performance_engineer` - Performance optimization engineering
+- `quality_testing_performance_tester` - Performance testing specialist
+- `security_auditor` - Security audits and assessments
+- `security_scanner` - Security scanning and vulnerability detection
+- `sentry-error-analyst` - Sentry error analysis and triage
+- `sentry-performance-expert` - Sentry performance monitoring
+- `tdd_orchestrator` - Test-driven development orchestration
+- `test_automator` - Test automation specialist
+- `test_generator` - Automated test generation
 
 ## Agent Format
 
