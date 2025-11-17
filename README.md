@@ -5,11 +5,34 @@ A TypeScript CLI tool to convert base-agents, commands, and skills to OpenCode f
 ## Features
 
 - **Agent Conversion**: Convert base-agents to OpenCode agent format
-- **Command Conversion**: Convert commands to OpenCode command format  
+- **Command Conversion**: Convert commands to OpenCode command format
 - **Skill Conversion**: Convert skills to OpenCode skill format
 - **Validation**: Comprehensive validation of converted files
 - **Batch Processing**: Convert all files at once
 - **Dry Run Mode**: Preview conversions without writing files
+- **Plugin Compatibility Research**: Analysis and strategies for Claude Code ↔ OpenCode plugin integration
+
+## Claude Code Plugin Compatibility
+
+We've researched how Claude Code plugins can work with OpenCode. Key findings:
+
+- ✅ **Commands are directly compatible** - Both systems use the same markdown format!
+- ⚠️ **Agents/Skills need conversion** - Can be wrapped as OpenCode custom tools
+- 🔴 **Hooks require code generation** - JSON configs → TypeScript event handlers
+- 📋 **Full plugin conversion planned** - Coming soon to CodeFlow CLI
+
+**Documentation**:
+- [Quick Start Guide](docs/QUICK_START_PLUGIN_COMPATIBILITY.md) - Use commands today
+- [Integration Guide](docs/CLAUDE_TO_OPENCODE_PLUGIN_INTEGRATION.md) - Complete technical analysis
+- [Implementation Roadmap](docs/PLUGIN_INTEGRATION_ROADMAP.md) - Future development plans
+
+**Try it now**:
+```bash
+# Convert Claude Code commands for OpenCode
+codeflow convert commands --output .opencode/command/
+```
+
+**POC Available**: See [examples/poc-anthropic-plugins/](examples/poc-anthropic-plugins/) for complete conversion examples using official Anthropic plugins (explanatory-output-style and learning-output-style).
 
 ## Installation
 
