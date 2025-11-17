@@ -20,7 +20,7 @@ intended_followups:
 - code-reviewer
 - content-writer
 allowed_directories:
-- /home/f3rg/src/github/codeflow
+- ${WORKSPACE}
 tools:
   write: true
   edit: true

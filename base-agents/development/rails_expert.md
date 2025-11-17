@@ -23,7 +23,7 @@ intended_followups:
   - test-generator
   - security-scanner
 allowed_directories:
-  - /home/f3rg/src/github/codeflow
+  - ${WORKSPACE}
 tools:
   read: true
   write: true
@@ -37,7 +37,6 @@ permission:
   grep: allow
   glob: allow
   list: allow
-  patch: allow
   # Deny-first: Sensitive files
   edit:
     "*": allow

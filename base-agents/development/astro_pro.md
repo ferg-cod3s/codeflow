@@ -22,7 +22,7 @@ intended_followups:
 - code-reviewer
 - observability-engineer
 allowed_directories:
-- /home/f3rg/src/github/codeflow
+- ${WORKSPACE}
 tools:
   write: true
   edit: true

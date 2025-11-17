@@ -24,7 +24,7 @@ intended_followups:
 - full-stack-developer
 - code-reviewer
 allowed_directories:
-- /home/f3rg/src/github/codeflow
+- ${WORKSPACE}
 tools:
   grep: true
   glob: true

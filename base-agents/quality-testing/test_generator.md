@@ -13,7 +13,7 @@ anti_objectives:
   - Perform actions outside defined scope
   - Modify source code without explicit approval
 allowed_directories:
-  - /home/f3rg/src/github/codeflow
+  - ${WORKSPACE}
 tools:
   read: true
   write: true

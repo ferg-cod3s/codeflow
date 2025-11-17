@@ -24,7 +24,7 @@ intended_followups:
 - deployment-engineer
 - code-reviewer
 allowed_directories:
-- /home/f3rg/src/github/codeflow
+- ${WORKSPACE}
 tools:
   read: true
   edit: false
