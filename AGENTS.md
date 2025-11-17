@@ -6,6 +6,8 @@ This document provides a comprehensive inventory of all base agents included in 
 
 CodeFlow includes **141 specialized agents** organized into **8 categories**, each designed for specific domains and use cases. These agents represent best practices and expert knowledge in their respective fields.
 
+**All agents are designed as subagents** - focused specialists meant to be invoked for specific tasks rather than primary interactive agents. This design enables precise, domain-specific assistance and efficient agent orchestration.
+
 ### Agent Statistics by Category
 
 | Category | Agent Count | Description |
@@ -302,7 +304,9 @@ prompt: |
 - OpenCode uses **filename** for agent name (not frontmatter `name` field)
 - `description` is **required** in OpenCode format
 - Non-core fields (`category`, `tags`, `primary_objective`, etc.) are integrated into the `prompt` field
-- `mode` defaults to `all` in OpenCode (not `subagent`)
+- **CodeFlow agents**: All designed as `subagent` mode (134 explicit, 7 inherit default)
+- **Converter default**: Sets `mode: subagent` if not specified in source
+- **OpenCode default**: `mode` defaults to `all` if omitted entirely in output
 
 ## Using Agents
 
@@ -355,9 +359,11 @@ Agents can be configured with various tool permissions:
 2. **Chain Agents**: Use `intended_followups` to create agent workflows
 3. **Scope Appropriately**: Use `allowed_directories` to limit file system access
 4. **Temperature Settings**: Lower for deterministic tasks (0.0-0.3), higher for creative work (0.7-1.0)
-5. **Mode Selection**:
-   - `primary`: Main agent for direct user interaction
-   - `subagent`: Specialized agent invoked by other agents
+5. **Subagent Design**:
+   - All CodeFlow agents are **subagents** - specialized experts for focused tasks
+   - Invoke them when you need domain-specific expertise
+   - Use agent orchestration to chain multiple specialists together
+   - Subagents excel at narrow, well-defined problems within their domain
 
 ## Contributing New Agents
 

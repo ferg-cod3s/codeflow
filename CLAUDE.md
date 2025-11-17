@@ -8,6 +8,8 @@ This document provides guidance for Claude AI assistants working with the CodeFl
 
 **Key Purpose**: Simplify migration from legacy agent/command/skill formats to the standardized OpenCode format.
 
+**Agent Philosophy**: All 141 agents are designed as **subagents** - specialized AI assistants meant to be invoked for specific tasks, domains, or use cases. They are not primary interactive agents but focused experts that can be called upon when needed.
+
 ## Project Structure
 
 ```
@@ -90,10 +92,13 @@ prompt: |
 **Key Mapping**:
 - `name` → Filename (e.g., `python_pro.md`)
 - `description` → **Required** field in frontmatter
-- `mode`, `temperature`, `model` → Direct mapping (mode defaults to `all` if omitted)
+- `mode` → Direct mapping (defaults to `subagent` in converter if not specified)
+- `temperature`, `model` → Direct mapping
 - `tools`, `permission` → Direct mapping
 - `category`, `tags`, `primary_objective`, `anti_objectives`, `intended_followups`, `allowed_directories` → Integrated into `prompt` field
 - Frontmatter body → `prompt` field content
+
+**Note**: The converter defaults to `mode: subagent` for agents without an explicit mode, as all CodeFlow agents are designed as specialized subagents.
 
 ### 2. Command Conversion
 
