@@ -237,7 +237,9 @@ Quality assurance, testing, security, code review, and performance.
 
 ## Agent Format
 
-Each agent is defined using markdown with YAML frontmatter:
+### Base Agent Format (Input)
+
+Each base agent is defined using markdown with YAML frontmatter:
 
 ```yaml
 ---
@@ -270,6 +272,37 @@ permission:
 
 [Agent prompt body containing detailed instructions and capabilities]
 ```
+
+### OpenCode Agent Format (Output)
+
+After conversion, agents use the OpenCode format (filename: `agent_name.md`):
+
+```yaml
+---
+description: Brief description of agent capabilities (REQUIRED)
+mode: primary | subagent | all (optional, defaults to 'all')
+temperature: 0.0 - 1.0 (optional)
+model: model_name (optional)
+tools:
+  write: true/false
+  edit: true/false
+  bash: true/false
+permission:
+  file_write: allow/deny/ask
+  bash_execution: allow/deny/ask
+prompt: |
+  **category**: category_name
+  **primary_objective**: Main goal of the agent
+
+  [Agent prompt body with additional metadata integrated]
+---
+```
+
+**Key Differences**:
+- OpenCode uses **filename** for agent name (not frontmatter `name` field)
+- `description` is **required** in OpenCode format
+- Non-core fields (`category`, `tags`, `primary_objective`, etc.) are integrated into the `prompt` field
+- `mode` defaults to `all` in OpenCode (not `subagent`)
 
 ## Using Agents
 

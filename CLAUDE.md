@@ -66,10 +66,9 @@ permission:
 [Agent prompt body]
 ```
 
-**OpenCode Agent Format**:
+**OpenCode Agent Format** (file: `python_pro.md`):
 ```yaml
 ---
-name: python_pro
 description: Master Python 3.12+ development
 mode: subagent
 temperature: 0.1
@@ -89,9 +88,12 @@ prompt: |
 ```
 
 **Key Mapping**:
-- `name`, `description`, `mode`, `temperature`, `model` → Direct mapping
+- `name` → Filename (e.g., `python_pro.md`)
+- `description` → **Required** field in frontmatter
+- `mode`, `temperature`, `model` → Direct mapping (mode defaults to `all` if omitted)
 - `tools`, `permission` → Direct mapping
 - `category`, `tags`, `primary_objective`, `anti_objectives`, `intended_followups`, `allowed_directories` → Integrated into `prompt` field
+- Frontmatter body → `prompt` field content
 
 ### 2. Command Conversion
 
