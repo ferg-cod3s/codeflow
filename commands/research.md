@@ -54,7 +54,12 @@ validation_rules:
 
 # Research Codebase
 
-**Research Query**: $ARGUMENTS
+Research codebase with **$QUERY** or analyze ticket at **$TICKET**.
+
+**Research Parameters:**
+- Query or Ticket: $QUERY or $TICKET (one required)
+- Scope: $SCOPE (codebase|research|both, optional)
+- Depth: $DEPTH (shallow|medium|deep, optional)
 
 Conduct comprehensive research across the codebase using direct queries or ticket files by coordinating specialized agents to explore patterns, context, and insights, then synthesize findings into actionable documentation. Uses intelligent caching for optimization.
 
@@ -277,5 +282,3 @@ status: complete
 - Hit rate ≥60%
 - Memory <30MB
 - Response <150ms
-
-$ARGUMENTS

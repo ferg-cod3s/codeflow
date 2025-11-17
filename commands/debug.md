@@ -52,8 +52,13 @@ validation_rules:
 
 # Debug Issue
 
-**Input**: $ARGUMENTS
+Debug **$ISSUE** in **$ENVIRONMENT** with reproduction steps **$REPRODUCTION_STEPS**.
 
+**Debug Parameters:**
+- Issue: $ISSUE (required - description or path to ticket)
+- Environment: $ENVIRONMENT (optional - development|staging|production)
+- Reproduction Steps: $REPRODUCTION_STEPS (optional)
+- Severity: $SEVERITY (optional - critical|high|medium|low)
 
 Execute a comprehensive debugging workflow with systematic issue reproduction, root cause analysis, fix implementation, and regression test creation to resolve issues effectively.
 
@@ -493,5 +498,3 @@ For complex issues requiring multi-domain investigation:
 - Cache hit rate target: ≥ 65% for repeated issue patterns
 - Memory usage: < 20MB for debugging pattern cache
 - Response time: < 75ms for cache queries
-
-{{issue}}

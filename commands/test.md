@@ -41,8 +41,12 @@ failure_modes:
 
 # Generate Test Suite
 
-**Input**: $ARGUMENTS
+Generate tests for **$SCOPE** covering files **$FILES** based on plan **$PLAN**.
 
+**Test Parameters:**
+- Scope: $SCOPE (required - description of feature/area under test)
+- Files: $FILES (optional - paths that must be tested or changed)
+- Plan: $PLAN (optional - path to implementation plan)
 
 You are tasked with designing, generating, and executing comprehensive tests for implemented features or plans. This command uses intelligent caching to optimize testing workflows and maintain consistency across similar test generation scenarios.
 
@@ -445,5 +449,3 @@ For thorough test generation and validation requiring multiple testing domains:
 - Cache hit rate target: ≥ 70% for repeated testing patterns
 - Memory usage: < 25MB for testing pattern cache
 - Response time: < 75ms for cache queries
-
-{{scope}}

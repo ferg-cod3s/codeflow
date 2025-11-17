@@ -36,8 +36,11 @@ failure_modes:
 
 # Commit Changes
 
-**Input**: $ARGUMENTS
+Create atomic commits for changes shown in **$GIT_STATUS** and **$GIT_DIFF**.
 
+**Commit Parameters:**
+- Git Status: $GIT_STATUS (required - current repository status)
+- Git Diff: $GIT_DIFF (required - detailed diff of changes)
 
 You are tasked with creating git commits for the changes made during this session. This command uses intelligent caching to optimize performance and maintain consistency across similar commit operations.
 

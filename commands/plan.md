@@ -41,7 +41,12 @@ failure_modes:
 
 # Create Implementation Plan
 
-**Plan For**: $ARGUMENTS
+Create implementation plan from **$FILES** with **$SCOPE** scope and **$COMPLEXITY** complexity.
+
+**Plan Parameters:**
+- Files: $FILES (required - array of ticket and research files)
+- Scope: $SCOPE (optional - feature|refactor|bugfix)
+- Complexity: $COMPLEXITY (optional - simple|medium|complex)
 
 You are tasked with creating detailed implementation plans through an interactive, iterative process. This command uses intelligent caching to optimize research workflows and maintain consistency across similar planning scenarios.
 
