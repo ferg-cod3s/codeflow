@@ -77,9 +77,9 @@ You are a full featured agent.`;
 
       const result = await (converter as any).convertSingleAgent(input);
 
-      expect(result).toContain('category: development');
-      expect(result).toContain('tags: python, testing');
-      expect(result).toContain('primary_objective: Write quality code');
+      expect(result).toContain('**category**: development');
+      expect(result).toContain('**tags**: python, testing');
+      expect(result).toContain('**primary_objective**: Write quality code');
       expect(result).toContain('You are a full featured agent');
     });
 
@@ -201,9 +201,9 @@ Agent with model config.`;
 
       const result = (converter as any).buildPrompt(frontmatter, body);
 
-      expect(result).toContain('category: testing');
-      expect(result).toContain('tags: unit, integration');
-      expect(result).toContain('primary_objective: Test thoroughly');
+      expect(result).toContain('**category**: testing');
+      expect(result).toContain('**tags**: unit, integration');
+      expect(result).toContain('**primary_objective**: Test thoroughly');
       expect(result).toContain('You are a test agent');
     });
 
@@ -216,8 +216,8 @@ Agent with model config.`;
 
       const result = (converter as any).buildPrompt(frontmatter, body);
 
-      expect(result).toContain('tags: python, typescript');
-      expect(result).toContain('anti_objectives: Skip tests, Write sloppy code');
+      expect(result).toContain('**tags**: python, typescript');
+      expect(result).toContain('**anti_objectives**: Skip tests, Write sloppy code');
     });
 
     it('should return body only when no additional fields', () => {
