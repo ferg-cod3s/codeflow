@@ -32,6 +32,8 @@ We've researched how Claude Code plugins can work with OpenCode. Key findings:
 codeflow convert commands --output .opencode/command/
 ```
 
+**POC Available**: See [examples/poc-anthropic-plugins/](examples/poc-anthropic-plugins/) for complete conversion examples using official Anthropic plugins (explanatory-output-style and learning-output-style).
+
 ## Installation
 
 ```bash

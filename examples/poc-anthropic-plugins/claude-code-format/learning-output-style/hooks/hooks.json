@@ -1,0 +1,11 @@
+{
+  "description": "Learning mode hook that encourages interactive coding and educational insights",
+  "hooks": {
+    "SessionStart": [
+      {
+        "type": "command",
+        "handler": "${CLAUDE_PLUGIN_ROOT}/hooks-handlers/session-start.sh"
+      }
+    ]
+  }
+}

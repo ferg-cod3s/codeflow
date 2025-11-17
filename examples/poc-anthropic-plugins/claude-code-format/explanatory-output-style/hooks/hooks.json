@@ -1,0 +1,11 @@
+{
+  "description": "Explanatory mode hook that adds educational insights instructions",
+  "hooks": {
+    "SessionStart": [
+      {
+        "type": "command",
+        "handler": "${CLAUDE_PLUGIN_ROOT}/hooks-handlers/session-start.sh"
+      }
+    ]
+  }
+}
