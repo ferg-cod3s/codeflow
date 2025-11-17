@@ -1,11 +1,11 @@
-import * as fs from 'fs-extra';
+import { readFile, readdir, stat } from 'fs/promises';
 import * as path from 'path';
-import { OpenCodeAgent, OpenCodeCommand, OpenCodeSkill, ValidationReport } from '../types/index';
-import { parseMarkdownFrontmatter } from '../utils/yaml-utils';
+import { OpenCodeAgent, OpenCodeCommand, OpenCodeSkill, ValidationReport } from '../types/index.js';
+import { parseMarkdownFrontmatter } from '../utils/yaml-utils.js';
 
 export class OpenCodeValidator {
   async validateAgent(filePath: string): Promise<ValidationReport> {
-    const content = await fs.readFile(filePath, 'utf-8');
+    const content = await readFile(filePath, 'utf-8');
     const { frontmatter, body } = parseMarkdownFrontmatter(content);
     
     const report: ValidationReport = {
@@ -92,7 +92,7 @@ export class OpenCodeValidator {
   }
 
   async validateCommand(filePath: string): Promise<ValidationReport> {
-    const content = await fs.readFile(filePath, 'utf-8');
+    const content = await readFile(filePath, 'utf-8');
     const { frontmatter, body } = parseMarkdownFrontmatter(content);
     
     const report: ValidationReport = {
@@ -155,7 +155,7 @@ export class OpenCodeValidator {
   }
 
   async validateSkill(filePath: string): Promise<ValidationReport> {
-    const content = await fs.readFile(filePath, 'utf-8');
+    const content = await readFile(filePath, 'utf-8');
     const { frontmatter, body } = parseMarkdownFrontmatter(content);
     
     const report: ValidationReport = {
@@ -208,7 +208,7 @@ export class OpenCodeValidator {
   }
 
   async validateDirectory(dirPath: string, format: 'opencode-agent' | 'opencode-command' | 'opencode-skill'): Promise<ValidationReport[]> {
-    const files = await fs.readdir(dirPath);
+    const files = await readdir(dirPath);
     const markdownFiles = files.filter(file => file.endsWith('.md'));
     
     const reports: ValidationReport[] = [];

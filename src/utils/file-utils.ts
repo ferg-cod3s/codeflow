@@ -1,4 +1,4 @@
-import * as fs from 'fs-extra';
+import { readFile as fsReadFile, writeFile as fsWriteFile, mkdir } from 'fs/promises';
 import * as path from 'path';
 import { glob } from 'glob';
 
@@ -8,16 +8,22 @@ export async function readAllFiles(pattern: string, cwd: string = process.cwd())
 }
 
 export async function readFile(filePath: string): Promise<string> {
-  return await fs.readFile(filePath, 'utf-8');
+  return await fsReadFile(filePath, 'utf-8');
 }
 
 export async function writeFile(filePath: string, content: string): Promise<void> {
-  await fs.ensureDir(path.dirname(filePath));
-  await fs.writeFile(filePath, content, 'utf-8');
+  await ensureDir(path.dirname(filePath));
+  await fsWriteFile(filePath, content, 'utf-8');
 }
 
 export async function ensureDir(dirPath: string): Promise<void> {
-  await fs.ensureDir(dirPath);
+  try {
+    await mkdir(dirPath, { recursive: true });
+  } catch (error: any) {
+    if (error.code !== 'EEXIST') {
+      throw error;
+    }
+  }
 }
 
 export function getRelativePath(filePath: string, basePath: string = process.cwd()): string {

@@ -1,7 +1,8 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
-import { OpenCodeValidator } from '../validators/opencode-validator';
+import { OpenCodeValidator } from '../validators/opencode-validator.js';
 import * as path from 'path';
+import { stat, writeFile } from 'fs/promises';
 
 export const validateCommand = new Command('validate')
   .description('Validate OpenCode format files')
@@ -13,7 +14,7 @@ export const validateCommand = new Command('validate')
     
     try {
       const validator = new OpenCodeValidator();
-      const stats = await require('fs-extra').stat(inputPath);
+      const stats = await stat(inputPath);
       
       let reports: any[];
       
@@ -90,7 +91,7 @@ export const validateCommand = new Command('validate')
           reports
         };
         
-        await require('fs-extra').writeFile(options.report, JSON.stringify(reportData, null, 2));
+        await writeFile(options.report, JSON.stringify(reportData, null, 2));
         console.log(chalk.blue(`\n📄 Report saved to: ${options.report}`));
       }
       

@@ -2,11 +2,16 @@
 
 import { Command } from 'commander';
 import chalk from 'chalk';
-import { convertCommand } from './convert';
-import { validateCommand } from './validate';
-import { migrateCommand } from './migrate';
+import { convertCommand } from './convert.js';
+import { validateCommand } from './validate.js';
+import { migrateCommand } from './migrate.js';
+import { readFileSync } from 'fs';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
 
-const packageJson = require('../../package.json');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const packageJson = JSON.parse(readFileSync(join(__dirname, '../../package.json'), 'utf-8'));
 
 const program = new Command();
 

@@ -1,7 +1,7 @@
 import * as path from 'path';
-import { BaseAgent, OpenCodeAgent } from '../types/index';
-import { readFile, writeFile, readAllFiles } from '../utils/file-utils';
-import { parseMarkdownFrontmatter, stringifyMarkdownFrontmatter } from '../utils/yaml-utils';
+import { BaseAgent, OpenCodeAgent } from '../types/index.js';
+import { readFile, writeFile, readAllFiles } from '../utils/file-utils.js';
+import { parseMarkdownFrontmatter, stringifyMarkdownFrontmatter } from '../utils/yaml-utils.js';
 
 export class AgentConverter {
   private fieldMapping: Record<string, string> = {
