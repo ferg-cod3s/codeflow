@@ -26,8 +26,10 @@ failure_modes:
 
 # CodeFlow Development Guidance
 
-**Input**: $ARGUMENTS
+Get help with **$TOPIC** or general CodeFlow development workflows.
 
+**Help Parameters:**
+- Topic: $TOPIC (optional - specific topic to get help with)
 
 This command provides guidance for working with the CodeFlow system and development workflows.
 

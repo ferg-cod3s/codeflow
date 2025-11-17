@@ -51,8 +51,13 @@ validation_rules:
 
 # Deploy Application
 
-**Input**: $ARGUMENTS
+Deploy to **$ENVIRONMENT** environment using version **$VERSION**.
 
+**Deployment Parameters:**
+- Environment: $ENVIRONMENT (required - staging|production|development)
+- Version: $VERSION (optional - defaults to current HEAD)
+- Rollback on Failure: $ROLLBACK_ON_FAILURE (optional - default: true)
+- Skip Validation: $SKIP_VALIDATION (optional - default: false)
 
 Execute a complete deployment workflow with comprehensive validation, execution, and verification phases to ensure safe and reliable deployments.
 
@@ -481,5 +486,3 @@ For production deployments requiring multi-domain coordination:
 - Cache hit rate target: ≥ 60% for repeated deployment patterns
 - Memory usage: < 15MB for deployment pattern cache
 - Response time: < 50ms for cache queries
-
-{{environment}}

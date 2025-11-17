@@ -41,8 +41,12 @@ failure_modes:
 
 # Refactor Code for Technical Debt Reduction
 
-**Input**: $ARGUMENTS
+Refactor code at **$TARGET_PATH** with **$SCOPE** scope focusing on **$FOCUS_AREAS**.
 
+**Refactoring Parameters:**
+- Target Path: $TARGET_PATH (required - file or directory to refactor)
+- Scope: $SCOPE (optional - file|directory|module, default: file)
+- Focus Areas: $FOCUS_AREAS (optional - performance|readability|maintainability|security|etc.)
 
 You are tasked with refactoring code to reduce technical debt while maintaining functionality and improving code quality. This command uses intelligent analysis to identify refactoring opportunities and implements changes safely.
 

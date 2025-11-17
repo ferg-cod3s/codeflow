@@ -49,8 +49,14 @@ failure_modes:
 
 # Code Review Command
 
-**Input**: $ARGUMENTS
+Review **$TARGET** with **$REVIEW_TYPE** focus at **$SEVERITY_THRESHOLD** severity level.
 
+**Review Parameters:**
+- Target: $TARGET (required - branch, pull request, commit, or directory)
+- Review Type: $REVIEW_TYPE (optional - comprehensive|security|performance|style|architecture, default: comprehensive)
+- Severity Threshold: $SEVERITY_THRESHOLD (optional - info|minor|major|critical|blocker, default: minor)
+- Auto Fix: $AUTO_FIX (optional - true|false, default: false)
+- Framework Rules: $FRAMEWORK_RULES (optional - array of frameworks)
 
 ## Overview
 

@@ -147,6 +147,21 @@ related_commands:
   - 'security-scan': 'For security validation in PRs'
   - 'impact-analysis': 'For change impact assessment'
   - 'test': 'For automated testing in PR validation'
+---
+
+# Create Pull Request
+
+Create PR with title **$TITLE** from **$HEAD_BRANCH** to **$BASE_BRANCH**.
+
+**PR Parameters:**
+- Title: $TITLE (required - pull request title)
+- Base Branch: $BASE_BRANCH (optional - default: main)
+- Head Branch: $HEAD_BRANCH (optional - default: current branch)
+- Description: $DESCRIPTION (optional - auto-generated if not provided)
+- Reviewers: $REVIEWERS (optional - list of reviewers)
+- Labels: $LABELS (optional - labels to apply)
+- Draft: $DRAFT (optional - true|false, default: false)
+- Auto Review: $AUTO_REVIEW (optional - true|false, default: true)
 changelog:
   - '1.0.0': 'Initial implementation with comprehensive PR creation and review coordination'
 ---
