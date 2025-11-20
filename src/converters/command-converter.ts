@@ -1,7 +1,7 @@
 import * as path from 'path';
-import { BaseCommand, OpenCodeCommand } from '../types/index';
-import { readFile, writeFile, readAllFiles } from '../utils/file-utils';
-import { parseMarkdownFrontmatter, stringifyMarkdownFrontmatter } from '../utils/yaml-utils';
+import { BaseCommand, OpenCodeCommand } from '../types/index.js';
+import { readFile, writeFile, readAllFiles } from '../utils/file-utils.js';
+import { parseMarkdownFrontmatter, stringifyMarkdownFrontmatter } from '../utils/yaml-utils.js';
 
 export class CommandConverter {
   async convertCommands(inputDir: string, outputDir: string, dryRun: boolean = false): Promise<{

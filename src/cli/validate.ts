@@ -1,6 +1,6 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
-import { OpenCodeValidator } from '../validators/opencode-validator';
+import { OpenCodeValidator } from '../validators/opencode-validator.js';
 import * as path from 'path';
 
 export const validateCommand = new Command('validate')

@@ -2,6 +2,7 @@
   "name": "opencode-explanatory-output-style",
   "version": "1.0.0",
   "description": "Adds educational insights about implementation choices and codebase patterns for OpenCode (converted from Claude Code plugin)",
+  "category": "output-style",
   "main": "explanatory-output-style.ts",
   "type": "module",
   "keywords": [

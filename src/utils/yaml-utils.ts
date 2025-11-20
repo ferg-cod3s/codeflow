@@ -1,5 +1,5 @@
 import * as yaml from 'yaml';
-import { ParsedFrontmatter } from '../types/base-types';
+import { ParsedFrontmatter } from '../types/base-types.js';
 
 export function parseMarkdownFrontmatter(content: string): { frontmatter: ParsedFrontmatter; body: string } {
   const frontmatterRegex = /^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$/;

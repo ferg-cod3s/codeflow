@@ -1,10 +1,10 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
-import { AgentConverter } from '../converters/agent-converter';
-import { CommandConverter } from '../converters/command-converter';
-import { SkillConverter } from '../converters/skill-converter';
-import { OpenCodeValidator } from '../validators/opencode-validator';
-import { ensureDir } from '../utils/file-utils';
+import { AgentConverter } from '../converters/agent-converter.js';
+import { CommandConverter } from '../converters/command-converter.js';
+import { SkillConverter } from '../converters/skill-converter.js';
+import { OpenCodeValidator } from '../validators/opencode-validator.js';
+import { ensureDir } from '../utils/file-utils.js';
 import * as path from 'path';
 
 export const convertCommand = new Command('convert')
