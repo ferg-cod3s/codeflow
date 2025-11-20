@@ -58,7 +58,7 @@ export class AnthropicConverter {
         skillContent = await readFile(skillFile);
       } catch (error) {
         result.failed++;
-        result.errors.push(`${pluginName}: SKILL.md not found`);
+        result.errors.push(`${path.basename(pluginDir)}: SKILL.md not found`);
         return result;
       }
 
@@ -175,7 +175,7 @@ export class AnthropicConverter {
       files: {}
     };
 
-    // Add additional files from the plugin directory
+    // Add additional files from plugin directory
     await this.scanAdditionalFiles(pluginDir, openCodePlugin);
 
     return openCodePlugin;
@@ -209,7 +209,6 @@ export class AnthropicConverter {
 
     if (name.includes('security') || description.includes('security')) return 'security';
     if (name.includes('frontend') || description.includes('frontend')) return 'frontend';
-    if (name.includes('design') || description.includes('design')) return 'design';
     if (name.includes('dev') || description.includes('development')) return 'development';
     if (name.includes('mcp') || description.includes('mcp')) return 'mcp';
     if (name.includes('art') || description.includes('art')) return 'art';
@@ -239,7 +238,7 @@ export class AnthropicConverter {
       const files = await readAllFiles('**/*', pluginDir);
       
       for (const file of files) {
-        if (file === 'SKILL.md') continue; // Skip the main skill file
+        if (file === 'SKILL.md') continue; // Skip main skill file
         
         const filePath = path.join(pluginDir, file);
         try {
@@ -253,23 +252,6 @@ export class AnthropicConverter {
     } catch (error) {
       // If we can't scan files, that's okay
       console.warn(`Warning: Could not scan additional files in ${pluginDir}`);
-    }
-  }
-
-  private async copyAdditionalFiles(
-    inputDir: string, 
-    outputDir: string, 
-    plugin: OpenCodePlugin,
-    dryRun: boolean
-  ): Promise<void> {
-    for (const [filePath, content] of Object.entries(plugin.files)) {
-      const outputPath = path.join(outputDir, filePath);
-      const outputDirPath = path.dirname(outputPath);
-      
-      if (!dryRun) {
-        await ensureDir(outputDirPath);
-        await writeFile(outputPath, content);
-      }
     }
   }
 
@@ -331,6 +313,8 @@ module.exports = {
   }
 
   private generateReadme(plugin: OpenCodePlugin): string {
+    const hasFiles = Object.keys(plugin.files).length > 0;
+    
     return `# ${plugin.name}
 
 ${plugin.description}
@@ -350,10 +334,10 @@ npm install ${plugin.name}
 \`\`\`javascript
 const ${plugin.name} = require('${plugin.name}');
 
-// Initialize the plugin
+// Initialize plugin
 await ${plugin.name}.initialize();
 
-// Execute the plugin
+// Execute plugin
 const result = await ${plugin.name}.execute(input);
 \`\`\`
 
@@ -365,7 +349,7 @@ ${plugin.type === 'agent' ? `
 - **Name**: ${plugin.name}
 - **Description**: ${plugin.description}
 - **Mode**: subagent
-- **Tools**: ${Object.keys(plugin.files).length > 0 ? 'File operations enabled' : 'Standard tools'}
+- **Tools**: ${hasFiles ? 'File operations enabled' : 'Standard tools'}
 ` : plugin.type === 'command' ? `
 ### Command Configuration
 
@@ -382,9 +366,10 @@ ${plugin.type === 'agent' ? `
 
 ## Files
 
-${Object.keys(plugin.files).length > 0 ? 
+${hasFiles ? 
 `This plugin includes the following additional files:
-${Object.keys(plugin.files).map(file => `- \`${file}\``).join('\n')}` : 
+${Object.keys(plugin.files).map(file => \`- \`${file}\`\`).join('\\n')}
+` : 
 'This is a standalone plugin with no additional files.'}
 
 ## Category
