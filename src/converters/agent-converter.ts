@@ -1,5 +1,5 @@
 import * as path from 'path';
-import { BaseAgent, OpenCodeAgent } from '../types/index.js';
+import { OpenCodeAgent } from '../types/index.js';
 import { readFile, writeFile, readAllFiles } from '../utils/file-utils.js';
 import { parseMarkdownFrontmatter, stringifyMarkdownFrontmatter } from '../utils/yaml-utils.js';
 
