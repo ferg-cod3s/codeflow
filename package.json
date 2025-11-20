@@ -9,20 +9,26 @@
   },
   "files": [
     "dist/**/*",
+    "plugins/**/*",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "PLUGIN_ECOSYSTEM.md"
   ],
   "scripts": {
     "build": "tsc",
     "build:cli": "tsc && chmod +x dist/cli/index.js",
+    "build:plugins": "tsc --project plugins/tsconfig.json",
     "dev": "tsc --watch",
+    "dev:plugins": "tsc --project plugins/tsconfig.json --watch",
     "test": "bun test",
+    "test:plugins": "bun test tests/plugins.test.ts",
     "test:watch": "bun test --watch",
     "typecheck": "tsc --noEmit",
+    "typecheck:plugins": "tsc --project plugins/tsconfig.json --noEmit",
     "start": "node dist/cli/index.js",
     "prepublishOnly": "npm run typecheck && npm run build:cli && npm test"
   },
-  "keywords": ["cli", "opencode", "agents", "conversion"],
+  "keywords": ["cli", "opencode", "agents", "conversion", "plugins", "mcp", "anthropic"],
   "author": "CodeFlow",
   "license": "MIT",
   "repository": {
@@ -38,7 +44,8 @@
     "yaml": "^2.3.4",
     "glob": "^10.3.10",
     "chalk": "^5.3.0",
-    "fs-extra": "^11.1.1"
+    "fs-extra": "^11.1.1",
+    "@opencode-ai/plugin": "^1.0.0"
   },
   "devDependencies": {
     "@types/node": "^20.10.0",
