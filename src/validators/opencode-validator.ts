@@ -1,6 +1,6 @@
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import { OpenCodeAgent, OpenCodeCommand, OpenCodeSkill, ValidationReport } from '../types/index.js';
+import { ValidationReport } from '../types/index.js';
 import { parseMarkdownFrontmatter } from '../utils/yaml-utils.js';
 
 export class OpenCodeValidator {
