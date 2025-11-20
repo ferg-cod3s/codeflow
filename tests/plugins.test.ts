@@ -217,7 +217,6 @@ describe('Plugin Validator', () => {
         validator['validateManifest'](manifest as any, result)
         
         // Debug: log what we're testing
-        console.log(`Testing version: ${version}, errors: ${result.errors.length}`)
         if (version === '1.0') {
           // Specific test for the first invalid version
           expect(result.errors.some(e => e.field === 'version')).toBe(true)
