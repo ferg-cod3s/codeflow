@@ -1,6 +1,6 @@
 {
   "name": "codeflow-cli",
-  "version": "1.0.0",
+  "version": "0.21.0",
   "description": "CLI tool to convert base-agents, commands, and skills to OpenCode format",
   "main": "dist/cli/index.js",
   "type": "module",

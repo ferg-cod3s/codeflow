@@ -12,23 +12,28 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Setup Node.js for NPM
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
-        run: npm ci
+        run: bun install
 
       - name: Run tests
-        run: npm test
+        run: bun test
 
       - name: Type check
-        run: npm run typecheck
+        run: bun run typecheck
 
       - name: Build CLI
-        run: npm run build:cli
+        run: bun run build:cli
 
       - name: Publish to NPM
         run: npm publish --access public
