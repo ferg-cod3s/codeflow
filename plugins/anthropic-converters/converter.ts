@@ -1,433 +1,402 @@
-/**
- * Anthropic Plugin Converter for OpenCode
- * 
- * Converts Claude Code plugins to OpenCode format with support for:
- * - Commands (direct compatibility)
- * - Agents (wrapper conversion)
- * - Hooks (JSON → TypeScript)
- * - Skills (format adaptation)
- */
+import * as path from 'path';
+import { readFile, writeFile, readAllFiles, ensureDir } from './utils/file-utils';
+import { parseMarkdownFrontmatter, stringifyMarkdownFrontmatter } from './utils/yaml-utils';
 
-import type { PluginManifest } from '../types'
-import type { Plugin } from '@opencode-ai/plugin'
-import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs'
-import { join, dirname } from 'path'
-import { parse as parseYaml, stringify as stringifyYaml } from 'yaml'
-
-export interface ClaudePluginManifest {
-  name: string
-  description: string
-  version: string
-  author?: {
-    name: string
-    email?: string
-  }
-  main?: string
-  hooks?: Record<string, string>
-  commands?: string[]
-  agents?: string[]
-  skills?: string[]
+export interface AnthropicSkill {
+  name: string;
+  description: string;
+  license?: string;
+  prompt: string;
 }
 
-export interface ConversionOptions {
-  outputDir: string
-  preserveHooks?: boolean
-  convertCommands?: boolean
-  convertAgents?: boolean
-  convertSkills?: boolean
-  targetFormat?: 'opencode'
-  verbose?: boolean
+export interface OpenCodePlugin {
+  name: string;
+  version: string;
+  description: string;
+  main: string;
+  type: 'skill' | 'agent' | 'command';
+  opencode?: {
+    category?: string;
+    tags?: string[];
+    author?: string;
+    repository?: string;
+  };
+  files: {
+    [key: string]: string;
+  };
 }
 
-export interface ConversionResult {
-  success: boolean
-  pluginName: string
-  outputPath?: string
-  errors?: string[]
-  warnings?: string[]
-  convertedFiles?: string[]
-}
+export class AnthropicConverter {
+  private convertedPlugins = new Map<string, OpenCodePlugin>();
 
-export class AnthropicPluginConverter {
-  private options: ConversionOptions
+  async convertPlugin(
+    pluginDir: string, 
+    outputDir: string, 
+    dryRun: boolean = false
+  ): Promise<{
+    converted: number;
+    failed: number;
+    errors: string[];
+    warnings: string[];
+  }> {
+    const result = {
+      converted: 0,
+      failed: 0,
+      errors: [] as string[],
+      warnings: [] as string[]
+    };
 
-  constructor(options: ConversionOptions) {
-    this.options = {
-      preserveHooks: true,
-      convertCommands: true,
-      convertAgents: true,
-      convertSkills: true,
-      targetFormat: 'opencode',
-      verbose: false,
-      ...options
-    }
-  }
-
-  /**
-   * Convert a Claude Code plugin to OpenCode format
-   */
-  async convertPlugin(pluginPath: string): Promise<ConversionResult> {
     try {
-      const pluginName = this.getPluginName(pluginPath)
-      const manifest = this.loadClaudeManifest(pluginPath)
+      const pluginName = path.basename(pluginDir);
+      console.log(`🔄 Converting plugin: ${pluginName}`);
+
+      // Read the SKILL.md file
+      const skillFile = path.join(pluginDir, 'SKILL.md');
+      let skillContent: string;
+
+      try {
+        skillContent = await readFile(skillFile);
+      } catch (error) {
+        result.failed++;
+        result.errors.push(`${path.basename(pluginDir)}: SKILL.md not found`);
+        return result;
+      }
+
+      // Parse the skill
+      const anthropicSkill = await this.parseSkill(skillContent);
       
-      if (!manifest) {
-        return {
-          success: false,
-          pluginName,
-          errors: ['Could not find or parse plugin manifest']
-        }
-      }
-
-      const result: ConversionResult = {
-        success: true,
-        pluginName,
-        convertedFiles: []
-      }
-
+      // Convert to OpenCode format
+      const openCodePlugin = await this.convertToOpenCode(pluginName, anthropicSkill, pluginDir);
+      
       // Create output directory
-      const outputPath = join(this.options.outputDir, pluginName)
-      mkdirSync(outputPath, { recursive: true })
-
-      // Convert different plugin components
-      if (this.options.convertCommands && manifest.commands) {
-        await this.convertCommands(pluginPath, outputPath, manifest, result)
+      const pluginOutputDir = path.join(outputDir, pluginName);
+      if (!dryRun) {
+        await ensureDir(pluginOutputDir);
       }
 
-      if (this.options.convertAgents && manifest.agents) {
-        await this.convertAgents(pluginPath, outputPath, manifest, result)
+      // Write package.json
+      const packageJsonPath = path.join(pluginOutputDir, 'package.json');
+      if (!dryRun) {
+        await writeFile(packageJsonPath, JSON.stringify(openCodePlugin, null, 2));
       }
 
-      if (this.options.convertSkills && manifest.skills) {
-        await this.convertSkills(pluginPath, outputPath, manifest, result)
+      // Write main plugin file
+      const mainFilePath = path.join(pluginOutputDir, openCodePlugin.main);
+      if (!dryRun) {
+        await writeFile(mainFilePath, this.generateMainPluginContent(openCodePlugin));
       }
 
-      if (this.options.preserveHooks && manifest.hooks) {
-        await this.convertHooks(pluginPath, outputPath, manifest, result)
+      // Write README
+      const readmePath = path.join(pluginOutputDir, 'README.md');
+      if (!dryRun) {
+        await writeFile(readmePath, this.generateReadme(openCodePlugin));
       }
 
-      // Generate OpenCode package.json
-      await this.generatePackageJson(outputPath, manifest, result)
+      // Copy additional files
+      await this.copyAdditionalFiles(pluginDir, pluginOutputDir, openCodePlugin, dryRun);
 
-      // Generate README
-      await this.generateReadme(outputPath, manifest, result)
-
-      result.outputPath = outputPath
-      return result
+      result.converted++;
+      console.log(`✅ Converted: ${pluginName}`);
+      
+      // Store for reference
+      this.convertedPlugins.set(pluginName, openCodePlugin);
 
     } catch (error) {
-      return {
-        success: false,
-        pluginName: this.getPluginName(pluginPath),
-        errors: [error instanceof Error ? error.message : String(error)]
-      }
+      result.failed++;
+      result.errors.push(`${path.basename(pluginDir)}: ${error}`);
+      console.error(`❌ Failed: ${path.basename(pluginDir)} - ${error}`);
     }
+
+    return result;
   }
 
-  /**
-   * Convert commands (direct compatibility)
-   */
-  private async convertCommands(
-    pluginPath: string,
-    outputPath: string,
-    manifest: ClaudePluginManifest,
-    result: ConversionResult
-  ): Promise<void> {
-    const commandsDir = join(pluginPath, 'commands')
-    if (!existsSync(commandsDir)) return
+  async convertMultiplePlugins(
+    plugins: string[],
+    baseInputDir: string,
+    outputDir: string,
+    dryRun: boolean = false
+  ): Promise<{
+    converted: number;
+    failed: number;
+    errors: string[];
+    warnings: string[];
+  }> {
+    const totalResult = {
+      converted: 0,
+      failed: 0,
+      errors: [] as string[],
+      warnings: [] as string[]
+    };
 
-    const outputCommandsDir = join(outputPath, 'commands')
-    mkdirSync(outputCommandsDir, { recursive: true })
-
-    // Commands are directly compatible - just copy them
-    const commandFiles = manifest.commands || []
-    for (const commandFile of commandFiles) {
-      const srcPath = join(commandsDir, commandFile)
-      const destPath = join(outputCommandsDir, commandFile)
+    for (const plugin of plugins) {
+      const pluginDir = path.join(baseInputDir, plugin);
+      const result = await this.convertPlugin(pluginDir, outputDir, dryRun);
       
-      if (existsSync(srcPath)) {
-        const content = readFileSync(srcPath, 'utf-8')
-        writeFileSync(destPath, content)
-        result.convertedFiles?.push(destPath)
-      }
+      totalResult.converted += result.converted;
+      totalResult.failed += result.failed;
+      totalResult.errors.push(...result.errors);
+      totalResult.warnings.push(...result.warnings);
     }
+
+    return totalResult;
   }
 
-  /**
-   * Convert agents (wrapper as OpenCode tools)
-   */
-  private async convertAgents(
-    pluginPath: string,
-    outputPath: string,
-    manifest: ClaudePluginManifest,
-    result: ConversionResult
-  ): Promise<void> {
-    const agentsDir = join(pluginPath, 'agents')
-    if (!existsSync(agentsDir)) return
+  private async parseSkill(content: string): Promise<AnthropicSkill> {
+    const { frontmatter, body } = parseMarkdownFrontmatter(content);
+    
+    return {
+      name: frontmatter.name || 'unknown',
+      description: frontmatter.description || '',
+      license: frontmatter.license,
+      prompt: body.trim()
+    };
+  }
 
-    const outputAgentsDir = join(outputPath, 'agents')
-    mkdirSync(outputAgentsDir, { recursive: true })
+  private async convertToOpenCode(
+    pluginName: string, 
+    skill: AnthropicSkill,
+    pluginDir: string
+  ): Promise<OpenCodePlugin> {
+    // Detect plugin type based on content and directory structure
+    const pluginType = this.detectPluginType(skill, pluginDir);
+    
+    const openCodePlugin: OpenCodePlugin = {
+      name: pluginName,
+      version: '1.0.0',
+      description: skill.description,
+      main: 'index.js',
+      type: pluginType,
+      opencode: {
+        category: this.inferCategory(skill, pluginDir),
+        tags: this.extractTags(skill),
+        author: 'Anthropic',
+        repository: 'https://github.com/anthropics/anthropic-agent-skills'
+      },
+      files: {}
+    };
 
-    const agentFiles = manifest.agents || []
-    for (const agentFile of agentFiles) {
-      const srcPath = join(agentsDir, agentFile)
-      if (!existsSync(srcPath)) continue
+    // Add additional files from plugin directory
+    await this.scanAdditionalFiles(pluginDir, openCodePlugin);
 
-      const agentContent = readFileSync(srcPath, 'utf-8')
-      const wrappedAgent = this.wrapAgentAsTool(agentFile, agentContent)
+    return openCodePlugin;
+  }
+
+  private detectPluginType(skill: AnthropicSkill, pluginDir: string): 'skill' | 'agent' | 'command' {
+    // Analyze content to determine type
+    const prompt = skill.prompt.toLowerCase();
+    const name = skill.name.toLowerCase();
+
+    // Agent indicators
+    if (prompt.includes('agent') || prompt.includes('subagent') || 
+        prompt.includes('mode:') || prompt.includes('tools:') ||
+        name.includes('-agent') || name.includes('sdk')) {
+      return 'agent';
+    }
+
+    // Command indicators  
+    if (prompt.includes('command') || prompt.includes('execute') ||
+        prompt.includes('run') || name.includes('-dev')) {
+      return 'command';
+    }
+
+    // Default to skill
+    return 'skill';
+  }
+
+  private inferCategory(skill: AnthropicSkill, pluginDir: string): string {
+    const name = skill.name.toLowerCase();
+    const description = skill.description.toLowerCase();
+
+    if (name.includes('security') || description.includes('security')) return 'security';
+    if (name.includes('frontend') || description.includes('frontend')) return 'frontend';
+    if (name.includes('dev') || description.includes('development')) return 'development';
+    if (name.includes('mcp') || description.includes('mcp')) return 'mcp';
+    if (name.includes('art') || description.includes('art')) return 'art';
+    if (name.includes('brand') || description.includes('brand')) return 'branding';
+    
+    return 'general';
+  }
+
+  private extractTags(skill: AnthropicSkill): string[] {
+    const tags: string[] = [];
+    const text = (skill.name + ' ' + skill.description).toLowerCase();
+
+    if (text.includes('algorithmic')) tags.push('algorithmic', 'generative');
+    if (text.includes('brand')) tags.push('branding', 'design');
+    if (text.includes('security')) tags.push('security', 'scanning');
+    if (text.includes('frontend')) tags.push('frontend', 'ui');
+    if (text.includes('mcp')) tags.push('mcp', 'server');
+    if (text.includes('development')) tags.push('development', 'workflow');
+    if (text.includes('art')) tags.push('art', 'creative');
+    if (text.includes('theme')) tags.push('theme', 'styling');
+
+    return tags.length > 0 ? tags : ['utility'];
+  }
+
+  private async scanAdditionalFiles(pluginDir: string, plugin: OpenCodePlugin): Promise<void> {
+    try {
+      const files = await readAllFiles('**/*', pluginDir);
       
-      const destPath = join(outputAgentsDir, agentFile.replace('.md', '.ts'))
-      writeFileSync(destPath, wrappedAgent)
-      result.convertedFiles?.push(destPath)
-    }
-  }
-
-  /**
-   * Convert hooks (JSON → TypeScript)
-   */
-  private async convertHooks(
-    pluginPath: string,
-    outputPath: string,
-    manifest: ClaudePluginManifest,
-    result: ConversionResult
-  ): Promise<void> {
-    if (!manifest.hooks) return
-
-    const hooksContent = this.generateHooksHandler(manifest.hooks)
-    const hooksPath = join(outputPath, 'hooks.ts')
-    writeFileSync(hooksPath, hooksContent)
-    result.convertedFiles?.push(hooksPath)
-  }
-
-  /**
-   * Convert skills (format adaptation)
-   */
-  private async convertSkills(
-    pluginPath: string,
-    outputPath: string,
-    manifest: ClaudePluginManifest,
-    result: ConversionResult
-  ): Promise<void> {
-    const skillsDir = join(pluginPath, 'skills')
-    if (!existsSync(skillsDir)) return
-
-    const outputSkillsDir = join(outputPath, 'skills')
-    mkdirSync(outputSkillsDir, { recursive: true })
-
-    // Copy skill directories with format adaptation
-    const skillDirs = manifest.skills || []
-    for (const skillDir of skillDirs) {
-      const srcSkillPath = join(skillsDir, skillDir)
-      const destSkillPath = join(outputSkillsDir, skillDir)
-      
-      if (existsSync(srcSkillPath)) {
-        await this.copySkillDirectory(srcSkillPath, destSkillPath, result)
-      }
-    }
-  }
-
-  /**
-   * Wrap Claude agent as OpenCode tool
-   */
-  private wrapAgentAsTool(agentFile: string, agentContent: string): string {
-    const agentName = agentFile.replace('.md', '')
-    const frontmatterMatch = agentContent.match(/^---\n(.*?)\n---\n(.*)$/s)
-    
-    let metadata = {}
-    let content = agentContent
-    
-    if (frontmatterMatch) {
-      try {
-        metadata = parseYaml(frontmatterMatch[1])
-        content = frontmatterMatch[2]
-      } catch (e) {
-        // If YAML parsing fails, treat entire content as agent definition
-      }
-    }
-
-    return `/**
- * ${metadata.description || agentName} Agent
- * Converted from Claude Code agent format
- */
-
-import type { Plugin } from "@opencode-ai/plugin"
-
-export const ${this.toPascalCase(agentName)}Agent: Plugin = async ({ client }) => {
-  return {
-    name: "${agentName}",
-    description: ${JSON.stringify(metadata.description || `${agentName} agent`)},
-    
-    tool: {
-      execute: {
-        before: async (input, output) => {
-          // Agent logic here
-          if (input.tool === 'chat' || input.tool === 'message') {
-            // Handle agent invocation
-            console.log('🤖 ${agentName} agent activated')
-          }
+      for (const file of files) {
+        if (file === 'SKILL.md') continue; // Skip main skill file
+        
+        const filePath = path.join(pluginDir, file);
+        try {
+          const content = await readFile(filePath);
+          plugin.files[file] = content;
+        } catch (error) {
+          // Skip files that can't be read
+          console.warn(`Warning: Could not read file ${file}`);
         }
       }
+    } catch (error) {
+      // If we can't scan files, that's okay
+      console.warn(`Warning: Could not scan additional files in ${pluginDir}`);
     }
   }
-}
 
-export default ${this.toPascalCase(agentName)}Agent
-`
-  }
-
-  /**
-   * Generate TypeScript hooks handler from JSON hooks
-   */
-  private generateHooksHandler(hooks: Record<string, string>): string {
-    const hookEntries = Object.entries(hooks)
+  private generateMainPluginContent(plugin: OpenCodePlugin): string {
+    const hasFiles = Object.keys(plugin.files).length > 0;
     
-    return `/**
- * Generated hooks handler
- * Converted from Claude Code JSON hooks format
- */
+    return `// OpenCode Plugin: ${plugin.name}
+// Converted from Anthropic Agent Skill
+// Version: ${plugin.version}
 
-import type { Plugin } from "@opencode-ai/plugin"
+${plugin.type === 'agent' ? `
+// Agent Configuration
+const agentConfig = {
+  name: "${plugin.name}",
+  description: "${plugin.description}",
+  mode: "subagent",
+  tools: ${hasFiles ? '{ file_operations: true }' : '{}'}
+};
+` : plugin.type === 'command' ? `
+// Command Configuration  
+const commandConfig = {
+  name: "${plugin.name}",
+  description: "${plugin.description}",
+  template: "default"
+};
+` : `
+// Skill Configuration
+const skillConfig = {
+  name: "${plugin.name}",
+  description: "${plugin.description}",
+  noReply: false
+};
+`}
 
-export const hooksHandler: Plugin = async ({ client }) => {
-  return {
-    event: async ({ event }) => {
-${hookEntries.map(([hookType, handler]) => `
-      if (event.type === '${hookType}') {
-        // Hook handler: ${handler}
-        console.log('🪝 Hook triggered: ${hookType}')
-        // Implement hook logic here
-      }`).join('')}
-    }
+// Main plugin logic
+module.exports = {
+  name: "${plugin.name}",
+  version: "${plugin.version}",
+  description: "${plugin.description}",
+  type: "${plugin.type}",
+  
+  ${plugin.type === 'agent' ? 'agentConfig' : plugin.type === 'command' ? 'commandConfig' : 'skillConfig'},
+  
+  // Plugin initialization
+  async initialize() {
+    console.log(\`Initialized \${this.name} plugin\`);
+  },
+  
+  // Main execution
+  async execute(input) {
+    // Plugin execution logic here
+    return {
+      success: true,
+      result: "Plugin executed successfully"
+    };
   }
-}
-
-export default hooksHandler
-`
+};
+`;
   }
 
-  /**
-   * Generate OpenCode package.json
-   */
-  private async generatePackageJson(
-    outputPath: string,
-    manifest: ClaudePluginManifest,
-    result: ConversionResult
-  ): Promise<void> {
-    const packageJson = {
-      name: `opencode-${manifest.name}`,
-      version: manifest.version,
-      description: manifest.description + (manifest.author ? ` by ${manifest.author.name}` : ''),
-      main: 'index.ts',
-      type: 'module',
-      category: this.determinePluginCategory(manifest),
-      author: manifest.author,
-      keywords: ['claude-code', 'converted', 'opencode'],
-      dependencies: {
-        '@opencode-ai/plugin': '^1.0.0'
-      },
-      engines: {
-        opencode: '>=1.0.0',
-        node: '>=16.0.0'
-      }
-    }
+  private generateReadme(plugin: OpenCodePlugin): string {
+    const hasFiles = Object.keys(plugin.files).length > 0;
+    
+    return `# ${plugin.name}
 
-    const packagePath = join(outputPath, 'package.json')
-    writeFileSync(packagePath, JSON.stringify(packageJson, null, 2))
-    result.convertedFiles?.push(packagePath)
-  }
+${plugin.description}
 
-  /**
-   * Generate README documentation
-   */
-  private async generateReadme(
-    outputPath: string,
-    manifest: ClaudePluginManifest,
-    result: ConversionResult
-  ): Promise<void> {
-    const readme = `# ${manifest.name}
+## Overview
 
-${manifest.description}
-
-## Converted from Claude Code
-
-This plugin was automatically converted from Claude Code format to OpenCode format.
+This OpenCode plugin was converted from an Anthropic Agent Skill. It provides ${plugin.type} functionality for the OpenCode ecosystem.
 
 ## Installation
 
-${'```'}bash
-# Copy to OpenCode plugins directory
-cp . ~/.config/opencode/plugin/
-${'```'}
-
-## Features
-
-${manifest.commands ? `- **Commands**: ${manifest.commands.join(', ')}` : ''}
-${manifest.agents ? `- **Agents**: ${manifest.agents.join(', ')}` : ''}
-${manifest.skills ? `- **Skills**: ${manifest.skills.join(', ')}` : ''}
-${manifest.hooks ? `- **Hooks**: ${Object.keys(manifest.hooks).join(', ')}` : ''}
+\`\`\`bash
+npm install ${plugin.name}
+\`\`\`
 
 ## Usage
 
-See individual component files for usage instructions.
+\`\`\`javascript
+const ${plugin.name} = require('${plugin.name}');
 
-## Conversion Notes
+// Initialize plugin
+await ${plugin.name}.initialize();
 
-- Commands are directly compatible
-- Agents are wrapped as OpenCode tools
-- Hooks are converted from JSON to TypeScript
-- Skills are adapted to OpenCode format
+// Execute plugin
+const result = await ${plugin.name}.execute(input);
+\`\`\`
 
-## License
+## Configuration
 
-See original plugin for license information.
-`
+${plugin.type === 'agent' ? `
+### Agent Configuration
 
-    const readmePath = join(outputPath, 'README.md')
-    writeFileSync(readmePath, readme)
-    result.convertedFiles?.push(readmePath)
-  }
+- **Name**: ${plugin.name}
+- **Description**: ${plugin.description}
+- **Mode**: subagent
+- **Tools**: ${hasFiles ? 'File operations enabled' : 'Standard tools'}
+` : plugin.type === 'command' ? `
+### Command Configuration
 
-  /**
-   * Helper methods
-   */
-  private getPluginName(pluginPath: string): string {
-    return pluginPath.split('/').pop() || 'unknown'
-  }
+- **Name**: ${plugin.name}
+- **Description**: ${plugin.description}
+- **Template**: Default
+` : `
+### Skill Configuration
 
-  private loadClaudeManifest(pluginPath: string): ClaudePluginManifest | null {
-    const manifestPath = join(pluginPath, '.claude-plugin', 'plugin.json')
-    if (!existsSync(manifestPath)) return null
+- **Name**: ${plugin.name}
+- **Description**: ${plugin.description}
+- **No Reply**: false
+`}
 
-    try {
-      const content = readFileSync(manifestPath, 'utf-8')
-      return JSON.parse(content)
-    } catch (e) {
-      return null
-    }
-  }
+## Files
 
-  private determinePluginCategory(manifest: ClaudePluginManifest): string {
-    if (manifest.commands?.length) return 'command'
-    if (manifest.agents?.length) return 'agent'
-    if (manifest.skills?.length) return 'skill'
-    if (manifest.hooks) return 'utility'
-    return 'utility'
-  }
+${hasFiles ? 
+`This plugin includes the following additional files:
+${Object.keys(plugin.files).map(file => \`- \`${file}\`\`).join('\\n')}
+` : 
+'This is a standalone plugin with no additional files.'}
 
-  private toPascalCase(str: string): string {
-    return str.replace(/(?:^|[-_])(.)/g, (_, char) => char.toUpperCase())
-  }
+## Category
 
-  private async copySkillDirectory(
-    srcPath: string,
-    destPath: string,
-    result: ConversionResult
-  ): Promise<void> {
-    // Implementation for copying skill directories with format adaptation
-    mkdirSync(destPath, { recursive: true })
-    // Add skill-specific conversion logic here
-    result.convertedFiles?.push(destPath)
+${plugin.opencode?.category || 'General'}
+
+## Tags
+
+${plugin.opencode?.tags?.join(', ') || 'utility'}
+
+## Author
+
+${plugin.opencode?.author || 'Unknown'}
+
+## Repository
+
+${plugin.opencode?.repository || 'Unknown'}
+
+## This plugin was converted from an Anthropic Agent Skill. Please refer to the original license terms.
+
+## Conversion Details
+
+- **Source**: Anthropic Agent Skills
+- **Target**: OpenCode Plugin Format
+- **Version**: ${plugin.version}
+- **Type**: ${plugin.type}
+- **Converted**: ${new Date().toISOString()}
+`;
   }
 }
-
-export default AnthropicPluginConverter
