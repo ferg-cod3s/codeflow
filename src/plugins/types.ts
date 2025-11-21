@@ -53,6 +53,7 @@ export interface MCPWrapperConfig {
   timeout?: number
   retryAttempts?: number
   autoConnect?: boolean
+  env?: Record<string, string>
 }
 
 export interface AnthropicConverterConfig {

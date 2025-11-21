@@ -1,19 +1,21 @@
 {
-  "extends": "./tsconfig.json",
+  "extends": "../tsconfig.json",
   "compilerOptions": {
-    "outDir": "./dist/plugins",
-    "rootDir": "./plugins",
+    "outDir": "../dist",
+    "rootDir": "..",
+    "noImplicitAny": false,
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true
   },
   "include": [
-    "plugins/**/*.ts"
+    "**/*.ts"
   ],
   "exclude": [
     "node_modules",
     "dist",
     "tests",
-    "examples"
+    "examples",
+    "**/converted/**"
   ]
 }
