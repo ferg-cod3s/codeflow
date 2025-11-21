@@ -354,10 +354,10 @@ This plugin was automatically converted from Claude Code format to OpenCode form
 
 ## Installation
 
-\`\`\`bash
+${'```'}bash
 # Copy to OpenCode plugins directory
 cp . ~/.config/opencode/plugin/
-\`\`\`
+${'```'}
 
 ## Features
 
