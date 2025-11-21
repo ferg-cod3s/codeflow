@@ -63,9 +63,41 @@ export class AnthropicPluginConverter {
     }
   }
 
-  /**
-   * Convert a Claude Code plugin to OpenCode format
-   */
+  async convertMultiplePlugins(
+    plugins: string[],
+    baseInputDir: string,
+    outputDir: string,
+    dryRun: boolean = false
+  ): Promise<{  
+    converted: number;
+    failed: number;
+    errors: string[];
+    warnings: string[];
+  }> {
+    const totalResult = {
+      converted: 0,
+      failed: 0,
+      errors: [] as string[],
+      warnings: [] as string[]
+    };
+
+    for (const plugin of plugins) {
+      const pluginDir = join(baseInputDir, plugin);
+      const result = await this.convertPlugin(pluginDir);
+      
+      if (result.success) {
+        totalResult.converted++;
+        // Note: convertPlugin doesn't currently support outputDir override or dryRun
+        // those would need to be added to options or refactored
+      } else {
+        totalResult.failed++;
+        if (result.errors) totalResult.errors.push(...result.errors);
+        if (result.warnings) totalResult.warnings.push(...result.warnings);
+      }
+    }
+
+    return totalResult;
+  }
   async convertPlugin(pluginPath: string): Promise<ConversionResult> {
     try {
       const pluginName = this.getPluginName(pluginPath)

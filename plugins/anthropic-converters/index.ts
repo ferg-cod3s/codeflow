@@ -2,7 +2,7 @@
 
 import { Command } from 'commander';
 import chalk from 'chalk';
-import { AnthropicConverter } from './converter';
+import { AnthropicPluginConverter as AnthropicConverter } from './converter';
 import * as path from 'path';
 
 const program = new Command();
@@ -46,7 +46,10 @@ program
     }
 
     try {
-      const converter = new AnthropicConverter();
+      const converter = new AnthropicConverter({
+        outputDir: options.output,
+        targetFormat: 'opencode'
+      });
       
       // Determine which plugins to convert
       let pluginsToConvert: string[] = [];
