@@ -84,7 +84,7 @@ export const WalkthroughOutputStyle: Plugin = async ({ client }) => {
   return {
     // Session initialization
     event: async ({ event }) => {
-      if (event.type === 'session.start' || event.type === 'session.init') {
+      if ((event.type as string) === 'session.start' || (event.type as string) === 'session.init') {
         console.log('\n' + '='.repeat(70))
         console.log('WALKTHROUGH MODE ACTIVE')
         console.log('='.repeat(70))

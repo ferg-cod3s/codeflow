@@ -47,7 +47,7 @@ export const LearningOutputStyle: Plugin = async ({ client }) => {
   return {
     // Session initialization hook
     event: async ({ event }) => {
-      if (event.type === 'session.start' || event.type === 'session.init') {
+      if ((event.type as string) === 'session.start' || (event.type as string) === 'session.init') {
         console.log('📚 Activating learning mode...')
 
         // Inject learning context at session start

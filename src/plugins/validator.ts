@@ -8,7 +8,7 @@
  * - Custom plugins
  */
 
-import type { PluginManifest, ExtendedPlugin } from '../types'
+import type { PluginManifest, ExtendedPlugin } from './types.js'
 import { readFileSync, existsSync } from 'fs'
 import { join, dirname } from 'path'
 import { parse as parseYaml } from 'yaml'

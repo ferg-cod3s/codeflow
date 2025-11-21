@@ -1,2 +1,2 @@
-export * from './base-types';
-export * from './opencode-types';
+export * from './base-types.js';
+export * from './opencode-types.js';

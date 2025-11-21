@@ -6,7 +6,7 @@
  */
 
 import type { Plugin } from "@opencode-ai/plugin"
-import type { MCPWrapperConfig } from '../types'
+import type { MCPWrapperConfig } from '../../src/plugins/types.js'
 
 export interface MCPServerInfo {
   name: string
@@ -75,7 +75,7 @@ export class MCPWrapper {
         },
 
         event: async ({ event }) => {
-          if (event.type === 'session.start') {
+          if ((event.type as string) === 'session.start') {
             console.log(`🔗 MCP Server: ${this.config.serverName} connected`)
             console.log(`🛠️  Available tools: ${this.availableTools.map(t => t.name).join(', ')}`)
           }
@@ -219,21 +219,21 @@ export class MCPWrapper {
     const args = this.config.serverPath.split(' ')
     const command = args.shift()
     
-    const process = spawn(command!, args, {
+    const childProcess = spawn(command!, args, {
       stdio: ['pipe', 'pipe', 'pipe'],
       env: { ...process.env, ...this.config.env }
     })
 
-    process.on('error', (error: any) => {
+    childProcess.on('error', (error: any) => {
       console.error(`MCP server process error:`, error)
     })
 
-    process.on('exit', (code: any) => {
+    childProcess.on('exit', (code: any) => {
       console.log(`MCP server process exited with code ${code}`)
       this.isConnected = false
     })
 
-    return process
+    return childProcess
   }
 
   /**

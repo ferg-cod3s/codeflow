@@ -2,11 +2,11 @@
 
 import { Command } from 'commander';
 import chalk from 'chalk';
-import { convertCommand } from './convert';
-import { validateCommand } from './validate';
-import { migrateCommand } from './migrate';
+import { convertCommand } from './convert.js';
+import { validateCommand } from './validate.js';
+import { migrateCommand } from './migrate.js';
 
-const packageJson = require('../../package.json');
+import packageJson from '../../package.json' with { type: 'json' };
 
 const program = new Command();
 
