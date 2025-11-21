@@ -33,7 +33,7 @@ export class AnthropicConverter {
     pluginDir: string, 
     outputDir: string, 
     dryRun: boolean = false
-  ): Promise<{
+  ): Promise<{  
     converted: number;
     failed: number;
     errors: string[];
@@ -115,7 +115,7 @@ export class AnthropicConverter {
     baseInputDir: string,
     outputDir: string,
     dryRun: boolean = false
-  ): Promise<{
+  ): Promise<{  
     converted: number;
     failed: number;
     errors: string[];
@@ -255,14 +255,62 @@ export class AnthropicConverter {
     }
   }
 
+  private async copyAdditionalFiles(pluginDir: string, pluginOutputDir: string, plugin: OpenCodePlugin, dryRun: boolean): Promise<void> {
+    // Writes files collected in plugin.files to the output directory, preserving subpaths.
+    const fileEntries = Object.entries(plugin.files || {});
+    for (const [relativePath, content] of fileEntries) {
+      const destPath = path.join(pluginOutputDir, relativePath);
+      const destDir = path.dirname(destPath);
+      try {
+        if (!dryRun) {
+          await ensureDir(destDir);
+          await writeFile(destPath, content);
+        }
+      } catch (err) {
+        console.warn(`Warning: Could not write file ${destPath}`);
+      }
+    }
+  }
+
   private generateMainPluginContent(plugin: OpenCodePlugin): string {
-    const hasFiles = Object.keys(plugin.files).length > 0;
-    
-    return `// OpenCode Plugin: ${plugin.name}
- // Converted from Anthropic Agent Skill
- // Version: ${plugin.version}
- 
- ${plugin.type === 'agent' ? `
- // Agent Configuration
- const agentConfig = {
-   name: \
+    const header = `// OpenCode Plugin: ${plugin.name}\n// Converted from Anthropic Agent Skill\n// Version: ${plugin.version}\n\n`;
+
+    if (plugin.type === 'agent') {
+      const cfg = {
+        name: plugin.name,
+        description: plugin.description,
+        opencode: plugin.opencode || {}
+      };
+
+      return header + `// Agent Configuration\nconst agentConfig = ${JSON.stringify(cfg, null, 2)};\n\nmodule.exports = { agentConfig };\n`;
+    }
+
+    if (plugin.type === 'command') {
+      return header + `// Command plugin entry\nmodule.exports = function runCommand(args) {\n  // Implement command logic here\n  console.log('Running command for ${plugin.name}', args);\n};\n`;
+    }
+
+    // Default: skill
+    return header + 'module.exports = ' + JSON.stringify({ name: plugin.name, description: plugin.description }, null, 2) + ';\n';
+  }
+
+  private generateReadme(plugin: OpenCodePlugin): string {
+    const lines = [
+      `# ${plugin.name}`,
+      '',
+      plugin.description || '',
+      '',
+      '## Plugin type',
+      '',
+      `- ${plugin.type}`
+    ];
+
+    if (plugin.opencode) {
+      if (plugin.opencode.category) lines.push('', '## Category', '', `- ${plugin.opencode.category}`);
+      if (plugin.opencode.tags && plugin.opencode.tags.length) lines.push('', '## Tags', '', plugin.opencode.tags.map(t => `- ${t}`).join('\n'));
+      if (plugin.opencode.author) lines.push('', '## Author', '', `- ${plugin.opencode.author}`);
+      if (plugin.opencode.repository) lines.push('', '## Repository', '', plugin.opencode.repository);
+    }
+
+    return lines.join('\n');
+  }
+}
