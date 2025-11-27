@@ -1,6 +1,6 @@
 ---
 name: 'research'
-mode: command
+mode: primary
 display_name: 'Deep Research & Analysis'
 category: 'workflow'
 subcategory: 'discovery'
@@ -203,7 +203,7 @@ Use YAML frontmatter format for argument specification:
 ```yaml
 ---
 name: research
-mode: command
+mode: primary
 scope: codebase
 depth: deep
 model: anthropic/claude-sonnet-4

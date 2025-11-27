@@ -1,6 +1,6 @@
 ---
 name: test
-mode: command
+mode: primary
 description: Generate and run a comprehensive testing workflow
 subtask: true
 version: 2.0.0-internal

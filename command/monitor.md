@@ -1,6 +1,6 @@
 ---
 name: monitor
-mode: command
+mode: primary
 description: Set up comprehensive monitoring and alerting for applications and infrastructure
 version: 1.0.0
 inputs:

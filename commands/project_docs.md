@@ -1,6 +1,6 @@
 ---
 name: project_docs
-mode: command
+mode: primary
 description: Generate comprehensive project documentation including PRD, security docs, user flows, and more
 subtask: true
 version: 1.0.0

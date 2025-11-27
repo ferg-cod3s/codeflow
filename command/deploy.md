@@ -1,6 +1,6 @@
 ---
 name: deploy
-mode: command
+mode: primary
 description: Execute deployment workflow with pre-deployment validation, deployment execution, and post-deployment verification
 version: 1.0.0
 last_updated: 2025-10-16

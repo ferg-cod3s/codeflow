@@ -1,6 +1,6 @@
 ---
 name: debug
-mode: command
+mode: primary
 description: Debug issues with issue reproduction, root cause analysis, fix implementation, and regression testing
 subtask: true
 version: 1.0.0

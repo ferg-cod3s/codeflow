@@ -1,6 +1,6 @@
 ---
 name: document
-mode: command
+mode: primary
 description: Produce high-quality documentation for implemented features
 subtask: true
 version: 2.0.0-internal

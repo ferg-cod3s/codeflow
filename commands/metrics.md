@@ -1,6 +1,6 @@
 ---
 name: metrics
-mode: command
+mode: primary
 description: Set up comprehensive performance metrics collection and analysis
 version: 1.0.0
 inputs:

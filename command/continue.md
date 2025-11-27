@@ -2,7 +2,7 @@
 name: continue
 description: Resume execution from the last completed step
 model: anthropic/claude-3-5-sonnet-20241022
-mode: command
+mode: primary
 temperature: 0.3
 category: workflow
 version: 1.0.0

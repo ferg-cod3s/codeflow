@@ -1,6 +1,6 @@
 ---
 name: review
-mode: command
+mode: primary
 description: Validate that an implementation plan was correctly executed
 subtask: true
 version: 2.0.0-internal

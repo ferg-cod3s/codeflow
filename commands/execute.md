@@ -1,6 +1,6 @@
 ---
 name: execute
-mode: command
+mode: primary
 description: Execute a specific implementation plan from docs/plans/
 subtask: true
 version: 2.0.0-internal

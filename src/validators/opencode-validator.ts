@@ -125,7 +125,7 @@ export class OpenCodeValidator {
     }
 
     // Template validation
-    if (!body || body.trim().length === 0) {
+    if (!frontmatter.template || frontmatter.template.trim().length === 0) {
       report.errors.push({
         field: 'template',
         message: 'Command template is required',

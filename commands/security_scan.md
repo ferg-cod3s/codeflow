@@ -1,6 +1,6 @@
 ---
 name: security_scan
-mode: command
+mode: primary
 description: Perform comprehensive security vulnerability scanning and analysis
 subtask: true
 version: 1.0.0

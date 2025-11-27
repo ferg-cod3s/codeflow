@@ -1,6 +1,6 @@
 ---
 name: add_changelog
-mode: command
+mode: primary
 description: Generate and maintain project changelog following Keep a Changelog format
 version: 1.0.0
 last_updated: 2025-10-29

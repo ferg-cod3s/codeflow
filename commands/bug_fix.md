@@ -1,6 +1,6 @@
 ---
 name: bug_fix
-mode: command
+mode: primary
 description: Systematic workflow for fixing bugs including issue creation, branch management, testing, and PR submission
 version: 1.0.0
 last_updated: 2025-10-29

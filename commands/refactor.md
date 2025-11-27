@@ -1,6 +1,6 @@
 ---
 name: refactor
-mode: command
+mode: primary
 description: Refactor code to reduce technical debt and improve maintainability
 subtask: true
 version: 2.0.0-internal

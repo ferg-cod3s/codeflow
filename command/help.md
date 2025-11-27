@@ -299,7 +299,7 @@ OpenCode requires explicit argument specification with YAML frontmatter:
 ```yaml
 ---
 name: research
-mode: command
+mode: primary
 scope: codebase
 depth: deep
 model: opencode/grok-code

@@ -1,6 +1,6 @@
 ---
 name: ticket
-mode: command
+mode: primary
 description: Creates a structured ticket for bugs, features, or technical debt based on user input. Extracts keywords and patterns for research phase.
 version: 1.0.0
 last_updated: 2025-10-04

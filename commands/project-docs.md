@@ -1,6 +1,6 @@
 ---
 name: project-docs
-mode: command
+mode: primary
 description: Generate comprehensive project documentation including PRD, security docs, user flows, and more
 version: 1.0.0
 last_updated: 2025-09-20

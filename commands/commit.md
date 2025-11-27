@@ -1,6 +1,6 @@
 ---
 name: commit
-mode: command
+mode: primary
 description: Commits the local changes in multiple atomic commits
 version: 2.0.0-internal
 last_updated: 2025-09-13

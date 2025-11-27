@@ -1,6 +1,6 @@
 ---
 name: code_review
-mode: command
+mode: primary
 description: Perform comprehensive automated code review and quality validation
 subtask: true
 version: 1.0.0

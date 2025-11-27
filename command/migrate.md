@@ -1,6 +1,6 @@
 ---
 name: migrate
-mode: command
+mode: primary
 description: Perform database schema and data migrations with zero downtime
 version: 1.0.0
 inputs:

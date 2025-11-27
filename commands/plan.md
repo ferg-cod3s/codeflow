@@ -1,6 +1,6 @@
 ---
 name: plan
-mode: command
+mode: primary
 description: Create an implementation plan from a ticket and research
 subtask: true
 version: 2.0.0-internal
