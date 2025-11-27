@@ -1,0 +1,481 @@
+name: Plugin Testing Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'plugins/anthropic-converters/**'
+      - 'src/plugins/**'
+      - 'tests/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'plugins/anthropic-converters/**'
+      - 'src/plugins/**'
+      - 'tests/**'
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  validate-plugins:
+    name: Validate All Plugins
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run plugin validation
+        run: |
+          echo "🔍 Running comprehensive plugin validation..."
+          node -e "
+          const { PluginValidator } = require('./src/plugins/validator');
+          const { pluginRegistry } = require('./src/plugins/registry');
+          
+          async function validateAllPlugins() {
+            console.log('📦 Starting plugin validation...');
+            const results = await pluginRegistry.validateAll();
+            
+            let totalErrors = 0;
+            let totalWarnings = 0;
+            
+            for (const result of results) {
+              if (!result.valid) {
+                totalErrors += result.errors.length;
+                console.error(\`❌ \${result.plugin}: \${result.errors.length} errors\`);
+                result.errors.forEach(error => console.error(\`   - \${error}\`));
+              } else {
+                console.log(\`✅ \${result.plugin}: Valid\`);
+              }
+              
+              totalWarnings += result.errors.length;
+            }
+            
+            console.log(\`\\n📊 Validation Summary:\`);
+            console.log(\`- Total Plugins: \${results.length}\`);
+            console.log(\`- Valid Plugins: \${results.filter(r => r.valid).length}\`);
+            console.log(\`- Total Errors: \${totalErrors}\`);
+            console.log(\`- Total Warnings: \${totalWarnings}\`);
+            
+            if (totalErrors > 0) {
+              process.exit(1);
+            }
+          }
+          
+          validateAllPlugins().catch(console.error);
+          "
+
+  test-integration:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    needs: validate-plugins
+    
+    strategy:
+      matrix:
+        node-version: [18, 20, 21]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run integration tests
+        run: |
+          echo "🧪 Running integration tests..."
+          npm run test:integration
+
+      - name: Run plugin loading tests
+        run: |
+          echo "🚀 Testing plugin loading..."
+          node -e "
+          const { pluginRegistry } = require('./src/plugins/registry');
+          
+          console.log('📦 Testing plugin registry...');
+          pluginRegistry.printSummary();
+          
+          // Test loading all converted plugins
+          const convertedPlugins = pluginRegistry.getConverted();
+          console.log(\`Found \${convertedPlugins.length} converted plugins\`);
+          
+          let loadSuccess = 0;
+          let loadFailures = 0;
+          
+          for (const registration of convertedPlugins) {
+            console.log(\`Loading plugin: \${registration.metadata.name}...\`);
+            const success = await pluginRegistry.loadPlugin(registration.metadata.name);
+            if (success) {
+              loadSuccess++;
+              console.log(\`✅ Successfully loaded: \${registration.metadata.name}\`);
+            } else {
+              loadFailures++;
+              console.log(\`❌ Failed to load: \${registration.metadata.name}\`);
+            }
+          }
+          
+          console.log(\`\\n📊 Load Test Results:\`);
+          console.log(\`- Successfully Loaded: \${loadSuccess}\`);
+          console.log(\`- Failed to Load: \${loadFailures}\`);
+          console.log(\`- Success Rate: \${((loadSuccess/convertedPlugins.length)*100).toFixed(1)}%\`);
+          
+          if (loadFailures > 0) {
+            process.exit(1);
+          }
+          "
+
+  test-performance:
+    name: Performance Tests
+    runs-on: ubuntu-latest
+    needs: test-integration
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run performance tests
+        run: |
+          echo "⚡ Running performance tests..."
+          node -e "
+          const PluginPerformanceTester = require('./tests/performance/plugin-performance.test');
+          
+          async function runPerformanceTests() {
+            console.log('⚡ Starting performance testing...');
+            
+            const tester = new PluginPerformanceTester();
+            const benchmarks = await tester.runAllPerformanceTests('./plugins/anthropic-converters/converted');
+            
+            console.log('📊 Performance Test Results:');
+            
+            let totalPassed = 0;
+            let totalFailed = 0;
+            let totalWarnings = 0;
+            
+            for (const benchmark of benchmarks) {
+              const status = benchmark.passed ? '✅' : '❌';
+              console.log(\`\${status} \${benchmark.pluginName} (\${benchmark.category})\`);
+              
+              if (benchmark.passed) {
+                totalPassed++;
+              } else {
+                totalFailed++;
+                console.log(\`   Load Time: \${benchmark.metrics.loadTime.toFixed(2)}ms\`);
+                console.log(\`   Memory Increase: \${(benchmark.metrics.memoryUsage.afterLoad - benchmark.metrics.memoryUsage.initial / 1024 / 1024).toFixed(2)}MB\`);
+                console.log(\`   Execution Time: \${benchmark.metrics.executionTime.average.toFixed(2)}ms\`);
+              }
+              
+              if (benchmark.warnings.length > 0) {
+                totalWarnings += benchmark.warnings.length;
+                console.log(\`   ⚠️ Warnings: \${benchmark.warnings.length}\`);
+                benchmark.warnings.forEach(warning => console.log(\`     - \${warning}\`));
+              }
+            }
+            
+            console.log(\`\\n📈 Performance Summary:\`);
+            console.log(\`- Total Tested: \${benchmarks.length}\`);
+            console.log(\`- Passed: \${totalPassed}\`);
+            console.log(\`- Failed: \${totalFailed}\`);
+            console.log(\`- Warnings: \${totalWarnings}\`);
+            console.log(\`- Success Rate: \${((totalPassed/benchmarks.length)*100).toFixed(1)}%\`);
+            
+            // Generate performance report
+            const report = tester.generateReport(benchmarks);
+            console.log('\\n' + report);
+            
+            // Save report to file
+            require('fs').writeFileSync('./performance-report.md', report);
+            
+            if (totalFailed > 0) {
+              process.exit(1);
+            }
+          }
+          
+          runPerformanceTests().catch(console.error);
+          "
+
+  test-security:
+    name: Security Tests
+    runs-on: ubuntu-latest
+    needs: validate-plugins
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run security tests
+        run: |
+          echo "🔒 Running security tests..."
+          node -e "
+          const { readFileSync, existsSync } = require('fs');
+          const { join } = require('path');
+          
+          const convertedPluginsDir = './plugins/anthropic-converters/converted';
+          const plugins = [
+            'agent-sdk-dev',
+            'plugin-dev',
+            'security-guidance',
+            'feature-dev',
+            'code-review',
+            'frontend-design',
+            'hookify'
+          ];
+          
+          console.log('🔒 Running security validation...');
+          
+          let securityIssues = 0;
+          let securityWarnings = 0;
+          
+          for (const plugin of plugins) {
+            const pluginPath = join(convertedPluginsDir, plugin);
+            const indexPath = join(pluginPath, 'index.js');
+            
+            if (existsSync(indexPath)) {
+              const code = readFileSync(indexPath, 'utf-8');
+              
+              // Check for security issues
+              const issues = [];
+              const warnings = [];
+              
+              // Dangerous patterns
+              const dangerousPatterns = [
+                { pattern: /eval\\s*\\(/gi, message: 'Uses eval() function' },
+                { pattern: /Function\\s*\\(/gi, message: 'Uses Function() constructor' },
+                { pattern: /document\\.write\\s*\\(/gi, message: 'Uses document.write()' },
+                { pattern: /require\\s*\\(['\"]child_process['\"])/gi, message: 'Uses child_process' },
+                { pattern: /require\\s*\\(['\"]fs['\"])/gi, message: 'Uses fs module' }
+              ];
+              
+              for (const { pattern, message } of dangerousPatterns) {
+                if (pattern.test(code)) {
+                  issues.push(message);
+                }
+              }
+              
+              // Input validation
+              if (!code.includes('validate') && !code.includes('sanitize')) {
+                warnings.push('Missing input validation');
+              }
+              
+              // Error handling
+              if (!code.includes('try') && !code.includes('catch')) {
+                warnings.push('Missing error handling');
+              }
+              
+              if (issues.length > 0) {
+                console.error(\`❌ \${plugin}: \${issues.length} security issues\`);
+                issues.forEach(issue => console.error(\`   - \${issue}\`));
+                securityIssues += issues.length;
+              } else {
+                console.log(\`✅ \${plugin}: No security issues\`);
+              }
+              
+              if (warnings.length > 0) {
+                console.warn(\`⚠️ \${plugin}: \${warnings.length} security warnings\`);
+                warnings.forEach(warning => console.warn(\`   - \${warning}\`));
+                securityWarnings += warnings.length;
+              }
+            }
+          }
+          
+          console.log(\`\\n🔒 Security Summary:\`);
+          console.log(\`- Security Issues: \${securityIssues}\`);
+          console.log(\`- Security Warnings: \${securityWarnings}\`);
+          
+          if (securityIssues > 0) {
+            console.error('❌ Security tests failed - critical issues found');
+            process.exit(1);
+          } else if (securityWarnings > 5) {
+            console.warn('⚠️ Many security warnings - review recommended');
+          } else {
+            console.log('✅ Security tests passed');
+          }
+          "
+
+  build-and-test:
+    name: Build and Test
+    runs-on: ${{ matrix.os }}
+    needs: [validate-plugins, test-integration]
+    
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        node-version: [18, 20]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: |
+          echo "🔨 Building project..."
+          npm run build
+          npm run build:cli
+
+      - name: Run all tests
+        run: |
+          echo "🧪 Running comprehensive test suite..."
+          npm test
+
+      - name: Type checking
+        run: |
+          echo "🔍 Running type checking..."
+          npm run typecheck
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results-${{ matrix.os }}-node${{ matrix.node-version }}
+          path: |
+            test-results/
+            performance-report.md
+          retention-days: 30
+
+  deploy-ready:
+    name: Deploy Ready Check
+    runs-on: ubuntu-latest
+    needs: [test-performance, test-security, build-and-test]
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check deploy readiness
+        run: |
+          echo "🚀 Checking deployment readiness..."
+          node -e "
+          const { pluginRegistry } = require('./src/plugins/registry');
+          const { PluginValidator } = require('./src/plugins/validator');
+          
+          async function checkDeployReadiness() {
+            console.log('🚀 Checking deployment readiness...');
+            
+            // Check all plugins are valid
+            const validationResults = await pluginRegistry.validateAll();
+            const invalidPlugins = validationResults.filter(r => !r.valid);
+            
+            if (invalidPlugins.length > 0) {
+              console.error('❌ Cannot deploy - invalid plugins found:');
+              invalidPlugins.forEach(p => {
+                console.error(\`  - \${p.plugin}: \${p.errors.length} errors\`);
+              });
+              process.exit(1);
+            }
+            
+            // Check all plugins can be loaded
+            const convertedPlugins = pluginRegistry.getConverted();
+            let loadSuccess = 0;
+            
+            for (const registration of convertedPlugins) {
+              const success = await pluginRegistry.loadPlugin(registration.metadata.name);
+              if (success) {
+                loadSuccess++;
+                await pluginRegistry.unloadPlugin(registration.metadata.name); // Clean up
+              }
+            }
+            
+            if (loadSuccess !== convertedPlugins.length) {
+              console.error('❌ Cannot deploy - some plugins failed to load');
+              process.exit(1);
+            }
+            
+            // Generate deployment report
+            const stats = pluginRegistry.getStats();
+            console.log('\\n📊 Deployment Readiness Report:');
+            console.log(\`- Total Plugins: \${stats.total}\`);
+            console.log(\`- Enabled: \${stats.enabled}\`);
+            console.log(\`- By Category: \${JSON.stringify(stats.byCategory, null, 2)}\`);
+            console.log(\`- By Type: \${JSON.stringify(stats.byType, null, 2)}\`);
+            
+            console.log('\\n✅ All plugins are ready for deployment!');
+            
+            // Export plugin list for deployment
+            const pluginList = pluginRegistry.exportState();
+            require('fs').writeFileSync('./plugin-manifest.json', pluginList);
+            
+            console.log('\\n📦 Plugin manifest exported to: plugin-manifest.json');
+          }
+          
+          checkDeployReadiness().catch(console.error);
+          "
+
+      - name: Upload deployment artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: deployment-artifacts
+          path: |
+            plugin-manifest.json
+            performance-report.md
+          retention-days: 30
+
+  notify:
+    name: Notify Results
+    runs-on: ubuntu-latest
+    needs: [deploy-ready]
+    if: always()
+    
+    steps:
+      - name: Notify success
+        if: needs.deploy-ready.result == 'success'
+        run: |
+          echo "🎉 Pipeline completed successfully!"
+          echo "All 7 converted plugins are validated and ready for deployment."
+
+      - name: Notify failure
+        if: needs.deploy-ready.result == 'failure'
+        run: |
+          echo "❌ Pipeline failed!"
+          echo "Check the logs for details on what needs to be fixed."
