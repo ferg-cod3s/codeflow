@@ -22,11 +22,28 @@ program.addCommand(validateCommand);
 program.addCommand(migrateCommand);
 
 // Global error handler
-program.exitOverride();
+program.exitOverride((err) => {
+  // Handle help/version and normal exits gracefully
+  if (err.code === 'commander.help' || err.code === 'commander.version' ||
+      err.code === 'exitWithHelp' || err.code === 'executeSubcommandAsync' ||
+      err.message.includes('outputHelp') || err.message.includes('outputVersion')) {
+    process.exit(0);
+  }
+  throw err;
+});
 
 try {
   program.parse();
 } catch (err) {
+  // Double-check for help/version errors that might not have been caught above
+  if (err instanceof Error) {
+    const message = err.message;
+    const code = (err as any).code;
+    if (message.includes('outputHelp') || message.includes('outputVersion') ||
+        code === 'commander.help' || code === 'commander.version') {
+      process.exit(0);
+    }
+  }
   console.error(chalk.red('❌ Error:'), err instanceof Error ? err.message : String(err));
   process.exit(1);
 }

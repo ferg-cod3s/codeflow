@@ -1,5 +1,6 @@
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 import * as path from 'path';
+import { glob } from 'glob';
 import { ValidationReport } from '../types/index.js';
 import { parseMarkdownFrontmatter } from '../utils/yaml-utils.js';
 
@@ -208,15 +209,15 @@ export class OpenCodeValidator {
   }
 
   async validateDirectory(dirPath: string, format: 'opencode-agent' | 'opencode-command' | 'opencode-skill'): Promise<ValidationReport[]> {
-    const files = await fs.readdir(dirPath);
-    const markdownFiles = files.filter(file => file.endsWith('.md'));
-    
+    // Use glob to recursively find all markdown files
+    const markdownFiles = await glob('**/*.md', { cwd: dirPath });
+
     const reports: ValidationReport[] = [];
-    
+
     for (const file of markdownFiles) {
       const filePath = path.join(dirPath, file);
       let report: ValidationReport;
-      
+
       switch (format) {
         case 'opencode-agent':
           report = await this.validateAgent(filePath);
@@ -228,10 +229,10 @@ export class OpenCodeValidator {
           report = await this.validateSkill(filePath);
           break;
       }
-      
+
       reports.push(report);
     }
-    
+
     return reports;
   }
 }
