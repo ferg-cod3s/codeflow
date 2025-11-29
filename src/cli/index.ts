@@ -14,7 +14,30 @@ program
   .name('codeflow')
   .description('CLI tool to convert base-agents, commands, and skills to OpenCode format')
   .version(packageJson.version, '-v, --version')
-  .helpOption('-h, --help');
+  .helpOption('-h, --help')
+  .addHelpText('after', `
+Examples:
+  # Local project setup (project-specific agents/commands/skills)
+  $ codeflow convert agents --output .opencode/agent
+  $ codeflow migrate --output .opencode
+
+  # Global setup (user-wide, available in all projects)
+  $ codeflow convert agents --global
+  $ codeflow migrate --global
+
+  # Preview changes
+  $ codeflow convert commands --global --dry-run
+  $ codeflow migrate --output .opencode --dry-run
+
+  # Validate converted files
+  $ codeflow validate .opencode/agent --format opencode-agent
+  $ codeflow validate ~/.config/opencode/command --format opencode-command
+
+Setup:
+  Local setup creates .opencode/ directory in your project root
+  Global setup installs to ~/.config/opencode/ (user-wide)
+
+Learn more at: https://opencode.ai/docs`);
 
 // Add subcommands
 program.addCommand(convertCommand);

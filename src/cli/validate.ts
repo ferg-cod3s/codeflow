@@ -9,6 +9,24 @@ export const validateCommand = new Command('validate')
   .argument('<path>', 'Path to files or directory to validate')
   .option('-f, --format <type>', 'Format type: opencode-agent, opencode-command, opencode-skill')
   .option('-r, --report <file>', 'Save validation report to file')
+  .addHelpText('after', `
+Examples:
+  # Validate local project agents
+  $ codeflow validate .opencode/agent --format opencode-agent
+
+  # Validate global commands
+  $ codeflow validate ~/.config/opencode/command --format opencode-command
+
+  # Validate single file
+  $ codeflow validate .opencode/agent/review.md
+
+  # Save validation report
+  $ codeflow validate .opencode --format opencode-agent --report validation-report.json
+
+  # Validate all types in local setup
+  $ codeflow validate .opencode/agent --format opencode-agent
+  $ codeflow validate .opencode/command --format opencode-command
+  $ codeflow validate .opencode/skill --format opencode-skill`)
   .action(async (inputPath, options) => {
     console.log(chalk.blue(`🔍 Validating ${inputPath}...`));
     

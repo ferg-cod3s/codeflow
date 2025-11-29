@@ -5,21 +5,49 @@ import { CommandConverter } from '../converters/command-converter.js';
 import { SkillConverter } from '../converters/skill-converter.js';
 import { OpenCodeValidator } from '../validators/opencode-validator.js';
 import { ensureDir } from '../utils/file-utils.js';
+import { OPENCODE_GLOBAL_DIR } from '../utils/constants.js';
 import * as path from 'path';
 
 export const migrateCommand = new Command('migrate')
   .description('Migrate all base-agents, commands, and skills to OpenCode format')
   .option('-o, --output <dir>', 'Output directory', './converted')
+  .option('-g, --global', 'Install to global OpenCode directory (~/.config/opencode/)')
   .option('-d, --dry-run', 'Show what would be migrated without writing files')
   .option('-v, --validation <level>', 'Validation level: strict, lenient, off', 'lenient')
   .option('--agents-only', 'Only migrate agents')
   .option('--commands-only', 'Only migrate commands')
   .option('--skills-only', 'Only migrate skills')
+  .addHelpText('after', `
+Examples:
+  # Full local project migration
+  $ codeflow migrate --output .opencode
+  $ codeflow migrate
+
+  # Global setup (user-wide, available in all projects)
+  $ codeflow migrate --global
+
+  # Migrate specific types
+  $ codeflow migrate --agents-only --global
+  $ codeflow migrate --commands-only --output .opencode
+  $ codeflow migrate --skills-only --global
+
+  # With validation options
+  $ codeflow migrate --global --validation strict
+  $ codeflow migrate --agents-only --validation off
+
+  # Preview changes
+  $ codeflow migrate --global --dry-run`)
   .action(async (options) => {
     console.log(chalk.blue('🚀 Starting full migration...'));
     
     try {
-      await ensureDir(options.output);
+      // Determine output directory
+      let outputDir = options.output;
+      if (options.global) {
+        outputDir = OPENCODE_GLOBAL_DIR;
+      }
+      
+      await ensureDir(outputDir);
       
       const validator = new OpenCodeValidator();
       const totalResults = {
@@ -32,21 +60,21 @@ export const migrateCommand = new Command('migrate')
       if (!options.commandsOnly && !options.skillsOnly) {
         console.log(chalk.yellow('\n📋 Migrating agents...'));
         const agentConverter = new AgentConverter();
-        totalResults.agents = await agentConverter.convertAgents('./base-agents', path.join(options.output, 'agents'), options.dryRun);
+        totalResults.agents = await agentConverter.convertAgents('./base-agents', path.join(outputDir, 'agent'), options.dryRun);
       }
       
       // Migrate commands
       if (!options.agentsOnly && !options.skillsOnly) {
         console.log(chalk.yellow('\n⚡ Migrating commands...'));
         const commandConverter = new CommandConverter();
-        totalResults.commands = await commandConverter.convertCommands('./commands', path.join(options.output, 'commands'), options.dryRun);
+        totalResults.commands = await commandConverter.convertCommands('./commands', path.join(outputDir, 'command'), options.dryRun);
       }
       
       // Migrate skills
       if (!options.agentsOnly && !options.commandsOnly) {
         console.log(chalk.yellow('\n🛠️  Migrating skills...'));
         const skillConverter = new SkillConverter();
-        totalResults.skills = await skillConverter.convertSkills('./skills', path.join(options.output, 'skills'), options.dryRun);
+        totalResults.skills = await skillConverter.convertSkills('./skills', path.join(outputDir, 'skill'), options.dryRun);
       }
       
       // Display summary
@@ -77,17 +105,17 @@ export const migrateCommand = new Command('migrate')
         const allReports = [];
         
         if (totalResults.agents.converted > 0 && !options.commandsOnly && !options.skillsOnly) {
-          const agentReports = await validator.validateDirectory(path.join(options.output, 'agents'), 'opencode-agent');
+          const agentReports = await validator.validateDirectory(path.join(outputDir, 'agent'), 'opencode-agent');
           allReports.push(...agentReports);
         }
         
         if (totalResults.commands.converted > 0 && !options.agentsOnly && !options.skillsOnly) {
-          const commandReports = await validator.validateDirectory(path.join(options.output, 'commands'), 'opencode-command');
+          const commandReports = await validator.validateDirectory(path.join(outputDir, 'command'), 'opencode-command');
           allReports.push(...commandReports);
         }
         
         if (totalResults.skills.converted > 0 && !options.agentsOnly && !options.commandsOnly) {
-          const skillReports = await validator.validateDirectory(path.join(options.output, 'skills'), 'opencode-skill');
+          const skillReports = await validator.validateDirectory(path.join(outputDir, 'skill'), 'opencode-skill');
           allReports.push(...skillReports);
         }
         

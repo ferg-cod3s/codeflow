@@ -22,10 +22,11 @@ You are a test agent.`;
 
       const result = await (converter as any).convertSingleAgent(input);
 
-      expect(result).toContain('name: test_agent');
+      // OpenCode format doesn't include name in frontmatter (derived from filename)
       expect(result).toContain('description: A test agent');
       expect(result).toContain('mode: subagent');
       expect(result).toContain('You are a test agent');
+      expect(result).not.toContain('name: test_agent');
     });
 
     it('should map tools correctly', async () => {
