@@ -18,15 +18,7 @@ export class OpenCodeValidator {
       suggestions: []
     };
 
-    // Required fields validation
-    if (!frontmatter.name) {
-      report.errors.push({
-        field: 'name',
-        message: 'Name is required',
-        severity: 'error'
-      });
-      report.valid = false;
-    }
+    // Note: name is derived from filename by opencode, not required in frontmatter
 
     if (!frontmatter.description) {
       report.errors.push({

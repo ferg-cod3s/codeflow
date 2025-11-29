@@ -74,9 +74,11 @@ export class AgentConverter {
       openCodeAgent.prompt = prompt;
     }
 
-    // Filter out undefined values
+    // Filter out undefined values and name (opencode derives from filename)
     const cleanAgent = Object.fromEntries(
-      Object.entries(openCodeAgent).filter(([_, value]) => value !== undefined)
+      Object.entries(openCodeAgent).filter(([key, value]) => 
+        value !== undefined && key !== 'name'
+      )
     );
 
     return stringifyMarkdownFrontmatter(cleanAgent, body);
@@ -107,7 +109,7 @@ export class AgentConverter {
   }
 
   private mapPermissions(
-    permission?: Record<string, string>, 
+    permission?: Record<string, any>, 
     allowedDirectories?: string[]
   ): Record<string, string | boolean> | undefined {
     if (!permission && !allowedDirectories) return undefined;
@@ -126,6 +128,19 @@ export class AgentConverter {
             mappedPermissions[key] = 'deny';
           } else {
             mappedPermissions[key] = 'ask'; // Default for string values
+          }
+        } else if (typeof value === 'object' && value !== null) {
+          // For complex permission objects, use the most permissive setting
+          // OpenCode permissions are simpler than the base-agent format
+          const hasAllow = Object.values(value).some(v => v === 'allow');
+          const hasDeny = Object.values(value).some(v => v === 'deny');
+          
+          if (hasDeny && !hasAllow) {
+            mappedPermissions[key] = 'deny';
+          } else if (hasAllow && !hasDeny) {
+            mappedPermissions[key] = 'allow';
+          } else {
+            mappedPermissions[key] = 'ask'; // Mixed permissions
           }
         } else {
           mappedPermissions[key] = value;
