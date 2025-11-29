@@ -1,0 +1,38 @@
+{
+  "name": "opencode-walkthrough-output-style",
+  "version": "1.0.0",
+  "description": "Step-by-step guided learning mode with code pattern display and validation",
+  "main": "walkthrough-output-style.ts",
+  "category": "output-style",
+  "author": {
+    "name": "CodeFlow Team",
+    "email": "team@codeflow.dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/codeflow/cli"
+  },
+  "keywords": [
+    "learning",
+    "walkthrough",
+    "tutorial",
+    "guided",
+    "step-by-step",
+    "education"
+  ],
+  "dependencies": {
+    "@opencode-ai/plugin": "^1.0.0"
+  },
+  "engines": {
+    "opencode": ">=1.0.0",
+    "node": ">=16.0.0"
+  },
+  "files": [
+    "walkthrough-output-style.ts",
+    "README.md"
+  ],
+  "exports": {
+    ".": "./walkthrough-output-style.ts",
+    "./README.md": "./README.md"
+  }
+}

@@ -1,0 +1,14 @@
+src/
+tsconfig.json
+*.log
+node_modules/
+.DS_Store
+*.tgz
+.nyc_output
+coverage/
+.env*
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
