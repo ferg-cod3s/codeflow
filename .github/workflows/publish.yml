@@ -94,7 +94,7 @@ jobs:
 
             ### Installation
             ```bash
-            npm install -g codeflow-cli@${{ github.ref_name }}
+             npm install -g @agentic-codeflow/cli@${{ github.ref_name }}
             ```
 
             ### What's New
@@ -105,6 +105,6 @@ jobs:
 
             ### Links
             - [Documentation](https://github.com/ferg-cod3s/codeflow)
-            - [NPM Package](https://www.npmjs.com/package/codeflow-cli)
+             - [NPM Package](https://www.npmjs.com/package/@agentic-codeflow/cli)
           draft: false
           prerelease: false
