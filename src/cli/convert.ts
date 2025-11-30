@@ -17,6 +17,10 @@ export const convertCommand = new Command('convert')
   .option('-d, --dry-run', 'Show what would be converted without writing files')
   .option('-v, --validation <level>', 'Validation level: strict, lenient, off', 'lenient')
   .option('-e, --enhance [level]', 'Enhance prompts with research-backed techniques (minimal|standard|maximum)')
+  .option('-c, --concurrency <number>', 'Number of parallel workers (default: 4)', '4')
+  .option('-b, --batch-size <number>', 'Files per batch (default: 50)', '50')
+  .option('-m, --memory-limit <number>', 'Memory limit in MB (default: 512)', '512')
+  .option('--profile', 'Enable performance profiling')
   .addHelpText('after', `
 Examples:
   # Local project setup (in current directory)
@@ -58,18 +62,51 @@ Examples:
       
       switch (type) {
         case 'agents':
-          const agentConverter = new AgentConverter();
-          result = await agentConverter.convertAgents('./base-agents', outputDir, options.dryRun);
+          if (options.concurrency || options.batchSize || options.memoryLimit || options.profile) {
+            console.log(chalk.blue('🚀 Using parallel conversion with optimizations'));
+            const parallelConverter = new ParallelConverter({
+              concurrency: options.concurrency,
+              batchSize: options.batchSize,
+              memoryLimit: options.memoryLimit,
+              enableProfiling: options.profile
+            });
+            result = await parallelConverter.convertAgentsParallel('./base-agents', outputDir, options.dryRun);
+          } else {
+            const agentConverter = new AgentConverter();
+            result = await agentConverter.convertAgents('./base-agents', outputDir, options.dryRun);
+          }
           break;
           
         case 'commands':
-          const commandConverter = new CommandConverter();
-          result = await commandConverter.convertCommands('./commands', outputDir, options.dryRun);
+          if (options.concurrency || options.batchSize || options.memoryLimit || options.profile) {
+            console.log(chalk.blue('🚀 Using parallel conversion with optimizations'));
+            const parallelConverter = new ParallelConverter({
+              concurrency: options.concurrency,
+              batchSize: options.batchSize,
+              memoryLimit: options.memoryLimit,
+              enableProfiling: options.profile
+            });
+            result = await parallelConverter.convertAgentsParallel('./commands', outputDir, options.dryRun);
+          } else {
+            const commandConverter = new CommandConverter();
+            result = await commandConverter.convertCommands('./commands', outputDir, options.dryRun);
+          }
           break;
           
         case 'skills':
-          const skillConverter = new SkillConverter();
-          result = await skillConverter.convertSkills('./base-skills', outputDir, options.dryRun);
+          if (options.concurrency || options.batchSize || options.memoryLimit || options.profile) {
+            console.log(chalk.blue('🚀 Using parallel conversion with optimizations'));
+            const parallelConverter = new ParallelConverter({
+              concurrency: options.concurrency,
+              batchSize: options.batchSize,
+              memoryLimit: options.memoryLimit,
+              enableProfiling: options.profile
+            });
+            result = await parallelConverter.convertAgentsParallel('./base-skills', outputDir, options.dryRun);
+          } else {
+            const skillConverter = new SkillConverter();
+            result = await skillConverter.convertSkills('./base-skills', outputDir, options.dryRun);
+          }
           break;
           
         default:
