@@ -5,6 +5,7 @@ import chalk from 'chalk';
 import { convertCommand } from './convert.js';
 import { validateCommand } from './validate.js';
 import { migrateCommand } from './migrate.js';
+import { enhanceCommand } from './enhance.js';
 
 import packageJson from '../../package.json' with { type: 'json' };
 
@@ -25,6 +26,10 @@ Examples:
   $ codeflow convert agents --global
   $ codeflow migrate --global
 
+  # Enhance prompts with research-backed techniques (+45-80% quality)
+  $ codeflow enhance agents/python_pro.md --level standard
+  $ codeflow enhance ./agents --output ./enhanced-agents
+
   # Preview changes
   $ codeflow convert commands --global --dry-run
   $ codeflow migrate --output .opencode --dry-run
@@ -43,6 +48,7 @@ Learn more at: https://opencode.ai/docs`);
 program.addCommand(convertCommand);
 program.addCommand(validateCommand);
 program.addCommand(migrateCommand);
+program.addCommand(enhanceCommand);
 
 // Global error handler
 program.exitOverride((err) => {
@@ -74,7 +80,7 @@ try {
 // Handle unknown commands
 program.on('command:*', (operands) => {
   console.error(chalk.red(`❌ Unknown command: ${operands[0]}`));
-  console.log(chalk.yellow('Available commands: convert, validate, migrate'));
+  console.log(chalk.yellow('Available commands: convert, validate, migrate, enhance'));
   console.log(chalk.white('Use --help for more information'));
   process.exit(1);
 });

@@ -2,6 +2,7 @@ import * as path from 'path';
 import { OpenCodeAgent } from '../types/index.js';
 import { readFile, writeFile, readAllFiles } from '../utils/file-utils.js';
 import { parseMarkdownFrontmatter, stringifyMarkdownFrontmatter } from '../utils/yaml-utils.js';
+import { ConversionErrorHandler, ErrorType, ConversionResult } from '../core/error-handler.js';
 
 export class AgentConverter {
   private fieldMapping: Record<string, string> = {
@@ -14,43 +15,67 @@ export class AgentConverter {
     'permission': 'permission'
   };
 
-  async convertAgents(inputDir: string, outputDir: string, dryRun: boolean = false): Promise<{
+  private errorHandler = new ConversionErrorHandler({
+    maxRetries: 2,
+    retryDelay: 500,
+    continueOnError: true
+  });
+
+  async convertAgents(inputDir: string, outputDir: string, dryRun: boolean = false): Promise<ConversionResult<{
+    totalFiles: number;
     converted: number;
     failed: number;
     errors: string[];
     warnings: string[];
-  }> {
-    const result = {
-      converted: 0,
-      failed: 0,
-      errors: [] as string[],
-      warnings: [] as string[]
-    };
-
+  }>> {
     const agentFiles = await readAllFiles('**/*.md', inputDir);
-    
+    let converted = 0;
+    let failed = 0;
+    const errors: string[] = [];
+    const warnings: string[] = [];
+
     for (const file of agentFiles) {
-      try {
-        const inputPath = path.join(inputDir, file);
-        const outputPath = path.join(outputDir, file);
-        
-        const content = await readFile(inputPath);
-        const converted = await this.convertSingleAgent(content);
-        
+      const inputPath = path.join(inputDir, file);
+      const outputPath = path.join(outputDir, file);
+      
+      const result = await this.errorHandler.handleError(
+        this.errorHandler.createError(ErrorType.FILE_READ_ERROR, `Failed to read file: ${file}`, { file, operation: 'read' }),
+        async () => {
+          const content = await readFile(inputPath);
+          return await this.convertSingleAgent(content);
+        },
+        `convert_${file}`
+      );
+
+      if (result.success && result.data) {
         if (!dryRun) {
-          await writeFile(outputPath, converted);
+          await this.errorHandler.handleError(
+            this.errorHandler.createError(ErrorType.FILE_WRITE_ERROR, `Failed to write file: ${file}`, { file, operation: 'write' }),
+            async () => await writeFile(outputPath, result.data),
+            `write_${file}`
+          );
         }
-        
-        result.converted++;
+        converted++;
         console.log(`✅ Converted: ${file}`);
-      } catch (error) {
-        result.failed++;
-        result.errors.push(`${file}: ${error}`);
-        console.error(`❌ Failed: ${file} - ${error}`);
+      } else {
+        failed++;
+        if (result.error) {
+          errors.push(`${file}: ${result.error.message}`);
+          console.error(`❌ Failed: ${file} - ${result.error.message}`);
+        }
+        warnings.push(...(result.warnings || []));
       }
     }
-    
-    return result;
+
+    return {
+      success: failed === 0,
+      data: { totalFiles: agentFiles.length, converted, failed, errors, warnings },
+      warnings,
+      converted,
+      failed,
+      errors,
+      metrics: this.errorHandler.createMetrics(converted, failed, 0, 0)
+    };
   }
 
   private async convertSingleAgent(content: string): Promise<string> {
