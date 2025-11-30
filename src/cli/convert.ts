@@ -41,9 +41,9 @@ Examples:
       // Determine output directory
       let outputDir = options.output;
       if (options.global) {
-        outputDir = path.join(OPENCODE_GLOBAL_DIR, type === 'agents' ? 'agent' : type === 'commands' ? 'command' : 'skill');
+        outputDir = path.join(OPENCODE_GLOBAL_DIR, type === 'agents' ? 'agent' : type === 'commands' ? 'command' : 'skills');
       } else {
-        outputDir = path.join(options.output, type === 'agents' ? 'agent' : type === 'commands' ? 'command' : 'skill');
+        outputDir = path.join(options.output, type === 'agents' ? 'agent' : type === 'commands' ? 'command' : 'skills');
       }
       
       await ensureDir(outputDir);
@@ -64,7 +64,7 @@ Examples:
           
         case 'skills':
           const skillConverter = new SkillConverter();
-          result = await skillConverter.convertSkills('./skills', outputDir, options.dryRun);
+          result = await skillConverter.convertSkills('./base-skills', outputDir, options.dryRun);
           break;
           
         default:

@@ -74,7 +74,7 @@ Examples:
       if (!options.agentsOnly && !options.commandsOnly) {
         console.log(chalk.yellow('\n🛠️  Migrating skills...'));
         const skillConverter = new SkillConverter();
-        totalResults.skills = await skillConverter.convertSkills('./skills', path.join(outputDir, 'skill'), options.dryRun);
+        totalResults.skills = await skillConverter.convertSkills('./base-skills', path.join(outputDir, 'skills'), options.dryRun);
       }
       
       // Display summary
@@ -115,7 +115,7 @@ Examples:
         }
         
         if (totalResults.skills.converted > 0 && !options.agentsOnly && !options.commandsOnly) {
-          const skillReports = await validator.validateDirectory(path.join(outputDir, 'skill'), 'opencode-skill');
+          const skillReports = await validator.validateDirectory(path.join(outputDir, 'skills'), 'opencode-skill');
           allReports.push(...skillReports);
         }
         
