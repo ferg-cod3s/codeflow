@@ -1,6 +1,6 @@
 {
   "name": "@agentic-codeflow/cli",
-  "version": "0.22.1",
+  "version": "0.22.2",
   "description": "CLI tool to convert base-agents, commands, and skills to OpenCode format",
   "main": "dist/cli/index.js",
   "type": "module",
