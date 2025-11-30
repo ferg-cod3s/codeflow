@@ -9,12 +9,12 @@
  * - Plugin validation
  */
 
-import { describe, it, expect, beforeEach, afterEach } from '@jest/globals'
-import { pluginRegistry, PluginRegistration } from '../src/plugins/registry'
-import { PluginValidator } from '../src/plugins/validator'
+import { describe, it, expect, beforeEach, afterEach } from 'bun:test'
+import { pluginRegistry, PluginRegistration, PluginMetadata } from '../src/plugins/registry'
+import { PluginValidator, ValidationResult } from '../src/plugins/validator'
 import { AnthropicPluginConverter } from '../plugins/anthropic-converters/converter'
 import { MCPWrapper } from '../plugins/mcp-wrappers/mcp-wrapper'
-import type { PluginManifest, PluginMetadata } from '../src/plugins/types'
+import type { PluginManifest } from '../src/plugins/types'
 
 describe('Plugin Registry', () => {
   beforeEach(() => {
@@ -166,7 +166,7 @@ describe('Plugin Validator', () => {
         // Missing version, description, category, main
       }
       
-      const result = {
+      const result: ValidationResult = {
         valid: true,
         errors: [],
         warnings: [],
@@ -187,7 +187,7 @@ describe('Plugin Validator', () => {
       
       for (const name of invalidNames) {
         const manifest = { name, version: '1.0.0', description: 'Test', category: 'output-style', main: 'index.ts' }
-        const result = {
+        const result: ValidationResult = {
           valid: true,
           errors: [],
           warnings: [],
@@ -207,7 +207,7 @@ describe('Plugin Validator', () => {
       
       for (const version of invalidVersions) {
         const manifest = { name: 'test', version, description: 'Test', category: 'output-style', main: 'index.ts' }
-        const result = {
+        const result: ValidationResult = {
           valid: true,
           errors: [],
           warnings: [],
@@ -247,7 +247,7 @@ describe('Plugin Validator', () => {
       }
       
       // Test manifest validation logic directly
-      const result = {
+      const result: ValidationResult = {
         valid: true,
         errors: [],
         warnings: [],
