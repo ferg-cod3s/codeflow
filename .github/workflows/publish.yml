@@ -5,65 +5,43 @@ on:
     tags:
       - 'v*'
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   publish:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          bun-version: latest
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
 
+      # Ensure npm 11.5.1 or later is installed
+      - name: Install npm
+        run: npm install -g npm@latest
+
+      # Install dependencies and build
       - name: Install dependencies
-        run: bun install
+        run: npm ci
 
       - name: Run tests
-        run: bun test
+        run: npm test
 
       - name: Type check
-        run: bun run typecheck
+        run: npm run typecheck
 
       - name: Build CLI
-        run: bun run build:cli
+        run: npm run build:cli
 
       - name: Publish to NPM
         run: npm publish --access public
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-  github-release:
-    needs: publish
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Generate changelog
-        id: changelog
-        run: |
-          # Get the latest tag
-          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.1.0")
-          PREVIOUS_TAG=$(git describe --tags --abbrev=0 $LATEST_TAG^ 2>/dev/null || echo "")
-
-          if [ -n "$PREVIOUS_TAG" ]; then
-            echo "## Changes since $PREVIOUS_TAG" >> changelog.md
-            git log --pretty=format:"- %s (%h)" $PREVIOUS_TAG..HEAD >> changelog.md
-          else
-            echo "## Initial Release" >> changelog.md
-            echo "- Complete Claude Code → OpenCode plugin conversion" >> changelog.md
-            echo "- Support for commands, agents, skills, and hooks" >> changelog.md
-            echo "- 100% success rate on all tested Anthropic plugins" >> changelog.md
-          fi
-
-          echo "changelog<<EOF" >> $GITHUB_OUTPUT
-          cat changelog.md >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Create GitHub Release
         uses: actions/create-release@v1
@@ -71,29 +49,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ github.ref_name }}
-          release_name: Release ${{ github.ref_name }}
-          body: |
-            ## 🚀 CodeFlow CLI ${{ github.ref_name }}
-
-            ${{ steps.changelog.outputs.changelog }}
-
-            ### Installation
-            ```bash
-            # Using npm
-            npm install -g @agentic-codeflow/cli@${{ github.ref_name }}
-            
-            # Using bun (recommended)
-            bun add -g @agentic-codeflow/cli@${{ github.ref_name }}
-            ```
-
-            ### What's New
-            - Complete Claude Code plugin conversion support
-            - Hook conversion (JSON → TypeScript)
-            - Enhanced CLI with flexible input options
-            - 100% success rate on Anthropic plugin testing
-
-            ### Links
-            - [Documentation](https://github.com/ferg-cod3s/codeflow)
-             - [NPM Package](https://www.npmjs.com/package/@agentic-codeflow/cli)
+          release_name: ${{ github.ref_name }}
           draft: false
           prerelease: false
