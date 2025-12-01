@@ -222,7 +222,6 @@ function publishToGitHubPackages(): void {
       }
       process.exit(1);
     }
-    }
 
     // Verify npm registry configuration
     const registry = execSync('npm config get registry', { encoding: 'utf8' }).trim();
