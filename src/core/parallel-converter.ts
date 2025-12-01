@@ -41,10 +41,11 @@ export interface BatchResult {
   errorCount: number;
 }
 
-class ParallelConverter {
+export class ParallelConverter {
   private options: Required<ConversionOptions>;
   private errorHandler: ConversionErrorHandler;
   private metrics: ConversionMetrics;
+  private inputDir: string;
 
   constructor(options: ConversionOptions = {}) {
     this.options = {
@@ -73,6 +74,7 @@ class ParallelConverter {
       averageTimePerFile: 0,
       throughput: 0
     };
+    this.inputDir = '';
   }
 
   /**
@@ -84,6 +86,7 @@ class ParallelConverter {
     dryRun: boolean = false
   ): Promise<ConversionResult<ConversionMetrics>> {
     this.metrics.startTime = Date.now();
+    this.inputDir = inputDir;
     
     try {
       // Get all agent files
@@ -130,11 +133,18 @@ class ParallelConverter {
       // Log performance metrics
       this.logPerformanceMetrics();
 
+      const resultData = {
+        totalProcessed: aggregatedResults.processedFiles,
+        successful: aggregatedResults.successfulConversions,
+        failed: aggregatedResults.failedConversions,
+        skipped: aggregatedResults.skippedFiles,
+        duration: this.metrics.endTime - this.metrics.startTime
+      };
+
       return {
-        success: aggregatedResults.errorCount === 0,
-        data: this.metrics,
-        warnings: aggregatedResults.warnings,
-        metrics: this.metrics
+        success: aggregatedResults.failedConversions === 0,
+        data: resultData as any,
+        warnings: aggregatedResults.warnings
       };
 
     } catch (error) {
@@ -160,13 +170,13 @@ class ParallelConverter {
 
     for (const file of files) {
       try {
-        const inputPath = path.join(inputDir, file);
+        const inputPath = path.join(this.inputDir, file);
         const outputPath = path.join(outputDir, file);
         
         const result = await this.errorHandler.handleError(
           this.errorHandler.createError(ErrorType.FILE_READ_ERROR, `Failed to read file: ${file}`, { file, operation: 'read' }),
           async () => {
-            const content = await readFile(inputPath);
+            const content = await readFile(inputPath!);
             return await this.convertSingleAgentOptimized(content);
           },
           `convert_${file}`
@@ -175,7 +185,7 @@ class ParallelConverter {
         if (result.success && result.data && !dryRun) {
           await this.errorHandler.handleError(
             this.errorHandler.createError(ErrorType.FILE_WRITE_ERROR, `Failed to write file: ${file}`, { file, operation: 'write' }),
-            async () => await writeFile(outputPath, result.data),
+            async () => await writeFile(outputPath, result.data!),
             `write_${file}`
           );
         }
@@ -254,7 +264,7 @@ class ParallelConverter {
   private async convertSmallAgent(content: string): Promise<string> {
     const { frontmatter, body } = parseMarkdownFrontmatter(content);
     
-    const openCodeAgent = {
+    const openCodeAgent: any = {
       name: frontmatter.name,
       description: frontmatter.description,
       mode: frontmatter.mode || 'subagent',

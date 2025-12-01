@@ -60,7 +60,13 @@ Examples:
       if (!options.commandsOnly && !options.skillsOnly) {
         console.log(chalk.yellow('\n📋 Migrating agents...'));
         const agentConverter = new AgentConverter();
-        totalResults.agents = await agentConverter.convertAgents('./base-agents', path.join(outputDir, 'agent'), options.dryRun);
+        const agentResult = await agentConverter.convertAgents('./base-agents', path.join(outputDir, 'agent'), options.dryRun);
+        totalResults.agents = {
+          converted: agentResult.converted || 0,
+          failed: agentResult.failed || 0,
+          errors: agentResult.errors || [],
+          warnings: agentResult.warnings || []
+        };
       }
       
       // Migrate commands

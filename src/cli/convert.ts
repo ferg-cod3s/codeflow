@@ -5,6 +5,8 @@ import { CommandConverter } from '../converters/command-converter.js';
 import { SkillConverter } from '../converters/skill-converter.js';
 import { OpenCodeValidator } from '../validators/opencode-validator.js';
 import { PromptEnhancer } from '../enhancers/prompt-enhancer.js';
+import { PromptOptimizer } from '../core/prompt-optimizer.js';
+import { ParallelConverter } from '../core/parallel-converter.js';
 import { ensureDir, readFile, writeFile, readAllFiles } from '../utils/file-utils.js';
 import { OPENCODE_GLOBAL_DIR } from '../utils/constants.js';
 import * as path from 'path';
@@ -20,29 +22,34 @@ export const convertCommand = new Command('convert')
   .option('-c, --concurrency <number>', 'Number of parallel workers (default: 4)', '4')
   .option('-b, --batch-size <number>', 'Files per batch (default: 50)', '50')
   .option('-m, --memory-limit <number>', 'Memory limit in MB (default: 512)', '512')
-  .option('--profile', 'Enable performance profiling')
+  .option('--optimize-prompts', 'Optimize existing prompts for efficiency and clarity')
   .addHelpText('after', `
-Examples:
+  Examples:
   # Local project setup (in current directory)
   $ codeflow convert agents --output .opencode/agent
   $ codeflow convert commands --output .opencode/command
   $ codeflow convert skills --output .opencode/skill
-
+  
   # Global setup (user-wide, available in all projects)
   $ codeflow convert agents --global
   $ codeflow convert commands --global
   $ codeflow convert skills --global
-
+  
   # Preview changes without writing files
   $ codeflow convert agents --global --dry-run
-
+  
   # With validation level
   $ codeflow convert agents --global --validation strict
   $ codeflow convert commands --output .opencode/command --validation off
-
+  
   # Convert AND enhance with research-backed techniques
   $ codeflow convert agents --global --enhance
-  $ codeflow convert agents --output .opencode/agent --enhance maximum`)
+  $ codeflow convert agents --output .opencode/agent --enhance maximum
+  
+  # Optimize existing prompts
+  $ codeflow optimize-prompts ./base-agents --output ./optimized-agents
+  $ codeflow optimize-prompts ./base-commands --output ./optimized-commands
+  $ codeflow optimize-prompts ./base-skills --output ./optimized-skills`)
   .action(async (type, options) => {
     console.log(chalk.blue(`🔄 Converting ${type}...`));
     
@@ -57,12 +64,36 @@ Examples:
       
       await ensureDir(outputDir);
       
+      // Determine input directory based on type
+      const inputDir = type === 'agents' ? './base-agents' : 
+                      type === 'commands' ? './commands' : './base-skills';
+      
       let result;
       const validator = new OpenCodeValidator();
       
       switch (type) {
         case 'agents':
-          if (options.concurrency || options.batchSize || options.memoryLimit || options.profile) {
+          if (options.optimizePrompts) {
+            console.log(chalk.blue('🔧 Optimizing prompts for efficiency and clarity...'));
+            const promptOptimizer = new PromptOptimizer({
+              preserveStructure: true,
+              focusArea: 'efficiency',
+              aggressiveness: 'moderate',
+              targetLength: 2000
+            });
+            
+            const optimizationResults = await promptOptimizer.optimizeDirectory(inputDir, outputDir);
+            
+            console.log(chalk.green(`✅ Optimized ${optimizationResults.optimizedFiles} prompts`));
+            console.log(chalk.blue(`📊 Total improvements: ${optimizationResults.totalImprovements}`));
+            
+            result = {
+              converted: optimizationResults.optimizedFiles,
+              failed: 0,
+              errors: [],
+              warnings: optimizationResults.results.flatMap((r: any) => r.analysis.issues.map((i: any) => i.description))
+            };
+          } else if (options.concurrency || options.batchSize || options.memoryLimit || options.profile) {
             console.log(chalk.blue('🚀 Using parallel conversion with optimizations'));
             const parallelConverter = new ParallelConverter({
               concurrency: options.concurrency,
@@ -120,14 +151,14 @@ Examples:
       console.log(chalk.white(`Converted: ${result.converted}`));
       console.log(chalk.white(`Failed: ${result.failed}`));
       
-      if (result.errors.length > 0) {
+      if (result.errors && result.errors.length > 0) {
         console.log(chalk.red('\n❌ Errors:'));
-        result.errors.forEach(error => console.log(chalk.red(`  - ${error}`)));
+        result.errors.forEach((error: any) => console.log(chalk.red(`  - ${error}`)));
       }
       
       if (result.warnings.length > 0) {
         console.log(chalk.yellow('\n⚠️  Warnings:'));
-        result.warnings.forEach(warning => console.log(chalk.yellow(`  - ${warning}`)));
+        result.warnings.forEach((warning: any) => console.log(chalk.yellow(`  - ${warning}`)));
       }
       
       // Enhance converted files if requested (agents only)

@@ -51,7 +51,7 @@ export class AgentConverter {
         if (!dryRun) {
           await this.errorHandler.handleError(
             this.errorHandler.createError(ErrorType.FILE_WRITE_ERROR, `Failed to write file: ${file}`, { file, operation: 'write' }),
-            async () => await writeFile(outputPath, result.data),
+            async () => await writeFile(outputPath, result.data!),
             `write_${file}`
           );
         }
