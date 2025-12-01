@@ -235,6 +235,12 @@ function createGitHubRelease(version: string): void {
 function main(): void {
   logInfo('Starting CodeFlow publish process...');
 
+  // Detect CI environment
+  const isCI = Boolean(process.env.CI || process.env.GITHUB_ACTIONS);
+  if (isCI) {
+    logInfo('Running in CI environment - skipping git checks and version commits');
+  }
+
   // Get version from environment variable
   const version = process.env.AGENTIC_VERSION;
 
@@ -252,32 +258,37 @@ function main(): void {
 
   logInfo(`Publishing version: ${version}`);
 
-  // Check if working directory is clean
-  try {
-    const status = execSync('git status --porcelain', { encoding: 'utf8' });
-    if (status.trim()) {
-      logError('Working directory is not clean. Please commit or stash changes first.');
+  // Skip git checks in CI (actions/setup-node creates .npmrc which dirties the working directory)
+  if (!isCI) {
+    // Check if working directory is clean
+    try {
+      const status = execSync('git status --porcelain', { encoding: 'utf8' });
+      if (status.trim()) {
+        logError('Working directory is not clean. Please commit or stash changes first.');
+        process.exit(1);
+      }
+    } catch (error) {
+      logError('Failed to check git status');
       process.exit(1);
     }
-  } catch (error) {
-    logError('Failed to check git status');
-    process.exit(1);
-  }
 
-  // Update package.json version
-  const versionChanged = updatePackageVersion(version);
+    // Update package.json version
+    const versionChanged = updatePackageVersion(version);
 
-  // Commit the version change only if it actually changed
-  if (versionChanged) {
-    execSync('git add package.json');
-    execSync(`git commit --no-verify -m "Bump version to ${version}"`);
-    logSuccess(`Committed version bump to ${version}`);
+    // Commit the version change only if it actually changed
+    if (versionChanged) {
+      execSync('git add package.json');
+      execSync(`git commit --no-verify -m "Bump version to ${version}"`);
+      logSuccess(`Committed version bump to ${version}`);
+    } else {
+      logInfo('No version change to commit');
+    }
+
+    // Verify tag exists and is on current commit
+    verifyTag(version);
   } else {
-    logInfo('No version change to commit');
+    logInfo('Skipping tag verification in CI (tag triggered the workflow)');
   }
-
-  // Verify tag exists and is on current commit
-  verifyTag(version);
 
   // Publish to GitHub Packages (OIDC handles authentication automatically)
   publishToGitHubPackages();
