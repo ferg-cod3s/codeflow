@@ -35,7 +35,7 @@ jobs:
         with:
           node-version: '20'
           registry-url: 'https://npm.pkg.github.com'
-          scope: '@agentic-codeflow'
+          scope: '@ferg-cod3s'
 
       - name: Upgrade npm to 11.5.1+ for OIDC support
         run: |
@@ -100,10 +100,10 @@ jobs:
             ### Installation
             ```bash
             # Install from GitHub Packages
-            npm install -g @agentic-codeflow/cli
+            npm install -g @ferg-cod3s/codeflow
             # Or configure registry and install
-            npm config set @agentic-codeflow:registry https://npm.pkg.github.com
-            npm install -g @agentic-codeflow/cli
+            npm config set @ferg-cod3s:registry https://npm.pkg.github.com
+            npm install -g @ferg-cod3s/codeflow
             ```
 
             ### Quick Start

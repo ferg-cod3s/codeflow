@@ -1,5 +1,5 @@
 {
-  "name": "@agentic-codeflow/cli",
+  "name": "@ferg-cod3s/codeflow",
   "version": "0.24.0",
   "description": "CLI tool to convert base-agents, commands, and skills to OpenCode format with advanced optimization and parallel processing",
   "main": "dist/cli/index.js",
