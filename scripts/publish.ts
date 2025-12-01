@@ -242,7 +242,6 @@ function publishToGitHubPackages(): void {
     }
     process.exit(1);
   }
-}
 
 function createGitHubRelease(version: string): void {
   logInfo('Creating GitHub release');
