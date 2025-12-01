@@ -188,61 +188,6 @@ function publishToGitHubPackages(): void {
   }
 }
 
-    logSuccess('OIDC environment variables detected');
-    logInfo(`OIDC Request URL: ${oidcRequestUrl}`);
-
-    // Verify npm version supports OIDC
-    const npmVersion = execSync('npm --version', { encoding: 'utf8' }).trim();
-    logInfo(`npm version: ${npmVersion}`);
-
-    const [major, minor] = npmVersion.split('.').map(Number);
-    if (major < 11 || (major === 11 && minor < 5)) {
-      logError(`npm version ${npmVersion} does not support OIDC authentication`);
-      logError('OIDC requires npm 11.5.1 or later');
-      logError('Please upgrade npm: npm install -g npm@latest');
-      process.exit(1);
-    }
-
-    logSuccess(`npm version ${npmVersion} supports OIDC authentication`);
-
-    // Test authentication before publishing
-    try {
-      logInfo('Testing npm authentication with OIDC...');
-      const whoami = execSync('npm whoami', { encoding: 'utf8', stdio: 'pipe' }).trim();
-      logSuccess(`Authenticated as: ${whoami}`);
-    } catch (error) {
-      logError('npm GitHub Packages authentication failed');
-      logError('This usually means: GitHub Packages is not configured correctly');
-      logError('Please verify:');
-      logError('  1. .npmrc is configured for GitHub Packages');
-      logError('  2. Workflow has id-token: write permission');
-      logError('  3. Repository name matches: ferg-cod3s/codeflow');
-      if (error instanceof Error) {
-        logError(error.message);
-      }
-      process.exit(1);
-    }
-
-    // Verify npm registry configuration
-    const registry = execSync('npm config get registry', { encoding: 'utf8' }).trim();
-    logInfo(`npm registry: ${registry}`);
-
-    if (registry !== 'https://registry.npmjs.org/') {
-      logWarning(`Registry is not default: ${registry}`);
-    }
-
-    // Publish using npm (required for OIDC)
-    logInfo('Publishing package with OIDC authentication...');
-    execSync('npm publish --provenance', { stdio: 'inherit' });
-    logSuccess('Successfully published to GitHub Packages with provenance');
-  } catch (error) {
-    logError('Failed to publish to npm');
-    if (error instanceof Error) {
-      logError(error.message);
-    }
-    process.exit(1);
-  }
-
 function createGitHubRelease(version: string): void {
   logInfo('Creating GitHub release');
 
