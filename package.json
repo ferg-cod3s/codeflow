@@ -1,7 +1,7 @@
 {
   "name": "@agentic-codeflow/cli",
   "version": "0.23.0",
-  "description": "CLI tool to convert base-agents, commands, and skills to OpenCode format",
+  "description": "CLI tool to convert base-agents, commands, and skills to OpenCode format with advanced optimization and parallel processing",
   "main": "dist/cli/index.js",
   "type": "module",
   "bin": {
@@ -12,8 +12,12 @@
     "plugins/**/*",
     "README.md",
     "LICENSE",
+    "CHANGELOG.md",
     "PLUGIN_ECOSYSTEM.md"
   ],
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
   "scripts": {
     "build": "tsc",
     "build:cli": "tsc && chmod +x dist/cli/index.js",
@@ -30,7 +34,11 @@
     "lint:fix": "echo 'No auto-fix available - fix TypeScript errors manually'",
     "quality": "bun run typecheck && bun run test:coverage",
     "start": "node dist/cli/index.js",
-    "prepublishOnly": "bun run quality && bun run build:cli"
+    "prepublishOnly": "bun run quality && bun run build:cli",
+    "release": "bun run quality && bun run build:cli && git add . && git commit -m \"chore: update build for release\" && git tag -a v$(npm pkg get version) -m \"Release v$(npm pkg get version)\" && echo \"✅ Release v$(npm pkg get version) ready for push\"",
+    "release:dry": "bun run quality && bun run build:cli && echo \"🔍 Dry run completed - ready for release\"",
+    "postversion": "git push && git push --follow-tags && npm publish",
+    "preversion": "bun run quality"
   },
   "keywords": [
     "cli",
@@ -45,12 +53,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ferg-cod3s/codeflow.git"
+    "url": "git+https://github.com/ferg-cod3s/codeflow.git"
   },
   "bugs": {
     "url": "https://github.com/ferg-cod3s/codeflow/issues"
   },
-  "homepage": "https://github.com/ferg-cod3s/codeflow",
+  "homepage": "https://github.com/ferg-cod3s/codeflow#readme",
   "dependencies": {
     "@opencode-ai/plugin": "^1.0.80",
     "chalk": "^5.6.2",

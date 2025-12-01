@@ -30,11 +30,12 @@ jobs:
         with:
           bun-version: latest
 
-      - name: Setup Node.js
+      - name: Setup Node.js for GitHub Packages
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          registry-url: 'https://registry.npmjs.org'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@agentic-codeflow'
 
       - name: Upgrade npm to 11.5.1+ for OIDC support
         run: |
@@ -81,9 +82,9 @@ jobs:
             AGENTIC_VERSION=${{ inputs.version }} bun run ./scripts/publish.ts
           fi
         env:
-          # OIDC authentication - no manual token needed
-          # npm 11.5.1+ will automatically use GitHub OIDC via id-token: write permission
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # GitHub Packages authentication
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create GitHub Release
         if: github.event_name == 'push'
@@ -98,6 +99,10 @@ jobs:
 
             ### Installation
             ```bash
+            # Install from GitHub Packages
+            npm install -g @agentic-codeflow/cli
+            # Or configure registry and install
+            npm config set @agentic-codeflow:registry https://npm.pkg.github.com
             npm install -g @agentic-codeflow/cli
             ```
 
