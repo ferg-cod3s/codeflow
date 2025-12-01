@@ -114,71 +114,37 @@ function verifyTag(version: string): void {
 }
 
 function publishToGitHubPackages(): void {
-  logInfo('Publishing to GitHub Packages using OIDC authentication');
+  logInfo('Publishing to GitHub Packages');
 
   try {
-    // Verify OIDC environment variables are present
-    const oidcRequestUrl = process.env.ACTIONS_ID_TOKEN_REQUEST_URL;
-    const oidcRequestToken = process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN;
-
-    if (!oidcRequestUrl || !oidcRequestToken) {
-      logError('OIDC environment variables not found!');
-      logError('This script must be run in GitHub Actions with id-token: write permission');
-      logError(`ACTIONS_ID_TOKEN_REQUEST_URL: ${oidcRequestUrl ? 'SET' : 'NOT SET'}`);
-      logError(`ACTIONS_ID_TOKEN_REQUEST_TOKEN: ${oidcRequestToken ? 'SET' : 'NOT SET'}`);
-      process.exit(1);
-    }
-
-    logSuccess('OIDC environment variables detected');
-    logInfo(`OIDC Request URL: ${oidcRequestUrl}`);
-
-    // Verify npm version supports OIDC
+    // Detect CI environment
+    const isCI = Boolean(process.env.CI || process.env.GITHUB_ACTIONS);
+    
+    // Verify npm version supports OIDC (if in CI)
     const npmVersion = execSync('npm --version', { encoding: 'utf8' }).trim();
     logInfo(`npm version: ${npmVersion}`);
 
-    const [major, minor] = npmVersion.split('.').map(Number);
-    if (major < 11 || (major === 11 && minor < 5)) {
-      logError(`npm version ${npmVersion} does not support OIDC authentication`);
-      logError('OIDC requires npm 11.5.1 or later');
-      logError('Please upgrade npm: npm install -g npm@latest');
-      process.exit(1);
-    }
-
-    logSuccess(`npm version ${npmVersion} supports OIDC authentication`);
-
-    // Test authentication before publishing
-    try {
-      logInfo('Testing npm authentication with GitHub Packages...');
-      const whoami = execSync('npm whoami', { encoding: 'utf8', stdio: 'pipe' }).trim();
-      logSuccess(`Authenticated as: ${whoami}`);
-    } catch (error) {
-      logError('npm GitHub Packages authentication failed');
-      logError('This usually means: GitHub Packages is not configured correctly');
-      logError('Please verify:');
-      logError('  1. .npmrc is configured for GitHub Packages');
-      logError('  2. Workflow has id-token: write permission');
-      logError('  3. Repository name matches: ferg-cod3s/codeflow');
-      if (error instanceof Error) {
-        logError(error.message);
+    if (isCI) {
+      // In CI, we use OIDC authentication via NODE_AUTH_TOKEN set by actions/setup-node
+      logInfo('Using GitHub Actions authentication (NODE_AUTH_TOKEN)');
+      
+      // Verify NODE_AUTH_TOKEN is set
+      if (!process.env.NODE_AUTH_TOKEN) {
+        logError('NODE_AUTH_TOKEN is not set!');
+        logError('This should be set by actions/setup-node or manually to GITHUB_TOKEN');
+        process.exit(1);
       }
-      process.exit(1);
+      logSuccess('NODE_AUTH_TOKEN is set');
     }
 
     // Verify npm registry configuration
     const registry = execSync('npm config get registry', { encoding: 'utf8' }).trim();
     logInfo(`npm registry: ${registry}`);
 
-    if (!registry.includes('npm.pkg.github.com')) {
-      logWarning(`Registry is not GitHub Packages: ${registry}`);
-      logInfo('Configuring registry for GitHub Packages...');
-      execSync('npm config set registry https://npm.pkg.github.com/', { stdio: 'inherit' });
-      logSuccess('Configured npm registry for GitHub Packages');
-    }
-
     // Publish to GitHub Packages
     logInfo('Publishing package to GitHub Packages...');
-    execSync('npm publish --provenance', { stdio: 'inherit' });
-    logSuccess('Successfully published to GitHub Packages with provenance');
+    execSync('npm publish', { stdio: 'inherit' });
+    logSuccess('Successfully published to GitHub Packages');
   } catch (error) {
     logError('Failed to publish to GitHub Packages');
     if (error instanceof Error) {
