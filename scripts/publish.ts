@@ -222,7 +222,6 @@ function publishToGitHubPackages(): void {
       }
       process.exit(1);
     }
-      process.exit(1);
     }
 
     // Verify npm registry configuration
