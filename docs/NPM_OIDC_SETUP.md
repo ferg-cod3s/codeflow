@@ -62,7 +62,7 @@ permissions:
 1. **Configure NPM Organization**:
    ```bash
    # Add your GitHub repo as trusted publisher in NPM org settings
-   # Repository: https://github.com/ferg-cod3s/codeflow
+   # Repository: https://github.com/v1truv1us/codeflow
    # Workflow: .github/workflows/publish.yml
    # Environment: (leave blank for all environments)
    ```

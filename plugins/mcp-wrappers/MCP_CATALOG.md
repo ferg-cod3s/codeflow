@@ -225,7 +225,7 @@ const security = await mcpSocket.analyzeDependencies(['react', 'express'])
 
 ### Long Term (Future)
 - [ ] GUI configuration tool
-- [ ] Plugin marketplace integration
+- [ ] Plugin marketplace integration (CodeFlow CLI feature)
 - [ ] Advanced debugging tools
 - [ ] Custom MCP server builder
 

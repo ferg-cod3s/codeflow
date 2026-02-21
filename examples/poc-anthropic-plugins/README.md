@@ -150,11 +150,13 @@ Interested in helping convert more plugins?
 - [Claude Code Docs](https://code.claude.com/docs/en/plugins)
 - [OpenCode Docs](https://opencode.ai/docs/plugins/)
 
-### CodeFlow CLI
-- [Main Repository](https://github.com/ferg-cod3s/codeflow)
+### CodeFlow CLI (separate project)
+- [Main Repository](https://github.com/v1truv1us/codeflow)
 - [Agent Conversion](../../README.md)
 - [Command Conversion](../../README.md)
 - [Skill Conversion](../../README.md)
+
+> **Note**: This POC and documentation are for CodeFlow CLI, a separate upstream project (`@agentic-codeflow/cli`). They are not part of `ai-eng-system`.
 
 ## License
 

@@ -120,7 +120,7 @@ permissions:
 
 | Field | Value |
 |-------|-------|
-| Organization or user | `ferg-cod3s` (or your GitHub org/username) |
+| Organization or user | `v1truv1us` (or your GitHub org/username) |
 | Repository | `codeflow` |
 | Workflow filename | `publish.yml` |
 | Environment name | *(leave blank unless using GitHub environments)* |

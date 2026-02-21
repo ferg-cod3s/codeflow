@@ -39,7 +39,7 @@ opencode
 ```bash
 npm install -g @codeflow/cli
 # or
-git clone https://github.com/ferg-cod3s/codeflow
+git clone https://github.com/v1truv1us/codeflow
 cd codeflow
 npm install
 npm run build:cli
@@ -395,7 +395,7 @@ If you manually convert agents/hooks, document it:
 ### Long Term (Months 1-2)
 - ⏳ Full plugin ecosystem compatibility
 - ⏳ Bidirectional conversion
-- ⏳ Plugin marketplace integration
+- ⏳ Plugin marketplace integration (CodeFlow CLI feature)
 
 **Track progress**: See [PLUGIN_INTEGRATION_ROADMAP.md](./PLUGIN_INTEGRATION_ROADMAP.md)
 
@@ -410,7 +410,7 @@ If you manually convert agents/hooks, document it:
 - [OpenCode Plugin Docs](https://opencode.ai/docs/plugins/)
 
 ### Community
-- [CodeFlow CLI Issues](https://github.com/ferg-cod3s/codeflow/issues)
+- [CodeFlow CLI Issues](https://github.com/v1truv1us/codeflow/issues)
 - [OpenCode Community](https://github.com/opencode-ai/opencode/discussions)
 - [Claude Code Community](https://github.com/anthropics/claude-code/discussions)
 

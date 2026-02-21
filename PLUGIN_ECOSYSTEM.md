@@ -8,7 +8,7 @@ The OpenCode plugin ecosystem provides a robust framework for extending Claude's
 
 - **Output Style Plugins**: Modify Claude's response behavior and formatting
 - **MCP Wrappers**: Integrate MCP servers as OpenCode plugins
-- **Anthropic Converters**: Convert Claude Code plugins to OpenCode format
+- **Anthropic Converters**: Convert Claude Code plugins to OpenCode format (CodeFlow CLI feature)
 - **Custom Plugins**: Build specialized functionality
 
 ## Plugin Categories

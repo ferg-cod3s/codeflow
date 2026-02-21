@@ -46,12 +46,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ferg-cod3s/codeflow.git",
+    "url": "https://github.com/v1truv1us/codeflow.git",
     "directory": "packages/agentic-codeflow-mcp"
   },
-  "homepage": "https://github.com/ferg-cod3s/codeflow/tree/main/packages/agentic-codeflow-mcp",
+  "homepage": "https://github.com/v1truv1us/codeflow/tree/main/packages/agentic-codeflow-mcp",
   "bugs": {
-    "url": "https://github.com/ferg-cod3s/codeflow/issues"
+    "url": "https://github.com/v1truv1us/codeflow/issues"
   },
   "engines": {
     "node": ">=18.0.0"

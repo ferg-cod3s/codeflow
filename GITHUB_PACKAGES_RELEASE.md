@@ -66,7 +66,7 @@ npm install -g @agentic-codeflow/cli
 ### **Development Installation**
 ```bash
 # Clone repository
-git clone https://github.com/ferg-cod3s/codeflow.git
+git clone https://github.com/v1truv1us/codeflow.git
 cd codeflow
 
 # Install dependencies
@@ -164,11 +164,11 @@ CodeFlow v0.23.0 with GitHub Packages integration represents:
 
 ## 🔗 Links
 
-- **GitHub Packages**: https://github.com/ferg-cod3s/codeflow/pkgs/npm/package/@agentic-codeflow/cli
-- **Git Tag**: https://github.com/ferg-cod3s/codeflow/releases/tag/v0.23.0
+- **GitHub Packages**: https://github.com/v1truv1us/codeflow/pkgs/npm/package/@agentic-codeflow/cli
+- **Git Tag**: https://github.com/v1truv1us/codeflow/releases/tag/v0.23.0
 - **CHANGELOG**: [Full changelog](./CHANGELOG.md)
 - **Documentation**: [Project README](./README.md)
-- **Issues**: [Report issues](https://github.com/ferg-cod3s/codeflow/issues)
+- **Issues**: [Report issues](https://github.com/v1truv1us/codeflow/issues)
 
 ---
 

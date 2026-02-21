@@ -1,6 +1,8 @@
-# CodeFlow CLI
+# CodeFlow CLI (separate upstream project)
 
 A TypeScript CLI tool to convert base-agents, commands, and skills to OpenCode format.
+
+> **Note**: This is a separate project (`@agentic-codeflow/cli`) included as a reference. It is not part of `ai-eng-system`.
 
 ## Features
 

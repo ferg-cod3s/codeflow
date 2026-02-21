@@ -555,7 +555,7 @@ ${context ? `Context: ${context}` : ''}
 - [OpenCode Hooks Guide](https://dev.to/einarcesar/does-opencode-support-hooks-a-complete-guide-to-extensibility-k3p)
 
 ### Repositories
-- [CodeFlow CLI](https://github.com/ferg-cod3s/codeflow)
+- [CodeFlow CLI](https://github.com/v1truv1us/codeflow)
 - [Claude Code Examples](https://github.com/anthropics/claude-code)
 - [OpenCode](https://github.com/opencode-ai/opencode)
 

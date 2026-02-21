@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.23.0] - 2024-12-01
 
+> **Note**: This changelog is for CodeFlow CLI, a separate upstream project (`@agentic-codeflow/cli`). It is included here as reference only.
+
 ### 🚀 Major Features
 - **Comprehensive Prompt Optimization System** - Built complete analysis and optimization engine for agent prompts
 - **Performance Optimization Pipeline** - Added parallel processing with configurable concurrency and batch operations
@@ -63,6 +65,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Support
 
 For questions and support, please visit:
-- 📖 [Documentation](https://github.com/ferg-cod3s/codeflow)
-- 🐛 [Issues](https://github.com/ferg-cod3s/codeflow/issues)
-- 💬 [Discussions](https://github.com/ferg-cod3s/codeflow/discussions)
+- 📖 [Documentation](https://github.com/v1truv1us/codeflow)
+- 🐛 [Issues](https://github.com/v1truv1us/codeflow/issues)
+- 💬 [Discussions](https://github.com/v1truv1us/codeflow/discussions)

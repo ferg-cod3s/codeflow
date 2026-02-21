@@ -1,6 +1,8 @@
-# Claude AI Assistant Guide for CodeFlow CLI
+# Claude AI Assistant Guide for CodeFlow CLI (separate project)
 
 This document provides guidance for Claude AI assistants working with the CodeFlow CLI project.
+
+> **Note**: CodeFlow CLI is a separate upstream project (`@agentic-codeflow/cli`) included here as reference material. It is not part of `ai-eng-system`.
 
 ## Project Overview
 
@@ -228,7 +230,7 @@ npm run prepublishOnly  # Runs typecheck, build, and tests
 2. **Node Version**: Requires Node.js 20+ (uses ES modules)
 3. **Package Manager**: Compatible with npm and bun
 4. **License**: MIT
-5. **Repository**: https://github.com/ferg-cod3s/codeflow
+5. **Repository**: https://github.com/v1truv1us/codeflow
 
 ## Agent Categories
 
@@ -252,9 +254,45 @@ When working on this project:
 3. Run `npm run typecheck && npm test` before committing
 4. Push to designated branch when complete
 
+## Recent Learnings & Insights (Updated Jan 2026)
+
+### 1. **Publishing & Release Automation**
+- **GitHub Packages Migration**: Successfully moved to `@ferg-cod3s/codeflow` scope on GitHub Packages registry
+- **OIDC Authentication**: Token-less publishing using GitHub Actions identity (npm 11.5.1+ required)
+- **Automated Release Pipeline**: Complete CI/CD with quality checks, building, and publishing
+- **CI Environment Handling**: Scripts detect CI vs local environments and adapt behavior
+- **Version Management**: Automated version bumping, git tagging, and GitHub release creation
+
+### 2. **Test Framework & Build System Evolution**
+- **Bun Migration**: Successfully migrated from Jest to Bun test runner
+  - Resolved dependency conflicts and TypeScript compilation issues
+  - Improved performance (100% test pass rate across 93 tests)
+  - Better reliability for test execution
+- **Quality Pipeline**: `npm run quality` combines typecheck and test coverage
+- **Strict TypeScript**: Zero compilation errors achieved across all modules
+
+### 3. **Error Handling & Resilience Patterns**
+- **ConversionErrorHandler**: Advanced error handling with retry mechanisms and exponential backoff
+- **Graceful Degradation**: Processing continues even when individual files fail
+- **Comprehensive Logging**: Structured error reporting with actionable suggestions
+- **Error Categories**: Standardized error types (FILE_READ_ERROR, FILE_WRITE_ERROR, etc.)
+
+### 4. **Common Issues & Solutions**
+- **Git Working Directory**: CI automatically handles dirty state from actions/setup-node
+- **Node/npm Requirements**: Node.js 20+, npm 11.5.1+ for OIDC authentication
+- **Permission Setup**: Requires `packages: write` and `id-token: write` for GitHub Packages
+- **Package Scope**: Current scope is `@ferg-cod3s/codeflow` (changed from `@v1truv1us/codeflow`)
+
+### 5. **Architecture Insights**
+- **Parallel Processing**: Configurable concurrency for large-scale conversions
+- **Memory Management**: Efficient handling of large file operations
+- **Prompt Optimization**: Built-in analysis and optimization engine for agent prompts
+- **Performance Metrics**: Real-time profiling and throughput monitoring
+
 ## Getting Help
 
-- GitHub Issues: https://github.com/ferg-cod3s/codeflow/issues
+- GitHub Issues: https://github.com/v1truv1us/codeflow/issues
 - README.md: User-facing documentation
 - This file (CLAUDE.md): AI assistant reference
 - AGENTS.md: Agent inventory and descriptions
+- GITHUB_PACKAGES_RELEASE.md: Detailed release documentation

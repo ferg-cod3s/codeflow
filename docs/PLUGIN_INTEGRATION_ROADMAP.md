@@ -8,6 +8,8 @@
 
 **Recommended Approach**: Extend CodeFlow CLI with plugin conversion capabilities
 
+> **Note**: This roadmap is for CodeFlow CLI, a separate upstream project (`@agentic-codeflow/cli`). It is not part of `ai-eng-system`.
+
 ---
 
 ## What Works Today (Zero Effort)
@@ -406,7 +408,7 @@ export const {{pluginName}}: Plugin = async ({ client, $, directory }) => {
 
 ### v2.0
 - [ ] Real-time plugin sync
-- [ ] Plugin marketplace integration
+- [ ] Plugin marketplace integration (CodeFlow CLI feature)
 - [ ] AI-assisted manual interventions
 
 ---

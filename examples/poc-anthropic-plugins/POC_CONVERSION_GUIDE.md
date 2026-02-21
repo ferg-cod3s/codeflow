@@ -587,10 +587,12 @@ This POC demonstrates that **Claude Code plugins CAN be successfully converted t
 - **Integration Guide**: /docs/CLAUDE_TO_OPENCODE_PLUGIN_INTEGRATION.md
 - **Roadmap**: /docs/PLUGIN_INTEGRATION_ROADMAP.md
 
-### CodeFlow CLI
-- **Repository**: https://github.com/ferg-cod3s/codeflow
+### CodeFlow CLI (separate project)
+- **Repository**: https://github.com/v1truv1us/codeflow
 - **Current Features**: Agent/Command/Skill conversion
 - **Planned**: Claude Plugin conversion (this POC validates feasibility)
+
+> **Note**: This POC and integration guide are for CodeFlow CLI, a separate upstream project (`@agentic-codeflow/cli`). They are not part of `ai-eng-system`.
 
 ---
 

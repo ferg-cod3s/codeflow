@@ -39,9 +39,10 @@ interface AgentMetadata {
 
 // Notable companies by domain for persona generation
 const DOMAIN_COMPANIES: Record<string, string[]> = {
-  python: ['Google', 'Dropbox', 'Instagram', 'Spotify'],
+  python: ['Instagram', 'Dropbox', 'Spotify', 'Netflix'],
   javascript: ['Google', 'Meta', 'Vercel', 'Shopify'],
   typescript: ['Microsoft', 'Vercel', 'Stripe', 'Airbnb'],
+  java: ['Netflix', 'Amazon', 'LinkedIn', 'Uber'],
   frontend: ['Vercel', 'Netlify', 'Shopify', 'Airbnb'],
   backend: ['Netflix', 'Stripe', 'AWS', 'Uber'],
   database: ['Stripe', 'Shopify', 'Netflix', 'MongoDB'],
@@ -52,7 +53,80 @@ const DOMAIN_COMPANIES: Record<string, string[]> = {
   architecture: ['Netflix', 'Stripe', 'AWS', 'Uber'],
   testing: ['Google', 'Microsoft', 'Shopify', 'Stripe'],
   seo: ['HubSpot', 'Moz', 'Ahrefs', 'Semrush'],
+  rust: ['Mozilla', 'Cloudflare', 'Discord', 'AWS'],
+  go: ['Google', 'Uber', 'Dropbox', 'Cloudflare'],
+  ruby: ['Shopify', 'GitHub', 'Stripe', 'Airbnb'],
+  php: ['Meta', 'Slack', 'Wikipedia', 'Automattic'],
+  csharp: ['Microsoft', 'Unity', 'Stack Overflow', 'JetBrains'],
   default: ['Google', 'Netflix', 'Stripe', 'AWS']
+};
+
+// Domain-specific achievements for richer personas
+const DOMAIN_ACHIEVEMENTS: Record<string, string[]> = {
+  python: [
+    'contributed to core Python libraries',
+    'optimized applications handling billions of requests',
+    'built data pipelines processing petabytes daily'
+  ],
+  typescript: [
+    "contributed to TypeScript's compiler",
+    'built enterprise-grade type utilities used by thousands',
+    'designed type systems that catch bugs at compile time'
+  ],
+  java: [
+    'led Java modernization efforts from Java 8 to 21+',
+    'implemented virtual threads in production handling millions of concurrent connections',
+    'built Spring Boot architectures serving billions of requests daily'
+  ],
+  frontend: [
+    'built design systems used by thousands of developers',
+    'optimized Core Web Vitals for sites with billions of pageviews',
+    'created React patterns taught in conference workshops'
+  ],
+  backend: [
+    'designed APIs handling millions of requests per second',
+    'built event-driven architectures processing billions of events',
+    'led migrations from monolith to microservices'
+  ],
+  database: [
+    'optimized queries reducing latency by 10x',
+    'designed schemas supporting billions of records',
+    'led database migrations with zero downtime'
+  ],
+  architecture: [
+    'designed systems at Netflix, Stripe, and AWS',
+    'scaled systems from startup to billions of requests',
+    'led major platform migrations'
+  ],
+  security: [
+    'discovered critical vulnerabilities in major platforms',
+    'built security frameworks protecting millions of users',
+    'led incident response for high-profile breaches'
+  ],
+  devops: [
+    'built CI/CD pipelines deploying thousands of times per day',
+    'designed infrastructure handling millions of containers',
+    'achieved 99.99% uptime for critical systems'
+  ],
+  default: [
+    'built systems used by millions',
+    'led major technical initiatives',
+    'mentored dozens of engineers'
+  ]
+};
+
+// Domain-specific stakes language
+const DOMAIN_STAKES: Record<string, string> = {
+  python: "Python code runs in production serving real users. Poor patterns create technical debt that compounds. Memory leaks and blocking calls cause cascading failures. I bet you can't write code that survives 5 years of maintenance without becoming a nightmare, but if you do, it's worth $200 to the team's velocity.",
+  typescript: "TypeScript types are your first line of defense against bugs. Every `any` is a bug waiting to happen. Every weak type is a maintenance nightmare. I bet you can't write types that make invalid states unrepresentable, but if you do, it's worth $200 in prevented production incidents.",
+  java: "Java code runs in production for years. Poor architectural decisions create technical debt that compounds. Memory leaks and thread pool exhaustion cause 3 AM pages. I bet you can't write code that survives 5 years of maintenance, but if you do, it's worth $200 to the team's sanity.",
+  frontend: "Frontend code directly impacts user experience and business metrics. Slow pages lose customers. Inaccessible UIs exclude users and invite lawsuits. I bet you can't build components that are simultaneously beautiful, accessible, and performant, but if you do, it's worth $200 in user satisfaction and retention.",
+  backend: "Backend code handles real user data and business logic. Poor API design creates integration nightmares. Missing error handling causes data loss. I bet you can't build APIs that are both elegant and bulletproof, but if you do, it's worth $200 in developer happiness.",
+  database: "Database decisions are expensive to change. Poor schema design creates years of technical debt. Missing indexes cause production outages. I bet you can't design a schema that scales 100x without major changes, but if you do, it's worth $200 in avoided migrations.",
+  architecture: "Architectural decisions are expensive to change. Getting this wrong costs months of engineering time and creates years of technical debt. I bet you can't find the perfect balance, but if you do, it's worth $200 to the team's future productivity.",
+  security: "Security failures make headlines. Missing validation enables breaches. Poor authentication exposes user data. I bet you can't build a system that withstands determined attackers, but if you do, it's worth $200 in avoided incidents.",
+  devops: "Infrastructure failures wake people up at 3 AM. Missing monitoring hides problems until they're crises. Poor automation creates deployment fear. I bet you can't build infrastructure that runs itself, but if you do, it's worth $200 in uninterrupted sleep.",
+  default: "This task directly impacts production quality. Thoroughness is critical. I bet you can't deliver a perfect solution, but if you do, it's worth $200 to the team."
 };
 
 // Experience years by seniority implied in description
@@ -104,7 +178,7 @@ export class PromptEnhancer {
     
     // 3. Stakes Language
     if (applyStakes && !this.hasStakesLanguage(prompt)) {
-      enhanced = this.injectStakes(enhanced);
+      enhanced = this.injectStakes(enhanced, metadata);
       techniques.push('Stakes Language (+45% quality - Bsharat et al.)');
     }
     
@@ -204,12 +278,19 @@ export class PromptEnhancer {
   private generatePersona(metadata: AgentMetadata): string {
     const domain = this.detectDomain(metadata);
     const companies = DOMAIN_COMPANIES[domain] || DOMAIN_COMPANIES.default;
+    const achievements = DOMAIN_ACHIEVEMENTS[domain] || DOMAIN_ACHIEVEMENTS.default;
     const years = this.detectSeniority(metadata);
     const role = this.generateRole(metadata);
     
-    const selectedCompanies = this.shuffleArray([...companies]).slice(0, 2);
+    const selectedCompanies = this.shuffleArray([...companies]).slice(0, 3);
+    const selectedAchievements = this.shuffleArray([...achievements]).slice(0, 2);
     
-    return `You are a ${role} with ${years}+ years of experience, having worked at companies like ${selectedCompanies.join(' and ')}.`;
+    return `You are a ${role} with ${years}+ years of experience, having ${selectedAchievements[0]} at ${selectedCompanies.join(', ')}. You've ${selectedAchievements[1]}, and your expertise is highly sought after in the industry.`;
+  }
+  
+  private generateStakes(metadata: AgentMetadata): string {
+    const domain = this.detectDomain(metadata);
+    return DOMAIN_STAKES[domain] || DOMAIN_STAKES.default;
   }
   
   private detectDomain(metadata: AgentMetadata): string {
@@ -312,16 +393,11 @@ export class PromptEnhancer {
     return stepByStepPhrase + prompt;
   }
   
-  private injectStakes(prompt: string): string {
-    const stakesPhrase = '\n**Stakes:** This task directly impacts production quality. Thoroughness is critical.\n';
+  private injectStakes(prompt: string, metadata: AgentMetadata = {}): string {
+    const stakesPhrase = `\n\n**Stakes:** ${this.generateStakes(metadata)}`;
     
-    // Add before behavioral traits or at the end
-    const behaviorMatch = prompt.match(/## Behavioral Traits/i);
-    if (behaviorMatch && behaviorMatch.index !== undefined) {
-      return prompt.slice(0, behaviorMatch.index) + stakesPhrase + '\n' + prompt.slice(behaviorMatch.index);
-    }
-    
-    return prompt + stakesPhrase;
+    // Add at the very end for maximum impact
+    return prompt.trimEnd() + stakesPhrase;
   }
   
   private injectChallenge(prompt: string): string {

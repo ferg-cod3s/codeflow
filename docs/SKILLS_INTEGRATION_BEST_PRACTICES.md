@@ -798,7 +798,7 @@ Command: /deploy production
 
 Agents orchestrated:
 ├─ deployment-wizard
-│   └─ Uses ALL 5 skills for comprehensive deployment
+│   └─ Uses all relevant skills for comprehensive deployment
 ├─ database-expert
 │   └─ Primarily uses database-migration skill
 ├─ monitoring-expert
@@ -1004,7 +1004,7 @@ Recommended skill composition:
 ├─ git-workflow-management (implicit - releases)
 └─ security-audit-workflow (implicit - production)
 
-Auto-load all 4 skills for comprehensive guidance
+Auto-load all relevant skills for comprehensive guidance
 ```
 
 ### 10.2 Skill Learning and Evolution
@@ -1027,7 +1027,7 @@ Skill evolution:
 
 ### 10.3 Cross-Organization Skill Sharing
 
-**Concept:** Skill marketplace
+**Concept:** Skill marketplace (CodeFlow project feature)
 
 ```
 Public skills repository:

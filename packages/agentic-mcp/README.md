@@ -177,7 +177,7 @@ Validates implementations against requirements and quality standards. Provides d
 
 ## Integration with CodeFlow CLI
 
-This MCP server works seamlessly with the [codeflow CLI](https://github.com/ferg-cod3s/codeflow) for enhanced project-specific workflows:
+This MCP server works seamlessly with the [codeflow CLI](https://github.com/v1truv1us/codeflow) for enhanced project-specific workflows:
 
 ```bash
 # Set up project with codeflow CLI
@@ -241,13 +241,13 @@ lsof -i :3000
 
 ### Commands Return Generic Content
 
-This is expected behavior! The MCP server provides generic, privacy-safe command templates. For project-specific customization, use the [codeflow CLI](https://github.com/ferg-cod3s/codeflow).
+This is expected behavior! The MCP server provides generic, privacy-safe command templates. For project-specific customization, use the [codeflow CLI](https://github.com/v1truv1us/codeflow).
 
 ## Development
 
 ```bash
 # Clone and setup
-git clone https://github.com/ferg-cod3s/codeflow.git
+git clone https://github.com/v1truv1us/codeflow.git
 cd codeflow/packages/agentic-codeflow-mcp
 npm install
 
@@ -263,7 +263,7 @@ npm start
 
 ## Contributing
 
-We welcome contributions! Please see our [Contributing Guide](https://github.com/ferg-cod3s/codeflow/blob/main/CONTRIBUTING.md) for details.
+We welcome contributions! Please see our [Contributing Guide](https://github.com/v1truv1us/codeflow/blob/main/CONTRIBUTING.md) for details.
 
 ## License
 
@@ -271,7 +271,7 @@ MIT - see [LICENSE](./LICENSE) file for details.
 
 ## Related Projects
 
-- [codeflow CLI](https://github.com/ferg-cod3s/codeflow) - Full codeflow workflow system with project customization
+- [codeflow CLI](https://github.com/v1truv1us/codeflow) - Full codeflow workflow system with project customization
 - [Model Context Protocol](https://github.com/anthropics/mcp) - The protocol specification this server implements
 
 ---

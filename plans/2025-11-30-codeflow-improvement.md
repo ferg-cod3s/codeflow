@@ -34,7 +34,7 @@ CodeFlow is a TypeScript CLI tool for converting AI agents between different pla
 
 ### Low Priority (Nice to Have)
 - [ ] Advanced caching mechanisms
-- [ ] Plugin marketplace integration
+- [ ] Plugin marketplace integration (CodeFlow CLI feature)
 - [ ] Real-time conversion progress tracking
 
 ## Technical Approach

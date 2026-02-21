@@ -180,7 +180,7 @@ function createGitHubRelease(version: string): void {
 
     releaseNotes += `\n### Installation\n\n\`\`\`bash\nnpm install -g @agentic-codeflow/cli\n\`\`\`\n\n`;
     releaseNotes += `### Quick Start\n\n\`\`\`bash\ncodeflow setup\n\`\`\`\n\n`;
-    releaseNotes += `**Full Changelog**: https://github.com/ferg-cod3s/codeflow/compare/${lastTag || 'main'}...${tagName}`;
+    releaseNotes += `**Full Changelog**: https://github.com/v1truv1us/codeflow/compare/${lastTag || 'main'}...${tagName}`;
 
     // Create release using gh CLI
     execSync(
@@ -190,7 +190,7 @@ function createGitHubRelease(version: string): void {
   } catch (error) {
     logWarning('Failed to create GitHub release automatically');
     logWarning(
-      'You can create it manually at: https://github.com/ferg-cod3s/codeflow/releases/new'
+      'You can create it manually at: https://github.com/v1truv1us/codeflow/releases/new'
     );
     if (error instanceof Error) {
       logWarning(error.message);
